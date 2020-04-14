@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "checkJs": true,
+    "module": "esnext",
+  },
+  "typeAcquisition": {
+    "enable": true,
+  },
+  "include": [
+    "./**/*.js",
+    "./typings/*.d.ts",
+
+  ]
+}
