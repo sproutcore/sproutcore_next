@@ -22,3 +22,8 @@ export const T_REGEXP = 'regexp';
   @type String
 */
 export const FROZEN_ERROR = "Cannot modify a frozen object";
+
+/**
+  A constant indicating an unsupported method, property or other.
+*/
+export const UNSUPPORTED = '_sc_unsupported';

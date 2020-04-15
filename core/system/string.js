@@ -5,8 +5,17 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { none } from "./base.js";
+import { none, typeOf } from "./base.js";
+import { T_NUMBER } from "./constants.js";
 
+
+const STRING_TITLEIZE_REGEXP = (/([\s|\-|\_|\n])([^\s|\-|\_|\n]?)/g);
+const STRING_DECAMELIZE_REGEXP = (/([a-z])([A-Z])/g);
+const STRING_DASHERIZE_REGEXP = (/[ _]/g);
+const STRING_DASHERIZE_CACHE = {};
+const STRING_TRIM_LEFT_REGEXP = (/^\s+/g);
+const STRING_TRIM_RIGHT_REGEXP = (/\s+$/g);
+const STRING_CSS_ESCAPED_REGEXP = (/(:|\.|\[|\])/g);
 
   /**
     This finds the value for a key in a formatting string.
@@ -128,3 +137,105 @@ export const w = function (str) {
   return ary;
 };
 
+  /**
+    Capitalizes a string.
+
+    ## Examples
+
+        capitalize('my favorite items') // 'My favorite items'
+        capitalize('css-class-name')    // 'Css-class-name'
+        capitalize('action_name')       // 'Action_name'
+        capitalize('innerHTML')         // 'InnerHTML'
+
+    @return {String} capitalized string
+  */
+export const capitalize = function (str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+  Camelizes a string.  This will take any words separated by spaces, dashes
+  or underscores and convert them into camelCase.
+
+  ## Examples
+
+      camelize('my favorite items') // 'myFavoriteItems'
+      camelize('css-class-name')    // 'cssClassName'
+      camelize('action_name')       // 'actionName'
+      camelize('innerHTML')         // 'innerHTML'
+
+  @returns {String} camelized string
+*/
+export const camelize = function (str) {
+  var ret = str.replace(STRING_TITLEIZE_REGEXP, function (str, separater, character) {
+    return character ? character.toUpperCase() : '';
+  });
+
+  var first = ret.charAt(0),
+    lower = first.toLowerCase();
+
+  return first !== lower ? lower + ret.slice(1) : ret;
+};
+
+/**
+  Converts a camelized string into all lower case separated by underscores.
+
+  ## Examples
+
+  decamelize('my favorite items') // 'my favorite items'
+  decamelize('css-class-name')    // 'css-class-name'
+  decamelize('action_name')       // 'action_name'
+  decamelize('innerHTML')         // 'inner_html'
+
+  @returns {String} the decamelized string.
+*/
+export const decamelize = function (str) {
+  return str.replace(STRING_DECAMELIZE_REGEXP, '$1_$2').toLowerCase();
+};
+
+/**
+  Converts a camelized string or a string with spaces or underscores into
+  a string with components separated by dashes.
+
+  ## Examples
+
+  | *Input String* | *Output String* |
+  dasherize('my favorite items') // 'my-favorite-items'
+  dasherize('css-class-name')    // 'css-class-name'
+  dasherize('action_name')       // 'action-name'
+  dasherize('innerHTML')         // 'inner-html'
+
+  @returns {String} the dasherized string.
+*/
+export const dasherize = function (str) {
+  var cache = STRING_DASHERIZE_CACHE,
+    ret = cache[str];
+
+  if (ret) {
+    return ret;
+  } else {
+    ret = decamelize(str).replace(STRING_DASHERIZE_REGEXP, '-');
+    cache[str] = ret;
+  }
+
+  return ret;
+};
+
+/**
+  Mulitplies a given string. For instance if you have a string "xyz"
+  and multiply it by 2 the result is "xyzxyz".
+
+  @param {string} str the string to multiply
+  @param {Number} value the number of times to multiply the string
+  @returns {string} the mulitiplied string
+*/
+export const mult = function (str, value) {
+  if (typeOf(value) !== T_NUMBER || value < 1) return null;
+
+  var ret = "";
+  for (var i = 0; i < value; i += 1) {
+    ret += str;
+  }
+
+  return ret;
+}

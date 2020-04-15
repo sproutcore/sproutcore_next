@@ -469,8 +469,8 @@ SCObject.reopen = function (props) {
 
     @param {...Object} props
       optional hash of method or properties to add to the instance.
-
-    @returns {SCObject} new instance of the receiver class.
+    @mixes ...props
+    @returns {Object} new instance of the receiver class.
   */
 SCObject.create = function (...props) {
   var C = this,

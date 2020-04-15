@@ -1,6 +1,5 @@
 import { T_CLASS, T_ARRAY, T_BOOL, T_DATE, T_UNDEFINED, T_NULL, T_NUMBER, T_HASH, T_FUNCTION, VERSION, T_ERROR, T_OBJECT, T_STRING } from './constants.js';
 
-// import '../index';
 
 /**
   @private

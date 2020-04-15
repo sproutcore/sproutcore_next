@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { fmt, w } from '../system/string.js';
+import { fmt, w, capitalize, camelize, decamelize, dasherize, mult } from '../system/string.js';
 
 /**
   @see SC.String.fmt
@@ -22,3 +22,24 @@ String.prototype.w = function () {
   return w(this);
 }
 
+String.prototype.capitalize = function () {
+  return capitalize(this);
+}
+
+String.prototype.camelize = function () {
+  return camelize(this);
+}
+
+String.prototype.decamelize = function () {
+  return decamelize(this);
+}
+
+String.prototype.dasherize = function () {
+  return dasherize(this);
+}
+
+String.prototype.mult = function (value) {
+
+  // @ts-ignore
+  return mult(this, value);
+}

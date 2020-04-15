@@ -459,7 +459,7 @@ RunLoop.currentRunLoop = null;
   The default RunLoop class.  If you choose to extend the RunLoop, you can
   set this property to make sure your class is used instead.
 
-  @type Class
+  @type RunLoop
 */
 RunLoop.runLoopClass = RunLoop;
 
@@ -557,15 +557,15 @@ export const run = function (callback, target, forceNested) {
 /**
   Wraps the passed function in code that ensures a run loop will
   surround it when run.
+  changed to use a closure
 */
 RunLoop.wrapFunction = function (func) {
   var ret = function () {
     var alreadyRunning = RunLoop.isRunLoopInProgress();
     if (!alreadyRunning) RunLoop.begin();
-    var ret = arguments.callee.wrapped.apply(this, arguments);
+    var ret = func.apply(this, arguments);
     if (!alreadyRunning) RunLoop.end();
     return ret;
   };
-  ret.wrapped = func;
   return ret;
 };

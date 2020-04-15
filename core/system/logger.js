@@ -89,7 +89,7 @@ const LOGGER_LEVEL_NONE = 'none';
 
 
 
-/** @class
+/** @instance
 
   Object to allow for safe logging actions, such as using the browser console.
   In addition to being output to the console, logs can be optionally recorded
@@ -141,12 +141,14 @@ const LOGGER_LEVEL_NONE = 'none';
   @author Colin Campbell
   @author Benedikt Böhm
   @author William Kakes
+  @lends SCObject
+  @type Object
   @since SproutCore 1.0
   @see <a href="http://getfirebug.com/logging.html">Firebug Logging Reference</a>
 */
 
 export const Logger = SCObject.create({
-  /** SCObject.prototype */
+  /** Logger.prototype */
     // ..........................................................
     // PROPERTIES
     //
@@ -374,7 +376,7 @@ export const Logger = SCObject.create({
       a type in a manner more useful to you than you can achieve with
       String.fmt().
 
-      @param {String|Array|Function|Object}
+      @param {String|Array|Function|Object} args
     */
     debugWithoutFmt: function () {
       this._handleMessage(LOGGER_LEVEL_DEBUG, false, null, arguments);
@@ -449,8 +451,8 @@ export const Logger = SCObject.create({
       in such a way that the info() invocation will be ignored, then the
       String.fmt() call will never actually be performed.
 
-      @param {String}              A message or a format string
-      @param {...any}       (optional)  Other arguments to pass to String.fmt() when using a format string
+      @param {String}  message            A message or a format string
+      @param {...any}  [optionalFormatArgs]     (optional)  Other arguments to pass to String.fmt() when using a format string
     */
     info: function (message, optionalFormatArgs) {
       // Implementation note:  To avoid having to put the info() shorthand
@@ -469,7 +471,7 @@ export const Logger = SCObject.create({
       a type in a manner more useful to you than you can achieve with
       String.fmt().
 
-      @param {String|Array|Function|Object}
+      @param {String|Array|Function|Object} args
     */
     infoWithoutFmt: function () {
       this._handleMessage(LOGGER_LEVEL_INFO, false, null, arguments);
@@ -502,8 +504,8 @@ export const Logger = SCObject.create({
       in such a way that the info() invocation will be ignored, then the
       String.fmt() call will never actually be performed.
 
-      @param {String}  (optional)  A title or format string to display above the group
-      @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
+      @param {String} [message] (optional)  A title or format string to display above the group
+      @param {...Object} [optionalFormatArgs]      (optional)  Other arguments to pass to String.fmt() when using a format string as the title
     */
     infoGroup: function (message, optionalFormatArgs) {
       // Implementation note:  To avoid having to put the infoGroup()
@@ -544,8 +546,8 @@ export const Logger = SCObject.create({
       in such a way that the warn() invocation will be ignored, then the
       String.fmt() call will never actually be performed.
 
-      @param {String}              A message or a format string
-      @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string
+      @param {String}  message            A message or a format string
+      @param {...Object} [optionalFormatArgs]     (optional)  Other arguments to pass to String.fmt() when using a format string
     */
     warn: function (message, optionalFormatArgs) {
       // Implementation note:  To avoid having to put the warn() shorthand
@@ -565,7 +567,7 @@ export const Logger = SCObject.create({
       a type in a manner more useful to you than you can achieve with
       String.fmt().
 
-      @param {String|Array|Function|Object}
+      @param {String|Array|Function|Object} args
     */
     warnWithoutFmt: function () {
       this._handleMessage(LOGGER_LEVEL_WARN, false, null, arguments);
@@ -598,8 +600,8 @@ export const Logger = SCObject.create({
       in such a way that the warn() invocation will be ignored, then the
       String.fmt() call will never actually be performed.
 
-      @param {String}  (optional)  A title or format string to display above the group
-      @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
+      @param {String} message  (optional)  A title or format string to display above the group
+      @param {...Object} [optionalFormatArgs]       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
     */
     warnGroup: function (message, optionalFormatArgs) {
       // Implementation note:  To avoid having to put the warnGroup()
@@ -640,7 +642,7 @@ export const Logger = SCObject.create({
       String.fmt() call will never actually be performed.
 
       @param {String}              A message or a format string
-      @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string
+      @param {...Object} [optionalFormatArgs]      (optional)  Other arguments to pass to String.fmt() when using a format string
     */
     error: function (message, optionalFormatArgs) {
       // Implementation note:  To avoid having to put the error() shorthand
@@ -659,7 +661,7 @@ export const Logger = SCObject.create({
       a type in a manner more useful to you than you can achieve with
       String.fmt().
 
-      @param {String|Array|Function|Object}
+      @param {String|Array|Function|Object} args
     */
     errorWithoutFmt: function () {
       this._handleMessage(LOGGER_LEVEL_ERROR, false, null, arguments);
@@ -693,7 +695,7 @@ export const Logger = SCObject.create({
       String.fmt() call will never actually be performed.
 
       @param {String}  (optional)  A title or format string to display above the group
-      @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
+      @param {...Object} [optionalFormatArgs]      (optional)  Other arguments to pass to String.fmt() when using a format string as the title
     */
     errorGroup: function (message, optionalFormatArgs) {
       // Implementation note:  To avoid having to put the errorGroup()
@@ -724,7 +726,7 @@ export const Logger = SCObject.create({
       in some browsers the native group indenting can make the timestamp
       formatting less than ideal.
 
-      @param {Boolean}  (optional)  Whether to include timestamps in the output
+      @param {Boolean} [includeTimestamps] (optional)  Whether to include timestamps in the output
     */
     outputRecordedLogMessages: function (includeTimestamps) {
       // If we have no reporter, there's nothing we can do.
@@ -733,7 +735,7 @@ export const Logger = SCObject.create({
       var reporter = this.get('reporter'),
         entries = this.get('recordedLogMessages'),
         indentation = 0,
-        timestampFormat = LOGGER_RECORDED_LOG_TIMESTAMP_PREFIX,
+        timestampFormat = getSetting('LOGGER_RECORDED_LOG_TIMESTAMP_PREFIX'),
         i, iLen, entry, type, timestampStr, message, originalArguments,
         output, title, newIndentation, disparity, j, jLen;
 
@@ -875,7 +877,7 @@ export const Logger = SCObject.create({
       appropriate categorization for your message, choosing the appropriate
       method.
 
-      @param {String|Array|Function|Object}
+      @param {String|Array|Function|Object} message
       @returns {Boolean} Whether or not anything was logged
     */
     log: function () {
@@ -934,7 +936,7 @@ export const Logger = SCObject.create({
       result in output when the reporter supports it.  Similarly, group messages
       logged via this method will never be recorded.
 
-      @param {String}  (optional)  An optional title to display above the group
+      @param {String} [title] (optional)  An optional title to display above the group
     */
     group: function (title) {
       var reporter = this.get('reporter');
@@ -965,7 +967,7 @@ export const Logger = SCObject.create({
       Logs the object using {@link Logger.log} if the reporter.dir function
       does not exist.
 
-      @param {Object}
+      @param {Object} obj
     */
     dir: function () {
       var reporter = this.get('reporter');
@@ -986,7 +988,7 @@ export const Logger = SCObject.create({
       Logs the object using {@link Logger.log} if reporter.dirxml function
       does not exist.
 
-      @param {Object}
+      @param {Object} obj
     */
     dirxml: function () {
       var reporter = this.get('reporter');
@@ -1006,7 +1008,7 @@ export const Logger = SCObject.create({
       Begins the JavaScript profiler, if it exists. Call {@link Logger.profileEnd}
       to end the profiling process and receive a report.
 
-      @param {String}     (optional)  A title to associate with the profile
+      @param {String} [title]    (optional)  A title to associate with the profile
       @returns {Boolean} true if reporter.profile exists, false otherwise
     */
     profile: function (title) {
@@ -1023,7 +1025,7 @@ export const Logger = SCObject.create({
       Ends the JavaScript profiler, if it exists.  If you specify a title, the
       profile with that title will be ended.
 
-      @param {String}     (optional)  A title to associate with the profile
+      @param {String} [title]    (optional)  A title to associate with the profile
       @returns {Boolean} true if reporter.profileEnd exists, false otherwise
       @see Logger.profile
     */
@@ -1215,9 +1217,9 @@ export const Logger = SCObject.create({
       will be called automatically on the title, but only if at least one of the
       log levels is such that the result will be used.
 
-      @param {String}              type                 Expected to be LOGGER_LEVEL_DEBUG, etc.
-      @param {String}  (optional)  title                Expected to a string format (for String.fmt()) if there are other arguments
-      @param {String}  (optional)  originalArguments    All arguments passed into debug(), etc. (which includes 'title'; for efficiency, we don’t copy it)
+      @param {String}   type                 Expected to be LOGGER_LEVEL_DEBUG, etc.
+      @param {String}  [title]                Expected to a string format (for String.fmt()) if there are other arguments
+      @param {String}  [originalArguments]    All arguments passed into debug(), etc. (which includes 'title'; for efficiency, we don’t copy it)
     */
     _handleGroup: function (type, title, originalArguments) {
       // Are we configured to show this type?
@@ -1359,7 +1361,7 @@ export const Logger = SCObject.create({
       @param {String}                 timestampStr       An optional timestamp prefix for the line, or null for none
       @param {Number}                 indentation        The current indentation level
       @param {String}                 message
-      @param {Arguments}  (optional)  originalArguments  If specified, the assumption is that the message was not automatically formatted
+      @param {String}   [originalArguments]  If specified, the assumption is that the message was not automatically formatted
     */
     _outputMessage: function (type, timestampStr, indentation, message, originalArguments) {
       if (!this.get('exists')) return;

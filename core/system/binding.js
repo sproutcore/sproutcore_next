@@ -926,11 +926,13 @@ export const Binding = {
 
     // If fromPath is a bool but aFlag is undefined, swap.
     if ((aFlag === undefined) && (typeOf(fromPath) === T_BOOL)) {
+      // @ts-ignore
       aFlag = fromPath;
       fromPath = null;
     }
 
     // beget if needed.
+    // @ts-ignore
     var binding = this.from(fromPath);
     if (binding === Binding) binding = binding.beget();
     binding._oneWay = (aFlag === undefined) ? true : aFlag;
@@ -1025,6 +1027,7 @@ export const Binding = {
   integer: function (fromPathOrRadix, radix) {
     // Normalize arguments.
     if (radix === undefined) {
+      // @ts-ignore
       radix = fromPathOrRadix;
       fromPathOrRadix = null;
     }
@@ -1084,11 +1087,13 @@ export const Binding = {
   noError: function (fromPath, aFlag) {
     // If fromPath is a bool but aFlag is undefined, swap.
     if ((aFlag === undefined) && (typeOf(fromPath) === T_BOOL)) {
+      // @ts-ignore
       aFlag = fromPath;
       fromPath = null;
     }
 
     // beget if needed.
+    // @ts-ignore
     var binding = this.from(fromPath);
     if (binding === Binding) binding = binding.beget();
     binding._noError = (aFlag === undefined) ? true : aFlag;

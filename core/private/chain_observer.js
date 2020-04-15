@@ -28,8 +28,8 @@
 /**
  * @class ChainObserver
  * @constructor
- * @param {@} property
- * @param {*} [root]
+ * @param {String} property
+ * @param {Object} [root]
  */
 export function ChainObserver (property, root) {
   this.property = property;
@@ -41,23 +41,37 @@ ChainObserver.prototype = {
   isChainObserver: true,
 
   // the object this instance is observing
+  /** @type { Object } */
   object: null,
 
   // the property on the object this link is observing.
+  /** @type String */
   property: null,
 
   // if not null, this is the next link in the chain.  Whenever the
   // current property changes, the next observer will be notified.
+  /** @type { ChainObserver } */
   next: null,
 
+  /** @type { Object } */
   root: null,
 
   // if not null, this is the final target observer.
+  /** @type { Object } */
   target: null,
 
   // if not null, this is the final target method
+  /** @type { String | Function } */
   method: null,
 
+  context: null,
+
+  // temporary
+  /** @type { ChainObserver } */
+  _tail: null,
+
+  /** @type { Array } */
+  tails: null,
   // an accessor method that traverses the list and finds the tail
   tail: function () {
     if (this._tail) {
@@ -67,6 +81,7 @@ ChainObserver.prototype = {
     var tail = this;
 
     while (tail.next) {
+      // @ts-ignore
       tail = tail.next;
     }
 
@@ -81,9 +96,13 @@ ChainObserver.prototype = {
 
     // if an old object, remove observer on it.
     if (this.object) {
+      // @ts-ignore
       if (this.property === '@each' && this.object._removeContentObserver) {
+        // @ts-ignore
         this.object._removeContentObserver(this);
+      // @ts-ignore
       } else if (this.object.removeObserver) {
+        // @ts-ignore
         this.object.removeObserver(this.property, this, this.propertyDidChange);
       }
     }
@@ -99,11 +118,15 @@ ChainObserver.prototype = {
     // and tearing down observers as items are added and removed from the
     // Enumerable.
     if (this.property === '@each' && this.next) {
+      // @ts-ignore
       if (this.object && this.object._addContentObserver) {
+        // @ts-ignore
         this.object._addContentObserver(this);
       }
     } else {
+      // @ts-ignore
       if (this.object && this.object.addObserver) {
+        // @ts-ignore
         this.object.addObserver(this.property, this, this.propertyDidChange);
       }
 
@@ -122,6 +145,7 @@ ChainObserver.prototype = {
     // if we have a next object in the chain, notify it that its object
     // did change...
     if (this.next) {
+      // @ts-ignore
       this.next.objectDidChange(value);
     }
 
