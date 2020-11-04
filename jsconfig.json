@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2018",
     "checkJs": true,
-    "module": "esnext",
+    "module": "es2020"
   },
   "typeAcquisition": {
-    "enable": true,
+    "enable": true
   },
-  "include": [
-    "./**/*.js",
-    "./typings/*.d.ts",
-
+  "exclude": [
+    "exclude/**/*"
   ]
 }

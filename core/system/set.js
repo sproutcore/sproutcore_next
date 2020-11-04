@@ -400,7 +400,7 @@ export const SCSet = mixin({}, Observable, Enumerable, Freezable, Copyable,
     /**
       Removes all the items in the passed array.
 
-      @param {SCObjects[]|SCSet} objects
+      @param {SCObject[]|SCSet} objects
       @returns {SCSet} receiver
     */
     removeEach: function (objects) {

@@ -8,7 +8,7 @@
 import { ObserverQueue } from '../private/observer_queue.js';
 import { CoreArray } from '../mixins/array.js';
 import { Observable } from '../mixins/observable.js';
-
+import { ObjectMixinProtocol } from '../protocols/mixin_protocol.js';
 import { getSetting, setSetting } from './settings.js';
 import { $A, EMPTY_ARRAY, K, mixin, generateGuid, beget, clone, typeOf, guidFor } from './base.js';
 import { T_CLASS, T_OBJECT, T_HASH } from './constants.js';
@@ -307,9 +307,11 @@ const _enhance = function (originalFunction, enhancement) {
   obj = new SC.Object();
 
   @mixes Observable
+  @mixes ObjectMixinProtocol
+  @constructor
   @since SproutCore 1.0
 */
-export const SCObject = function (props) {
+export function SCObject (props) {
   this.__sc_super__ = SCObject.prototype;
   return this._object_init(props);
 };
@@ -324,6 +326,7 @@ export const SCObject = function (props) {
     This is a shorthand for calling SC.mixin(MyClass, props...);
 
     @param {...Object} props the properties you want to add.
+    @static
     @returns {Object} receiver
   */
 SCObject.mixin = function (...props) {
@@ -357,7 +360,7 @@ SCObject.superclass = null;
     in your init() to allow the normal setup to proceed.
 
     @param {...Object} props the methods of properties you want to add
-    @returns {Object} A new object class
+    @returns { } A new object class
   */
 SCObject.extend = function () {
   //@if(debug)
@@ -470,17 +473,18 @@ SCObject.reopen = function (props) {
     @param {...Object} props
       optional hash of method or properties to add to the instance.
     @mixes ...props
-    @returns {Object} new instance of the receiver class.
+    @constructs
+    @returns {Object}
   */
 SCObject.create = function (...props) {
   var C = this,
-    ret = new C(arguments);
+    ret = new C(props);
 
   // if (SC.ObjectDesigner) {
   //   SC.ObjectDesigner.didCreateObject(ret, SC.$A(arguments));
   // }
   return ret;
-},
+};
   /**
     Walk like a duck.  You can use this to quickly test classes.
 
@@ -566,7 +570,7 @@ SCObject.kindOf = function (scClass) {
 // DEFAULT OBJECT INSTANCE
 //
 /** @mixes Observable */
-SCObject.prototype = mixin({}, Observable, {
+SCObject.prototype = {
 
   _kvo_enabled: true,
 
@@ -574,7 +578,7 @@ SCObject.prototype = mixin({}, Observable, {
     This is the first method invoked on a new instance.  It will first apply
     any added properties to the new instance and then calls the real init()
     method.
-
+    @constructs SCObject
     @param {Array} extensions an array-like object with hashes to apply.
     @returns {Object} receiver
   */
@@ -911,13 +915,15 @@ SCObject.prototype = mixin({}, Observable, {
   */
   concatenatedProperties: ['concatenatedProperties', 'initMixin', 'destroyMixin']
 
-});
+};
+
+
 
 // bootstrap the constructor for SC.Object.
 SCObject.prototype.constructor = SCObject;
 
 // Add observable to mixin
-// mixin(SCObject.prototype, Observable);
+mixin(SCObject.prototype, Observable);
 
 // ..........................................................
 // CLASS NAME SUPPORT

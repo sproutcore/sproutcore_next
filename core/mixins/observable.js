@@ -353,7 +353,7 @@ export const Observable = {
     @method
     @param {String|Object} key the property to set
     @param {Object} value the value to set or null.
-    @returns {Observable}
+    @returns {Object}
   */
   set: function (key, value) {
     var func = this[key],
@@ -452,7 +452,7 @@ export const Observable = {
     When you are done making changes, call endPropertyChanges() to allow
     notification to resume.
 
-    @returns {Observable}
+    @returns {Object}
   */
   beginPropertyChanges: function () {
     this._kvo_changeLevel = this._kvo_changeLevel + 1;
@@ -469,7 +469,7 @@ export const Observable = {
     notifications. When you are done making changes, call this method to allow
     notification to resume.
 
-    @returns {Observable}
+    @returns {Object}
   */
   endPropertyChanges: function () {
     this._kvo_changeLevel = (this._kvo_changeLevel || 1) - 1;
@@ -495,7 +495,7 @@ export const Observable = {
     and cause notifications to be delivered more often than you would like.
 
     @param {String} key The property key that is about to change.
-    @returns {Observable}
+    @returns {Object}
   */
   propertyWillChange: function (key) {
     return this;
@@ -517,7 +517,7 @@ export const Observable = {
     @param {String} key The property key that has just changed.
     @param {Object} value The new value of the key.  May be null.
     @param {Boolean} [_keepCache] Private property
-    @returns {Observable}
+    @returns {Object}
   */
   propertyDidChange: function (key, value, _keepCache) {
     this._kvo_revision = this._kvo_revision + 1;
@@ -704,7 +704,7 @@ export const Observable = {
     @param {Array} queue the queue to add functions to
     @param {Array} keys the array of dependent keys for this key
     @param {Object} dependents the _kvo_dependents cache
-    @param {SCSet} seen already seen keys
+    @param {CoreSet} seen already seen keys
     @returns {void}
   */
   _kvo_addCachedDependents: function (queue, keys, dependents, seen) {
@@ -835,7 +835,7 @@ export const Observable = {
     @param {Object|Function} target the target object to invoke or the function to call
     @param {String|Function} [method] the method to invoke.
     @param {Object} [context] optional context
-    @returns {SCObject} self
+    @returns {Object} self
   */
   addObserver: function (key, target, method, context) {
     var kvoKey, chain;
@@ -891,7 +891,7 @@ export const Observable = {
     @param {String} key the key to observer
     @param {Object} target the target object to invoke
     @param {String|Function} [method] the method to invoke.
-    @returns {Observable} receiver
+    @returns {Object} receiver
   */
   removeObserver: function (key, target, method) {
 
@@ -1612,7 +1612,7 @@ export const Observable = {
 
     @param {String|Object} key the key to change
     @param {Object} value the value to change
-    @returns {Observable}
+    @returns {Object}
   */
   setIfChanged: function (key, value) {
     if (value === undefined && typeOf(key) === T_HASH) {
@@ -1646,7 +1646,7 @@ export const Observable = {
 
     @param {String} path the property path to set
     @param {Object} value the value to set
-    @returns {Observable}
+    @returns {Object}
   */
   setPath: function (path, value) {
     if (path.indexOf('.') >= 0) {
@@ -1748,7 +1748,7 @@ export const Observable = {
 
     @param {String} key The property key that has just changed.
     @param {Object} value The new value of the key.  May be null.
-    @returns {Observable}
+    @returns {Object}
   */
   notifyPropertyChange: function (key, value) {
     this.propertyWillChange(key);
@@ -1766,7 +1766,7 @@ export const Observable = {
     In those cases, you can simply call this method to notify all property
     observers immediately.  Note that this ignores property groups.
 
-    @returns {Observable}
+    @returns {Object}
   */
   allPropertiesDidChange: function () {
     this._kvo_cache = null; //clear cached props

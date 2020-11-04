@@ -39,7 +39,6 @@ String.prototype.dasherize = function () {
 }
 
 String.prototype.mult = function (value) {
-
   // @ts-ignore
   return mult(this, value);
 }

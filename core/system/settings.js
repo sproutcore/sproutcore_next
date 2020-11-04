@@ -23,9 +23,10 @@ export function getSetting(name) {
  * @export
  * @param {String} name
  * @param {Boolean|Number|String} value
+ * @param {Boolean} [overWrite] Optional: set to false to prevent overwrite
  * @returns {Boolean|Number|String}
  */
-export function setSetting(name, value) {
+export function setSetting(name, value, overWrite = true) {
   settings[name] = value;
   return value;
 }

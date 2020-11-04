@@ -19,7 +19,7 @@ let Benchmark;
 let ObserverQueue;
 import('../private/observer_queue.js').then(r => ObserverQueue = r.ObserverQueue);
 let Logger;
-import('../system/logger.js').then(r => Logger = r.Logger);
+import('./logger.js').then(r => Logger = r.Logger);
 let RunLoop;
 import { run } from './runloop.js';
 import('./runloop.js').then(r => RunLoop = r.RunLoop);

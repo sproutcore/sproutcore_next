@@ -70,6 +70,11 @@ ChainObserver.prototype = {
   /** @type { ChainObserver } */
   _tail: null,
 
+  /** @type {Object} */
+  masterTarget: null,
+  /**@type {String | Function} */
+  masterMethod: null,
+
   /** @type { Array } */
   tails: null,
   // an accessor method that traverses the list and finds the tail

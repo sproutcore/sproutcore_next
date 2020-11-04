@@ -15,7 +15,7 @@ import { getSetting } from '../system/settings.js';
 
 let Logger;
 // enable later
-// import('../system/logger.js').then(l => Logger = l);
+import('../system/logger.js').then(l => Logger = l.Logger);
 
 // ........................................................................
 // ObserverSet

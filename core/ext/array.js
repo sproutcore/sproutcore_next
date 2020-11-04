@@ -1,7 +1,7 @@
 import { Copyable } from '../mixins/copyable.js';
 import { mixin, copy, none, isEqual, supplement } from '../system/base.js';
 import { Freezable } from '../mixins/freezable.js';
-import { Observable } from '../mixins/observable';
+import { Observable } from '../mixins/observable.js';
 import { Enumerable, Reducers } from '../mixins/enumerable.js';
 import { CoreArray } from '../mixins/array.js';
 

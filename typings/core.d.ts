@@ -2,8 +2,6 @@
 // Project: SproutCore
 // Definitions by: Maurits Lamers
 
-import { Observable } from "../core/mixins/observable";
-
 /*~ This is the global-modifying module template file. You should rename it to index.d.ts
  *~ and place it in a folder with the same name as the module.
  *~ For example, if you were writing a file for "super-greeter", this
@@ -21,14 +19,21 @@ declare global {
   interface String {
     fmt: (...args: any[]) => string;
     w: () => string[];
+    capitalize: () => string;
+    camelize: () => string;
+    decamelize: () => string;
+    dasherize: () => string;
+    mult: (value: number) => string;
   }
 
   interface Function {
-    property: (...args: string[]) => Function;
-    cacheable: (aFlag?: boolean) => Function;
-    idempotent: (aFlag?: boolean) => Function;
-    enhance: () => Function;
-    observes: (...propertyPaths) => Function;
+    property: (...args: string[]) => SCMethod;
+    cacheable: (aFlag?: boolean) => SCMethod;
+    idempotent: (aFlag?: boolean) => SCMethod;
+    enhance: () => SCMethod;
+    observes: (...propertyPaths) => SCMethod;
+    handleEvents: (...events) => SCMethod;
+    stateObserves: (...args) => SCMethod;
   }
 
   interface SCMethod extends Function {
@@ -41,6 +46,10 @@ declare global {
     isEnhancement?: boolean;
     localPropertyPaths?: string[];
     propertyPaths?: string[];
+    isEventHandler?: boolean;
+    events?: any[];
+    isStateObserveHandler?: boolean;
+    args?: string[];
   }
 
   class SCEnumerator {
@@ -51,11 +60,8 @@ declare global {
     static create: (enumerableObject?: Enumerable) => Enumerator;
   }
 
-  // class Enumerator implements EnumeratorInterface {
-  //   create: (enumerableObject?: Enumerable) => Enumerator;
-  // }
 
-  class Enumerable {
+  interface Enumerable {
     isEnumerable: boolean;
     nextObject: (index: number, previousObject?: any, context?: any) => any;
     firstObject: function;
@@ -201,17 +207,20 @@ declare global {
   }
 
 
-  class SCObject extends Observable {
+  class SCObject implements Observable {
     static create: (...objs: object[]) => object;
-    static extend: (...objs: object[]) => object;
+    static extend: (...objs: object[]) => class;
     static subclasses: any[];
     static reopen: (...objs: object[]) => object;
     static subclassOf: (obj: object) => boolean;
     static hasSubclass: (obj: object) => boolean;
     static superclass: SCObject;
     static __sc_super__: object;
+    _object_init(): () => void;
     static toString: () => string;
   }
+
+
 }
 
 // /*~ If your module exports types or values, write them as usual */

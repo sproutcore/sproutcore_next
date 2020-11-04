@@ -16,6 +16,8 @@ import { CoreSet } from '../system/set.js';
 import { ObserverSet } from '../private/observer_set.js';
 import { ChainObserver } from '../private/chain_observer.js';
 
+let PropertyChain;
+import ('../private/property_chain.js').then(m => PropertyChain = m.PropertyChain);
 /**
  * @mixin
  */
@@ -327,7 +329,7 @@ export const CoreArray = {
   /**
     Compares each item in the passed array to this one.
 
-    @param {CoreArray} ary The array you want to compare to
+    @param {Array} ary The array you want to compare to
     @returns {Boolean} true if they are equal.
   */
   isEqual: function (ary) {
@@ -358,7 +360,7 @@ export const CoreArray = {
     value.
 
     @param {Object} value The value you want to be removed
-    @returns {CoreArray} The new, filtered array
+    @returns {Array} The new, filtered array
   */
   without: function (value) {
     if (this.indexOf(value) < 0) return this; // value not present.
