@@ -9,7 +9,7 @@
 // ========================================================================
 
 /*globals module test ok isObj assert.equal expects */
-import { beget, hashFor } from "../../core/system/base.js";
+import { beget, hashFor } from "../../../core/system/base.js";
 
 var objectA, objectB , arrayA, stringA; // global variables
 

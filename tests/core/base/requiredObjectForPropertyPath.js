@@ -8,7 +8,7 @@
 // SC.requiredObjectForPropertyPath Tests
 // ========================================================================
 /*globals module test ok assert.deepEqual assert.equal expects */
-import { SC } from "../../core/core.js";
+import { SC } from "../../../core/core.js";
 
 module("SC.requiredObjectForPropertyPath") ;
 

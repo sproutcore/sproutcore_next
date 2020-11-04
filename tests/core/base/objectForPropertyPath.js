@@ -8,7 +8,7 @@
 // SC.objectForPropertyPath Tests
 // ========================================================================
 /*globals module test ok assert.deepEqual assert.equal expects */
-import { SC } from "../../core/core.js";
+import { SC } from "../../../core/core.js";
 
 
 // An ObjectController will make a content object or an array of content objects

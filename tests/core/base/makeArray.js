@@ -8,7 +8,7 @@
 // SC.makeArray Tests
 // ========================================================================
 /*globals module test */
-import { SC } from "../../core/core.js";
+import { SC } from "../../../core/core.js";
 
 var objectA,objectB,objectC; //global variables
 

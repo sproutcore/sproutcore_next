@@ -8,7 +8,7 @@
 // SC.keys Tests
 // ========================================================================
 /*globals module test */
-import { SC } from "../../core/core.js";
+import { SC } from "../../../core/core.js";
 
 module("Fetch Keys ");
 

@@ -5,7 +5,7 @@
 // ==========================================================================
 /*globals module, ok, assert.equal, assert.deepEqual, test */
 
-import { SC } from '../../core/core.js';
+import { SC } from '../../../core/core.js';
 
 // test parsing of query string
 var v = [];

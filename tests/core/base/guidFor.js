@@ -8,7 +8,7 @@
 // SC.guidFor Tests
 // ========================================================================
 /*globals module test ok isObj assert.equal expects */
-import { SC } from "../../core/core.js";
+import { SC } from "../../../core/core.js";
 
 module("SC.guidFor");
 

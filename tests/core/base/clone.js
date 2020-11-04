@@ -7,8 +7,7 @@
 
 /*globals module test ok assert.equal expects object assert.deepEqual */
 
-import { SC } from "../../core/core.js"; // we take SC.Object from here because of the 
-import { T_ARRAY, T_OBJECT } from '../../core/system/constants.js';
+import { SC } from "../../../core/core.js"; // we take SC.Object from here because of the 
 
 var object ;
 

@@ -10,7 +10,7 @@
 /*globals module test ok isObj assert.equal expects */
 
 
-import { SC } from "../../core/core.js";
+import { SC } from "../../../core/core.js";
 
 var obj1,obj2,obj3; //global variables
 

@@ -4,7 +4,7 @@
 //            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-import { SC } from "../../core/core.js";
+import { SC } from "../../../core/core.js";
 
 module("SproutCore Type Checking");
 

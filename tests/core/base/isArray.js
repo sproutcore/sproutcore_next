@@ -9,7 +9,7 @@
 // ========================================================================
 /*globals module test */
 
-import { SC } from "../../core/core.js";
+import { SC } from "../../../core/core.js";
 
 (function() {
   module("isArray");
