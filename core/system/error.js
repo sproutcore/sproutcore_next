@@ -32,8 +32,8 @@ import { get } from '../mixins/observable.js';
 
   You can actually make any object you want to be treated like an Error object
   by simply implementing two properties: isError and errorValue.  If you
-  set isError to YES, then calling SC.ok(obj) on your object will return NO.
-  If isError is YES, then SC.val(obj) will return your errorValue property
+  set isError to true, then calling SC.ok(obj) on your object will return false.
+  If isError is true, then SC.val(obj) will return your errorValue property
   instead of the receiver.
 
   When using SC.typeOf(obj), SC.T_ERROR will only be returned if the obj
@@ -110,7 +110,12 @@ export const SCError = SCObject.extend(
 
       @type Boolean
     */
-    isError: true
+    isError: true,
+
+    /** 
+     *  Make this specifically an SC Error, saves a instanceof check
+     */
+    _isSCError: true
   });
 
 SCError.mixin({
@@ -176,7 +181,7 @@ export const throwError = function (description, label, errorValue) {
 export const $throw = throwError;
 
 /**
-  Returns NO if the passed errorValue is an error object or false.
+  Returns false if the passed errorValue is an error object or false.
 
   @param {Object} ret object errorValue
   @returns {Boolean}

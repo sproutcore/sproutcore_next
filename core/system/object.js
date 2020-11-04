@@ -5,20 +5,26 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { ObserverQueue } from '../private/observer_queue.js';
-import { CoreArray } from '../mixins/array.js';
+// import { ObserverQueue } from '../private/observer_queue.js';
+// import { CoreArray } from '../mixins/array.js';
 import { Observable } from '../mixins/observable.js';
-import { ObjectMixinProtocol } from '../protocols/mixin_protocol.js';
+// import { ObjectMixinProtocol } from '../protocols/mixin_protocol.js';
 import { getSetting, setSetting } from './settings.js';
 import { $A, EMPTY_ARRAY, K, mixin, generateGuid, beget, clone, typeOf, guidFor } from './base.js';
 import { T_CLASS, T_OBJECT, T_HASH } from './constants.js';
 import { SCSet, CoreSet } from './set.js';
-import { _getRecentStack } from './runloop.js';
+// import { _getRecentStack } from './runloop.js';
 let Benchmark;
-// import('./benchmark.js').then(m => Benchmark = m.Benchmark);
 
 let RunLoop;
-import('./runloop.js').then(m => RunLoop = m.RunLoop);
+let _getRecentStack;
+export function __runtimeDeps () {
+  // import('./benchmark.js').then(m => Benchmark = m.Benchmark);
+  import('./runloop.js').then(m => {
+    RunLoop = m.RunLoop;
+    _getRecentStack = m._getRecentStack;
+  });
+}
 
 /*global*/
 
@@ -709,6 +715,8 @@ SCObject.prototype = {
     @type Boolean
   */
   isObject: true,
+
+  _isSCObject: true,
 
   /**
     Returns true if the named value is an executable function.

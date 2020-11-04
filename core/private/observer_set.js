@@ -15,7 +15,10 @@ import { getSetting } from '../system/settings.js';
 
 let Logger;
 // enable later
-import('../system/logger.js').then(l => Logger = l.Logger);
+export function __runtimeDeps () {
+  import('../system/logger.js').then(l => Logger = l.Logger);
+}
+
 
 // ........................................................................
 // ObserverSet

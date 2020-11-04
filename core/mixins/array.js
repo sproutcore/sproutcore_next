@@ -12,12 +12,16 @@ import { RangeObserver } from '../system/range_observer.js';
 import { IndexSet } from '../system/index_set.js';
 import { T_NUMBER } from '../system/constants.js';
 import { none, isEqual, guidFor, clone } from '../system/base.js';
-import { CoreSet } from '../system/set.js';
+import { CoreSet } from '../system/core_set.js';
 import { ObserverSet } from '../private/observer_set.js';
 import { ChainObserver } from '../private/chain_observer.js';
 
 let PropertyChain;
-import ('../private/property_chain.js').then(m => PropertyChain = m.PropertyChain);
+
+export function __runtimeDeps () {
+  import ('../private/property_chain.js').then(m => PropertyChain = m.PropertyChain);
+}
+
 /**
  * @mixin
  */

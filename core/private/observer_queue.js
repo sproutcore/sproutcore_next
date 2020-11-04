@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { CoreSet } from '../system/set.js';
+import { CoreSet } from '../system/core_set.js';
 import { tupleForPropertyPath } from '../system/base.js';
 
 // ........................................................................

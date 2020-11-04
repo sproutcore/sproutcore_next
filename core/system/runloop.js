@@ -11,6 +11,7 @@ import { SCObject } from './object.js';
 import { getSetting } from './settings.js';
 import { Binding } from './binding.js';
 
+
 let Logger;
 
 //@if(debug)
@@ -51,6 +52,8 @@ let Logger;
   @since SproutCore 1.0
 */
 export const RunLoop = SCObject.extend({
+  /**@scope RunLoop */
+
 
   /**
     Call this method whenver you begin executing code.

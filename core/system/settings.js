@@ -3,7 +3,7 @@ A set of default settings used throughout the framework
 */
 
 const settings = {
-
+  debug: false
 };
 
 /**

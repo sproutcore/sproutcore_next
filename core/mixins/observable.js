@@ -12,19 +12,18 @@ import { ChainObserver } from '../private/chain_observer.js';
 import { guidFor, typeOf, clone, objectForPropertyPath, tupleForPropertyPath, hashFor } from '../system/base.js';
 import { T_HASH } from '../system/constants.js';
 import { ObserverQueue } from '../private/observer_queue.js';
-import { CoreSet } from '../system/set.js';
+import { CoreSet } from '../system/core_set.js';
 
 let PropertyChain;
-// import('../private/property_chain.js').then(p => PropertyChain = p.PropertyChain)
 
 // let ObserverQueue;
-// import('../private/observer_queue.js').then(m => {
-//   console.log('resolving observer_queue', m);
-//    ObserverQueue = m.ObserverQueue;
-// });
 
 let Binding;
-import('../system/binding.js').then(m => Binding = m.Binding);
+
+export function __runtimeDeps () {
+  import('../private/property_chain.js').then(p => PropertyChain = p.PropertyChain)
+  import('../system/binding.js').then(m => Binding = m.Binding);
+}
 
 let _TMP_SEEN_SET;
 

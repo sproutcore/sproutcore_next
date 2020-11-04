@@ -36,3 +36,8 @@ Another thing: routes: also something only available to the main thread, but sho
 on to the statechart somehow...
 
 
+# workers...
+It looks like most of the app, including the state chart could work inside a worker,
+and only the view system could run inside the main thread. 
+The core should then run inside both, which also means not depending on window, or at least be flexible
+with globals

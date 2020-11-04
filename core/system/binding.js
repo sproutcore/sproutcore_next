@@ -9,20 +9,25 @@ import '../ext/function.js';
 import { getSetting, setSetting } from './settings.js';
 import { beget, typeOf, tupleForPropertyPath, none, isArray, guidFor } from './base.js';
 import { T_ERROR, T_BOOL, T_ARRAY, T_STRING, T_NUMBER, T_FUNCTION } from './constants.js';
-import { CoreSet } from './set.js';
+import { CoreSet } from './core_set.js';
 import { property } from './function.js';
+import { run } from './runloop.js';
+
 // sc_require('system/object');
 let SCObject;
-import('./object.js').then(r => SCObject = r.SCObject);
 let Benchmark;
-// import('./benchmark.js').then(r => Benchmark = r.Benchmark);
 let ObserverQueue;
-import('../private/observer_queue.js').then(r => ObserverQueue = r.ObserverQueue);
 let Logger;
-import('./logger.js').then(r => Logger = r.Logger);
 let RunLoop;
-import { run } from './runloop.js';
-import('./runloop.js').then(r => RunLoop = r.RunLoop);
+
+export function __runtimeDeps () {
+  import('./object.js').then(r => SCObject = r.SCObject);
+  // import('./benchmark.js').then(r => Benchmark = r.Benchmark);
+  import('../private/observer_queue.js').then(r => ObserverQueue = r.ObserverQueue);
+  import('./logger.js').then(r => Logger = r.Logger);
+  import('./runloop.js').then(r => RunLoop = r.RunLoop);
+
+}
 
 
 /**@typedef {[Object, String]} Tuple */

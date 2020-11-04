@@ -163,9 +163,9 @@ export const typeOf = (item) => {
     // so this code checks for the presence of Error first just to make
     // sure.  No error instance can exist before the class loads anyway so
     // this is safe.
-    if (item.isSCError) {
+    if (item.isError && item._isSCError) {
       return T_ERROR;
-    } else if (item.isSCObject) {
+    } else if (item.isObject && item._isSCObject) {
       return T_OBJECT;
     } else {
       return T_HASH;
@@ -178,7 +178,7 @@ export const typeOf = (item) => {
 
 
 /**
-  Returns YES if the passed value is null or undefined.  This avoids errors
+  Returns true if the passed value is null or undefined.  This avoids errors
   from JSLint complaining about use of ==, which can be technically
   confusing.
 
@@ -202,7 +202,7 @@ export const empty = (obj) => {
 };
 
 /**
-  Returns YES if the passed object is an array or Array-like.
+  Returns true if the passed object is an array or Array-like.
 
   SproutCore Array Protocol:
   * the object has an objectAt property; or
@@ -374,7 +374,7 @@ export const hashFor = (...objects) => {
 
   @param {Object} a first value to compare
   @param {Object} b the second value to compare
-  @returns {Boolean} YES if the two have equal hash code values.
+  @returns {Boolean} true if the two have equal hash code values.
 
 */
 export const isEqual = (a, b) => {
@@ -729,7 +729,7 @@ export const objectForPropertyPath = (path, root, stopAt) => {
 export const requiredObjectForPropertyPath = (path, root, stopAt) => {
   var o = objectForPropertyPath(path, root, stopAt);
   if (!o) {
-    throw path + " could not be found";
+    throw new Error(path + " could not be found");
   }
   return o;
 }

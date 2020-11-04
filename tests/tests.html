@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="qunit/qunit-2.11.3.css">
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script src="qunit/qunit-2.11.3.js"></script>
+    <script>
+      window.module = QUnit.module;
+      window.test = QUnit.test;
+      window.equals = QUnit.assert.equal;
+      window.same = QUnit.assert.deepEqual;
+      window.ok = QUnit.assert.ok;
+      window.assert = QUnit.assert;
+    </script>
+    <script src="./core/beget.js" type="module"></script>
+    <script src="./core/clone.js" type="module"></script>
+    <script src="./core/compare.js" type="module"></script>
+    <script src="./core/guidFor.js" type="module"></script>
+    <script src="./core/inspect.js" type="module"></script>
+    <script src="./core/isArray.js" type="module"></script>
+    <script src="./core/IsEqual.js" type="module"></script>
+    <script src="./core/itemType.js" type="module"></script>
+    <script src="./core/keys.js" type="module"></script>
+    <script src="./core/makeArray.js" type="module"></script>
+    <script src="./core/objectForPropertyPath.js" type="module"></script>
+    <script src="./core/requiredObjectForPropertyPath.js" type="module"></script>
+    <script src="./core/tupleForPropertyPath.js" type="module"></script>
+</body>
+</html>

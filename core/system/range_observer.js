@@ -54,7 +54,7 @@ export const RangeObserver = {
     @param {Object} target the target
     @param {Function|String} method the method to invoke
     @param {Object} context optional context to include in callback
-    @param {Boolean} isDeep if YES, observe property changes as well
+    @param {Boolean} isDeep if true, observe property changes as well
     @returns {RangeObserver} instance
   */
   create: function (source, indexSet, target, method, context, isDeep) {

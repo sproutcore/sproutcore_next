@@ -76,7 +76,7 @@ export const Freezable = {
   isFreezable: true,
 
   /**
-    Set to YES when the object is frozen.  Use this property to detect whether
+    Set to true when the object is frozen.  Use this property to detect whether
     your object is frozen or not.
 
     @type Boolean
