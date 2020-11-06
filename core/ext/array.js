@@ -4,6 +4,7 @@ import { Freezable } from '../mixins/freezable.js';
 import { Observable } from '../mixins/observable.js';
 import { Enumerable, Reducers } from '../mixins/enumerable.js';
 import { CoreArray } from '../mixins/array.js';
+import { FROZEN_ERROR } from '../system/constants.js';
 
 /**
   @namespace
@@ -42,7 +43,6 @@ supplement(Array.prototype, CoreArray);
 
 mixin(Array.prototype, Copyable);
 mixin(Array.prototype, Freezable);
-// this possibly needs to be done async through import()
 mixin(Array.prototype, Observable);
 mixin(Array.prototype, Reducers);
 
@@ -53,6 +53,38 @@ Array.prototype.firstObject = Enumerable.firstObject;
 Array.prototype.lastObject = Enumerable.lastObject;
 
 Array.prototype.sortProperty = Enumerable.sortProperty,
+
+Array.prototype.replace = function (idx, amt, objects) {
+  if (this.isFrozen) { throw new Error(FROZEN_ERROR); }
+
+  var args;
+  var len = objects ? (objects.get ? objects.get('length') : objects.length) : 0;
+
+  // Notify that array content is about to mutate.
+  this.arrayContentWillChange(idx, amt, len);
+
+  if (len === 0) {
+    this.splice(idx, amt);
+  } else {
+    args = [idx, amt].concat(objects);
+    this.splice.apply(this, args);
+  }
+
+  this.arrayContentDidChange(idx, amt, len);
+
+  return this;
+};
+
+  // If you ask for an unknown property, then try to collect the value
+  // from member items.
+Array.prototype.unknownProperty = function (key, value) {
+  var ret = this.reducedProperty(key, value);
+  if ((value !== undefined) && ret === undefined) {
+    ret = this[key] = value;
+  }
+  return ret;
+}
+
 
 // see above...
 Array.prototype.mapProperty = function (key) {
@@ -234,30 +266,31 @@ Array.prototype.setEach = function (key, value) {
 /*
 This is the only one from the polyfills that might be required..
 Point being that reducerProperty is something specific to SC.
-reduce: function (callback, initialValue, reducerProperty) {
-    if (typeof callback !== "function") throw new TypeError();
-    var len = this.length;
-
-    // no value to return if no initial value & empty
-    if (len === 0 && initialValue === undefined) throw new TypeError();
-
-    var ret = initialValue;
-    for (var idx = 0; idx < len; idx++) {
-      var next = this[idx];
-
-      // while ret is still undefined, just set the first value we get as
-      // ret. this is not the ideal behavior actually but it matches the
-      // FireFox implementation... :(
-      if (next !== null) {
-        if (ret === undefined) {
-          ret = next;
-        } else {
-          ret = callback.call(null, ret, next, idx, this, reducerProperty);
-        }
-      }
-    }
-
 */
+// Array.prototype.originalReduce = Array.prototype.reduce;
+// Array.prototype.reduce = function (callback, initialValue, reducerProperty) {
+//   if (typeof callback !== "function") throw new TypeError();
+//   var len = this.length;
+
+//   // no value to return if no initial value & empty
+//   if (len === 0 && initialValue === undefined) throw new TypeError();
+
+//   var ret = initialValue;
+//   for (var idx = 0; idx < len; idx++) {
+//     var next = this[idx];
+
+//     // while ret is still undefined, just set the first value we get as
+//     // ret. this is not the ideal behavior actually but it matches the
+//     // FireFox implementation... :(
+//     if (next !== null) {
+//       if (ret === undefined) {
+//         ret = next;
+//       } else {
+//         ret = callback.call(null, ret, next, idx, this, reducerProperty);
+//       }
+//     }
+//   }
+// };
 
 
 /**

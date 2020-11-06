@@ -8,7 +8,7 @@
 // SC.tupleForPropertyPath Tests
 // ========================================================================
 /*globals module test */
-import { SC } from "../../../core/core.js";
+import { SC, GLOBAL } from "../../../core/core.js";
 
 var object, object1,object3; //global variables
 
@@ -29,20 +29,20 @@ module("Checking the tuple for property path",{
 
 test("should check for the tuple property", function() {
      var object2 = [];
-     object2 = SC.tupleForPropertyPath(object.name,window);
-     assert.equal(object2[0], window, "the window object");
+     object2 = SC.tupleForPropertyPath(object.name, '');
+     assert.equal(object2[0], GLOBAL, "the global object");
      assert.equal(object2[1],'SproutCore',"the property name");	
-     object2 = SC.tupleForPropertyPath(object.objectA.propertyVal,'object', window);
+     object2 = SC.tupleForPropertyPath(object.objectA.propertyVal,'object');
 	assert.equal(object2[0],'object',"the root");
      assert.equal(object2[1],'chainedProperty',"a chained property");
 });
 
 test("should check for the tuple property when path is undefined",function(){     //test case where no property defined
      var object2;
-     object2 = SC.tupleForPropertyPath(object.value, window);
+     object2 = SC.tupleForPropertyPath(object.value, '');
      assert.equal(true,object2 === null,'returns null for undefined path');	
 });
 
 test("should check for path argument", function() {
-	assert.equal(SC.tupleForPropertyPath(null, window), null, "returns null for null path");
+	assert.equal(SC.tupleForPropertyPath(null), null, "returns null for null path");
 })

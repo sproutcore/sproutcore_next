@@ -1,5 +1,8 @@
 import { T_CLASS, T_ARRAY, T_BOOL, T_DATE, T_UNDEFINED, T_NULL, T_NUMBER, T_HASH, T_FUNCTION, VERSION, T_ERROR, T_OBJECT, T_STRING } from './constants.js';
 
+import global from './global.js';
+
+
 /**
   @private
 
@@ -683,10 +686,8 @@ export const objectForPropertyPath = (path, root, stopAt) => {
 
   var loc, nextDotAt, key, max;
 
-  // API change, we try to be modular, so no searching from window or global
-  // simply provide an object
-  //if (!root) root = window;
-  if (!root) throw new Error("SCCore#objectForPropertyPath: no root provided");
+  // in order to run easily in different environments, we use a calculcated global
+  if (!root) root = global;
 
   // faster method for strings
   if (typeof path === "string") {

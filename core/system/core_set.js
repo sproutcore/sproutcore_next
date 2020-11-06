@@ -163,6 +163,23 @@ export const CoreSet = mixin({}, Enumerable, Freezable, Copyable,
       return ret;
     },
 
+    // TODO: not sure whether this should stay this way. The reason of copying Observable#get here is the option to simply do computed properties and for a unified API
+    // but CoreSet is not Observable, and as such doesn't load Observable neither...
+    get: function (key) {
+      var ret = this[key],
+        cache;
+      if (ret === undefined) {
+        return this.unknownProperty(key);
+      } else if (ret && ret.isProperty) {
+        if (ret.isCacheable) {
+          cache = this._kvo_cache;
+          if (!cache) cache = this._kvo_cache = {};
+  
+          return (cache[ret.cacheKey] !== undefined) ? cache[ret.cacheKey] : (cache[ret.cacheKey] = ret.call(this, key));
+        } else return ret.call(this, key);
+      } else return ret;
+    },
+
     /**
       Walk like a duck
 
@@ -312,7 +329,7 @@ export const CoreSet = mixin({}, Enumerable, Freezable, Copyable,
 
       var idx, isObservable = this.isObservable;
 
-      if (isObservable) this.beginPropertyChanges();
+      // if (isObservable) this.beginPropertyChanges();
       if (objects.isSCArray) {
         idx = objects.get('length');
         while (--idx >= 0) this.add(objects.objectAt(idx));
@@ -323,7 +340,7 @@ export const CoreSet = mixin({}, Enumerable, Freezable, Copyable,
       } else objects.forEach(function (i) {
         this.add(i);
       }, this);
-      if (isObservable) this.endPropertyChanges();
+      // if (isObservable) this.endPropertyChanges();
 
       return this;
     },

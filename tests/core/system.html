@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="/tests/qunit/qunit-2.11.3.css">
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script src="/tests/qunit/qunit-2.11.3.js"></script>
+    <script>
+      window.module = QUnit.module;
+      window.test = QUnit.test;
+      window.equals = QUnit.assert.equal;
+      window.same = QUnit.assert.deepEqual;
+      window.ok = QUnit.assert.ok;
+      window.assert = QUnit.assert;
+      QUnit.config.autostart = false;
+    </script>
+    <script src="./system/binding.js" type="module"></script>
+    <!-- <script src="./mixins/enumerable/enumerable_observers.js" type="module"></script> -->
+    <!-- <script src="./mixins/observable/chained.js" type="module"></script> -->
+    <!-- <script src="./mixins/observable/observable_test.js" type="module"></script> -->
+    <!-- <script src="./mixins/observable/observersForKey.js" type="module"></script> -->
+    <!-- <script src="./mixins/observable/propertyChanges.js" type="module"></script> --> -->
+    <!-- <script src="./mixins/observable/registerDependentKeys.js" type="module"></script> -->
+    <!-- <script src="./mixins/array.js" type="module"></script> -->
+    <!-- <script src="./mixins/array_observers.js" type="module"></script> -->
+    <!-- <script src="./mixins/comparable.js" type="module"></script> -->
+    <!-- <script src="./mixins/propertyChanges.js" type="module"></script> -->
+    <!-- <script>QUnit.start();</script> -->
+</body>
+</html>

@@ -15,8 +15,9 @@ import { getSetting } from '../system/settings.js';
 
 let Logger;
 // enable later
-export function __runtimeDeps () {
-  import('../system/logger.js').then(l => Logger = l.Logger);
+export async function __runtimeDeps () {
+  const l = await import('../system/logger.js');
+  Logger = l.Logger;
 }
 
 

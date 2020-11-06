@@ -19,10 +19,14 @@ let PropertyChain;
 // let ObserverQueue;
 
 let Binding;
-
-export function __runtimeDeps () {
-  import('../private/property_chain.js').then(p => PropertyChain = p.PropertyChain)
-  import('../system/binding.js').then(m => Binding = m.Binding);
+let Logger;
+export async function __runtimeDeps () {
+  const p = await import('../private/property_chain.js');
+  PropertyChain = p.PropertyChain;
+  const b = await import('../system/binding.js');
+  Binding = b.Binding;
+  const l = await import('../system/logger.js');
+  Logger = l.Logger;
 }
 
 let _TMP_SEEN_SET;
@@ -1085,7 +1089,7 @@ export const Observable = {
         this[key] = this.bind(propertyKey, value);
       }
     }
-
+    
     // Add Properties
     if (keys = this._properties) {
       for (loc = 0, keysLen = keys.length; loc < keysLen; loc++) {

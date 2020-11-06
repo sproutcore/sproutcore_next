@@ -18,8 +18,9 @@ import { ChainObserver } from '../private/chain_observer.js';
 
 let PropertyChain;
 
-export function __runtimeDeps () {
-  import ('../private/property_chain.js').then(m => PropertyChain = m.PropertyChain);
+export async function __runtimeDeps () {
+  const m = await import ('../private/property_chain.js')
+  PropertyChain = m.PropertyChain;
 }
 
 /**

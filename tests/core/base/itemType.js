@@ -4,7 +4,7 @@
 //            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-import { SC } from "../../../core/core.js";
+import { SC, GLOBAL } from "../../../core/core.js";
 
 module("SproutCore Type Checking");
 
@@ -73,11 +73,11 @@ test("SC.isArray" ,function(){
 	assert.equal( SC.isArray(string),   false, '"Hello"' );
 	assert.equal( SC.isArray(object),   false, "{}" );
   assert.equal( SC.isArray(length),   true,  "{length: 12}" );
-  assert.equal( SC.isArray(window),   false, "window" );
+  assert.equal( SC.isArray(GLOBAL),   false, "global" );
   assert.equal( SC.isArray(fn),       false, "function() {}" );
 
-  if (window.document) {
-    var nodelist      = document.getElementsByTagName("body");
+  if (GLOBAL.document) {
+    var nodelist = document.getElementsByTagName("body");
     assert.equal( SC.isArray(nodelist), true, "NodeList" );
   }
 });

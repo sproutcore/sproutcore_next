@@ -18,12 +18,11 @@ let Benchmark;
 
 let RunLoop;
 let _getRecentStack;
-export function __runtimeDeps () {
+export async function __runtimeDeps () {
   // import('./benchmark.js').then(m => Benchmark = m.Benchmark);
-  import('./runloop.js').then(m => {
-    RunLoop = m.RunLoop;
-    _getRecentStack = m._getRecentStack;
-  });
+  const r = await import('./runloop.js');
+  RunLoop = r.RunLoop;
+  _getRecentStack = r._getRecentStack;
 }
 
 /*global*/

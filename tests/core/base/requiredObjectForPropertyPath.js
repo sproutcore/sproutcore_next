@@ -8,23 +8,23 @@
 // SC.requiredObjectForPropertyPath Tests
 // ========================================================================
 /*globals module test ok assert.deepEqual assert.equal expects */
-import { SC } from "../../../core/core.js";
+import { SC, GLOBAL } from "../../../core/core.js";
 
 module("SC.requiredObjectForPropertyPath") ;
 
-test("should be able to resolve an object on the window", function() {
-  var myLocal = (window.myGlobal = { test: 'this '}) ;
+test("should be able to resolve an object on the global", function() {
+  var myLocal = (GLOBAL.myGlobal = { test: 'this '}) ;
 
   assert.deepEqual(myLocal, { test: 'this '}) ;
-  assert.deepEqual(window.myGlobal, { test: 'this '}) ;
+  assert.deepEqual(GLOBAL.myGlobal, { test: 'this '}) ;
 
   // verify we can resolve our binding path
-  assert.deepEqual(SC.requiredObjectForPropertyPath('myGlobal', window), { test: 'this '}) ;
+  assert.deepEqual(SC.requiredObjectForPropertyPath('myGlobal'), { test: 'this '}) ;
 
-  window.myGlobal = null;
+  GLOBAL.myGlobal = null;
 });
 
 test("should throw error when object can't be found", function() {
-  QUnit.assert.throws(function(){ SC.requiredObjectForPropertyPath('notExistingObject', window); },
+  QUnit.assert.throws(function(){ SC.requiredObjectForPropertyPath('notExistingObject'); },
                   Error, "notExistingObject could not be found");
 });

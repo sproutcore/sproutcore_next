@@ -11,22 +11,24 @@ import { beget, typeOf, tupleForPropertyPath, none, isArray, guidFor } from './b
 import { T_ERROR, T_BOOL, T_ARRAY, T_STRING, T_NUMBER, T_FUNCTION } from './constants.js';
 import { CoreSet } from './core_set.js';
 import { property } from './function.js';
-import { run } from './runloop.js';
+import { RunLoop, run } from './runloop.js';
+import { ObserverQueue } from '../private/observer_queue.js';
 
 // sc_require('system/object');
 let SCObject;
 let Benchmark;
-let ObserverQueue;
+// let ObserverQueue;
 let Logger;
-let RunLoop;
+// let RunLoop;
 
-export function __runtimeDeps () {
-  import('./object.js').then(r => SCObject = r.SCObject);
+export async function __runtimeDeps () {
+  const o = await import('./object.js');
+  SCObject = o.SCObject;
   // import('./benchmark.js').then(r => Benchmark = r.Benchmark);
-  import('../private/observer_queue.js').then(r => ObserverQueue = r.ObserverQueue);
-  import('./logger.js').then(r => Logger = r.Logger);
-  import('./runloop.js').then(r => RunLoop = r.RunLoop);
-
+  // import('../private/observer_queue.js').then(r => ObserverQueue = r.ObserverQueue);
+  const l = await import('./logger.js');
+  Logger = l.Logger;
+  // import('./runloop.js').then(r => RunLoop = r.RunLoop);
 }
 
 
@@ -351,7 +353,7 @@ export const Binding = {
     // method to be called from other methods when the fromPath might be
     // optional. (cf single(), multiple())
     if (!propertyPath) return this;
-
+   
     // beget if needed.
     var binding = (this === Binding) ? this.beget() : this;
     binding._fromPropertyPath = propertyPath;
@@ -447,7 +449,7 @@ export const Binding = {
       }
     }
     this._fromObserverData = [path, this, this.fromPropertyDidChange, root];
-    // ObserverQueue.addObserver.apply(ObserverQueue, this._fromObserverData); // very peculiar this
+    // ObserverQueue.addObserver.apply(ObserverQueue, this._fromObserverData); 
     ObserverQueue.addObserver(...this._fromObserverData);
 
     // try to connect the to side
@@ -889,6 +891,10 @@ export const Binding = {
           path = [root || this._toRoot, path.slice(1)];
           root = null;
         }
+      }
+      else if (Array.isArray(path) && path[1].includes(".")) {
+        root = path[0];
+        path = path[1];
       }
 
       tuple = tupleForPropertyPath(path, root);
