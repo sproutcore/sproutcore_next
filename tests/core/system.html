@@ -23,13 +23,36 @@
     <script src="./system/observer_set.js" type="module"></script>
     <script src="./system/set.js" type="module"></script>
     <script src="./system/run_loop.js" type="module"></script>
-    <!-- <script src="./mixins/observable/observersForKey.js" type="module"></script> -->
-    <!-- <script src="./mixins/observable/propertyChanges.js" type="module"></script> --> -->
-    <!-- <script src="./mixins/observable/registerDependentKeys.js" type="module"></script> -->
-    <!-- <script src="./mixins/array.js" type="module"></script> -->
-    <!-- <script src="./mixins/array_observers.js" type="module"></script> -->
-    <!-- <script src="./mixins/comparable.js" type="module"></script> -->
-    <!-- <script src="./mixins/propertyChanges.js" type="module"></script> -->
+    <script src="./system/index_set/clone.js" type="module"></script>
+    <script src="./system/index_set/add.js" type="module"></script>
+    <script src="./system/index_set/addEach.js" type="module"></script>
+    <script src="./system/index_set/contains.js" type="module"></script>
+    <script src="./system/index_set/create.js" type="module"></script>
+    <script src="./system/index_set/indexAfter.js" type="module"></script>
+    <script src="./system/index_set/indexBefore.js" type="module"></script>
+    <script src="./system/index_set/infinite.js" type="module"></script>
+    <script src="./system/index_set/intersects.js" type="module"></script>
+    <script src="./system/index_set/max.js" type="module"></script>
+    <script src="./system/index_set/min.js" type="module"></script>
+    <script src="./system/index_set/rangeStartForIndex.js" type="module"></script>
+    <script src="./system/index_set/remove.js" type="module"></script>
+    <script src="./system/index_set/removeEach.js" type="module"></script>
+    <script src="./system/index_set/without.js" type="module"></script>
+    <script src="./system/object/base.js" type="module"></script>
+    <script src="./system/object/bindings.js" type="module"></script>
+    <script src="./system/object/concatenated_properties.js" type="module"></script>
+    <script src="./system/object/enhance.js" type="module"></script>
+    <script src="./system/object/mixin.js" type="module"></script>
+    <script src="./system/range_observer/create.js" type="module"></script>
+    <script src="./system/range_observer/destroy.js" type="module"></script>
+    <script src="./system/range_observer/objectPropertyDidChange.js" type="module"></script>
+    <script src="./system/range_observer/rangeDidChange.js" type="module"></script>
+    <script src="./system/range_observer/update.js" type="module"></script>
+
     <!-- <script>QUnit.start();</script> -->
+    <script type="module">
+      import { SC } from '../../core/core.js';
+      SC.onload = function () { QUnit.start(); };
+    </script>
 </body>
 </html>
