@@ -7,7 +7,7 @@
 
 import { guidFor, beget, mixin } from "./base.js";
 import { IndexSet } from "./index_set.js";
-import { CoreSet } from "./set.js";
+import { CoreSet } from "./core_set.js";
 import { ObserverQueue } from "../private/observer_queue.js";
 
 

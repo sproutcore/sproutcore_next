@@ -13,6 +13,7 @@ import { guidFor, typeOf, clone, objectForPropertyPath, tupleForPropertyPath, ha
 import { T_HASH } from '../system/constants.js';
 import { ObserverQueue } from '../private/observer_queue.js';
 import { CoreSet } from '../system/core_set.js';
+import GLOBAL from '../system/global.js';
 
 let PropertyChain;
 
@@ -1817,9 +1818,7 @@ export const get = function (object, key) {
 export const getPath = function (object, path) {
   if (path === undefined) {
     path = object;
-    object = this; // no longer referencing to globals
-    // object = window;
-
+    object = GLOBAL;
   }
   return objectForPropertyPath(path, object);
 };

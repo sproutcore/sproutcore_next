@@ -4,22 +4,26 @@ import { __runtimeDeps as obsSetRuntimeDeps, ObserverSet } from './private/obser
 
 import global from "./system/global.js";
 import { getSetting, setSetting } from "./system/settings.js";
+import { SCString } from "./system/string.js";
 import './ext/number.js';
 import './ext/string.js';
 import { Copyable } from './mixins/copyable.js';
 import { Comparable } from './mixins/comparable.js';
 import { Enumerable } from './mixins/enumerable.js';
-import { SCObject, __runtimeDeps as objRuntimeDeps } from './system/object.js';
+import { SCObject, __runtimeDeps as objRuntimeDeps, kindOf, instanceOf } from './system/object.js';
 import { Observable, get, getPath } from './mixins/observable.js';
 import { CoreArray, SCArray } from './mixins/array.js';
+import { ObserverQueue } from './private/observer_queue.js';
 import './ext/array.js';
 import { RunLoop, run } from './system/runloop.js';
 import { Binding, __runtimeDeps as bindingRuntimeDeps } from './system/binding.js';
+import { IndexSet } from './system/index_set.js';
 import { Logger } from './system/logger.js';
-import { SCError } from './system/error.js';
+import { SCError, ok, val, $throw, $error, $ok, $val } from './system/error.js';
 import { SCSet } from './system/set.js';
+import { RangeObserver } from './system/range_observer.js';
 import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath } from './system/base.js';
-import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T_STRING, T_BOOL, T_CLASS, T_DATE, T_ERROR } from './system/constants.js';
+import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T_STRING, T_BOOL, T_CLASS, T_DATE, T_ERROR, FROZEN_ERROR } from './system/constants.js';
 
 
 
@@ -46,6 +50,7 @@ export const SC = {
   set LOG_OBSERVERS (val) {
     setSetting('LOG_OBSERVERS', val);
   },
+  String: SCString,
   Copyable,
   Comparable,
   Enumerable,
@@ -56,10 +61,14 @@ export const SC = {
   Array: SCArray,
   Error: SCError,
   RunLoop,
+  IndexSet,
   run,
   Binding,
   Logger,
   ObserverSet,
+  RangeObserver,
+  ObserverQueue,
+  // Observers: ObserverQueue, // backwards compat
   Set: SCSet,
   typeOf,
   clone,
@@ -74,6 +83,8 @@ export const SC = {
   empty,
   isEqual,
   makeArray,
+  kindOf,
+  instanceOf,
   A,
   $A: A,
   objectForPropertyPath,
@@ -90,7 +101,22 @@ export const SC = {
   T_DATE,
   T_ERROR,
   T_NULL,
-  T_FUNCTION
+  T_FUNCTION,
+  FROZEN_ERROR,
+  $error,
+  $ok,
+  $throw,
+  $val,
+  val,
+  ok,
+  json: {
+    encode (root) {
+      return JSON.stringify(root);
+    },
+    decode (root) {
+      return JSON.parse(root);
+    }
+  }
 };
 
 // there might be a more dynamic way to do this...

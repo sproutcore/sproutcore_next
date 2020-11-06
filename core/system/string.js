@@ -239,3 +239,13 @@ export const mult = function (str, value) {
 
   return ret;
 }
+
+export const SCString = {
+  fmt,
+  w,
+  capitalize,
+  camelize,
+  decamelize,
+  dasherize,
+  mult
+}

@@ -11,10 +11,7 @@
 
 import { SC, GLOBAL } from '../../../core/core.js';
 
-SC.onload = function () {
-  console.log('SC onload');
-  QUnit.start();
-}
+
 
 var FromObject, fromObject, midObject, toObject, binding, Bon1, bon2, first, second, third, binding1, binding2;
 

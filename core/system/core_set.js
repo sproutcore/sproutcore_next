@@ -418,7 +418,7 @@ export const CoreSet = mixin({}, Enumerable, Freezable, Copyable,
 
       var idx, isObservable = this.isObservable;
 
-      if (isObservable) this.beginPropertyChanges();
+      // if (isObservable) this.beginPropertyChanges();
       if (objects.isSCArray) {
         idx = objects.get('length');
         while (--idx >= 0) this.remove(objects.objectAt(idx));
@@ -428,7 +428,7 @@ export const CoreSet = mixin({}, Enumerable, Freezable, Copyable,
       } else objects.forEach(function (i) {
         this.remove(i);
       }, this);
-      if (isObservable) this.endPropertyChanges();
+      // if (isObservable) this.endPropertyChanges();
 
       return this;
     },
