@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="/tests/qunit/qunit-2.11.3.css">
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script src="/tests/qunit/qunit-2.11.3.js"></script>
+    <script>
+      window.module = QUnit.module;
+      window.test = QUnit.test;
+      window.equals = QUnit.assert.equal;
+      window.same = QUnit.assert.deepEqual;
+      window.ok = QUnit.assert.ok;
+      window.assert = QUnit.assert;
+      QUnit.config.autostart = false;
+    </script>
+    <script src="./controllers/array/array_case.js" type="module"></script>
+    <script src="./controllers/array/enum_case.js" type="module"></script>
+    <script src="./controllers/array/null_case.js" type="module"></script>
+    <script src="./controllers/array/selection_support.js" type="module"></script>
+    <script src="./controllers/array/single_case.js" type="module"></script>
+    <script src="./controllers/object/content_destroyed.js" type="module"></script> -->
+    <script src="./controllers/object/empty_case.js" type="module"></script>
+    <script src="./controllers/object/multiple_case.js" type="module"></script>
+    <script src="./controllers/object/single_case.js" type="module"></script>
+    <script src="./controllers/object/single_enumerable_case.js" type="module"></script>
+    <script type="module">
+      import { SC } from '../../core/core.js';
+      SC.onload = function () { QUnit.start(); };
+    </script>
+</body>
+</html>

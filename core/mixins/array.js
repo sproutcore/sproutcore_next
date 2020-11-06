@@ -11,7 +11,7 @@ import '../ext/function.js';
 import { RangeObserver } from '../system/range_observer.js';
 import { IndexSet } from '../system/index_set.js';
 import { T_NUMBER } from '../system/constants.js';
-import { none, isEqual, guidFor, clone, mixin } from '../system/base.js';
+import { none, isEqual, guidFor, clone as cloneFn, mixin } from '../system/base.js';
 import { CoreSet } from '../system/core_set.js';
 import { ObserverSet } from '../private/observer_set.js';
 import { ChainObserver } from '../private/chain_observer.js';
@@ -773,7 +773,7 @@ export const CoreArray = {
     @param {Object} item
   */
   _clonePropertyChainToItem: function (chain, item) {
-    var clone = clone(chain),
+    var clone = cloneFn(chain),
       kvoCloneList = '_kvo_enumerable_property_clones',
       cloneList;
 
@@ -816,7 +816,7 @@ export const CoreArray = {
     @param {ChainObserver} chainObserver the chain segment to begin from
   */
   _resumeChainObservingForItemWithChainObserver: function (item, chainObserver) {
-    var observer = clone(chainObserver.next);
+    var observer = cloneFn(chainObserver.next);
     var key = observer.property;
 
     // The chain observer should create new observers on the child object
