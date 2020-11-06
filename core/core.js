@@ -1,6 +1,6 @@
 import { __runtimeDeps as obsRuntimeDeps } from './mixins/observable.js';
 import { __runtimeDeps as aryRuntimeDeps } from './mixins/array.js';
-import { __runtimeDeps as obsSetRuntimeDeps } from './private/observer_set.js';
+import { __runtimeDeps as obsSetRuntimeDeps, ObserverSet } from './private/observer_set.js';
 
 import global from "./system/global.js";
 import { getSetting, setSetting } from "./system/settings.js";
@@ -11,12 +11,13 @@ import { Comparable } from './mixins/comparable.js';
 import { Enumerable } from './mixins/enumerable.js';
 import { SCObject, __runtimeDeps as objRuntimeDeps } from './system/object.js';
 import { Observable, get, getPath } from './mixins/observable.js';
-import { CoreArray } from './mixins/array.js';
+import { CoreArray, SCArray } from './mixins/array.js';
 import './ext/array.js';
 import { RunLoop, run } from './system/runloop.js';
 import { Binding, __runtimeDeps as bindingRuntimeDeps } from './system/binding.js';
 import { Logger } from './system/logger.js';
 import { SCError } from './system/error.js';
+import { SCSet } from './system/set.js';
 import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath } from './system/base.js';
 import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T_STRING, T_BOOL, T_CLASS, T_DATE, T_ERROR } from './system/constants.js';
 
@@ -39,7 +40,12 @@ export const SC = {
   set LOG_DUPLICATE_BINDINGS (val) {
     setSetting('LOG_DUPLICATE_BINDINGS', val);
   },
-
+  get LOG_OBSERVERS () {
+    return getSetting('LOG_OBSERVERS');
+  },
+  set LOG_OBSERVERS (val) {
+    setSetting('LOG_OBSERVERS', val);
+  },
   Copyable,
   Comparable,
   Enumerable,
@@ -47,12 +53,14 @@ export const SC = {
   get,
   getPath,
   Object: SCObject,
-  Array: CoreArray,
+  Array: SCArray,
   Error: SCError,
   RunLoop,
   run,
   Binding,
   Logger,
+  ObserverSet,
+  Set: SCSet,
   typeOf,
   clone,
   copy: clone,

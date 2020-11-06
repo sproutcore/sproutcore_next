@@ -11,10 +11,11 @@ import '../ext/function.js';
 import { RangeObserver } from '../system/range_observer.js';
 import { IndexSet } from '../system/index_set.js';
 import { T_NUMBER } from '../system/constants.js';
-import { none, isEqual, guidFor, clone } from '../system/base.js';
+import { none, isEqual, guidFor, clone, mixin } from '../system/base.js';
 import { CoreSet } from '../system/core_set.js';
 import { ObserverSet } from '../private/observer_set.js';
 import { ChainObserver } from '../private/chain_observer.js';
+import { Enumerable } from './enumerable.js';
 
 let PropertyChain;
 
@@ -919,5 +920,7 @@ export const CoreArray = {
   }
 
 };
+
+export const SCArray = mixin({}, Enumerable, CoreArray);
 
 
