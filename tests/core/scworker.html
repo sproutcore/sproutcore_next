@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="/tests/qunit/qunit-2.11.3.css">
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <!-- <script src="/tests/qunit/qunit-2.11.3.js"></script> -->
+    <!-- <script>
+      window.module = QUnit.module;
+      window.test = QUnit.test;
+      window.equals = QUnit.assert.equal;
+      window.same = QUnit.assert.deepEqual;
+      window.ok = QUnit.assert.ok;
+      window.assert = QUnit.assert;
+    </script> -->
+    <script type="module">
+      // just for the moment we do it like this
+      import { SC } from '../../core/core.js';
+      // setup the worker
+      SC.onload = () => {
+        SC.run( () => {
+          SC.scWorker.init('./scworker/app.js', 'module');
+
+          window.mySourceObject = SC.Object.create({
+            testBinding: 'myObject.test'
+          });
+
+        });
+        SC.RunLoop.currentRunLoop.invokeNext(function () {});
+        setTimeout(() => {
+          SC.run( () => {
+            console.log('test value is ', mySourceObject.get('test'));
+          })
+        }, 5000);
+      };
+
+  </script>
+</body>
+</html>

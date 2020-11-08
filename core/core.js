@@ -27,9 +27,9 @@ import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T
 import { Controller } from './controllers/controller.js';
 import { ObjectController } from './controllers/object_controller.js';
 import { ArrayController } from './controllers/array_controller.js';
-
-
-
+import { SCProxy } from './system/proxy.js';
+import { ENV } from './system/env.js';
+import { scWorker, __runtimeDeps as scWorkerRuntimeDeps } from './system/scworker.js'; 
 
 export const GLOBAL = global;
 
@@ -121,17 +121,23 @@ export const SC = {
   },
   Controller,
   ObjectController,
-  ArrayController
+  ArrayController,
+  Proxy: SCProxy,
+  ENV,
+  scWorker
 };
 
-// there might be a more dynamic way to do this...
-Promise.all([
+const runtimeDeps = [
+  scWorkerRuntimeDeps(),
   obsRuntimeDeps(),
   aryRuntimeDeps(),
   bindingRuntimeDeps(),
   obsSetRuntimeDeps(),
   objRuntimeDeps(),
-]).then(r => {
+];
+
+// there might be a more dynamic way to do this...
+Promise.all(runtimeDeps).then(r => {
   if (SC.onload && typeof SC.onload === 'function') {
     SC.onload();
   }  

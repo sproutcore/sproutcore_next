@@ -7,6 +7,8 @@
 
 import { CoreSet } from '../system/core_set.js';
 import { tupleForPropertyPath } from '../system/base.js';
+import { scWorker } from '../system/scworker.js';
+import { ENV } from '../system/env.js';
 
 // ........................................................................
 // OBSERVER QUEUE
@@ -43,6 +45,12 @@ export const ObserverQueue = {
     // try to get the tuple for this.
     if (typeof propertyPath === "string") {
       tuple = tupleForPropertyPath(propertyPath, pathRoot);
+      if (!tuple && ENV === 'window') {
+        tuple = scWorker.tupleForPropertyPath(propertyPath, pathRoot); // pathRoot might not be useful here at all...
+        // question: would simply being able to install an observer be enough? Probably not, as it doesn't allow for caching data... 
+        // many processes rely on .get which is sync, so we need to provide some sync way of getting the data...
+        if (tuple) console.log('found proxy');
+      };
     } else {
       tuple = propertyPath;
     }
@@ -131,6 +139,10 @@ export const ObserverQueue = {
         if (!item) continue;
 
         var tuple = tupleForPropertyPath(item[0], item[3]);
+        if (!tuple) {
+          // check whether tuple is in worker
+          tuple = scWorker.tupleForPropertyPath(item[0]);
+        }
         // check if object is observable (yet) before adding an observer
         if (tuple && tuple[0].addObserver) {
           tuple[0].addObserver(tuple[1], item[1], item[2]);

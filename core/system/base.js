@@ -1,6 +1,7 @@
 import { T_CLASS, T_ARRAY, T_BOOL, T_DATE, T_UNDEFINED, T_NULL, T_NUMBER, T_HASH, T_FUNCTION, VERSION, T_ERROR, T_OBJECT, T_STRING } from './constants.js';
 
 import global from './global.js';
+import { ENV } from './env.js';
 
 
 /**
@@ -284,13 +285,16 @@ export const A = (obj) => {
 // GUIDS & HASHES
 //
 
+const guidKeyEnv = ENV === 'worker'? 'wrkr': '';
 // Like jQuery.expando but without any risk of conflict
-export const guidKey =  "SproutCore" + (VERSION + Math.random()).replace(/\D/g, "");
+export const guidKey =  "SproutCore" + guidKeyEnv + (VERSION + Math.random()).replace(/\D/g, "");
 
 // Used for guid generation...
 const _keyCache = {};
 let _uuid = 0;
 
+
+const guidPrefix = ENV === 'worker'? "sc_wrkr" : "sc";
 /**
   Returns a unique GUID for the object.  If the object does not yet have
   a guid, one will be assigned to it.  You can call this on any object,
@@ -326,7 +330,7 @@ export const guidFor = (obj) => {
   if (obj === Object) return '(Object)';
   if (obj === Array) return '(Array)';
 
-  return generateGuid(obj, "sc");
+  return generateGuid(obj, guidPrefix);
 };
 
 /**
@@ -337,7 +341,8 @@ export const guidFor = (obj) => {
   @param {Object} obj the object to assign the guid to
   @param {String} prefix prefixes the generated guid
   @returns {String} the guid
-*/
+*/      // check wether this tuple exists
+
 export const generateGuid = (obj, prefix) => {
   var ret = (prefix + (_uuid++));
   if (obj) obj[guidKey] = ret;
@@ -651,7 +656,7 @@ export const inspect = (obj) => {
   paths.
 
   @param {String | Array} path the property path
-  @param {Object} root optional parameter specifying the place to start
+  @param {Object} [root] optional parameter specifying the place to start
   @returns {Array} array with [object, property] if found or null
 */
 export const tupleForPropertyPath = function (path, root) {
@@ -678,7 +683,7 @@ export const tupleForPropertyPath = function (path, root) {
   the standard method used in SproutCore to traverse object paths.
 
   @param {String|Array} path the path
-  @param {Object} root optional root object.  window is used otherwise
+  @param {Object} [root] optional root object.  window is used otherwise
   @param {Number} [stopAt] optional point to stop searching the path.
   @returns {Object} the found object or undefined.
 */
@@ -723,8 +728,8 @@ export const objectForPropertyPath = (path, root, stopAt) => {
   that it will throw an error when object can't be found.
 
   @param {String} path the path
-  @param {Object} root optional root object.  window is used otherwise
-  @param {Number} stopAt optional point to stop searching the path.
+  @param {Object} [root] optional root object.  window is used otherwise
+  @param {Number} [stopAt] optional point to stop searching the path.
   @returns {Object} the found object or throws an error.
 */
 export const requiredObjectForPropertyPath = (path, root, stopAt) => {
