@@ -17,6 +17,7 @@ Protocol for messaging: RPC like structure
 
 let SCProxy;
 let RunLoop; 
+let Binding;
 let proxyBuffer = [];
 
 export async function __runtimeDeps () {
@@ -25,6 +26,8 @@ export async function __runtimeDeps () {
   SCProxy = p.SCProxy;
   const r = await import('./runloop.js');
   RunLoop = r.RunLoop;
+  const b = await import('./binding.js');
+  Binding = b.Binding;
   // it can happen things aren't loaded yet when they are required, so we buffer these
   proxyBuffer.forEach(evt => scWorker._handleReply.call(scWorker, evt));
   proxyBuffer = undefined;
@@ -54,7 +57,7 @@ export const scWorker = {
     else if (ENV === 'worker') {
       self.addEventListener('message', this._handleReply.bind(this));
       // TODO: here also error handlers
-      postMessage({ cmd: 'init' });
+      this._send({ cmd: 'init' });
     }
 
   },
@@ -62,6 +65,7 @@ export const scWorker = {
   // this might become a closure, but keep it "public" for now.
   _paths: new Map(), // 
 
+  _inflight: new Set(),
 
   /**
    * This is called by the ObserverQueue as soon as the regular tupleForPropertyPath doesn't 
@@ -72,7 +76,7 @@ export const scWorker = {
    * @returns { SCProxy | null }
    */
   tupleForPropertyPath (path) {
-    console.log('searching for property path on worker', path);
+    console.log(ENV,'searching for property path', path);
     // find the key.  It is the last . or first *
     let key;
     let stopAt = path.indexOf('*');
@@ -80,10 +84,25 @@ export const scWorker = {
     key = (stopAt >= 0) ? path.slice(stopAt + 1) : path;
 
     const basePath = path.slice(0, stopAt);
+    
+    const isInFlight = this._inflight.has(basePath);
+    if (isInFlight) {
+      console.log(ENV, 'this path is still in flight', basePath);
+      return null; // too fast, wait...
+    } 
+
     // check for a path, if the basepath is already known, return the cached object
     const curP = this._paths.get(basePath);
-    if (curP) return [curP, key];
+    if (curP) {
+      console.log(ENV, 'found a proxy, return tuplet');
+      return [curP, key];
+    }
     else {
+      // indicate we are in flight
+      this._inflight.add(basePath);
+
+      console.log(ENV, 'not found a proxy, sending request, returning null');
+      // perhaps keep track of what is in flight here... to not overdo the number of proxy objects being created... or to create a storm on the message port
       this._send({ cmd: 'requestTupleForPropertyPath', path, basePath, key });
       // setup a question to the other side
       return null;
@@ -91,19 +110,18 @@ export const scWorker = {
   },
 
   _handleRequestTupleForPropertyPath (data) {
-    console.log('_handleRequestTupleForPropertyPath', data);
     const { path, basePath, key } = data;
-    console.log('handleRequestTupleForPropertyPath', path);
     const tuple = tupleForPropertyPath(path); // check whether it exists at all...
     // also retrieve a value to cache
     let value;
     if (tuple && tuple[0]) {
       value = tuple[0].get? tuple[0].get(key): tuple[0][key];
+      console.log(ENV, '_handleRequestTupleForPropertyPath: found object for path in ', basePath);
     }
     const reply = { cmd: "replyTupleForPropertyPath", found: !!tuple, path, basePath, key, value }; // hopefully this doesn't cause issues... it might though if the values are SCObjects... let's see
     // it might also be that sending the value immediately is not a good idea, and we should wait for the automatic synchronisation system of 
     // the bindings
-    postMessage(reply);
+    this._send(reply);
   },
 
   /**
@@ -120,40 +138,43 @@ export const scWorker = {
     const { path, basePath, key, found, value } = data;
 
     if (!found) {
+      this._inflight.delete(basePath); // no longer in flight
       return; // do nothing
     }
-
     // if found, we need the following: 
     //- a base property path to register the SCProxy on
     
-  
+    
     // on reply here, we immediately create a proxy object to handle
     // the connection will be initiated by didAddObserver on SCProxy
   
-    if (!this._paths.get('basePath')) {
-      const proxy = SCProxy.create({
+    let proxy = this._paths.get(basePath);
+
+    if (!proxy) {
+      proxy = SCProxy.create({
         _path: basePath,
         _scWorker: this
       });
       this._paths.set(basePath, proxy);
-      // make sure the new object is hooked up...
-      ObserverQueue.flush(proxy);
-      proxy.set(key, value); // set immediately so if there is a sync going on, it will have it...
-
     }
+    this._inflight.delete(basePath); // no longer in flight
+    console.log(ENV, basePath, 'no longer in flight, created a proxy if necessary and calling ObserverQueue to hook up the proxy');
+    // make sure the new object is hooked up...
+    ObserverQueue.flush(proxy);
+    console.log(ENV, basePath, 'setting value to key to init the binding value');
+    proxy.set(key, value); // set immediately so if there is a sync going on, it will have it...
 
+    // console.log(ENV, ': worker indicated target found, now creating a proxy just in case for', basePath);
+    // 
   },
 
   _handleReply (evt) {
     // for the first few messages RunLoop might not be present, that is not an issue, it will be picked up later when it is available.
     if (RunLoop) RunLoop.begin();
-    console.log('_handleReply', evt);
-    if (!evt.data) {
-      console.warn(`SC.workerManager: received a reply which doesn't match the API: ${evt}`);
-    } 
     if (!SCProxy) {
       return proxyBuffer.push(evt);
     }
+    console.log(ENV, '_handleReply', evt);
     switch (evt.data.cmd) {
       case 'init': this._workerHasInited(); break;
       case 'replyTupleForPropertyPath': this._handleReplyTupleForPropertyPath(evt.data); break;
@@ -161,17 +182,27 @@ export const scWorker = {
       case 'requestTupleForPropertyPath': this._handleRequestTupleForPropertyPath(evt.data); break;
       case 'registerObserver': this._handleRegisterObserver(evt.data); break;
       case 'unregisterObserver': this._handleUnregisterObserver(evt.data); break;
+      case 'observerDidRegister': this._handleObserverDidRegister(evt.data); break;
+      case 'notify': this._handleNotify(evt.data); break;
+      default: 
+        throw new Error(ENV + ": scWorker: invalid command: " + evt.data.cmd);
     }
     if (RunLoop) RunLoop.end();
   },
 
   _send (msg) {
-    if (!this._workerReady) this._msgBuff.push(msg);
-    else this._appWorker.postMessage(msg);
+    if (ENV === 'window') {
+      if (!this._workerReady) this._msgBuff.push(msg);
+      else this._appWorker.postMessage(msg);  
+    }
+    else {
+      // worker
+      postMessage(msg);
+    }
   },
 
   _workerHasInited () {
-    console.log('worker has inited, sending ', this._msgBuff.length, 'messages');
+    console.log(ENV, 'worker has inited, sending ', this._msgBuff.length, 'messages');
     // first send init message,
     // send all buffered messages
     this._workerReady = true;
@@ -208,21 +239,26 @@ export const scWorker = {
    * @param {SCProxy} obj
    */
   registerProxy (obj, key) {
-    console.log('registerProxy');
+    console.log(ENV, 'registerProxy for', obj, key);
     if (!obj.isSCProxy) return; 
-    const guid = guidFor(obj);
-    this._proxies.set(guid, obj);
-    // now send message to the other side to connect the observer relation
-    this._send({ cmd: "registerObserver", basePath: obj._path, key, originId: guid });
-    // this should cause a reply with similar 
+    const originId = guidFor(obj);
+    // if proxy is already known (which happens when a proxy's didAddObserver is called when the binding is initiated from the other direction)
+    // don't save, and don't send a message to the other side...
+    if (!this._proxies.has(obj._path)) { // if the proxy is this sided...
+      this._proxies.set(originId, obj);
+      // now send message to the other side to connect the observer relation
+      this._send({ cmd: "registerObserver", basePath: obj._path, key, originId });
+      // this should cause a reply with similar   
+    }
   },
 
   _handleRegisterObserver (data) {
     // this means the other side wants to register an observer, so we have to do the same
     // on this side...
     // we keep originId to easily communicate later without paths (?)
-    
     const { basePath, key, originId } = data;
+    console.log(ENV, 'handleRegisterObserver for', basePath, key, originId);
+
     const target = requiredObjectForPropertyPath(basePath);
     // get proxy if already exists
     let proxy = this._proxies.get(basePath);
@@ -237,10 +273,25 @@ export const scWorker = {
     // notify on the other side...
     proxy.registerNotifier(key, originId);
     // add key observers
-    target.addObserver(key, proxy, 'proxyChange');
+    // debugger;
+    proxy[key+'BindingDefault'] = Binding; // provide a binding default.
+    proxy.bind(key, [target, key]);
+    const targetId = guidFor(proxy);
+    // send back the proxy of the 
+    this._send({ cmd: 'observerDidRegister', targetId, key, basePath, originId });
+    this._proxies.set(targetId, proxy);
+    // target.addObserver(key, proxy, 'proxyChange');
     // also retrieve the target[key] and send back the initial value
     // const val = target.get? target.get(key): target[key];
 
+  },
+
+  _handleObserverDidRegister (data) {
+    const {key, basePath, targetId, originId } = data;
+    console.log(ENV, 'handleObserverDidRegister, setting targetId', targetId, basePath, key);
+
+    const proxy = this._proxies.get(originId);
+    proxy.registerNotifier(key, targetId);
   },
 
   unregisterProxy (obj, key) {
@@ -255,6 +306,16 @@ export const scWorker = {
     // perhaps clean up proxy objects if nothing remains to observe...
     //this._kvo_for('_kvo_observed_keys', CoreSet).remove(key);
 
+  },
+
+  _handleNotify (data) {
+    const { path, originIds, value, key} = data;
+    console.log(ENV, ': handling notification of change: ', path, key, value, originIds);
+    // debugger;
+    originIds.forEach(id => {
+      const p = this._proxies.get(id);
+      p.setIfChanged(key, value); 
+    });
   }
 
 

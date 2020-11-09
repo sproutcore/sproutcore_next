@@ -21,13 +21,29 @@
     <script type="module">
       // just for the moment we do it like this
       import { SC } from '../../core/core.js';
+      let counter = 0;
+      let start;
+
+      function timingTest () {
+        const duration = new Date().getTime() - start;
+        console.log('this took ', duration, 'ms');
+      }
+
       // setup the worker
       SC.onload = () => {
+        // SC.LOG_BINDINGS = true;
+        // SC.LOG_OBSERVERS = true;
         SC.run( () => {
           SC.scWorker.init('./scworker/app.js', 'module');
 
           window.mySourceObject = SC.Object.create({
-            testBinding: 'myObject.test'
+            testBinding: 'myObject.test',
+            testDidChange: function () {
+              counter += 1;
+              if (this.get('test') === 'test123456789') {
+                timingTest();
+              }
+            }.observes('test')
           });
 
         });
@@ -35,6 +51,10 @@
         setTimeout(() => {
           SC.run( () => {
             console.log('test value is ', mySourceObject.get('test'));
+            console.log('NOTE ===================== test value change');
+            // debugger;
+            start = new Date().getTime();
+            mySourceObject.set('test', 'test1234');
           })
         }, 5000);
       };

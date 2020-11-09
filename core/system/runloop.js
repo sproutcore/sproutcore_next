@@ -12,7 +12,7 @@ import { getSetting } from './settings.js';
 import { Binding } from './binding.js';
 
 
-let Logger;
+let Logger = console; // use console until Logger is available
 
 //@if(debug)
 // When in debug mode, users can log deferred calls (such as .invokeOnce()) by

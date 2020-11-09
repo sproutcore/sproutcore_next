@@ -29,7 +29,7 @@ import { ObjectController } from './controllers/object_controller.js';
 import { ArrayController } from './controllers/array_controller.js';
 import { SCProxy } from './system/proxy.js';
 import { ENV } from './system/env.js';
-import { scWorker, __runtimeDeps as scWorkerRuntimeDeps } from './system/scworker.js'; 
+import { scWorker, __runtimeDeps as scWorkerRuntimeDeps } from './system/scworker.js';
 
 export const GLOBAL = global;
 

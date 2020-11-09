@@ -577,7 +577,7 @@ test("cacheable nested dependent keys should clear after their dependencies upda
   assert.equal(GLOBAL.DepObj.get('price'), 15, "cacheable computed properties are invalidated after a middle property changes");
 
   GLOBAL.DepObj.setPath('restaurant.menu', SC.Object.create({
-    price: 25QUnit
+    price: 25
   }));
 
   assert.equal(GLOBAL.DepObj.get('price'), 25, "cacheable computed properties are invalidated after a middle property changes again, before a run loop");

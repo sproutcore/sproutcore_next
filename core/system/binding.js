@@ -13,6 +13,7 @@ import { CoreSet } from './core_set.js';
 import { property } from './function.js';
 import { RunLoop, run } from './runloop.js';
 import { ObserverQueue } from '../private/observer_queue.js';
+import { scWorker } from './scworker.js';
 
 // sc_require('system/object');
 let SCObject;
@@ -898,6 +899,9 @@ export const Binding = {
       }
 
       tuple = tupleForPropertyPath(path, root);
+      if (!tuple) {
+        tuple = scWorker.tupleForPropertyPath(path, root);
+      }
       if (tuple) {
         this._fromTarget = tuple[0];
         this._fromPropertyKey = tuple[1];
@@ -908,6 +912,9 @@ export const Binding = {
       path = this._toPropertyPath;
       root = this._toRoot;
       tuple = tupleForPropertyPath(path, root);
+      if (!tuple) {
+        tuple = scWorker.tupleForPropertyPath(path, root);
+      }
       if (tuple) {
         this._toTarget = tuple[0];
         this._toPropertyKey = tuple[1];
