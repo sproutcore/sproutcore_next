@@ -76,7 +76,7 @@ export const scWorker = {
    * @returns { SCProxy | null }
    */
   tupleForPropertyPath (path) {
-    console.log(ENV,'searching for property path', path);
+    // console.log(ENV,'searching for property path', path);
     // find the key.  It is the last . or first *
     let key;
     let stopAt = path.indexOf('*');
@@ -87,21 +87,21 @@ export const scWorker = {
     
     const isInFlight = this._inflight.has(basePath);
     if (isInFlight) {
-      console.log(ENV, 'this path is still in flight', basePath);
+      // console.log(ENV, 'this path is still in flight', basePath);
       return null; // too fast, wait...
     } 
 
     // check for a path, if the basepath is already known, return the cached object
     const curP = this._paths.get(basePath);
     if (curP) {
-      console.log(ENV, 'found a proxy, return tuplet');
+      // console.log(ENV, 'found a proxy, return tuplet');
       return [curP, key];
     }
     else {
       // indicate we are in flight
       this._inflight.add(basePath);
 
-      console.log(ENV, 'not found a proxy, sending request, returning null');
+      // console.log(ENV, 'not found a proxy, sending request, returning null');
       // perhaps keep track of what is in flight here... to not overdo the number of proxy objects being created... or to create a storm on the message port
       this._send({ cmd: 'requestTupleForPropertyPath', path, basePath, key });
       // setup a question to the other side
@@ -116,7 +116,7 @@ export const scWorker = {
     let value;
     if (tuple && tuple[0]) {
       value = tuple[0].get? tuple[0].get(key): tuple[0][key];
-      console.log(ENV, '_handleRequestTupleForPropertyPath: found object for path in ', basePath);
+      // console.log(ENV, '_handleRequestTupleForPropertyPath: found object for path in ', basePath);
     }
     const reply = { cmd: "replyTupleForPropertyPath", found: !!tuple, path, basePath, key, value }; // hopefully this doesn't cause issues... it might though if the values are SCObjects... let's see
     // it might also be that sending the value immediately is not a good idea, and we should wait for the automatic synchronisation system of 
@@ -158,10 +158,10 @@ export const scWorker = {
       this._paths.set(basePath, proxy);
     }
     this._inflight.delete(basePath); // no longer in flight
-    console.log(ENV, basePath, 'no longer in flight, created a proxy if necessary and calling ObserverQueue to hook up the proxy');
+    // console.log(ENV, basePath, 'no longer in flight, created a proxy if necessary and calling ObserverQueue to hook up the proxy');
     // make sure the new object is hooked up...
     ObserverQueue.flush(proxy);
-    console.log(ENV, basePath, 'setting value to key to init the binding value');
+    // console.log(ENV, basePath, 'setting value to key to init the binding value');
     proxy.set(key, value); // set immediately so if there is a sync going on, it will have it...
 
     // console.log(ENV, ': worker indicated target found, now creating a proxy just in case for', basePath);
@@ -174,7 +174,7 @@ export const scWorker = {
     if (!SCProxy) {
       return proxyBuffer.push(evt);
     }
-    console.log(ENV, '_handleReply', evt);
+    // console.log(ENV, '_handleReply', evt);
     switch (evt.data.cmd) {
       case 'init': this._workerHasInited(); break;
       case 'replyTupleForPropertyPath': this._handleReplyTupleForPropertyPath(evt.data); break;
@@ -202,7 +202,7 @@ export const scWorker = {
   },
 
   _workerHasInited () {
-    console.log(ENV, 'worker has inited, sending ', this._msgBuff.length, 'messages');
+    // console.log(ENV, 'worker has inited, sending ', this._msgBuff.length, 'messages');
     // first send init message,
     // send all buffered messages
     this._workerReady = true;
@@ -213,7 +213,7 @@ export const scWorker = {
   },
 
   _handleImportScripts (urls) {
-    console.log('importing scripts', urls);
+    // console.log('importing scripts', urls);
     let result = true;
     // Promise.all(urls.map(u => {
     //   return import(u);
@@ -239,7 +239,7 @@ export const scWorker = {
    * @param {SCProxy} obj
    */
   registerProxy (obj, key) {
-    console.log(ENV, 'registerProxy for', obj, key);
+    // console.log(ENV, 'registerProxy for', obj, key);
     if (!obj.isSCProxy) return; 
     const originId = guidFor(obj);
     // if proxy is already known (which happens when a proxy's didAddObserver is called when the binding is initiated from the other direction)
@@ -257,7 +257,7 @@ export const scWorker = {
     // on this side...
     // we keep originId to easily communicate later without paths (?)
     const { basePath, key, originId } = data;
-    console.log(ENV, 'handleRegisterObserver for', basePath, key, originId);
+    // console.log(ENV, 'handleRegisterObserver for', basePath, key, originId);
 
     const target = requiredObjectForPropertyPath(basePath);
     // get proxy if already exists
@@ -288,7 +288,7 @@ export const scWorker = {
 
   _handleObserverDidRegister (data) {
     const {key, basePath, targetId, originId } = data;
-    console.log(ENV, 'handleObserverDidRegister, setting targetId', targetId, basePath, key);
+    // console.log(ENV, 'handleObserverDidRegister, setting targetId', targetId, basePath, key);
 
     const proxy = this._proxies.get(originId);
     proxy.registerNotifier(key, targetId);
@@ -310,7 +310,7 @@ export const scWorker = {
 
   _handleNotify (data) {
     const { path, originIds, value, key} = data;
-    console.log(ENV, ': handling notification of change: ', path, key, value, originIds);
+    // console.log(ENV, ': handling notification of change: ', path, key, value, originIds);
     // debugger;
     originIds.forEach(id => {
       const p = this._proxies.get(id);

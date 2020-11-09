@@ -37,11 +37,11 @@ export const SCProxy = SCObject.extend({
       this.notifyPropertyChange(key);
       this.proxyChange(this, key, value);
     }
-    console.log('unknownProperty in SCProxy in', ENV, 'called with', key, value);
+    // console.log('unknownProperty in SCProxy in', ENV, 'called with', key, value);
   },
 
   didAddObserver: function (key, target, method) {
-    console.log(ENV, ': SCProxy#didAddObserver called, registring proxy with scWorker');
+    // console.log(ENV, ': SCProxy#didAddObserver called, registring proxy with scWorker');
     // when the observer has been added, we send a message over to the other side,
     // to connect the observer, and retrieve any current value.
     // first register at workerManager
@@ -56,7 +56,7 @@ export const SCProxy = SCObject.extend({
 
   // 
   proxyChange: function (sender, key, value, context, rev) {
-    console.log('proxyChanged called on proxy in ', ENV, this._notifiers);
+    // console.log('proxyChanged called on proxy in ', ENV, this._notifiers);
     // will be set up to do any forwarding of change.
     if (!this._notifiers) return;
     if (!this._notifiers.get(key)) return;
