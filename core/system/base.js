@@ -26,7 +26,7 @@ const _baseMixin = (override, args) => {
   var target = args[0] || {},
     idx = 1,
     length = args.length,
-    options, copy, key;
+    options, copy, key, propDesc;
 
   // Handle case where we have only one item...extend SC
   if (length === 1) {
@@ -38,6 +38,11 @@ const _baseMixin = (override, args) => {
     if (!(options = args[idx])) continue;
     for (key in options) {
       if (!options.hasOwnProperty(key)) continue;
+      propDesc = Object.getOwnPropertyDescriptor(options, key);
+      if (propDesc.get || propDesc.set) {
+        Object.defineProperty(target, key, propDesc);
+        continue;
+      }
       copy = options[key];
       if (target === copy) continue; // prevent never-ending loop
       if (copy !== undefined && (override || (target[key] === undefined))) target[key] = copy;

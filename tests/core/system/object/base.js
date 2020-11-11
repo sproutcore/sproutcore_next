@@ -12,7 +12,7 @@
 import { SC, GLOBAL } from '../../../../core/core.js';
 
 
-var obj, obj1, don, don1 ; // global variables
+var obj, obj1, don, don1, ExtObj, extObj, Ext2Obj ; // global variables
 
 module("A new SC.Object instance", {
   
@@ -23,7 +23,15 @@ module("A new SC.Object instance", {
       aMethodThatExists: function() {},
       aMethodThatReturnsTrue: function() { return true; },
       aMethodThatReturnsFoobar: function() { return "Foobar"; },
-      aMethodThatReturnsFalse: function() { return false; }
+      aMethodThatReturnsFalse: function() { return false; },
+      _es6StyleComputedPropertyValue: 'ES6',
+      get es6styleComputedProperty () {
+        return this._es6StyleComputedPropertyValue;
+      },
+      set es6styleComputedProperty (val) {
+        this._es6StyleComputedPropertyValue = val; 
+      }
+
     });
   },
   
@@ -36,6 +44,7 @@ module("A new SC.Object instance", {
 test("Should identify it's methods using the 'respondsTo' method", function() {
   assert.equal(obj.respondsTo('aMethodThatExists'), true) ;
   assert.equal(obj.respondsTo('aMethodThatDoesNotExist'), false) ;
+  assert.equal(obj.respondsTo('es6styleComputedProperty'), false); // it is not a method, so false
 });
 
 test("Should return false when asked to perform a method it does not have", function() {
@@ -52,6 +61,9 @@ test("Should pass back the return true if method returned true, false if method 
 test("Should return it's properties when requested using SC.Object#get", function() {
   assert.equal(obj.get('foo'), 'bar') ;
   assert.equal(obj.get('total'), 12345) ;
+  const prop = Object.getOwnPropertyDescriptor(obj, 'es6styleComputedProperty');
+  assert.ok(prop.get, 'the getter should be defined as a getter');
+  assert.equal(obj.get('es6styleComputedProperty'), 'ES6');
 });
 
 test("Should allow changing of those properties by calling SC.Object#set", function() {
@@ -63,6 +75,7 @@ test("Should allow changing of those properties by calling SC.Object#set", funct
   
   assert.equal(obj.get('foo'), 'Chunky Bacon') ;
   assert.equal(obj.get('total'), 12) ;
+  // at this moment set does not support native computed properties yet
 });
 
 test("Should only advertise changes once per request to SC.Object#didChangeFor", function() {
@@ -134,9 +147,21 @@ test("Global+Local observer works", function() {
 module("SC.Object instance extended", {  
   beforeEach: function() {
     obj = SC.Object.extend();
-	obj1 = obj.create();
-	don = SC.Object.extend();
-	don1 = don.create();
+  	obj1 = obj.create();
+	  don = SC.Object.extend();
+    don1 = don.create();
+    ExtObj = SC.Object.extend({
+      get nativeES6Getter () {
+        return 'ES6';
+      }
+    });
+    SC.mixin(ExtObj, {
+      get nativeGetter () {
+        return 'ES5 is old';
+      } 
+    });
+    Ext2Obj = ExtObj.extend();
+    extObj = ExtObj.create();
   },
   
   afterEach: function() {
@@ -144,6 +169,9 @@ module("SC.Object instance extended", {
     obj1 = undefined ;
     don = undefined ;
     don1 = undefined ;
+    ExtObj = undefined;
+    extObj = undefined;
+    Ext2Obj = undefined;
   }
   
 });
@@ -161,6 +189,14 @@ test("Checking the kind of method for an object", function() {
 	assert.equal(SC.kindOf(obj1, don), false);
 	assert.equal(SC.kindOf(null, obj1), false);
 });
+
+test("Defining es6 getters", function () {
+  // installing through extend means it is on the prototype
+  const extObjPropDesc = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(extObj), 'nativeES6Getter');
+  assert.ok(extObjPropDesc.get, 'getter on the extend hash should be installed on the prototype');
+  const ext2ObjPropDesc = Object.getOwnPropertyDescriptor(Ext2Obj, 'nativeGetter');
+  assert.ok(ext2ObjPropDesc.get, 'getter defined on the class should be available on subclasses');
+})
 
 
 module("SC.Object superclass and subclasses", {  

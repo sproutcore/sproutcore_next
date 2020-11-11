@@ -135,7 +135,7 @@ function _object_extend(base, ext, proto) {
     clonedObservers = false,
     properties = base._properties,
     clonedProperties = false,
-    paths, pathLoc, local, value;
+    paths, pathLoc, local, value, propDesc;
 
   // outlets are treated a little differently because you can manually
   // name outlets in the passed in hash. If this is the case, then clone
@@ -154,6 +154,15 @@ function _object_extend(base, ext, proto) {
 
     // avoid copying builtin methods
     if (!ext.hasOwnProperty(key)) continue;
+
+    // if key turns out to be a getter or setter, copy and install the propDesc
+    // without triggering the getter
+    propDesc = Object.getOwnPropertyDescriptor(ext, key);
+    // console.log('propdesc for', key, propDesc);
+    if (propDesc.get || propDesc.set) {
+      Object.defineProperty(base, key, propDesc); // copy and install
+      continue; // prevent anything else to happen on this key
+    }
 
     // get the value.  use concats if defined
     value = (concats.hasOwnProperty(key) ? concats[key] : null) || ext[key];
@@ -231,6 +240,7 @@ function _object_extend(base, ext, proto) {
       }
     }
 
+    
     // copy property
     base[key] = value;
   }
@@ -384,6 +394,11 @@ SCObject.extend = function () {
 
   for (prop in this) {
     if (!this.hasOwnProperty(prop)) continue;
+    let propDesc = Object.getOwnPropertyDescriptor(this, prop);
+    if (propDesc.get || propDesc.set) {
+      Object.defineProperty(ret, prop, propDesc);
+      continue;
+    }
     ret[prop] = this[prop];
   }
 

@@ -38,7 +38,10 @@ test("Mixins applied to an object should include Mixin properties, bindings and 
     xBinding: SC.Binding.oneWay("MyBindable.x"),
     yObserver: function() {
       observerCalled++;
-    }.observes('MyBindable.y')
+    }.observes('MyBindable.y'),
+    get es6StyleComputedProperty () {
+      return 'ES6'
+    }
   };
 
   // Mix in the mixin AFTER creating the object.
@@ -51,8 +54,15 @@ test("Mixins applied to an object should include Mixin properties, bindings and 
     objXBinding: SC.Binding.oneWay("MyBindable.x"),
     objYObserver: function() {
       observerCalled++;
-    }.observes('MyBindable.y')
+    }.observes('MyBindable.y'),
+    get nativeComputedProperty () {
+      return 'ES7';
+    }
   });
+
+  const propDesc = Object.getOwnPropertyDescriptor(obj, 'nativeComputedProperty');
+  assert.ok(propDesc.get, 'ES6 style computed properties is present before a mixin is applied');
+
 
   obj.mixin(mixin);
 
@@ -68,6 +78,10 @@ test("Mixins applied to an object should include Mixin properties, bindings and 
   assert.equal(observerCalled, 0, "fires observer");
   assert.equal(obj.get('computedProperty') + ', ' + obj.get('objComputedProperty'), 'bar, bar');
   assert.equal(obj.get('x') + ', ' + obj.get('objX'), '1, 1', "obj bound values should be 1");
+  const propDesc2 = Object.getOwnPropertyDescriptor(obj, 'nativeComputedProperty');
+  assert.ok(propDesc2.get, "es6 style computed properties should also get mixed in");
+  const propDesc3 = Object.getOwnPropertyDescriptor(obj, 'nativeComputedProperty');
+  assert.ok(propDesc3.get, 'ES6 style computed properties should not disappear after a mixin is applied');
 
   SC.run(function() {
     obj.set('foo', 'not bar');

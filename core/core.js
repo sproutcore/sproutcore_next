@@ -22,7 +22,7 @@ import { Logger } from './system/logger.js';
 import { SCError, ok, val, $throw, $error, $ok, $val } from './system/error.js';
 import { SCSet } from './system/set.js';
 import { RangeObserver } from './system/range_observer.js';
-import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath } from './system/base.js';
+import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath, mixin } from './system/base.js';
 import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T_STRING, T_BOOL, T_CLASS, T_DATE, T_ERROR, FROZEN_ERROR } from './system/constants.js';
 import { Controller } from './controllers/controller.js';
 import { ObjectController } from './controllers/object_controller.js';
@@ -124,7 +124,8 @@ export const SC = {
   ArrayController,
   Proxy: SCProxy,
   ENV,
-  scWorker
+  scWorker,
+  mixin
 };
 
 const runtimeDeps = [
