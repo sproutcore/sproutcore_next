@@ -25,6 +25,8 @@ Check out the repository and the import `SC` from the core.js file in the core f
 import { SC } from './core/core.js
 ```
 
+Tests can be run by running a http-server in the root of the project, and loading the tests/core/*.html files.
+
 # Notes
 While it seems that the ES6 class system is a good fit for SproutCore it would break certain functionality of the framework itself
 as well as that syntactically it will not be straightforward. 
