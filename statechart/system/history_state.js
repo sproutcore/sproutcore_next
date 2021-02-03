@@ -34,7 +34,7 @@ import { SC } from '../../core/core.js';
     })
 
   @author Michael Cohen
-  @extends SC.Object
+  
 */
 export const HistoryState = SC.Object.extend(
   /** @scope HistoryState.prototype */{

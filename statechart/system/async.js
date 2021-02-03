@@ -14,7 +14,7 @@ import { SC } from '../../core/core.js';
   used during a state transition process when either entering or
   exiting a state.
 
-  @extends Object
+  
   @author Michael Cohen
 */
 export const Async = SC.Object.extend(
@@ -33,7 +33,7 @@ export const Async = SC.Object.extend(
     var func = this.get('func'),
         arg1 = this.get('arg1'),
         arg2 = this.get('arg2'),
-        funcType = typeOf(func);
+        funcType = SC.typeOf(func);
 
     if (funcType === SC.T_STRING) {
       state.tryToPerform(func, arg1, arg2);

@@ -1106,7 +1106,7 @@ export const StatechartManager = /** @scope StatechartManager.prototype */{
     @param context {Hash} a context hash object to provide the enterState method
   */
   enterState: function (state, context) {
-    if (state.enterStateByRoute && kindOf(context, StateRouteHandlerContext)) {
+    if (state.enterStateByRoute && SC.kindOf(context, StateRouteHandlerContext)) {
       return state.enterStateByRoute(context);
     } else {
       return state.enterState(context);
