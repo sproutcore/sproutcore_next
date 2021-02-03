@@ -7,13 +7,18 @@
 
 import { guidFor, $A } from './base.js';
 
+/**
+ * @typedef  { import('../../typings/core').SCMethod } SCMethod
+ * @typedef { import('../../typings/core').SCComputedProperty } SCComputedProperty
+ */
 
 /**
   @param { SCMethod } fn
   @param { String[] } keys
-  @returns { SCMethod }
+  @returns { SCComputedProperty }
 */
 export const property = (fn, keys) => {
+  
   fn.dependentKeys = $A(keys);
   var guid = guidFor(fn);
   fn.cacheKey = "__cache__" + guid;
@@ -24,8 +29,9 @@ export const property = (fn, keys) => {
 
   /**
     @see Function.prototype.cacheable
-    @param { SCMethod } fn
+    @param { import('../../typings/core').SCMethod } fn
     @param { Boolean } [aFlag]
+    @param { import('../../typings/core').SCCachedComputedProperty}
   */
 export const cacheable = (fn, aFlag) => {
   fn.isProperty = true; // also make a property just in case
@@ -38,7 +44,7 @@ export const cacheable = (fn, aFlag) => {
   @see Function.prototype.idempotent
   @param { SCMethod } fn
   @param { Boolean } [aFlag]
-  @returns { SCMethod }
+  @returns { SCCachedComputedProperty }
 */
 export const idempotent = (fn, aFlag) => {
   fn.isProperty = true; // also make a property just in case
@@ -62,6 +68,7 @@ export const enhance = (fn) => {
   @see Function.prototype.observes
   @param { SCMethod } fn
   @param { String[] } propertyPaths
+  @returns { import('../../typings/core.js').SCObserverMethod }
 */
 export const observes = function (fn, propertyPaths) {
   // sort property paths into local paths (i.e just a property name) and

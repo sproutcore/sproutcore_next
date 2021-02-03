@@ -1,0 +1,356 @@
+
+type Fix<T> = { [K in keyof T]: T[K] };
+
+
+/**
+ * An attribute's value type, which if it's a function, has "this" scoped as an SC
+ * instance whose body contain all key values from T and U.
+ */
+type SCScopedAttr<
+        T extends {}, 
+        U extends {}, 
+        K extends keyof U
+        > 
+        = U[K] extends Function ? 
+            (this: SCInstance<T & U>, ...args: unknown[]) => SCMethod
+    : U[K];
+
+/**
+ * Attributes whose function values have "this" scoped as an SC instance whose
+ * body contain all key values from T and U.
+ */
+type SCScopedAttrs<
+    T extends {}, 
+    U extends {}
+    > = { 
+        [K in keyof U]: SCScopedAttr<T, U, K> };
+
+export declare interface Copyable {
+    isCopyable: boolean;
+    copy: (deep?: boolean) => any;
+    frozenCopy: () => any;
+}
+
+export declare interface Freezable {
+    isFreezable: boolean;
+    isFrozen: boolean;
+    freeze: () => object;
+}
+
+export declare interface Comparable {
+    isComparable: boolean;
+    compare: (a: any, b: any) => number;
+}
+
+
+declare interface Observable {
+    addProbe: (key: string) => void;
+    removeProbe: (key: string) => void;
+    logProperty: (...propertyNames: string[]) => void;
+    isObservable: boolean;
+    automaticallyNotifiesObserversFor: (key: string) => boolean;
+    get: (key: string) => any;
+    set: (key: string, value: any) => Object;
+    unknownProperty: (key: string, value?: any) => any;
+    beginPropertyChanges: () => Observable;
+    endPropertyChanges: () => Observable;
+    propertyWillChange: (key: string) => Observable;
+    propertyDidChange: (key: string, value?: any, _keepCache?: boolean) => Observable;
+    registerDependentKey: (key: string, dependentKeys: string[]) => void;
+    registerDependentKeyWithChain: (property: string, chain: object) => void;
+    removeDependentKeyWithChain: (property: string, chain: object) => void;
+    addObserver: (key: string, target: object | Function, method?: string | Function, context?: object) => object;
+    removeObserver: (key: string, target: object | Function, method?: string | Function) => object;
+    hasObserverFor: (key: string, target?: object | Function, method?: string | Function) => boolean;
+    initObservable: () => void;
+    destroyObservable: () => object;
+    addObservesHandler: (observer: Function, path: string) => object;
+    removeObservesHandler: (observer: Function, path: string) => object;
+    observersForKey: (key: string) => any[];
+    _notifyPropertyObservers: (key?: string) => void;
+    bind: (toKey: string, target: object | string, method?: string | Function) => Binding;
+    didChangeFor: (context: string | object, ...propertyNames: string[]) => boolean;
+    setIfChanged: (key: string | object, value: any) => object;
+    getPath: (path: string) => any;
+    setPath: (path: string, value: any) => object;
+    setPathIfChanged: (path: string, value: any) => object;
+    getEach: (...propertyNames: string[]) => any[];
+    incrementProperty: (key: string, increment?: number) => number;
+    decrementProperty: (key: string, increment?: number) => number;
+    toggleProperty: (key: string, value?: any, alt?: any) => any;
+    notifyPropertyChange: (key: string, value?: any) => object;
+    allPropertiesDidChange: () => object;
+    propertyRevision: number;
+}
+
+declare interface Enumerable {
+    isEnumerable: boolean;
+    nextObject: (index: number, previousObject?: any, context?: any) => any;
+    firstObject: () => any;
+    lastObject: () => any;
+    // enumerator: () => Enumerator;
+    forEach: (callback: Function, target?: Object) => any;
+    getEach: (key: string) => any[];
+    setEach: (key: string, value: any) => any[];
+    map: (callback: Function, target?: any) => any[];
+    mapProperty: (key: string) => any[];
+    filter: (callback: Function, target?: any) => any[];
+    sortProperty: (key: string) => any[];
+    filterProperty: (key: string, value?: any) => any[];
+    find: (callback: Function, target?: any) => any;
+    findProperty: (key: string, value?: any) => any;
+    every: (callback: Function, target?: any) => boolean;
+    everyProperty: (key: string, value?: any) => boolean;
+    some: (callback: Function, target?: any) => boolean;
+    someProperty: (key: string, value?: any) => boolean;
+    reduce: (callback: Function, initialValue?: any, reducerProperty?: any) => any;
+    invoke: (methodName: string, ...args?: any[]) => any[];
+    invokeWhile: (targetValue: any, methodName: string, ...args?: any[]) => any;
+    toArray: () => any[];
+    groupBy: (key: string) => any[];
+}
+    
+declare interface CoreArray {
+    isSCArray: boolean;
+    replace: (idx: number, amt?: number, objects: any[]) => any[];
+    indexOf: (object: object, startAt?: number) => number;
+    lastIndexOf: (object: object, startAt?: number) => number;
+    objectAt: (idx: number) => any;
+    '[]': function;
+    insertAt: (idx: number, object: object) => object;
+    removeAt: (start: number, length?: number) => object;
+    removeObject: (obj: object) => any[];
+    removeObjects: (objects: object[]) => any[];
+    slice: (beginIndex?: number, endIndex?: number) => any[];
+    pushObject: (obj: object) => any;
+    pushObjects: (objects: object[]) => any[];
+    popObject: () => any;
+    shiftObject: () => any;
+    unshiftObject: (obj: object) => any;
+    unshiftObjects: (objects: object[]) => any;
+    isEqual: (ary: any[]) => boolean;
+    compact: () => any[];
+    without: (value: any) => any[];
+    uniq: () => any[];
+    flatten: () => any[];
+    max: () => number;
+    min: () => number;
+    contains: (obj: object) => boolean;
+}
+
+// define function SCObject<T extends new() => unknown>(cons: T): {
+//     new (): InstanceType<T> & 
+// }
+
+// class SCObject<T extends {}> = SCInstanceMethods<T> & T;
+
+// class SCObject<T extends {} extends Observable> {
+//     __sc_super__: SCClass
+// }
+
+/**
+ * SproutCore class, where T is is the type of all the attributes.
+ */
+// interface SCClass<T extends {}> {
+//     mixin<U extends {}>(other: SCScopedAttrs<T, U>): SCClass<T & U>;
+//     extend(): SCClass<T>;
+//     extend<U extends {}>(attrs: SCScopedAttrs<T, U>): SCClass<T & U>;
+//     create(): SCInstance<T>;
+//     create<U extends {}>(attrs: SCScopedAttrs<T, U>): SCInstance<T & U>;
+//     toString(): string;
+//     subclassOf<T>(clazz: SCClass<T>): boolean;
+//     hasSubclass<T>(clazz: SCClass<T>): boolean;
+//     kindOf<U>(clazz: SCClass<U>): boolean;
+// }
+
+// interface SCConstructor<M extends SCObject, T> {
+//     new (...args: {}[]): SCScopedAttrs<T&M>;
+// }
+
+export type SCObjectConstructor<T> = (new (properties?: object) => T) & (new (...args: any[]) => T);
+export type SCObjectInstanceArguments<T> = Partial<T> & { [key: string]: any; };
+export interface SCObjectClassArguments {
+    [key: string]: any;
+}
+
+export declare class SCObject<T extends {}> extends Observable, Copyable, Freezable {
+    constructor<U extends {}> (attrs: SCScopedAttrs<T, U>): SCObject<T & U>;
+    public mixin<U extends {}>(other: SCScopedAttrs<T, U>): SCObject<T & U>;
+    public extend(): SCObject<T>;
+    public extend<U extends {}>(attrs: SCScopedAttrs<T, U>): SCObject<T & U>;
+    // public create<T extends SCObject>(this: SCConstructor<T>): T;
+    // public create<U extends {}>(attrs: SCScopedAttrs<T, U>): SCInstance<T & U>;
+    // public create<U extends {}>(attrs: SCScopedAttrs<T, U>): new SCObject();
+    public create<U extends {}>(): SCObject<T> {
+        return new this;
+    };
+    public create<U extends {}>(...attrs: SCScopedAttrs<T, U>[]): SCObject<T & U> {
+        return new this();
+    };
+    
+    public toString(): string;
+    public subclassOf<T>(clazz: SCObject<T>): boolean;
+    public hasSubclass<T>(clazz: SCObject<T>): boolean;
+    public kindOf<U>(clazz: SCObject<U>): boolean; 
+    // __sc_super__: SCObject<T>;
+    // _kvo_enabled: boolean;
+    // _object_init(): Function<T>;
+    // init(this: SCObject<T>): <SCMethod> { 
+
+    // };
+
+    addProbe: (key: string) => void;
+    removeProbe: (key: string) => void;
+    logProperty: (...propertyNames: string[]) => void;
+    isObservable: boolean;
+    automaticallyNotifiesObserversFor: (key: string) => boolean;
+    get: (key: string) => any;
+    set: (key: string, value: any) => Object;
+    unknownProperty: (key: string, value?: any) => any;
+    beginPropertyChanges: () => Observable;
+    endPropertyChanges: () => Observable;
+    propertyWillChange: (key: string) => Observable;
+    propertyDidChange: (key: string, value?: any, _keepCache?: boolean) => Observable;
+    registerDependentKey: (key: string, dependentKeys: string[]) => void;
+    registerDependentKeyWithChain: (property: string, chain: object) => void;
+    removeDependentKeyWithChain: (property: string, chain: object) => void;
+    addObserver: (key: string, target: object | Function, method?: string | Function, context?: object) => object;
+    removeObserver: (key: string, target: object | Function, method?: string | Function) => object;
+    hasObserverFor: (key: string, target?: object | Function, method?: string | Function) => boolean;
+    initObservable: () => void;
+    destroyObservable: () => object;
+    addObservesHandler: (observer: Function, path: string) => object;
+    removeObservesHandler: (observer: Function, path: string) => object;
+    observersForKey: (key: string) => any[];
+    _notifyPropertyObservers: (key?: string) => void;
+    bind: (toKey: string, target: object | string, method?: string | Function) => Binding;
+    didChangeFor: (context: string | object, ...propertyNames: string[]) => boolean;
+    setIfChanged: (key: string | object, value: any) => object;
+    getPath: (path: string) => any;
+    setPath: (path: string, value: any) => object;
+    setPathIfChanged: (path: string, value: any) => object;
+    getEach: (...propertyNames: string[]) => any[];
+    incrementProperty: (key: string, increment?: number) => number;
+    decrementProperty: (key: string, increment?: number) => number;
+    toggleProperty: (key: string, value?: any, alt?: any) => any;
+    notifyPropertyChange: (key: string, value?: any) => object;
+    allPropertiesDidChange: () => object;
+    propertyRevision: number;
+
+} 
+
+
+/**
+ * Interface with methods for SproutCore instances, where T is is the
+ * type of all the attributes.
+ */
+// interface SCInstanceMethods<T extends {}> extends Observable {
+//     mixin<U extends {}>(other: SCScopedAttrs<T, U>): SCInstance<T & U>;
+//     init(): SCInstance<T>;
+//     destroy(): SCInstance<T>;
+//     respondsTo(methodName: string): boolean;
+//     tryToPerform(methodName: string, arg1?: unknown, arg2?: unknown): boolean;
+//     instanceOf<T>(clazz: SCClass<T>): boolean;
+//     kindOf<U>(clazz: SCClass<U>): boolean;
+//     invokeOnce(methodLike: string | Function): SCInstance<T>;
+//     invokeLast(methodLike: string | Function): SCInstance<T>;
+//     invokeNext(methodLike: string | Function): SCInstance<T>;
+//     toString(): string;
+
+//     get<K extends keyof T>(key: K): T[K];
+//     set<K extends keyof T>(key: K, value: T[K]): void;
+// }
+
+/**
+ * SproutCore instance, where T is is the type of all the attributes.
+ */
+type SCInstance<T extends {}> = SCInstanceMethods<T> & T;
+
+export interface ComputedPropertyGetterObj<T> {
+    get(this: any, key: string): T;
+}
+
+export interface ComputedPropertySetterObj<T> {
+    set(this: any, key: string, value: T): T;
+}
+
+export declare interface SCMethod<T = SCObject> extends Function {
+    base: Function
+}
+
+export declare interface SCComputedProperty<T = SCObject> extends SCMethod {
+    dependentKeys: string[];
+    cacheKey: string;
+    lastSetValueKey: string;
+    isProperty: true;
+}
+
+export declare interface SCCachedComputedProperty<T = SCObject> extends SCComputedProperty {
+    isCacheable: boolean
+}
+
+export declare interface SCIdempotentProperty<T = SCObject> extends SCComputedProperty {
+    isVolatile: true;
+}
+
+export declare interface SCEnhancedMethod<T = SCObject> extends Function {
+    isEnhancement: true;
+}
+
+export declare interface SCObserverMethod<T = SCObject> extends Function {
+    localPropertyPaths: string[];
+    propertyPaths: string[];
+}
+
+export namespace SC {
+    /**
+     * SC.Object base object.
+     */
+    const Object: SCObject<{}>;
+    /**
+     * SC.* functions.
+     */
+    function instanceOf<T, U>(obj: SCInstance<T>, clazz: SCObject<U>): boolean;
+    function kindOf<T, U>(obj: SCInstance<T>, clazz: SCObject<U>): boolean;
+    function mixin<T, U>(a: T, b: U): T & U;
+    function mixin<T, U, M>(a: T, b: U, c: M): T & U & M;
+}
+    
+global {
+
+    interface String {
+        fmt(str: string, ...args?: any[]): string;
+        w(str: string): Array;
+        capitalize(str: string): string;
+        camelize(str: string): string;
+        decamelize(str: string): string;
+        dasherize(str: string): string;
+        mult(str: string): string;
+    }
+
+    interface Array implements CoreArray, Enumerable, Observable {
+        copy: (deep?: boolean) => any[];
+        nextObject: (index: number, previousObject?: any, context?: any) => Function;
+        enumerator: () => SCEnumerator;
+        sortProperty: (key: string) => any[];
+        mapProperty: (key: string) => any[];
+        filterProperty: (key: string, value?: any) => any[];
+        groupBy: (key: string) => Array;
+        findProperty: (key: string, value?: any) => any;
+        everyProperty: (key: string, value?: any) => boolean;
+        someProperty: (key: string, value?: any) => boolean;
+        invoke: (methodName: string) => Array;
+        invokeWhile: (targetValue: any, methodName: string) => any;
+        toArray: () => any[];
+        getEach: (key: string) => any[];
+        setEach: (key: string, value: any) => any[];
+    }
+
+    interface Function {
+        property: (...args: string[]) => SCComputedProperty;
+        cacheable: () => SCCachedComputedProperty;
+        idempotent: () => SCIdempotentProperty;
+        enhance: (this: Function) => SCEnhancedMethod;
+        observes: (...args: string[]) => SCObserverMethod;
+    }
+}

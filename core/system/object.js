@@ -296,8 +296,7 @@ const _enhance = function (originalFunction, enhancement) {
 
 };
 
-/** @class
-
+/** 
   Root object for the SproutCore framework.  SC.Object is the root class for
   most classes defined by SproutCore.  It builds on top of the native object
   support provided by JavaScript to provide support for class-like
@@ -321,9 +320,9 @@ const _enhance = function (originalFunction, enhancement) {
   You can create a SproutCore object just like any other object...
   obj = new SC.Object();
 
+  @class
   @mixes Observable
   @mixes ObjectMixinProtocol
-  @constructor
   @since SproutCore 1.0
 */
 export function SCObject (props) {
@@ -342,7 +341,7 @@ export function SCObject (props) {
 
     @param {...Object} props the properties you want to add.
     @static
-    @returns {Object} receiver
+    @returns {SCObject} receiver
   */
 SCObject.mixin = function (...props) {
   var len = props.length,
@@ -375,7 +374,7 @@ SCObject.superclass = null;
     in your init() to allow the normal setup to proceed.
 
     @param {...Object} props the methods of properties you want to add
-    @returns { } A new object class
+    @returns { SCObject } A new object class
   */
 SCObject.extend = function () {
   //@if(debug)
@@ -386,7 +385,7 @@ SCObject.extend = function () {
   // build a new constructor and copy class methods.  Do this before
   // adding any other properties so they are not overwritten by the copy.
   var prop;
-
+  
   var ret = function (props) {
     this.__sc_super__ = ret.prototype;
     return this._object_init(props);
@@ -431,6 +430,11 @@ SCObject.extend = function () {
 
 
 // Tested in ../tests/system/object/enhance.js
+/**
+ * 
+ * @param {Object} props
+ * @returns { SCClass } 
+ */
 SCObject.reopen = function (props) {
   // Reopen subclasses.
   if (this.subclasses) {
@@ -494,7 +498,7 @@ SCObject.reopen = function (props) {
       optional hash of method or properties to add to the instance.
     @mixes ...props
     @constructs
-    @returns {Object}
+    @returns { SCInstance<ThisType> }
   */
 SCObject.create = function (...props) {
   var C = this,
@@ -503,6 +507,7 @@ SCObject.create = function (...props) {
   // if (SC.ObjectDesigner) {
   //   SC.ObjectDesigner.didCreateObject(ret, SC.$A(arguments));
   // }
+  // @ts-ignore
   return ret;
 };
   /**

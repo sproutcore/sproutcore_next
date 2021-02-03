@@ -9,6 +9,8 @@ import { fmt, w, capitalize, camelize, decamelize, dasherize, mult } from '../sy
 
 /**
   @see SC.String.fmt
+  @memberof String 
+  @returns {string}
 */
 String.prototype.fmt = function (...args) {
   return fmt(this, args);
@@ -16,12 +18,17 @@ String.prototype.fmt = function (...args) {
 
 /**
   @see SC.String.w
+  @memberof String 
   @returns {Array}
 */
 String.prototype.w = function () {
   return w(this);
 }
 
+/**
+ * @memberof String 
+ * @returns {string}
+ */
 String.prototype.capitalize = function () {
   return capitalize(this);
 }

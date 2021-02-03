@@ -176,7 +176,7 @@ Function.prototype.enhance = function () {
   @param {...String} propertyPaths A list of strings which indicate the
     properties being observed
 
-  @returns {Function} receiver, useful for chaining calls.
+  @returns {import('../../typings/core.js').SCObserverMethod} receiver, useful for chaining calls.
 */
 Function.prototype.observes = function (...propertyPaths) {
   return observes(this, propertyPaths);

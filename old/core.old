@@ -1,0 +1,235 @@
+// // Type definitions for SproutCore 3
+// // Project: SproutCore
+// // Definitions by: Maurits Lamers
+
+// /*~ This is the global-modifying module template file. You should rename it to index.d.ts
+//  *~ and place it in a folder with the same name as the module.
+//  *~ For example, if you were writing a file for "super-greeter", this
+//  *~ file should be 'super-greeter/index.d.ts'
+//  */
+
+// /*~ Note: If your global-modifying module is callable or constructable, you'll
+//  *~ need to combine the patterns here with those in the module-class or module-function
+//  *~ template files
+//  */
+// declare global {
+//   /*~ Here, declare things that go in the global namespace, or augment
+//    *~ existing declarations in the global namespace
+//    */
+//   interface String {
+//     fmt: (...args: any[]) => string;
+//     w: () => string[];
+//     capitalize: () => string;
+//     camelize: () => string;
+//     decamelize: () => string;
+//     dasherize: () => string;
+//     mult: (value: number) => string;
+//   }
+
+//   interface Function {
+//     property: (...args: string[]) => SCMethod;
+//     cacheable: (aFlag?: boolean) => SCMethod;
+//     idempotent: (aFlag?: boolean) => SCMethod;
+//     enhance: () => SCMethod;
+//     observes: (...propertyPaths) => SCMethod;
+//     handleEvents: (...events) => SCMethod;
+//     stateObserves: (...args) => SCMethod;
+//   }
+
+//   interface SCMethod extends Function {
+//     isProperty?: boolean;
+//     isCacheable?: boolean;
+//     dependentKeys?: string[];
+//     isVolatile?: boolean;
+//     cacheKey?: string;
+//     lastSetValueKey?: string;
+//     isEnhancement?: boolean;
+//     localPropertyPaths?: string[];
+//     propertyPaths?: string[];
+//     isEventHandler?: boolean;
+//     events?: any[];
+//     isStateObserveHandler?: boolean;
+//     args?: string[];
+//   }
+
+//   class SCEnumerator {
+//     enumerable: any;
+//     nextObject: () => any;
+//     reset: () => object;
+//     destroy: () => void;
+//     static create: (enumerableObject?: Enumerable) => Enumerator;
+//   }
+
+
+//   interface Enumerable {
+//     isEnumerable: boolean;
+//     nextObject: (index: number, previousObject?: any, context?: any) => any;
+//     firstObject: function;
+//     lastObject: function;
+//     enumerator: () => Enumerator;
+//     forEach: (callback: Function, target?: Object) => any;
+//     getEach: (key: string) => any[];
+//     setEach: (key: string, value: any) => any[];
+//     map: (callback: Function, target?: any) => any[];
+//     mapProperty: (key: string) => any[];
+//     filter: (callback: Function, target?: any) => any[];
+//     sortProperty: (key: string) => any[];
+//     filterProperty: (key: string, value?: any) => any[];
+//     find: (callback: Function, target?: any) => any;
+//     findProperty: (key: string, value?: any) => any;
+//     every: (callback: Function, target?: any) => boolean;
+//     everyProperty: (key: string, value?: any) => boolean;
+//     some: (callback: Function, target?: any) => boolean;
+//     someProperty: (key: string, value?: any) => boolean;
+//     reduce: (callback: Function, initialValue?: any, reducerProperty?: any) => any;
+//     invoke: (methodName: string, ...args?: any[]) => any[];
+//     invokeWhile: (targetValue: any, methodName: string, ...args?: any[]) => any;
+//     toArray: () => any[];
+//     groupBy: (key: string) => any[];
+//   }
+
+//   interface Copyable {
+//     isCopyable: boolean;
+//     copy: (deep?: boolean) => any;
+//     frozenCopy: () => any;
+//   }
+
+//   interface Freezable {
+//     isFreezable: boolean;
+//     isFrozen: boolean;
+//     freeze: () => object;
+//   }
+
+//   interface Comparable {
+//     isComparable: boolean;
+//     compare: (a: any, b: any) => number;
+//   }
+
+//   interface Observable {
+//     addProbe: (key: string) => void;
+//     removeProbe: (key: string) => void;
+//     logProperty: (...propertyNames: string[]) => void;
+//     isObservable: boolean;
+//     automaticallyNotifiesObserversFor: (key: string) => boolean;
+//     get: (key: string) => any;
+//     set: (key: string, value: any) => Object;
+//     unknownProperty: (key: string, value?: any) => any;
+//     beginPropertyChanges: () => Observable;
+//     endPropertyChanges: () => Observable;
+//     propertyWillChange: (key: string) => Observable;
+//     propertyDidChange: (key: string, value?: any, _keepCache?: boolean) => Observable;
+//     registerDependentKey: (key: string, dependentKeys: string[]) => void;
+//     registerDependentKeyWithChain: (property: string, chain: object) => void;
+//     removeDependentKeyWithChain: (property: string, chain: object) => void;
+//     addObserver: (key: string, target: object | Function, method?: string | Function, context?: object) => object;
+//     removeObserver: (key: string, target: object | Function, method?: string | Function) => object;
+//     hasObserverFor: (key: string, target?: object | Function, method?: string | Function) => boolean;
+//     initObservable: () => void;
+//     destroyObservable: () => object;
+//     addObservesHandler: (observer: Function, path: string) => object;
+//     removeObservesHandler: (observer: Function, path: string) => object;
+//     observersForKey: (key: string) => any[];
+//     _notifyPropertyObservers: (key?: string) => void;
+//     bind: (toKey: string, target: object | string, method?: string | Function) => Binding;
+//     didChangeFor: (context: string | object, ...propertyNames: string[]) => boolean;
+//     setIfChanged: (key: string | object, value: any) => object;
+//     getPath: (path: string) => any;
+//     setPath: (path: string, value: any) => object;
+//     setPathIfChanged: (path: string, value: any) => object;
+//     getEach: (...propertyNames: string[]) => any[];
+//     incrementProperty: (key: string, increment?: number) => number;
+//     decrementProperty: (key: string, increment?: number) => number;
+//     toggleProperty: (key: string, value?: any, alt?: any) => any;
+//     notifyPropertyChange: (key: string, value?: any) => object;
+//     allPropertiesDidChange: () => object;
+//     propertyRevision: number;
+//   }
+
+//   class Reducers {
+//     '[]': function;
+//     enumerableContentDidChange: (start: number, length: number, deltas?: number) => void;
+//     reducedProperty: (key: string, value?: any, generateProperty?: boolean) => any;
+//   }
+
+//   interface SCClass {
+//     create: (...objs: object[]) => object;
+//     extend: (...objs: object[]) => object;
+//     subclasses: SCClass[];
+//     reopen: (...objs: object[]) => object;
+//     subclassOf: (obj: object) => boolean;
+//     hasSubclass: (obj: object) => boolean;
+//   }
+
+//   interface CoreArray {
+//     isSCArray: boolean;
+//     replace: (idx: number, amt?: number, objects: any[]) => any[];
+//     indexOf: (object: object, startAt?: number) => number;
+//     lastIndexOf: (object: object, startAt?: number) => number;
+//     objectAt: (idx: number) => any;
+//     '[]': function;
+//     insertAt: (idx: number, object: object) => object;
+//     removeAt: (start: number, length?: number) => object;
+//     removeObject: (obj: object) => any[];
+//     removeObjects: (objects: object[]) => any[];
+//     slice: (beginIndex?: number, endIndex?: number) => any[];
+//     pushObject: (obj: object) => any;
+//     pushObjects: (objects: object[]) => any[];
+//     popObject: () => any;
+//     shiftObject: () => any;
+//     unshiftObject: (obj: object) => any;
+//     unshiftObjects: (objects: object[]) => any;
+//     isEqual: (ary: any[]) => boolean;
+//     compact: () => any[];
+//     without: (value: any) => any[];
+//     uniq: () => any[];
+//     flatten: () => any[];
+//     max: () => number;
+//     min: () => number;
+//     contains: (obj: object) => boolean;
+//   }
+
+//   interface Array extends CoreArray, Observable, Enumerable {
+//     copy: (deep?: boolean) => any[];
+//     nextObject: (index: number, previousObject?: any, context?: any) => Function;
+//     enumerator: () => SCEnumerator;
+//     sortProperty: (key: string) => any[];
+//     mapProperty: (key: string) => any[];
+//     filterProperty: (key: string, value?: any) => any[];
+//     groupBy: (key: string) => Array;
+//     findProperty: (key: string, value?: any) => any;
+//     everyProperty: (key: string, value?: any) => boolean;
+//     someProperty: (key: string, value?: any) => boolean;
+//     invoke: (methodName: string) => Array;
+//     invokeWhile: (targetValue: any, methodName: string) => any;
+//     toArray: () => any[];
+//     getEach: (key: string) => any[];
+//     setEach: (key: string, value: any) => any[];
+//   }
+
+
+//   class SCObject implements Observable {
+//     static create: (...objs: object[]) => object;
+//     static extend: (...objs: object[]) => class;
+//     static subclasses: any[];
+//     static reopen: (...objs: object[]) => object;
+//     static subclassOf: (obj: object) => boolean;
+//     static hasSubclass: (obj: object) => boolean;
+//     static superclass: SCObject;
+//     static __sc_super__: object;
+//     _object_init(): () => void;
+//     static toString: () => string;
+//   }
+
+
+// }
+
+// // /*~ If your module exports types or values, write them as usual */
+// // export interface StringFormatOptions {
+// //   fancinessLevel: number;
+// // }
+
+// // /*~ For example, declaring a method on the module (in addition to its global side effects) */
+// // export function doSomething(): void;
+
+// // /*~ If your module exports nothing, you'll need this line. Otherwise, delete it */
+// export { };

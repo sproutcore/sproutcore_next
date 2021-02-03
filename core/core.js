@@ -10,7 +10,7 @@ import './ext/string.js';
 import { Copyable } from './mixins/copyable.js';
 import { Comparable } from './mixins/comparable.js';
 import { Enumerable } from './mixins/enumerable.js';
-import { SCObject, __runtimeDeps as objRuntimeDeps, kindOf, instanceOf } from './system/object.js';
+import { SCObject, __runtimeDeps as objRuntimeDeps, kindOf, instanceOf, _object_className } from './system/object.js';
 import { Observable, get, getPath } from './mixins/observable.js';
 import { CoreArray, SCArray } from './mixins/array.js';
 import { ObserverQueue } from './private/observer_queue.js';
@@ -30,10 +30,19 @@ import { ArrayController } from './controllers/array_controller.js';
 import { SCProxy } from './system/proxy.js';
 import { ENV } from './system/env.js';
 import { scWorker, __runtimeDeps as scWorkerRuntimeDeps } from './system/scworker.js';
+import { Builder } from './system/builder.js';
+import { DelegateSupport } from './mixins/delegate_support.js';
+
+import { detectedBrowser, OS, CLASS_PREFIX, CSS_PREFIX, BROWSER, ENGINE, DEVICE, DOM_PREFIX } from './system/browser.js';
 
 export const GLOBAL = global;
 
+// /** @type {import('../typings/core').SC} */
+
 export const SC = {
+  getSetting,
+  setSetting,
+  
   get LOG_BINDINGS () {
     return getSetting('LOG_BINDINGS');
   },
@@ -60,6 +69,7 @@ export const SC = {
   get,
   getPath,
   Object: SCObject,
+  _object_className,
   Array: SCArray,
   Error: SCError,
   RunLoop,
@@ -125,7 +135,17 @@ export const SC = {
   Proxy: SCProxy,
   ENV,
   scWorker,
-  mixin
+  mixin,
+  Builder,
+  browser: detectedBrowser,
+  OS,
+  // CLASS_PREFIX,
+  // CSS_PREFIX,
+  // BROWSER,
+  // ENGINE,
+  // DEVICE,
+  // DOM_PREFIX
+  DelegateSupport
 };
 
 const runtimeDeps = [

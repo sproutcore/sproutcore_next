@@ -1,0 +1,68 @@
+/**
+ * An attribute's value type, which if it's a function, has "this" scoped as an SC
+ * instance whose body contain all key values from T and U.
+ */
+type SCScopedAttr<T extends {}, U extends {}, K extends keyof U> = U[K] extends Function
+    ? (this: SCInstance<T & U>, ...args: unknown[]) => unknown
+    : U[K];
+
+/**
+ * Attributes whose function values have "this" scoped as an SC instance whose
+ * body contain all key values from T and U.
+ */
+type SCScopedAttrs<T extends {}, U extends {}> = { [K in keyof U]: SCScopedAttr<T, U, K> };
+
+/**
+ * SproutCore class, where T is is the type of all the attributes.
+ */
+interface SCClass<T extends {}> {
+    mixin<U extends {}>(other: SCScopedAttrs<T, U>): SCClass<T & U>;
+    extend(): SCClass<T>;
+    extend<U extends {}>(attrs: SCScopedAttrs<T, U>): SCClass<T & U>;
+    create(): SCInstance<T>;
+    create<U extends {}>(attrs: SCScopedAttrs<T, U>): SCInstance<T & U>;
+    toString(): string;
+    subclassOf<T>(clazz: SCClass<T>): boolean;
+    hasSubclass<T>(clazz: SCClass<T>): boolean;
+    kindOf<U>(clazz: SCClass<U>): boolean;
+}
+
+/**
+ * Interface with methods for SproutCore instances, where T is is the
+ * type of all the attributes.
+ */
+interface SCInstanceMethods<T extends {}> {
+    mixin<U extends {}>(other: SCScopedAttrs<T, U>): SCInstance<T & U>;
+    init(): SCInstance<T>;
+    destroy(): SCInstance<T>;
+    respondsTo(methodName: string): boolean;
+    tryToPerform(methodName: string, arg1?: unknown, arg2?: unknown): boolean;
+    instanceOf<T>(clazz: SCClass<T>): boolean;
+    kindOf<U>(clazz: SCClass<U>): boolean;
+    invokeOnce(methodLike: string | Function): SCInstance<T>;
+    invokeLast(methodLike: string | Function): SCInstance<T>;
+    invokeNext(methodLike: string | Function): SCInstance<T>;
+    toString(): string;
+
+    get<K extends keyof T>(key: K): T[K];
+    set<K extends keyof T>(key: K, value: T[K]): void;
+}
+
+/**
+ * SproutCore instance, where T is is the type of all the attributes.
+ */
+type SCInstance<T extends {}> = SCInstanceMethods<T> & T;
+
+declare namespace SC {
+    /**
+     * SC.Object base object.
+     */
+    const Object: SCClass<{}>;
+
+    /**
+     * SC.* functions.
+     */
+    function instanceOf<T, U>(obj: SCInstance<T>, clazz: SCClass<U>): boolean;
+    function kindOf<T, U>(obj: SCInstance<T>, clazz: SCClass<U>): boolean;
+    function mixin<T, U>(a: T, b: U): T & U;
+}

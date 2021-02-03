@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es6",
     "checkJs": true,
     "module": "es2020"
   },
@@ -8,7 +8,11 @@
     "enable": true
   },
   "include": [
-    "core",
-    "typings"
+    "./typings/core.d.ts",
+    "./core/**/*.js",
+    "./event/**/*.js",
+    "./responder/**/*.js",
+    "./statechart/**/*.js"
+
   ]
 }

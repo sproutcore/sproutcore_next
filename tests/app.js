@@ -4,8 +4,10 @@
 import { SC } from "../core/core.js";
 
 
-window.myObject = SC.Object.create();
+/** @type { SCInstance<ThisType>} */
+const myObject = SC.Object.create();
 window.SC = SC;
 // window.Observable = Observable;
 
 console.log('done');
+
