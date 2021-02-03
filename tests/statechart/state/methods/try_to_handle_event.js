@@ -3,16 +3,21 @@
 // ==========================================================================
 /*globals SC */
 
+
+import { SC } from '/core/core.js';
+import { Statechart, State } from '/statechart/statechart.js';
+
+
 var sc, root, foo, bar;
 
-module("SC.State: addSubstate method Tests", {
+module("State: addSubstate method Tests", {
   
-  setup: function() {
+  beforeEach: function() {
     
-    sc = SC.Statechart.create({
+    sc = Statechart.create({
       
-      stateWillTryToHandleEvent: function(state, event, handler) {
-        sc_super();
+      stateWillTryToHandleEvent: function stateWillTryToHandleEvent(state, event, handler) {
+        stateWillTryToHandleEvent.base.apply(this, arguments);
         this.stateWillTryToHandleEventInfo = {
           state: state,
           event: event,
@@ -20,8 +25,8 @@ module("SC.State: addSubstate method Tests", {
         };
       },
 
-      stateDidTryToHandleEvent: function(state, event, handler, handled) {
-        sc_super();
+      stateDidTryToHandleEvent: function stateDidTryToHandleEvent (state, event, handler, handled) {
+        stateDidTryToHandleEvent.base.apply(this, arguments);
         this.stateDidTryToHandleEventInfo = {
           state: state,
           event: event,
@@ -32,9 +37,9 @@ module("SC.State: addSubstate method Tests", {
       
       initialState: 'foo',
       
-      foo: SC.State.design({
+      foo: State.design({
         
-        eventHandlerReturnValue: YES,
+        eventHandlerReturnValue: true,
         
         _notifyHandledEvent: function(handler, event, arg1, arg2) {
           this.handledEventInfo = {
@@ -73,132 +78,132 @@ module("SC.State: addSubstate method Tests", {
     foo = sc.getState('foo');
   },
   
-  teardown: function() {
+  afterEach: function() {
     sc = foo = null;
   }
   
 });
 
-test("try to invoke state foo's eventHandler1 event handler", function() {
+test("try to invoke state foo's eventHandler1 event handler", function (assert) {
   
   var ret = foo.tryToHandleEvent('eventHandler1', 100, 200);
   
   var info = foo.handledEventInfo;
   
-  equals(ret, true, 'foo.tryToHandleEvent should return true');
-  ok(info, 'foo.handledEventInfo should not be null');
-  equals(info.handler, 'eventHandler1', 'foo.eventHandler1 should have been invoked');
-  equals(info.arg1, 100, 'foo.eventHandler1 should handle event 100');
-  equals(info.arg2, 200, 'foo.eventHandler1 should handle event 200');
+  assert.equal(ret, true, 'foo.tryToHandleEvent should return true');
+  assert.ok(info, 'foo.handledEventInfo should not be null');
+  assert.equal(info.handler, 'eventHandler1', 'foo.eventHandler1 should have been invoked');
+  assert.equal(info.arg1, 100, 'foo.eventHandler1 should handle event 100');
+  assert.equal(info.arg2, 200, 'foo.eventHandler1 should handle event 200');
 
   info = sc.stateWillTryToHandleEventInfo;
   
-  ok(info, 'sc.stateWillTryToHandleEvent should have been invoked');
-  equals(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
-  equals(info.event, 'eventHandler1', 'sc.stateWillTryToHandleEvent should have been passed event eventHandler1');
-  equals(info.handler, 'eventHandler1', 'sc.stateWillTryToHandleEvent should have been passed handler eventHandler1');
+  assert.ok(info, 'sc.stateWillTryToHandleEvent should have been invoked');
+  assert.equal(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
+  assert.equal(info.event, 'eventHandler1', 'sc.stateWillTryToHandleEvent should have been passed event eventHandler1');
+  assert.equal(info.handler, 'eventHandler1', 'sc.stateWillTryToHandleEvent should have been passed handler eventHandler1');
   
   info = sc.stateDidTryToHandleEventInfo;
   
-  ok(info, 'sc.stateDidTryToHandleEventInfo should have been invoked');
-  equals(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
-  equals(info.event, 'eventHandler1', 'sc.stateDidTryToHandleEventInfo should have been passed event eventHandler1');
-  equals(info.handler, 'eventHandler1', 'sc.stateDidTryToHandleEventInfo should have been passed handler eventHandler1');
-  equals(info.handled, true, 'sc.stateDidTryToHandleEventInfo should have been passed handled true');
+  assert.ok(info, 'sc.stateDidTryToHandleEventInfo should have been invoked');
+  assert.equal(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
+  assert.equal(info.event, 'eventHandler1', 'sc.stateDidTryToHandleEventInfo should have been passed event eventHandler1');
+  assert.equal(info.handler, 'eventHandler1', 'sc.stateDidTryToHandleEventInfo should have been passed handler eventHandler1');
+  assert.equal(info.handled, true, 'sc.stateDidTryToHandleEventInfo should have been passed handled true');
   
 });
 
-test("try to invoke state foo's eventHandler2 event handler", function() {
+test("try to invoke state foo's eventHandler2 event handler", function (assert) {
   
   var ret = foo.tryToHandleEvent('test1', 100, 200);
   
   var info = foo.handledEventInfo;
   
-  equals(ret, true, 'foo.tryToHandleEvent should return true');
-  ok(info, 'foo.handledEventInfo should not be null');
-  equals(info.handler, 'eventHandler2', 'foo.eventHandler2 should have been invoked');
-  equals(info.event, 'test1', 'foo.eventHandler2 should handle event test1');
-  equals(info.arg1, 100, 'foo.eventHandler2 should handle event 100');
-  equals(info.arg2, 200, 'foo.eventHandler2 should handle event 200');
+  assert.equal(ret, true, 'foo.tryToHandleEvent should return true');
+  assert.ok(info, 'foo.handledEventInfo should not be null');
+  assert.equal(info.handler, 'eventHandler2', 'foo.eventHandler2 should have been invoked');
+  assert.equal(info.event, 'test1', 'foo.eventHandler2 should handle event test1');
+  assert.equal(info.arg1, 100, 'foo.eventHandler2 should handle event 100');
+  assert.equal(info.arg2, 200, 'foo.eventHandler2 should handle event 200');
 
   info = sc.stateWillTryToHandleEventInfo;
   
-  ok(info, 'sc.stateWillTryToHandleEvent should have been invoked');
-  equals(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
-  equals(info.event, 'test1', 'sc.stateWillTryToHandleEvent should have been passed event test1');
-  equals(info.handler, 'eventHandler2', 'sc.stateWillTryToHandleEvent should have been passed handler eventHandler2');
+  assert.ok(info, 'sc.stateWillTryToHandleEvent should have been invoked');
+  assert.equal(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
+  assert.equal(info.event, 'test1', 'sc.stateWillTryToHandleEvent should have been passed event test1');
+  assert.equal(info.handler, 'eventHandler2', 'sc.stateWillTryToHandleEvent should have been passed handler eventHandler2');
   
   info = sc.stateDidTryToHandleEventInfo;
   
-  ok(info, 'sc.stateDidTryToHandleEventInfo should have been invoked');
-  equals(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
-  equals(info.event, 'test1', 'sc.stateDidTryToHandleEventInfo should have been passed event test1');
-  equals(info.handler, 'eventHandler2', 'sc.stateDidTryToHandleEventInfo should have been passed handler eventHandler2');
-  equals(info.handled, true, 'sc.stateDidTryToHandleEventInfo should have been passed handled true');
+  assert.ok(info, 'sc.stateDidTryToHandleEventInfo should have been invoked');
+  assert.equal(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
+  assert.equal(info.event, 'test1', 'sc.stateDidTryToHandleEventInfo should have been passed event test1');
+  assert.equal(info.handler, 'eventHandler2', 'sc.stateDidTryToHandleEventInfo should have been passed handler eventHandler2');
+  assert.equal(info.handled, true, 'sc.stateDidTryToHandleEventInfo should have been passed handled true');
   
 });
 
-test("try to invoke state foo's eventHandler3 event handler", function() {
+test("try to invoke state foo's eventHandler3 event handler", function (assert) {
   
   var ret = foo.tryToHandleEvent('digit3', 100, 200);
   
   var info = foo.handledEventInfo;
   
-  equals(ret, true, 'foo.tryToHandleEvent should return true');
-  ok(info, 'foo.handledEventInfo should not be null');
-  equals(info.handler, 'eventHandler3', 'foo.eventHandler3 should have been invoked');
-  equals(info.event, 'digit3', 'foo.eventHandler3 should handle event test1');
-  equals(info.arg1, 100, 'foo.eventHandler3 should handle event 100');
-  equals(info.arg2, 200, 'foo.eventHandler3 should handle event 200');
+  assert.equal(ret, true, 'foo.tryToHandleEvent should return true');
+  assert.ok(info, 'foo.handledEventInfo should not be null');
+  assert.equal(info.handler, 'eventHandler3', 'foo.eventHandler3 should have been invoked');
+  assert.equal(info.event, 'digit3', 'foo.eventHandler3 should handle event test1');
+  assert.equal(info.arg1, 100, 'foo.eventHandler3 should handle event 100');
+  assert.equal(info.arg2, 200, 'foo.eventHandler3 should handle event 200');
 
   info = sc.stateWillTryToHandleEventInfo;
   
-  ok(info, 'sc.stateWillTryToHandleEvent should have been invoked');
-  equals(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
-  equals(info.event, 'digit3', 'sc.stateWillTryToHandleEvent should have been passed event digit3');
-  equals(info.handler, 'eventHandler3', 'sc.stateWillTryToHandleEvent should have been passed handler eventHandler3');
+  assert.ok(info, 'sc.stateWillTryToHandleEvent should have been invoked');
+  assert.equal(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
+  assert.equal(info.event, 'digit3', 'sc.stateWillTryToHandleEvent should have been passed event digit3');
+  assert.equal(info.handler, 'eventHandler3', 'sc.stateWillTryToHandleEvent should have been passed handler eventHandler3');
   
   info = sc.stateDidTryToHandleEventInfo;
   
-  ok(info, 'sc.stateDidTryToHandleEventInfo should have been invoked');
-  equals(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
-  equals(info.event, 'digit3', 'sc.stateDidTryToHandleEventInfo should have been passed event digit3');
-  equals(info.handler, 'eventHandler3', 'sc.stateDidTryToHandleEventInfo should have been passed handler eventHandler3');
-  equals(info.handled, true, 'sc.stateDidTryToHandleEventInfo should have been passed handled true');
+  assert.ok(info, 'sc.stateDidTryToHandleEventInfo should have been invoked');
+  assert.equal(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
+  assert.equal(info.event, 'digit3', 'sc.stateDidTryToHandleEventInfo should have been passed event digit3');
+  assert.equal(info.handler, 'eventHandler3', 'sc.stateDidTryToHandleEventInfo should have been passed handler eventHandler3');
+  assert.equal(info.handled, true, 'sc.stateDidTryToHandleEventInfo should have been passed handled true');
   
 });
 
-test("try to invoke state foo's unknownEvent event handler", function() {
+test("try to invoke state foo's unknownEvent event handler", function (assert) {
   
   var ret = foo.tryToHandleEvent('test', 100, 200);
   
   var info = foo.handledEventInfo;
   
-  equals(ret, true, 'foo.tryToHandleEvent should return true');
-  ok(info, 'foo.handledEventInfo should not be null');
-  equals(info.handler, 'unknownEvent', 'foo.unknownEvent should have been invoked');
-  equals(info.event, 'test', 'foo.unknownEvent should handle event test');
-  equals(info.arg1, 100, 'foo.unknownEvent should handle event 100');
-  equals(info.arg2, 200, 'foo.unknownEvent should handle event 200');
+  assert.equal(ret, true, 'foo.tryToHandleEvent should return true');
+  assert.ok(info, 'foo.handledEventInfo should not be null');
+  assert.equal(info.handler, 'unknownEvent', 'foo.unknownEvent should have been invoked');
+  assert.equal(info.event, 'test', 'foo.unknownEvent should handle event test');
+  assert.equal(info.arg1, 100, 'foo.unknownEvent should handle event 100');
+  assert.equal(info.arg2, 200, 'foo.unknownEvent should handle event 200');
 
   info = sc.stateWillTryToHandleEventInfo;
   
-  ok(info, 'sc.stateWillTryToHandleEvent should have been invoked');
-  equals(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
-  equals(info.event, 'test', 'sc.stateWillTryToHandleEvent should have been passed event test');
-  equals(info.handler, 'unknownEvent', 'sc.stateWillTryToHandleEvent should have been passed handler unknownEvent');
+  assert.ok(info, 'sc.stateWillTryToHandleEvent should have been invoked');
+  assert.equal(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
+  assert.equal(info.event, 'test', 'sc.stateWillTryToHandleEvent should have been passed event test');
+  assert.equal(info.handler, 'unknownEvent', 'sc.stateWillTryToHandleEvent should have been passed handler unknownEvent');
   
   info = sc.stateDidTryToHandleEventInfo;
   
-  ok(info, 'sc.stateDidTryToHandleEventInfo should have been invoked');
-  equals(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
-  equals(info.event, 'test', 'sc.stateDidTryToHandleEventInfo should have been passed event test');
-  equals(info.handler, 'unknownEvent', 'sc.stateDidTryToHandleEventInfo should have been passed handler unknownEvent');
-  equals(info.handled, true, 'sc.stateDidTryToHandleEventInfo should have been passed handled true');
+  assert.ok(info, 'sc.stateDidTryToHandleEventInfo should have been invoked');
+  assert.equal(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
+  assert.equal(info.event, 'test', 'sc.stateDidTryToHandleEventInfo should have been passed event test');
+  assert.equal(info.handler, 'unknownEvent', 'sc.stateDidTryToHandleEventInfo should have been passed handler unknownEvent');
+  assert.equal(info.handled, true, 'sc.stateDidTryToHandleEventInfo should have been passed handled true');
   
 });
 
-test("try not to invoke any of state foo's event handlers", function() {
+test("try not to invoke any of state foo's event handlers", function (assert) {
   
   foo.unknownEvent = undefined;
   
@@ -206,83 +211,83 @@ test("try not to invoke any of state foo's event handlers", function() {
   
   var info = foo.handledEventInfo;
   
-  equals(ret, NO, 'foo.tryToHandleEvent should return false');
-  ok(!info, 'foo.handledEventInfo should be null');
+  assert.equal(ret, false, 'foo.tryToHandleEvent should return false');
+  assert.ok(!info, 'foo.handledEventInfo should be null');
 
   info = sc.stateWillTryToHandleEventInfo;
-  ok(!info, 'sc.stateWillTryToHandleEvent should not have been invoked');
+  assert.ok(!info, 'sc.stateWillTryToHandleEvent should not have been invoked');
 
   info = sc.stateDidTryToHandleEventInfo;
-  ok(!info, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
+  assert.ok(!info, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
   
 });
 
-test("try to invoke state foo's eventHandler1 but tryToHandleEvent returns false", function() {
-  foo.eventHandlerReturnValue = NO;
+test("try to invoke state foo's eventHandler1 but tryToHandleEvent returns false", function (assert) {
+  foo.eventHandlerReturnValue = false;
   
   var ret = foo.tryToHandleEvent('eventHandler1', 100, 200);
   
   var info = foo.handledEventInfo;
   
-  equals(ret, NO, 'foo.tryToHandleEvent should return false');
-  ok(info, 'foo.handledEventInfo should be null');
-  equals(info.handler, 'eventHandler1', 'foo.eventHandler1 should have been invoked');
-  equals(info.event, 'eventHandler1', 'foo.eventHandler1 should handle event test');
-  equals(info.arg1, 100, 'foo.eventHandler1 should handle event 100');
-  equals(info.arg2, 200, 'foo.eventHandler1 should handle event 200');
+  assert.equal(ret, false, 'foo.tryToHandleEvent should return false');
+  assert.ok(info, 'foo.handledEventInfo should be null');
+  assert.equal(info.handler, 'eventHandler1', 'foo.eventHandler1 should have been invoked');
+  assert.equal(info.event, 'eventHandler1', 'foo.eventHandler1 should handle event test');
+  assert.equal(info.arg1, 100, 'foo.eventHandler1 should handle event 100');
+  assert.equal(info.arg2, 200, 'foo.eventHandler1 should handle event 200');
 
   info = sc.stateWillTryToHandleEventInfo;
-  ok(info, 'sc.stateWillTryToHandleEvent should not have been invoked');
-  equals(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
-  equals(info.event, 'eventHandler1', 'sc.stateWillTryToHandleEvent should have been passed event test');
-  equals(info.handler, 'eventHandler1', 'sc.stateWillTryToHandleEvent should have been passed handler eventHandler1');
+  assert.ok(info, 'sc.stateWillTryToHandleEvent should not have been invoked');
+  assert.equal(info.state, foo, 'sc.stateWillTryToHandleEvent should have been passed state foo');
+  assert.equal(info.event, 'eventHandler1', 'sc.stateWillTryToHandleEvent should have been passed event test');
+  assert.equal(info.handler, 'eventHandler1', 'sc.stateWillTryToHandleEvent should have been passed handler eventHandler1');
 
   info = sc.stateDidTryToHandleEventInfo;
-  ok(info, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
-  equals(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
-  equals(info.event, 'eventHandler1', 'sc.stateDidTryToHandleEventInfo should have been passed event test');
-  equals(info.handler, 'eventHandler1', 'sc.stateDidTryToHandleEventInfo should have been passed handler eventHandler1');
-  equals(info.handled, false, 'sc.stateDidTryToHandleEventInfo should have been passed handled false');
+  assert.ok(info, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
+  assert.equal(info.state, foo, 'sc.stateDidTryToHandleEventInfo should have been passed state foo');
+  assert.equal(info.event, 'eventHandler1', 'sc.stateDidTryToHandleEventInfo should have been passed event test');
+  assert.equal(info.handler, 'eventHandler1', 'sc.stateDidTryToHandleEventInfo should have been passed handler eventHandler1');
+  assert.equal(info.handled, false, 'sc.stateDidTryToHandleEventInfo should have been passed handled false');
 });
 
-test("try to invoke all of state foo's handlers but tryToHandleEvent returns false", function() {
+test("try to invoke all of state foo's handlers but tryToHandleEvent returns false", function (assert) {
   var ret, info;
   
-  foo.eventHandlerReturnValue = NO;
+  foo.eventHandlerReturnValue = false;
   
   ret = foo.tryToHandleEvent('eventHandler1');
   
-  equals(ret, NO, 'foo.tryToHandleEvent should return false');
+  assert.equal(ret, false, 'foo.tryToHandleEvent should return false');
   info = foo.handledEventInfo;
-  ok(info, 'foo.handledEventInfo should be null');
-  equals(info.handler, 'eventHandler1', 'foo.eventHandler1 should have been invoked');
-  ok(sc.stateWillTryToHandleEventInfo, 'sc.stateWillTryToHandleEvent should not have been invoked');
-  ok(sc.stateDidTryToHandleEventInfo, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
+  assert.ok(info, 'foo.handledEventInfo should be null');
+  assert.equal(info.handler, 'eventHandler1', 'foo.eventHandler1 should have been invoked');
+  assert.ok(sc.stateWillTryToHandleEventInfo, 'sc.stateWillTryToHandleEvent should not have been invoked');
+  assert.ok(sc.stateDidTryToHandleEventInfo, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
   
   ret = foo.tryToHandleEvent('test1');
   
-  equals(ret, NO, 'foo.tryToHandleEvent should return false for event test1');
+  assert.equal(ret, false, 'foo.tryToHandleEvent should return false for event test1');
   info = foo.handledEventInfo;
-  ok(info, 'foo.handledEventInfo should be null');
-  equals(info.handler, 'eventHandler2', 'foo.eventHandler2 should have been invoked');
-  ok(sc.stateWillTryToHandleEventInfo, 'sc.stateWillTryToHandleEvent should not have been invoked');
-  ok(sc.stateDidTryToHandleEventInfo, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
+  assert.ok(info, 'foo.handledEventInfo should be null');
+  assert.equal(info.handler, 'eventHandler2', 'foo.eventHandler2 should have been invoked');
+  assert.ok(sc.stateWillTryToHandleEventInfo, 'sc.stateWillTryToHandleEvent should not have been invoked');
+  assert.ok(sc.stateDidTryToHandleEventInfo, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
   
   ret = foo.tryToHandleEvent('digit3');
   
-  equals(ret, NO, 'foo.tryToHandleEvent should return false for event digit3');
+  assert.equal(ret, false, 'foo.tryToHandleEvent should return false for event digit3');
   info = foo.handledEventInfo;
-  ok(info, 'foo.handledEventInfo should be null');
-  equals(info.handler, 'eventHandler3', 'foo.eventHandler3 should have been invoked');
-  ok(sc.stateWillTryToHandleEventInfo, 'sc.stateWillTryToHandleEvent should not have been invoked');
-  ok(sc.stateDidTryToHandleEventInfo, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
+  assert.ok(info, 'foo.handledEventInfo should be null');
+  assert.equal(info.handler, 'eventHandler3', 'foo.eventHandler3 should have been invoked');
+  assert.ok(sc.stateWillTryToHandleEventInfo, 'sc.stateWillTryToHandleEvent should not have been invoked');
+  assert.ok(sc.stateDidTryToHandleEventInfo, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
   
   ret = foo.tryToHandleEvent('blah');
   
-  equals(ret, NO, 'foo.tryToHandleEvent should return false for event blah');
+  assert.equal(ret, false, 'foo.tryToHandleEvent should return false for event blah');
   info = foo.handledEventInfo;
-  ok(info, 'foo.handledEventInfo should be null');
-  equals(info.handler, 'unknownEvent', 'foo.unknownEvent should have been invoked');
-  ok(sc.stateWillTryToHandleEventInfo, 'sc.stateWillTryToHandleEvent should not have been invoked');
-  ok(sc.stateDidTryToHandleEventInfo, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
+  assert.ok(info, 'foo.handledEventInfo should be null');
+  assert.equal(info.handler, 'unknownEvent', 'foo.unknownEvent should have been invoked');
+  assert.ok(sc.stateWillTryToHandleEventInfo, 'sc.stateWillTryToHandleEvent should not have been invoked');
+  assert.ok(sc.stateDidTryToHandleEventInfo, 'sc.stateDidTryToHandleEventInfo should not have been invoked');
 });

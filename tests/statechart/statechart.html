@@ -18,7 +18,7 @@
       window.ok = QUnit.assert.ok;
       window.assert = QUnit.assert;
     </script>
-    <script src="./system/sequence_matcher.js" type="module"></script>
+    <!-- <script src="./system/sequence_matcher.js" type="module"></script>
     <script src="./private/state_path_matcher.js" type="module"></script>
     <script src="./state//initial_substate.js" type="module"></script>
     <script src="./state/is_current_state.js" type="module"></script>
@@ -27,10 +27,10 @@
     <script src="./state/methods/get_state.js" type="module"></script>
     <script src="./state/methods/get_substate.js" type="module"></script>
     <script src="./state/methods/route_triggered.js" type="module"></script>
-    <!-- <script src="./base/keys.js" type="module"></script> -->
-    <!-- <script src="./base/makeArray.js" type="module"></script> -->
-    <!-- <script src="./base/objectForPropertyPath.js" type="module"></script> -->
-    <!-- <script src="./base/requiredObjectForPropertyPath.js" type="module"></script> -->
-    <!-- <script src="./base/tupleForPropertyPath.js" type="module"></script> --> 
+    <script src="./state/methods/try_to_handle_event.js" type="module"></script> -->
+    <script src="./state/methods/find_first_relative_current_state/with_concurrent.js" type="module"></script>
+    <script src="./state/methods/find_first_relative_current_state/without_concurrent.js" type="module"></script>
+    <script src="./state/plugin/mixin.js" type="module"></script>
+    <script src="./state/plugin/nesting.js" type="module"></script> 
 </body>
 </html>

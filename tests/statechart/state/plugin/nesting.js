@@ -1,46 +1,50 @@
 // ==========================================================================
-// SC.State Unit Test
+// State Unit Test
 // ==========================================================================
 /*globals SC externalState1 externalState2 */
 
-var statechart = null;
-externalState1 = null;
-externalState2 = null;
+import { SC, GLOBAL } from '/core/core.js';
+import { Statechart, State, EmptyState } from '/statechart/statechart.js';
 
-module("SC.State.plugin: Nest States Tests", {
-  setup: function() {
+
+var statechart = null;
+GLOBAL.externalState1 = null;
+GLOBAL.externalState2 = null;
+
+module("State.plugin: Nest States Tests", {
+  beforeEach: function() {
     
-    externalState1 = SC.State.extend({
+    externalState1 = State.extend({
       
       message: 'external state 1'
       
     });
     
-    externalState2 = SC.State.extend({
+    externalState2 = State.extend({
       
       initialSubstate: 'd',
       
       message: 'external state 2',
       
-      d: SC.State.design(),
+      d: State.design(),
       
-      e: SC.State.plugin('externalState1')
+      e: State.plugin('externalState1')
       
     });
     
-    statechart = SC.Statechart.create({
+    statechart = Statechart.create({
       
-      monitorIsActive: YES,
+      monitorIsActive: true,
       
-      rootState: SC.State.design({
+      rootState: State.design({
         
         initialSubstate: 'a',
         
-        a: SC.State.plugin('externalState1'),
+        a: State.plugin('externalState1'),
         
-        b: SC.State.plugin('externalState2'),
+        b: State.plugin('externalState2'),
         
-        c: SC.State.design()
+        c: State.design()
         
       })
       
@@ -49,47 +53,47 @@ module("SC.State.plugin: Nest States Tests", {
     statechart.initStatechart();
   },
   
-  teardown: function() {
+  afterEach: function() {
     statechart.destroy();
     externalState1 = null;
     externalState2 = null;
   }
 });
 
-test("check statechart states", function() {
+test("check statechart states", function (assert) {
   var stateA = statechart.getState('a'),
       stateB = statechart.getState('b'),
       stateC = statechart.getState('c'),
       stateD = statechart.getState('d'),
       stateE = statechart.getState('e');
 
-  equals(SC.kindOf(stateA, externalState1), true, 'state a should be kind of externalState1');
-  equals(SC.kindOf(stateB, externalState2), true, 'state b should be kind of externalState2');
-  equals(SC.kindOf(stateE, externalState1), true, 'state e should be kind of externalState1');
-  equals(SC.kindOf(stateC, externalState1), false, 'state c should not be kind of externalState1');
-  equals(SC.kindOf(stateD, externalState1), false, 'state d should not be kind of externalState1');
+  assert.equal(SC.kindOf(stateA, externalState1), true, 'state a should be kind of externalState1');
+  assert.equal(SC.kindOf(stateB, externalState2), true, 'state b should be kind of externalState2');
+  assert.equal(SC.kindOf(stateE, externalState1), true, 'state e should be kind of externalState1');
+  assert.equal(SC.kindOf(stateC, externalState1), false, 'state c should not be kind of externalState1');
+  assert.equal(SC.kindOf(stateD, externalState1), false, 'state d should not be kind of externalState1');
   
-  equals(stateA !== stateE, true, 'state a should not be equal to state e');
+  assert.equal(stateA !== stateE, true, 'state a should not be equal to state e');
 });
 
-test("check statechart initialization", function() {
+test("check statechart initialization", function (assert) {
   var monitor = statechart.get('monitor');
   var root = statechart.get('rootState');
   
-  equals(monitor.get('length'), 2, 'initial state sequence should be of length 2');
-  equals(monitor.matchSequence().begin().entered(root, 'a').end(), true, 'initial sequence should be entered[ROOT, a]');
-  equals(statechart.get('currentStateCount'), 1, 'current state count should be 1');
-  equals(statechart.stateIsCurrentState('a'), true, 'current state should be a');
+  assert.equal(monitor.get('length'), 2, 'initial state sequence should be of length 2');
+  assert.equal(monitor.matchSequence().begin().entered(root, 'a').end(), true, 'initial sequence should be entered[ROOT, a]');
+  assert.equal(statechart.get('currentStateCount'), 1, 'current state count should be 1');
+  assert.equal(statechart.stateIsCurrentState('a'), true, 'current state should be a');
 });
 
-test("go to state e", function() {
+test("go to state e", function (assert) {
   var monitor = statechart.get('monitor');
       
   monitor.reset();
   statechart.gotoState('e');
   
-  equals(monitor.get('length'), 3, 'initial state sequence should be of length 3');
-  equals(monitor.matchSequence().begin().exited('a').entered('b', 'e').end(), true, 'initial sequence should be exited[a], entered[b, e]');
-  equals(statechart.get('currentStateCount'), 1, 'current state count should be 1');
-  equals(statechart.stateIsCurrentState('e'), true, 'current state should be e');
+  assert.equal(monitor.get('length'), 3, 'initial state sequence should be of length 3');
+  assert.equal(monitor.matchSequence().begin().exited('a').entered('b', 'e').end(), true, 'initial sequence should be exited[a], entered[b, e]');
+  assert.equal(statechart.get('currentStateCount'), 1, 'current state count should be 1');
+  assert.equal(statechart.stateIsCurrentState('e'), true, 'current state should be e');
 });

@@ -1,35 +1,39 @@
 // ==========================================================================
-// SC.Statechart Unit Test
+// Statechart Unit Test
 // ==========================================================================
 /*globals SC TestState */
 
-TestState = null;
+import { SC, GLOBAL } from '/core/core.js';
+import { StatechartManager, State, EmptyState } from '/statechart/statechart.js';
+
+
+GLOBAL.TestState = null;
 var obj, MixinA, MixinB, stateA, stateB, stateC;
 
-module("SC.State.plugin: Mixin Tests", {
-  setup: function() {
+module("State.plugin: Mixin Tests", {
+  beforeEach: function() {
     
     MixinA = {
-      isMixinA: YES
+      isMixinA: true
     };
     
     MixinB = {
-      isMixinB: YES
+      isMixinB: true
     };
 
-    TestState = SC.State.extend({
-      isTestState: YES
+    TestState = State.extend({
+      isTestState: true
     });
 
-    obj = SC.Object.create(SC.StatechartManager, {
+    obj = SC.Object.create(StatechartManager, {
       
       initialState: 'stateA',
       
-      stateA: SC.State.plugin('TestState'),
+      stateA: State.plugin('TestState'),
       
-      stateB: SC.State.plugin('TestState', MixinA),
+      stateB: State.plugin('TestState', MixinA),
       
-      stateC: SC.State.plugin('TestState', MixinA, MixinB)
+      stateC: State.plugin('TestState', MixinA, MixinB)
       
     });
     
@@ -39,30 +43,30 @@ module("SC.State.plugin: Mixin Tests", {
 
   },
   
-  teardown: function() {
+  afterEach: function() {
     obj = TestState = MixinA = MixinB = null;
     stateA = stateB = stateC = null;
   }
 
 });
 
-test("check plugin state A", function() {
-  ok(SC.kindOf(stateA, TestState));
-  ok(stateA.get('isTestState'));
-  ok(!stateA.get('isMixinA'));
-  ok(!stateA.get('isMixinB'));
+test("check plugin state A", function (assert) {
+  assert.ok(SC.kindOf(stateA, TestState));
+  assert.ok(stateA.get('isTestState'));
+  assert.ok(!stateA.get('isMixinA'));
+  assert.ok(!stateA.get('isMixinB'));
 });
 
-test("check plugin state B", function() {
-  ok(SC.kindOf(stateB, TestState));
-  ok(stateB.get('isTestState'));
-  ok(stateB.get('isMixinA'));
-  ok(!stateB.get('isMixinB'));
+test("check plugin state B", function (assert) {
+  assert.ok(SC.kindOf(stateB, TestState));
+  assert.ok(stateB.get('isTestState'));
+  assert.ok(stateB.get('isMixinA'));
+  assert.ok(!stateB.get('isMixinB'));
 });
 
-test("check plugin state C", function() {
-  ok(SC.kindOf(stateC, TestState));
-  ok(stateC.get('isTestState'));
-  ok(stateC.get('isMixinA'));
-  ok(stateC.get('isMixinB'));
+test("check plugin state C", function (assert) {
+  assert.ok(SC.kindOf(stateC, TestState));
+  assert.ok(stateC.get('isTestState'));
+  assert.ok(stateC.get('isMixinA'));
+  assert.ok(stateC.get('isMixinB'));
 });

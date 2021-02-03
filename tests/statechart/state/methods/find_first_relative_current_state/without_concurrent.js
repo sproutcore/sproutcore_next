@@ -3,32 +3,37 @@
 // ==========================================================================
 /*globals SC */
 
+
+import { SC } from '/core/core.js';
+import { Statechart, State, StatechartDelegate, StateRouteHandlerContext } from '/statechart/statechart.js';
+
+
 var sc, root, stateA, stateB, stateC, stateD, stateE, stateF;
 
-module("SC.State: findFirstRelativeCurrentState method Tests (without concurrent states)", {
+module("State: findFirstRelativeCurrentState method Tests (without concurrent states)", {
   
-  setup: function() {
+  beforeEach: function() {
     
-    sc = SC.Statechart.create({
+    sc = Statechart.create({
       initialState: 'a',
     
-      a: SC.State.design({
+      a: State.design({
         
         initialSubstate: 'c',
         
-        c: SC.State.design(),
+        c: State.design(),
         
-        d: SC.State.design()
+        d: State.design()
         
       }),
       
-      b: SC.State.design({
+      b: State.design({
         
         initialSubstate: 'e',
         
-        e: SC.State.design(),
+        e: State.design(),
         
-        f: SC.State.design()
+        f: State.design()
         
       })
       
@@ -45,30 +50,30 @@ module("SC.State: findFirstRelativeCurrentState method Tests (without concurrent
     stateF = sc.getState('f');
   },
   
-  teardown: function() {
+  afterEach: function() {
     sc = root = stateA = stateB = stateC = stateD = stateE = stateF = null;
   }
   
 });
 
-test("check when current state is state C", function() {
-  equals(root.findFirstRelativeCurrentState(), stateC, "root state should return state C");
-  equals(stateA.findFirstRelativeCurrentState(), stateC, "state A should return state C");
-  equals(stateB.findFirstRelativeCurrentState(), stateC, "state B should return state C");
-  equals(stateC.findFirstRelativeCurrentState(), stateC, "state C should return state C");
-  equals(stateD.findFirstRelativeCurrentState(), stateC, "state D should return state C");
-  equals(stateE.findFirstRelativeCurrentState(), stateC, "state E should return state C");
-  equals(stateF.findFirstRelativeCurrentState(), stateC, "state F should return state C");
+test("check when current state is state C", function (assert) {
+  assert.equal(root.findFirstRelativeCurrentState(), stateC, "root state should return state C");
+  assert.equal(stateA.findFirstRelativeCurrentState(), stateC, "state A should return state C");
+  assert.equal(stateB.findFirstRelativeCurrentState(), stateC, "state B should return state C");
+  assert.equal(stateC.findFirstRelativeCurrentState(), stateC, "state C should return state C");
+  assert.equal(stateD.findFirstRelativeCurrentState(), stateC, "state D should return state C");
+  assert.equal(stateE.findFirstRelativeCurrentState(), stateC, "state E should return state C");
+  assert.equal(stateF.findFirstRelativeCurrentState(), stateC, "state F should return state C");
 });
 
-test("check when current state is state F", function() {
+test("check when current state is state F", function (assert) {
   sc.gotoState(stateF);
   
-  equals(root.findFirstRelativeCurrentState(), stateF, "root state should return state F");
-  equals(stateA.findFirstRelativeCurrentState(), stateF, "state A should return state F");
-  equals(stateB.findFirstRelativeCurrentState(), stateF, "state B should return state F");
-  equals(stateC.findFirstRelativeCurrentState(), stateF, "state C should return state F");
-  equals(stateD.findFirstRelativeCurrentState(), stateF, "state D should return state F");
-  equals(stateE.findFirstRelativeCurrentState(), stateF, "state E should return state F");
-  equals(stateF.findFirstRelativeCurrentState(), stateF, "state F should return state F");
+  assert.equal(root.findFirstRelativeCurrentState(), stateF, "root state should return state F");
+  assert.equal(stateA.findFirstRelativeCurrentState(), stateF, "state A should return state F");
+  assert.equal(stateB.findFirstRelativeCurrentState(), stateF, "state B should return state F");
+  assert.equal(stateC.findFirstRelativeCurrentState(), stateF, "state C should return state F");
+  assert.equal(stateD.findFirstRelativeCurrentState(), stateF, "state D should return state F");
+  assert.equal(stateE.findFirstRelativeCurrentState(), stateF, "state E should return state F");
+  assert.equal(stateF.findFirstRelativeCurrentState(), stateF, "state F should return state F");
 });
