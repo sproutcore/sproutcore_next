@@ -1,0 +1,23 @@
+{
+  "name": "sproutcore_next",
+  "version": "0.0.5",
+  "description": "Attempt at next generation sc",
+  "main": "test.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.hku.nl:maurits.lamers/sproutcore_next"
+  },
+  "author": "Maurits Lamers",
+  "license": "MIT",
+  "types": "./typings/core.d.ts",
+  "dependencies": {
+    "httpserver": "^0.3.0",
+    "jquery": "^3.5.1"
+  }
+}
