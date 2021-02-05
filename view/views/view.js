@@ -1,5 +1,7 @@
 
 import { CoreView } from './core_view.js';
+import { cursorSupport } from './view/cursor.js';
+import { viewEnabledSupport } from './view/enabled.js';
 
 /**
   @class
@@ -279,7 +281,7 @@ import { CoreView } from './core_view.js';
   @since SproutCore 1.0
 
 */
-export const View = CoreView.extend(/** @scope View.prototype */{
+export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursorSupport, /** @scope View.prototype */{
   classNames: ['sc-view'],
 
   displayProperties: [],

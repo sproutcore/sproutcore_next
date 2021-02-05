@@ -5,8 +5,10 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { none, typeOf } from "./base.js";
-import { T_NUMBER } from "./constants.js";
+import { $A, none, typeOf } from "./base.js";
+import { T_NUMBER, T_STRING } from "./constants.js";
+import { Locale } from "./locale.js";
+import { error } from "./logger.js";
 
 
 const STRING_TITLEIZE_REGEXP = (/([\s|\-|\_|\n])([^\s|\-|\_|\n]?)/g);
@@ -240,6 +242,176 @@ export const mult = function (str, value) {
   return ret;
 }
 
+/**
+  Escapes the given string to make it safe to use as a jQuery selector.
+  jQuery will interpret '.' and ':' as class and pseudo-class indicators.
+
+  @see http://learn.jquery.com/using-jquery-core/faq/how-do-i-select-an-element-by-an-id-that-has-characters-used-in-css-notation/
+
+  @param {String} str the string to escape
+  @returns {String} the escaped string
+*/
+export const escapeCssIdForSelector = function (str) {
+  return str.replace(STRING_CSS_ESCAPED_REGEXP, '\\$1');
+};
+
+  /**
+    Localizes the string.  This will look up the receiver string as a key
+    in the current Strings hash.  If the key matches, the loc'd value will be
+    used.  The resulting string will also be passed through fmt() to insert
+    any variables.
+
+    @param str {String} String to localize
+    @param args {Object...} optional arguments to interpolate also
+    @returns {String} the localized and formatted string.
+  */
+export const loc = function (str) {
+  // NB: This could be implemented as a wrapper to locWithDefault() but
+  // it would add some overhead to deal with the arguments and adds stack
+  // frames, so we are keeping the implementation separate.
+  if (!Locale.currentLocale) { Locale.createCurrentLocale(); }
+
+  var localized = Locale.currentLocale.locWithDefault(str);
+  if (typeOf(localized) !== T_STRING) { localized = str; }
+
+  var args = $A(arguments);
+  args.shift(); // remove str param
+  //to extend String.prototype
+  if (args.length > 0 && args[0] && args[0].isSCArray) { args = args[0]; }
+
+  // I looked up the performance of try/catch. IE and FF do not care so
+  // long as the catch never happens. Safari and Chrome are affected rather
+  // severely (10x), but this is a one-time cost per loc (the code being
+  // executed is likely as expensive as this try/catch cost).
+  //
+  // Also, .loc() is not called SO much to begin with. So, the error handling
+  // that this gives us is worth it.
+  try {
+    return fmt(localized, args);      
+  } catch (e) {
+      error("Error processing string with key: " + str);
+      error("Localized String: " + localized);
+      error("Error: " + e);
+  }
+
+};
+
+/**
+  Returns the localized metric value for the specified key.  A metric is a
+  single value intended to be used in your interface’s layout, such as
+  "Button.Confirm.Width" = 100.
+
+  If you would like to return a set of metrics for use in a layout hash, you
+  may prefer to use the locLayout() method instead.
+
+  @param {String} key
+  @returns {Number} the localized metric
+*/
+export const locMetric = function (key) {
+  let K             = Locale,
+      currentLocale = K.currentLocale;
+
+  if (!currentLocale) {
+    K.createCurrentLocale();
+    currentLocale = K.currentLocale;
+  }
+  return currentLocale.locMetric(key);
+};
+
+/**
+  Creates and returns a new hash suitable for use as an View’s 'layout'
+  hash.  This hash will be created by looking for localized metrics following
+  a pattern based on the “base key” you specify.
+
+  For example, if you specify "Button.Confirm", the following metrics will be
+  used if they are defined:
+
+    Button.Confirm.left
+    Button.Confirm.top
+    Button.Confirm.right
+    Button.Confirm.bottom
+    Button.Confirm.width
+    Button.Confirm.height
+    Button.Confirm.midWidth
+    Button.Confirm.minHeight
+    Button.Confirm.centerX
+    Button.Confirm.centerY
+
+  Additionally, you can optionally specify a hash which will be merged on top
+  of the returned hash.  For example, if you wish to allow a button’s width
+  to be configurable per-locale, but always wish for it to be centered
+  vertically and horizontally, you can call:
+
+    locLayout("Button.Confirm", {centerX:0, centerY:0})
+
+  …so that you can combine both localized and non-localized elements in the
+  returned hash.  (An exception will be thrown if there is a locale-specific
+  key that matches a key specific in this hash.)
+
+
+  For example, if your locale defines:
+
+    Button.Confirm.left
+    Button.Confirm.top
+    Button.Confirm.right
+    Button.Confirm.bottom
+
+
+  …then these two code snippets will produce the same result:
+
+    layout: {
+      left:   "Button.Confirm.left".locMetric(),
+      top:    "Button.Confirm.top".locMetric(),
+      right:  "Button.Confirm.right".locMetric(),
+      bottom: "Button.Confirm.bottom".locMetric()
+    }
+
+    layout: "Button.Confirm".locLayout()
+
+  The former is slightly more efficient because it doesn’t have to iterate
+  through the possible localized layout keys, but in virtually all situations
+  you will likely wish to use the latter.
+
+  @param str {String} key
+  @param {str} (optional) additionalHash
+  @param {String} (optional) additionalHash
+  @returns {Number} the localized metric
+*/
+export const locLayout = function (key, additionalHash) {
+  let K             = Locale,
+      currentLocale = K.currentLocale;
+
+  if (!currentLocale) {
+    K.createCurrentLocale();
+    currentLocale = K.currentLocale;
+  }
+  return currentLocale.locLayout(key, additionalHash);
+};
+
+/**
+  Works just like loc() except that it will return the passed default
+  string if a matching key is not found.
+
+  @param {String} str the string to localize
+  @param {String} def the default to return
+  @param {Object...} args optional formatting arguments
+  @returns {String} localized and formatted string
+*/
+export const locWithDefault = function (str, def) {
+  if (!Locale.currentLocale) { Locale.createCurrentLocale(); }
+
+  var localized = Locale.currentLocale.locWithDefault(str, def);
+  if (typeOf(localized) !== T_STRING) { localized = str; }
+
+  var args = $A(arguments);
+  args.shift(); // remove str param
+  args.shift(); // remove def param
+
+  return fmt(localized, args);
+};
+
+
+
 export const SCString = {
   fmt,
   w,
@@ -247,5 +419,10 @@ export const SCString = {
   camelize,
   decamelize,
   dasherize,
-  mult
+  mult,
+  escapeCssIdForSelector,
+  loc,
+  locMetric,
+  locLayout,
+  locWithDefault
 }

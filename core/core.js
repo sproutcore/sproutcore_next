@@ -36,6 +36,8 @@ import { DelegateSupport } from './mixins/delegate_support.js';
 import { detectedBrowser, OS, CLASS_PREFIX, CSS_PREFIX, BROWSER, ENGINE, DEVICE, DOM_PREFIX } from './system/browser.js';
 import { readyMixin } from './system/ready.js';
 
+import { Locale, metricsFor, stringsFor, methodForLocale,  hashesForLocale } from './system/locale.js';
+
 export const GLOBAL = global;
 
 // /** @type {import('../typings/core').SC} */
@@ -148,7 +150,12 @@ export const SC = {
   ENGINE,
   DEVICE,
   DOM_PREFIX,
-  DelegateSupport
+  DelegateSupport,
+  Locale,
+  methodForLocale,
+  stringsFor,
+  metricsFor,
+  hashesForLocale
 };
 
 mixin(SC, readyMixin);

@@ -7,11 +7,11 @@
 /*global jQuery*/
 
 import { SC } from '../../core/core.js';
-import { CoreView } from './view/base.js';
 import { CoreQuery } from '../../event/event.js';
 
 import { Responder } from '../../../responder/responder.js';
-
+import { viewStates, viewStatechart } from './view/statechart.js'
+import { coreViewEnabledSupport } from './view/enabled.js';
 
 
 // sc_require('system/browser');
@@ -48,7 +48,7 @@ EMPTY_CHILD_VIEWS_ARRAY.needsClone = true;
   @class
 
 */
-export const CoreView = Responder.extend(SC.DelegateSupport, (
+export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
 /** @scope View.prototype */ {
 
   /**
@@ -1904,6 +1904,10 @@ CoreView.mixin(
 
 });
 
+CoreView.mixin(viewStates);
+CoreView.mixin(coreViewEnabledSupport);
+
+
 // .......................................................
 // OUTLET BUILDER
 //
@@ -1914,7 +1918,7 @@ CoreView.mixin(
   define an outlet that points to another view or object.  The root object
   used for the path will be the receiver.
 */
-outlet = function (path, root) {
+export const outlet = function (path, root) {
   return function (key) {
     return (this[key] = objectForPropertyPath(path, (root !== undefined) ? root : this));
   }.property();
@@ -1932,3 +1936,4 @@ CoreView.unload = function () {
     }
   }
 };
+

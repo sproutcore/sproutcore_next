@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { fmt, w, capitalize, camelize, decamelize, dasherize, mult } from '../system/string.js';
+import { fmt, w, capitalize, camelize, decamelize, dasherize, mult, loc, locLayout, locMetric, locWithDefault, escapeCssIdForSelector } from '../system/string.js';
 
 /**
   @see SC.String.fmt
@@ -48,4 +48,46 @@ String.prototype.dasherize = function () {
 String.prototype.mult = function (value) {
   // @ts-ignore
   return mult(this, value);
+}
+
+String.prototype.loc = function(...args) {
+  args.unshift(this);
+  return loc(...args);
+};
+
+String.prototype.locWithDefault = function (...args) {
+  args.unshift(this);
+  locWithDefault(...args);
+};
+// /**
+//   @see SC.String.locWithDefault
+// */
+// locWithDefault: function(def) {
+//   var args = SC.$A(arguments);
+//   args.unshift(this);
+//   return SC.String.locWithDefault.apply(SC.String, args);
+// },
+
+// String.prototype.loc = function (str, ...args) {
+//   return loc(this.toString(), args);
+// };
+
+// String.prototype.locMetric = function () {
+//   return locMetric(this.toString());
+// };
+
+String.prototype.locLayout = function (obj) {
+  return locLayout(this.toString(), obj);
+}
+
+String.prototype.locWithDefault = function (def, ...args) {
+  return locWithDefault(this.toString(), def, ...args);
+}
+
+String.prototype.locMetric = function () {
+  return locMetric(this.toString());
+};
+
+String.prototype.escapeCssIdForSelector = function () {
+  return escapeCssIdForSelector(this);
 }

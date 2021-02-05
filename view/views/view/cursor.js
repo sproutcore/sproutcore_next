@@ -1,6 +1,6 @@
 // sc_require("views/view");
 
-export const CursorSupport = /** @scope View.prototype */ {
+export const cursorSupport = /** @scope View.prototype */ {
 
   /**
     You can set this to an Cursor instance; whenever that Cursor's
@@ -37,4 +37,4 @@ export const CursorSupport = /** @scope View.prototype */ {
   */
   shouldInheritCursor: true
 
-});
+};

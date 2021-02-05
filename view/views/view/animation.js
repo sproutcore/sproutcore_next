@@ -2,7 +2,7 @@
 // Project:   SproutCore - JavaScript Application Framework
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-sc_require("views/view");
+// sc_require("views/view");
 
 /** @private
   Properties that can be animated
@@ -72,15 +72,14 @@ const ANIMATABLE_PROPERTIES = {
   @readonly
   @enum {Number}
 */
-LayoutState = {
+export const LayoutState = {
   START: 1,
   CURRENT: 2,
   END: 3
 };
 
 
-View.reopen(
-  /** @scope View.prototype */ {
+const animationSupport = /** @scope View.prototype */ {
 
   /** @private Shared object used to avoid continually initializing/destroying objects. */
   _SC_DECOMPOSED_TRANSFORM_MAP: null,
@@ -254,7 +253,7 @@ View.reopen(
 
     // Normalize arguments
     // TODO: Revisit .animate() arguments re: overloading.
-    if (typeof key === T_STRING) {
+    if (typeof key === SC.T_STRING) {
       hash = {};
       hash[key] = value;
     } else {
@@ -264,10 +263,10 @@ View.reopen(
       hash = key;
     }
 
-    optionsType = typeOf(options);
-    if (optionsType === T_NUMBER) {
+    optionsType = SC.typeOf(options);
+    if (optionsType === SC.T_NUMBER) {
       options = { duration: options };
-    } else if (optionsType !== T_HASH) {
+    } else if (optionsType !== SC.T_HASH) {
       throw new Error("Must provide options hash!");
     }
 
@@ -314,7 +313,7 @@ View.reopen(
     // Timing function
     timing = options.timing;
     if (timing) {
-      if (typeof timing !== T_STRING) {
+      if (typeof timing !== SC.T_STRING) {
         options.timing = "cubic-bezier(" + timing[0] + ", " + timing[1] + ", " +
                                          timing[2] + ", " + timing[3] + ")";
       } // else leave as is (assume proper CSS timing String)
@@ -714,11 +713,11 @@ View.reopen(
             // Set scale.
             if (expectsScale) {
               // If the scale was set in the layout as an Array, return it as an Array.
-              if (typeOf(scaleLayout) === T_ARRAY) {
+              if (SC.typeOf(scaleLayout) === T_ARRAY) {
                 ret.scale = [decomposition.scaleX, decomposition.scaleY];
 
               // If the scale was set in the layout as an Object, return it as an Object.
-              } else if (typeOf(scaleLayout) === T_HASH) {
+              } else if (SC.typeOf(scaleLayout) === T_HASH) {
                 ret.scale = { x: decomposition.scaleX, y: decomposition.scaleY };
 
               // Return it as a single value.
@@ -885,4 +884,4 @@ View.reopen(
     }
   }
 
-});
+};

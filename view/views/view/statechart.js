@@ -1,9 +1,12 @@
-sc_require("views/view/base");
+// sc_require("views/view/base");
+
+
+
 
 // When in debug mode, core developers can log the view state.
 //@if (debug)
-SC.LOG_VIEW_STATES = false;
-SC.LOG_VIEW_STATES_STYLE = {
+const LOG_VIEW_STATES = false;
+const LOG_VIEW_STATES_STYLE = {
   0x0200: 'color: #67b7db; font-style: italic;', // UNRENDERED
   0x0300: 'color: #67b7db; font-style: italic;', // UNATTACHED
   0x0380: 'color: #67b7db; font-style: italic;', // ATTACHED_PARTIAL
@@ -19,9 +22,26 @@ SC.LOG_VIEW_STATES_STYLE = {
 };
 //@endif
 
+export const IS_RENDERED = 0x0100;
+export const IS_ATTACHED = 0x0080;
+export const IS_SHOWN    = 0x0040;
+export const IS_HIDDEN   = 0x0020;
+export const UNRENDERED  = 0x0200;
+export const UNATTACHED  = 0x0300;
+export const ATTACHED_PARTIAL = 0x0380;
+export const ATTACHED_HIDDEN  = 0x03A0;
+export const ATTACHED_SHOWN   = 0x03C0;
+export const ATTACHED_HIDDEN_BY_PARENT = 0x03A1;
+export const ATTACHED_BUILDING_IN      = 0x03C1;
+export const ATTACHED_BUILDING_OUT     = 0x03C4;
+export const ATTACHED_BUILDING_OUT_BY_PARENT = 0x03C5;
+export const ATTACHED_SHOWING = 0x03C2;
+export const ATTACHED_HIDING = 0x03C3; // 963 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
+export const ATTACHED_SHOWN_ANIMATING = 0x03C6; // 966 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
 
-SC.CoreView.mixin(
-  /** @scope SC.CoreView */ {
+
+
+export const viewStates = /** @scope CoreView */ {
 
   // State bit masks
 
@@ -33,48 +53,48 @@ SC.CoreView.mixin(
 
     Use a logical AND (single `&`) to test rendered status.  For example,
 
-        view.get('viewState') & SC.CoreView.IS_RENDERED
+        view.get('viewState') & CoreView.IS_RENDERED
 
     @static
     @constant
   */
-  IS_RENDERED: 0x0100, // 01 0000 0000, 256
+  IS_RENDERED, // 01 0000 0000, 256
 
   /**
     The view has been attached.
 
     Use a logical AND (single `&`) to test attached status.  For example,
 
-        view.get('viewState') & SC.CoreView.IS_ATTACHED
+        view.get('viewState') & CoreView.IS_ATTACHED
 
     @static
     @constant
   */
-  IS_ATTACHED: 0x0080, // 00 1000 0000, 128
+  IS_ATTACHED, // 00 1000 0000, 128
 
   /**
     The view is visible in the display.
 
     Use a logical AND (single `&`) to test shown status.  For example,
 
-        view.get('viewState') & SC.CoreView.IS_SHOWN
+        view.get('viewState') & CoreView.IS_SHOWN
 
     @static
     @constant
   */
-  IS_SHOWN: 0x0040, // 00 0100 0000, 64
+  IS_SHOWN, // 00 0100 0000, 64
 
   /**
     The view is invisible in the display.
 
     Use a logical AND (single `&`) to test hidden status.  For example,
 
-        view.get('viewState') & SC.CoreView.IS_HIDDEN
+        view.get('viewState') & CoreView.IS_HIDDEN
 
     @static
     @constant
   */
-  IS_HIDDEN: 0x0020, // 00 0010 0000, 32
+  IS_HIDDEN, // 00 0010 0000, 32
 
   // Main states
 
@@ -84,7 +104,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  UNRENDERED: 0x0200, // 10 0000 0000, 512 (IS_CREATED)
+  UNRENDERED, // 10 0000 0000, 512 (IS_CREATED)
 
   /**
     The view has been created and rendered, but has not been attached
@@ -93,7 +113,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  UNATTACHED: 0x0300, // 11 0000 0000, 768 (IS_CREATED + IS_RENDERED)
+  UNATTACHED, // 11 0000 0000, 768 (IS_CREATED + IS_RENDERED)
 
   /**
     The view has been created and rendered and attached to a parent, but an ancestor is not
@@ -102,17 +122,17 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_PARTIAL: 0x0380, // 11 1000 0000, 896 (IS_CREATED + IS_RENDERED + IS_ATTACHED)
+  ATTACHED_PARTIAL, // 11 1000 0000, 896 (IS_CREATED + IS_RENDERED + IS_ATTACHED)
 
   /**
     The view has been created, rendered and attached, but is not visible in the
     display.
 
-    Test with & SC.CoreView.IS_HIDDEN
+    Test with & CoreView.IS_HIDDEN
     @static
     @constant
   */
-  ATTACHED_HIDDEN: 0x03A0, // 11 1010 0000, 928 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_HIDDEN)
+  ATTACHED_HIDDEN, // 11 1010 0000, 928 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_HIDDEN)
 
   /**
     The view has been created, rendered and attached and is visible in the
@@ -121,7 +141,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_SHOWN: 0x03C0, // 11 1100 0000, 960 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN)
+  ATTACHED_SHOWN, // 11 1100 0000, 960 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN)
 
   // Minor states
 
@@ -132,7 +152,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_HIDDEN_BY_PARENT: 0x03A1, // 929  (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_HIDDEN +)
+  ATTACHED_HIDDEN_BY_PARENT, // 929  (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_HIDDEN +)
 
   /**
     The view has been created, rendered and attached and is visible in the
@@ -142,7 +162,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_BUILDING_IN: 0x03C1, // 961 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
+  ATTACHED_BUILDING_IN, // 961 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
 
   /**
     The view has been created, rendered and attached.  It is currently
@@ -152,7 +172,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_BUILDING_OUT: 0x03C4, // 964 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
+  ATTACHED_BUILDING_OUT, // 964 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
 
   /**
     The view has been created, rendered and attached.  It is currently
@@ -163,7 +183,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_BUILDING_OUT_BY_PARENT: 0x03C5, // 965 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
+  ATTACHED_BUILDING_OUT_BY_PARENT, // 965 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
 
   /**
     The view has been created, rendered and attached and is visible in the
@@ -173,7 +193,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_SHOWING: 0x03C2, // 962 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
+  ATTACHED_SHOWING, // 962 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
 
   /**
     The view has been created, rendered and attached.  It is currently
@@ -183,7 +203,7 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_HIDING: 0x03C3, // 963 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
+  ATTACHED_HIDING, // 963 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
 
   /**
     The view has been created, rendered and attached, is visible in the
@@ -192,13 +212,12 @@ SC.CoreView.mixin(
     @static
     @constant
   */
-  ATTACHED_SHOWN_ANIMATING: 0x03C6 // 966 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
+  ATTACHED_SHOWN_ANIMATING // 966 (IS_CREATED + IS_RENDERED + IS_ATTACHED + IS_SHOWN +)
 
-});
+};
 
 
-SC.CoreView.reopen(
-  /** @scope SC.CoreView.prototype */ {
+export const viewStatechart = /** @scope CoreView.prototype */ {
 
   //@if(debug)
   /* BEGIN DEBUG ONLY PROPERTIES AND METHODS */
@@ -212,8 +231,8 @@ SC.CoreView.reopen(
   _viewStateString: function () {
     var ret = [], state = this.get('viewState');
 
-    for (var prop in SC.CoreView) {
-      if (prop.match(/[A-Z_]$/) && SC.CoreView[prop] === state) {
+    for (var prop in CoreView) {
+      if (prop.match(/[A-Z_]$/) && viewStates[prop] === state) {
         ret.push(prop);
       }
     }
@@ -246,31 +265,31 @@ SC.CoreView.reopen(
   /**
     The current state of the view as managed by its internal statechart.
 
-    In order to optimize the behavior of SC.View, such as only observing display
+    In order to optimize the behavior of View, such as only observing display
     properties when in a rendered state or queueing updates when in a non-shown
-    state, SC.View includes a simple internal statechart that maintains the
+    state, View includes a simple internal statechart that maintains the
     current state of the view.
 
     Views have several possible states:
 
-    * SC.CoreView.UNRENDERED
-    * SC.CoreView.UNATTACHED
-    * SC.CoreView.ATTACHED_PARTIAL
-    * SC.CoreView.ATTACHED_SHOWING
-    * SC.CoreView.ATTACHED_SHOWN
-    * SC.CoreView.ATTACHED_SHOWN_ANIMATING
-    * SC.CoreView.ATTACHED_HIDING
-    * SC.CoreView.ATTACHED_HIDDEN
-    * SC.CoreView.ATTACHED_HIDDEN_BY_PARENT
-    * SC.CoreView.ATTACHED_BUILDING_IN
-    * SC.CoreView.ATTACHED_BUILDING_OUT
-    * SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT
+    * CoreView.UNRENDERED
+    * CoreView.UNATTACHED
+    * CoreView.ATTACHED_PARTIAL
+    * CoreView.ATTACHED_SHOWING
+    * CoreView.ATTACHED_SHOWN
+    * CoreView.ATTACHED_SHOWN_ANIMATING
+    * CoreView.ATTACHED_HIDING
+    * CoreView.ATTACHED_HIDDEN
+    * CoreView.ATTACHED_HIDDEN_BY_PARENT
+    * CoreView.ATTACHED_BUILDING_IN
+    * CoreView.ATTACHED_BUILDING_OUT
+    * CoreView.ATTACHED_BUILDING_OUT_BY_PARENT
 
     @type String
-    @default SC.CoreView.UNRENDERED
+    @default CoreView.UNRENDERED
     @readonly
   */
-  viewState: SC.CoreView.UNRENDERED,
+  viewState: UNRENDERED,
 
   /**
     Whether the view's layer is attached to a parent or not.
@@ -283,7 +302,7 @@ SC.CoreView.reopen(
     @readonly
   */
   isAttached: function () {
-    return (this.get('viewState') & SC.CoreView.IS_ATTACHED) > 0;
+    return (this.get('viewState') & IS_ATTACHED) > 0;
   }.property('viewState').cacheable(),
 
   /** @private
@@ -297,9 +316,9 @@ SC.CoreView.reopen(
     @default false
     @readonly
   */
-  // NOTE: This property is of little value, so it's private in case we decide to toss it.
+  // falseTE: This property is of little value, so it's private in case we decide to toss it.
   _isRendered: function () {
-    return (this.get('viewState') & SC.CoreView.IS_RENDERED) > 0;
+    return (this.get('viewState') & IS_RENDERED) > 0;
   }.property('viewState').cacheable(),
 
   /**
@@ -321,7 +340,7 @@ SC.CoreView.reopen(
     @readonly
   */
   isVisibleInWindow: function () {
-    return( this.get('viewState') & SC.CoreView.IS_SHOWN) > 0;
+    return( this.get('viewState') & IS_SHOWN) > 0;
   }.property('viewState').cacheable(),
 
 
@@ -336,15 +355,15 @@ SC.CoreView.reopen(
       state = this.get('viewState');
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doAdopt(%@, %@): curParentView: %@'.fmt(this, parentView, beforeView, curParentView), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doAdopt(%@, %@): curParentView: %@'.fmt(this, parentView, beforeView, curParentView), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
     if (curParentView && curParentView !== parentView) {
       //@if(debug)
       // This should be avoided, because using the same view instance without explicitly orphaning it first is a dangerous practice.
-      SC.warn("Developer Warning: You should not adopt the view, %@, to a new parent without removing it from its old parent first.".fmt(this));
+      warn("Developer Warning: You should not adopt the view, %@, to a new parent without removing it from its old parent first.".fmt(this));
       //@endif
 
       // Force orphaning the view.
@@ -385,18 +404,18 @@ SC.CoreView.reopen(
 
       // When a view is adopted, it should go to the same state as its new parent.
       switch (state) {
-      case SC.CoreView.UNRENDERED:
+      case UNRENDERED:
         switch (parentViewState) {
-        case SC.CoreView.UNRENDERED:
+        case UNRENDERED:
           break;
         default:
           // Bypass the unrendered state for adopted views.
           this._doRender();
         }
         break;
-      case SC.CoreView.UNATTACHED:
+      case UNATTACHED:
         switch (parentViewState) {
-        case SC.CoreView.UNRENDERED:
+        case UNRENDERED:
           // Bring the child view down to the state of the parent.
           this._doDestroyLayer();
           break;
@@ -410,7 +429,7 @@ SC.CoreView.reopen(
         break;
       default: // ATTACHED_X
         switch (parentViewState) {
-        case SC.CoreView.UNRENDERED:
+        case UNRENDERED:
           // Bring the child view down to the state of the parent.
           this._doDestroyLayer();
           break;
@@ -424,7 +443,7 @@ SC.CoreView.reopen(
       }
 
     // Adopting a view that is building out.
-    } else if (state === SC.CoreView.ATTACHED_BUILDING_OUT) {
+    } else if (state === ATTACHED_BUILDING_OUT) {
       this._doAttach();
 
     // Can't do anything.
@@ -443,15 +462,15 @@ SC.CoreView.reopen(
       isHandled = false;
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doAttach(%@, %@)'.fmt(this, parentNode, nextNode), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doAttach(%@, %@)'.fmt(this, parentNode, nextNode), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
     switch (state) {
 
     // Normal case: view is not attached and is being attached.
-    case SC.CoreView.UNATTACHED:
+    case UNATTACHED:
       var node = this.get('layer');
 
       this._executeQueuedUpdates();
@@ -479,7 +498,7 @@ SC.CoreView.reopen(
       break;
 
     // Special case: view switched from building out to building in.
-    case SC.CoreView.ATTACHED_BUILDING_OUT:
+    case ATTACHED_BUILDING_OUT:
       // If already building out, we need to cancel and possibly build in. Top-down so that any
       // children that are hidden or building out on their own allow us to bail out early.
       this._callOnChildViews('_parentDidCancelBuildOut');
@@ -490,12 +509,12 @@ SC.CoreView.reopen(
       // Note: We can be in ATTACHED_BUILDING_OUT state without a transition out while we wait for child views.
       if (this.get('transitionOut')) {
         // Cancel the building out transition (in place if we are going to switch to transitioning back in).
-        // this.cancelAnimation(transitionIn ? SC.LayoutState.CURRENT : undefined);
+        // this.cancelAnimation(transitionIn ? LayoutState.CURRENT : undefined);
         this.cancelAnimation();
 
         //@if (debug)
-        if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-          SC.Logger.log('%c       — cancelling build out outright'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+        if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+          Logger.log('%c       — cancelling build out outright'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
         }
         //@endif
 
@@ -517,28 +536,28 @@ SC.CoreView.reopen(
       break;
 
     // Invalid states that have no effect.
-    case SC.CoreView.ATTACHED_HIDING:
-    case SC.CoreView.ATTACHED_HIDDEN:
-    case SC.CoreView.ATTACHED_HIDDEN_BY_PARENT:
-    case SC.CoreView.ATTACHED_BUILDING_IN:
-    case SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT:
-    case SC.CoreView.ATTACHED_SHOWING:
-    case SC.CoreView.UNRENDERED:
+    case ATTACHED_HIDING:
+    case ATTACHED_HIDDEN:
+    case ATTACHED_HIDDEN_BY_PARENT:
+    case ATTACHED_BUILDING_IN:
+    case ATTACHED_BUILDING_OUT_BY_PARENT:
+    case ATTACHED_SHOWING:
+    case UNRENDERED:
       break;
 
     // Improper states that have no effect, but should be discouraged.
-    case SC.CoreView.ATTACHED_SHOWN:
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING:
+    case ATTACHED_SHOWN:
+    case ATTACHED_SHOWN_ANIMATING:
       //@if(debug)
       if (parentNode !== this.getPath('parentView.layer')) {
         // This should be avoided, because moving the view layer without explicitly removing it first is a dangerous practice.
-        SC.warn("Developer Warning: You can not attach the view, %@, to a new node without properly detaching it first.".fmt(this));
+        warn("Developer Warning: You can not attach the view, %@, to a new node without properly detaching it first.".fmt(this));
       }
       //@endif
       break;
-    case SC.CoreView.ATTACHED_PARTIAL:
+    case ATTACHED_PARTIAL:
       //@if(debug)
-      SC.warn("Developer Warning: You can not attach the child view, %@, directly.".fmt(this));
+      warn("Developer Warning: You can not attach the child view, %@, directly.".fmt(this));
       //@endif
       break;
     }
@@ -552,28 +571,28 @@ SC.CoreView.reopen(
       isHandled = false;
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doDestroyLayer()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doDestroyLayer()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
     switch (state) {
 
     // Invalid states that have no effect.
-    case SC.CoreView.UNRENDERED:
-    case SC.CoreView.ATTACHED_HIDING:
-    case SC.CoreView.ATTACHED_HIDDEN:
-    case SC.CoreView.ATTACHED_HIDDEN_BY_PARENT:
-    case SC.CoreView.ATTACHED_BUILDING_IN:
-    case SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT:
-    case SC.CoreView.ATTACHED_SHOWING:
-    case SC.CoreView.ATTACHED_SHOWN:
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING:
-    case SC.CoreView.ATTACHED_BUILDING_OUT:
-    case SC.CoreView.ATTACHED_PARTIAL:
+    case UNRENDERED:
+    case ATTACHED_HIDING:
+    case ATTACHED_HIDDEN:
+    case ATTACHED_HIDDEN_BY_PARENT:
+    case ATTACHED_BUILDING_IN:
+    case ATTACHED_BUILDING_OUT_BY_PARENT:
+    case ATTACHED_SHOWING:
+    case ATTACHED_SHOWN:
+    case ATTACHED_SHOWN_ANIMATING:
+    case ATTACHED_BUILDING_OUT:
+    case ATTACHED_PARTIAL:
       break;
 
-    // Normal case (SC.CoreView.UNATTACHED): view is rendered and its layer is being destroyed.
+    // Normal case (UNATTACHED): view is rendered and its layer is being destroyed.
     default:
       // Notify that the layer will be destroyed. Bottom-up so that each child is in the proper
       // state before its parent potentially alters its state. For example, a parent could modify
@@ -594,8 +613,8 @@ SC.CoreView.reopen(
       shouldHandle = true;
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doDetach()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doDetach()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -604,16 +623,16 @@ SC.CoreView.reopen(
 
     // Scenario: The view is shown.
     // Result: Allow the view and/or any of its child views to build out or else execute the detach.
-    case SC.CoreView.ATTACHED_SHOWN:
+    case ATTACHED_SHOWN:
       this._executeDoBuildOut(immediately);
 
       break;
 
     // Scenario: The view is attached but isn't visible (possibly because an ancestor is detached or hidden).
     // Result: Detach the view immediately.
-    case SC.CoreView.ATTACHED_PARTIAL:
-    case SC.CoreView.ATTACHED_HIDDEN:
-    case SC.CoreView.ATTACHED_HIDDEN_BY_PARENT:
+    case ATTACHED_PARTIAL:
+    case ATTACHED_HIDDEN:
+    case ATTACHED_HIDDEN_BY_PARENT:
       // Detach immediately.
       this._executeDoDetach();
 
@@ -621,7 +640,7 @@ SC.CoreView.reopen(
 
     // Scenario: The view is in the middle of a hiding transition.
     // Result: Cancel the animation and then run as normal.
-    case SC.CoreView.ATTACHED_HIDING:
+    case ATTACHED_HIDING:
       // Cancel the animation (in the future we will be able to let it run out while building out).
       this.cancelAnimation();
 
@@ -635,8 +654,8 @@ SC.CoreView.reopen(
 
     // Scenario: The view is in the middle of an animation or showing transition.
     // Result: Cancel the animation and then run as normal.
-    case SC.CoreView.ATTACHED_SHOWING:
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING: // TODO: We need concurrent states!
+    case ATTACHED_SHOWING:
+    case ATTACHED_SHOWN_ANIMATING: // TODO: We need concurrent states!
       // Cancel the animation (in the future we will be able to let it run out while building out).
       this.cancelAnimation();
 
@@ -649,20 +668,20 @@ SC.CoreView.reopen(
 
     // Scenario: The view is building in.
     // Result: If it has a build out transition, swap to it. Otherwise, cancel.
-    case SC.CoreView.ATTACHED_BUILDING_IN:
+    case ATTACHED_BUILDING_IN:
       // Cancel the build in transition.
       // if (transitionOut) {
       //   //@if (debug)
-      //   if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      //     SC.Logger.log('%c       — cancelling build in in place'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      //   if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      //     Logger.log('%c       — cancelling build in in place'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
       //   }
       //   //@endif
 
-      //   this.cancelAnimation(SC.LayoutState.CURRENT);
+      //   this.cancelAnimation(LayoutState.CURRENT);
       // } else {
         //@if (debug)
-        if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-          SC.Logger.log('%c       — cancelling build in outright'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+        if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+          Logger.log('%c       — cancelling build in outright'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
         }
         //@endif
 
@@ -678,9 +697,9 @@ SC.CoreView.reopen(
 
     // Scenario: View is already building out because of an ancestor.
     // Result: Stop the transition so that it can continue in place on its own.
-    case SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT:
+    case ATTACHED_BUILDING_OUT_BY_PARENT:
       // Cancel the build out transition.
-      this.cancelAnimation(SC.LayoutState.CURRENT); // Fires didTransitionOut callback (necessary to clean up parent view build out wait)
+      this.cancelAnimation(LayoutState.CURRENT); // Fires didTransitionOut callback (necessary to clean up parent view build out wait)
 
       // Set the proper state. (the view should only have been able to get to ATTACHED_BUILDING_OUT_BY_PARENT from ATTACHED_SHOWN).
       this._gotoAttachedShownState();
@@ -694,7 +713,7 @@ SC.CoreView.reopen(
 
     // Scenario: View is already building out.
     // Result: Stop if forced to.
-    case SC.CoreView.ATTACHED_BUILDING_OUT:
+    case ATTACHED_BUILDING_OUT:
       // If immediately is passed, cancel the build out prematurely.
       if (immediately) {
         // Note: *will* detach notice already sent.
@@ -711,7 +730,7 @@ SC.CoreView.reopen(
       //@if(debug)
       // Add some debugging only warnings for if the view statechart code is being improperly used.
       // Telling the view to detach when it is already detached isn't correct: UNRENDERED, UNATTACHED
-      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _doDetach".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view, %@, in _doDetach".fmt(this));
       //@endif
 
       shouldHandle = false;
@@ -727,8 +746,8 @@ SC.CoreView.reopen(
       shouldHandle = true;
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doHide()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doHide()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -737,11 +756,11 @@ SC.CoreView.reopen(
 
     // Scenario: The view is shown.
     // Result: Notify that the view will hide and then either hide or run hide transition.
-    case SC.CoreView.ATTACHED_SHOWN:
-    case SC.CoreView.ATTACHED_BUILDING_IN:
-    case SC.CoreView.ATTACHED_BUILDING_OUT:
-    case SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT:
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING:
+    case ATTACHED_SHOWN:
+    case ATTACHED_BUILDING_IN:
+    case ATTACHED_BUILDING_OUT:
+    case ATTACHED_BUILDING_OUT_BY_PARENT:
+    case ATTACHED_SHOWN_ANIMATING:
     // ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_BUILDING_OUT
 
       // TODO: How do we check for conflicts in the hide transition against other concurrent transitions/animations?
@@ -758,10 +777,10 @@ SC.CoreView.reopen(
 
     // Scenario: The view was showing at the time it was told to hide.
     // Result: Cancel the animation.
-    case SC.CoreView.ATTACHED_SHOWING:
+    case ATTACHED_SHOWING:
       // Cancel the showing transition.
       if (transitionHide) {
-        this.cancelAnimation(SC.LayoutState.CURRENT);
+        this.cancelAnimation(LayoutState.CURRENT);
       } else {
         this.cancelAnimation();
       }
@@ -780,8 +799,8 @@ SC.CoreView.reopen(
 
     // Scenario: The view is rendered but is not attached.
     // Result: Queue an update to the visibility style.
-    case SC.CoreView.UNATTACHED:
-    case SC.CoreView.ATTACHED_PARTIAL:
+    case UNATTACHED:
+    case ATTACHED_PARTIAL:
       // Queue the visibility update for the next time we display.
       this._visibleStyleNeedsUpdate = true;
 
@@ -789,15 +808,15 @@ SC.CoreView.reopen(
 
     // Scenario: The view is not even rendered.
     // Result: Nothing is required.
-    case SC.CoreView.UNRENDERED:
+    case UNRENDERED:
       shouldHandle = false;
       break;
 
-    case SC.CoreView.ATTACHED_HIDDEN: // FAST PATH!
-    case SC.CoreView.ATTACHED_HIDING: // FAST PATH!
+    case ATTACHED_HIDDEN: // FAST PATH!
+    case ATTACHED_HIDING: // FAST PATH!
       return false;
-    case SC.CoreView.ATTACHED_HIDDEN_BY_PARENT: // FAST PATH!
-      // Note that visibility update is NOT conditional for this state.
+    case ATTACHED_HIDDEN_BY_PARENT: // FAST PATH!
+      // Note that visibility update is falseT conditional for this state.
       this._doUpdateVisibleStyle();
 
       // Update states after *will* and before *did* notifications!
@@ -811,7 +830,7 @@ SC.CoreView.reopen(
       // Add some debugging only warnings for if the view statechart code is being improperly used.
       // Telling the view to hide when it is already hidden isn't correct:
       //
-      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _doHide".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view, %@, in _doHide".fmt(this));
       //@endif
 
       shouldHandle = false;
@@ -826,8 +845,8 @@ SC.CoreView.reopen(
       handled = true;
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doOrphan()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doOrphan()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -856,8 +875,8 @@ SC.CoreView.reopen(
         shouldHandle = true;
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doRender()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doRender()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -866,7 +885,7 @@ SC.CoreView.reopen(
 
     // Scenario: The view is not rendered.
     // Result: Render the layer and then notify.
-    case SC.CoreView.UNRENDERED:
+    case UNRENDERED:
       // Render the view.
       this._executeDoRender();
 
@@ -892,7 +911,7 @@ SC.CoreView.reopen(
       // Add some debugging only warnings for if the view statechart code is being improperly used.
       // All other states should be impossible if parent was UNATTACHED:
       // ATTACHED_SHOWING, ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_HIDING, ATTACHED_HIDDEN, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT, UNATTACHED, ATTACHED_PARTIAL
-      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _doRender".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view, %@, in _doRender".fmt(this));
       //@endif
       shouldHandle = false;
     }
@@ -907,8 +926,8 @@ SC.CoreView.reopen(
         shouldHandle = true;
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doShow()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doShow()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -917,10 +936,10 @@ SC.CoreView.reopen(
 
     // Scenario: The view is hidden.
     // Result: Depends on whether the parent view is shown or hidden by an ancestor.
-    case SC.CoreView.ATTACHED_HIDDEN:
+    case ATTACHED_HIDDEN:
       var parentView = this.get('parentView'),
           // Views without a parent are not limited by a parent's current state.
-          isParentShown = parentView ? parentView.get('viewState') & SC.CoreView.IS_SHOWN : true;
+          isParentShown = parentView ? parentView.get('viewState') & IS_SHOWN : true;
 
       // Scenario: The view is hidden and its ancestors are all visible.
       // Result: Notify that the view and relevant child views will be shown.
@@ -963,9 +982,9 @@ SC.CoreView.reopen(
 
     // Scenario: The view was hiding at the time it was told to show.
     // Result: Revert or reverse the hiding transition.
-    case SC.CoreView.ATTACHED_HIDING:
+    case ATTACHED_HIDING:
       // Cancel the hiding transition (in place if we are going to switch to transitioning back in).
-      this.cancelAnimation(transitionShow ? SC.LayoutState.CURRENT : SC.LayoutState.START);
+      this.cancelAnimation(transitionShow ? LayoutState.CURRENT : LayoutState.START);
 
       // Set the proper state.
       this._gotoAttachedShownState();
@@ -978,9 +997,9 @@ SC.CoreView.reopen(
 
     // Scenario: The view is rendered but is not attached.
     // Result: Queue an update to the visibility style.
-    case SC.CoreView.UNATTACHED:
-    case SC.CoreView.ATTACHED_PARTIAL:
-    case SC.CoreView.ATTACHED_HIDDEN_BY_PARENT:
+    case UNATTACHED:
+    case ATTACHED_PARTIAL:
+    case ATTACHED_HIDDEN_BY_PARENT:
       // Queue the visibility update for the next time we display.
       this._visibleStyleNeedsUpdate = true;
 
@@ -988,7 +1007,7 @@ SC.CoreView.reopen(
 
     // Scenario: The view is not even rendered.
     // Result: Nothing is required.
-    case SC.CoreView.UNRENDERED:
+    case UNRENDERED:
       shouldHandle = false;
       break;
 
@@ -998,7 +1017,7 @@ SC.CoreView.reopen(
       // Add some debugging only warnings for if the view statechart code is being improperly used.
       // Telling the view to show when it is already visible isn't correct:
       // ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_SHOWING, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_BUILDING_OUT
-      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _doShow".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view, %@, in _doShow".fmt(this));
       //@endif
 
       shouldHandle = false;
@@ -1013,8 +1032,8 @@ SC.CoreView.reopen(
       handled = true;
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _doUpdateContent(%@)'.fmt(this, force), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _doUpdateContent(%@)'.fmt(this, force), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -1042,20 +1061,20 @@ SC.CoreView.reopen(
     transition completes.  You should only use this method if implementing a
     custom transition plugin.
 
-    @param {SC.ViewTransitionProtocol} transition The transition plugin used.
+    @param {ViewTransitionProtocol} transition The transition plugin used.
     @param {Object} options The original options used.  One of transitionShowOptions or transitionInOptions.
   */
   didTransitionIn: function () {
     var state = this.get('viewState');
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — didTransitionIn()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — didTransitionIn()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
-    if (state === SC.CoreView.ATTACHED_SHOWING ||
-      state === SC.CoreView.ATTACHED_BUILDING_IN) {
+    if (state === ATTACHED_SHOWING ||
+      state === ATTACHED_BUILDING_IN) {
       this._teardownTransition();
 
       // Set the proper state.
@@ -1068,23 +1087,23 @@ SC.CoreView.reopen(
     transition completes.  You should only use this method if implementing a
     custom transition plugin.
 
-    @param {SC.ViewTransitionProtocol} transition The transition plugin used.
+    @param {ViewTransitionProtocol} transition The transition plugin used.
     @param {Object} options The original options used.  One of transitionHideOptions or transitionOutOptions.
   */
   didTransitionOut: function () {
     var state = this.get('viewState');
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — didTransitionOut()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — didTransitionOut()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
-    if (state === SC.CoreView.ATTACHED_BUILDING_OUT) {
+    if (state === ATTACHED_BUILDING_OUT) {
       this._teardownTransition();
 
       this._executeDoDetach();
-    } else if (state === SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT) {
+    } else if (state === ATTACHED_BUILDING_OUT_BY_PARENT) {
       var owningView = this._owningView;
       // We can't clean up the transition until the parent is done.  For
       // example, a fast child build out inside of a slow parent build out.
@@ -1096,7 +1115,7 @@ SC.CoreView.reopen(
         // Clean up.
         this._owningView = null;
       }
-    } else if (state === SC.CoreView.ATTACHED_HIDING) {
+    } else if (state === ATTACHED_HIDING) {
       this._teardownTransition();
 
       // Hide immediately.
@@ -1137,57 +1156,57 @@ SC.CoreView.reopen(
 
   /** @private */
   _gotoAttachedBuildingInState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_BUILDING_IN);
+    this.set('viewState', ATTACHED_BUILDING_IN);
   },
 
   /** @private */
   _gotoAttachedBuildingOutState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_BUILDING_OUT);
+    this.set('viewState', ATTACHED_BUILDING_OUT);
   },
 
   /** @private */
   _gotoAttachedBuildingOutByParentState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT);
+    this.set('viewState', ATTACHED_BUILDING_OUT_BY_PARENT);
   },
 
   /** @private */
   _gotoAttachedHiddenState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_HIDDEN);
+    this.set('viewState', ATTACHED_HIDDEN);
   },
 
   /** @private */
   _gotoAttachedHiddenByParentState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_HIDDEN_BY_PARENT);
+    this.set('viewState', ATTACHED_HIDDEN_BY_PARENT);
   },
 
   /** @private */
   _gotoAttachedHidingState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_HIDING);
+    this.set('viewState', ATTACHED_HIDING);
   },
 
   /** @private */
   _gotoAttachedShowingState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_SHOWING);
+    this.set('viewState', ATTACHED_SHOWING);
   },
 
   /** @private */
   _gotoAttachedShownState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_SHOWN);
+    this.set('viewState', ATTACHED_SHOWN);
   },
 
   /** @private */
   _gotoUnattachedState: function () {
-    this.set('viewState', SC.CoreView.UNATTACHED);
+    this.set('viewState', UNATTACHED);
   },
 
   /** @private */
   _gotoAttachedPartialState: function () {
-    this.set('viewState', SC.CoreView.ATTACHED_PARTIAL);
+    this.set('viewState', ATTACHED_PARTIAL);
   },
 
   /** @private */
   _gotoUnrenderedState: function () {
-    this.set('viewState', SC.CoreView.UNRENDERED);
+    this.set('viewState', UNRENDERED);
   },
 
   // ------------------------------------------------------------------------
@@ -1332,8 +1351,8 @@ SC.CoreView.reopen(
     // Cancel any remaining animations (e.g. a concurrent hide).
     var viewState = this.get('viewState');
     switch (viewState) {
-    case SC.CoreView.ATTACHED_HIDING:
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING:
+    case ATTACHED_HIDING:
+    case ATTACHED_SHOWN_ANIMATING:
       this.cancelAnimation();
       break;
     }
@@ -1368,10 +1387,10 @@ SC.CoreView.reopen(
     // Cancel any remaining animations (e.g. a concurrent build in or build out).
     var viewState = this.get('viewState');
     switch (viewState) {
-    case SC.CoreView.ATTACHED_BUILDING_IN:
-    case SC.CoreView.ATTACHED_BUILDING_OUT:
-    case SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT:
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING:
+    case ATTACHED_BUILDING_IN:
+    case ATTACHED_BUILDING_OUT:
+    case ATTACHED_BUILDING_OUT_BY_PARENT:
+    case ATTACHED_SHOWN_ANIMATING:
       this.cancelAnimation();
       break;
     }
@@ -1519,7 +1538,7 @@ SC.CoreView.reopen(
       // show the view if it's not being shown already,
       // unless the view is transitioning to being hidden
       var viewState = this.get('viewState');
-      if (!(viewState & SC.CoreView.IS_SHOWN) || (viewState == SC.CoreView.ATTACHED_HIDING)) {
+      if (!(viewState & IS_SHOWN) || (viewState == ATTACHED_HIDING)) {
         this._doShow();
       }
     } else {
@@ -1614,7 +1633,7 @@ SC.CoreView.reopen(
 
     // Scenario: The child view was attached to the parent, which was unattached.
     // Result: Update the child and then move it to the proper attached state.
-    case SC.CoreView.ATTACHED_PARTIAL:
+    case ATTACHED_PARTIAL:
       // Run any queued updates.
       this._executeQueuedUpdates();
 
@@ -1632,8 +1651,8 @@ SC.CoreView.reopen(
     // Scenario: The child is unrendered or unattached.
     // Result: The child would need to be forced into this state by its parent (otherwise it should
     //         be in an ATTACHED_PARTIAL state), so just leave it alone and don't notify.
-    case SC.CoreView.UNRENDERED: // Render + attach?
-    case SC.CoreView.UNATTACHED: // Attach?
+    case UNRENDERED: // Render + attach?
+    case UNATTACHED: // Attach?
       // There's no need to continue to further child views.
       shouldContinue = false;
       break;
@@ -1644,7 +1663,7 @@ SC.CoreView.reopen(
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // All other states should be impossible if parent was UNATTACHED:
       // ATTACHED_BUILDING_IN, ATTACHED_SHOWING, ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_HIDING, ATTACHED_HIDDEN, ATTACHED_HIDDEN_BY_PARENT
-      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _parentDidAttach".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view, %@, in _parentDidAttach".fmt(this));
       //@endif
 
       // There's no need to continue to further child views.
@@ -1665,11 +1684,11 @@ SC.CoreView.reopen(
 
     // If the view was building out because its parent was building out, attempt to reverse or
     // revert the transition.
-    if (state === SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT) {
+    if (state === ATTACHED_BUILDING_OUT_BY_PARENT) {
       var transitionIn = this.get('transitionIn');
 
       // Cancel the building out transition (in place if we are going to switch to transitioning back in).
-      this.cancelAnimation(transitionIn ? SC.LayoutState.CURRENT : undefined);
+      this.cancelAnimation(transitionIn ? LayoutState.CURRENT : undefined);
 
       // Set the proper state.
       this._gotoAttachedShownState();
@@ -1679,8 +1698,8 @@ SC.CoreView.reopen(
       }
 
     // If the view was building out on its own or is hidden we can ignore it.
-    } else if (state === SC.CoreView.ATTACHED_BUILDING_OUT || state &
-      SC.CoreView.IS_HIDDEN) {
+    } else if (state === ATTACHED_BUILDING_OUT || state &
+      IS_HIDDEN) {
       // There's no need to continue to further child views.
       return false;
     }
@@ -1696,7 +1715,7 @@ SC.CoreView.reopen(
 
     // Scenario: The child view was shown.
     // Result: Go to hidden by parent state.
-    case SC.CoreView.ATTACHED_SHOWN:
+    case ATTACHED_SHOWN:
       // Go to the proper state.
       this._gotoAttachedHiddenByParentState();
 
@@ -1705,9 +1724,9 @@ SC.CoreView.reopen(
 
     // Scenario: The child view was hidden or forced to unrendered or unattached state.
     // Result: Do nothing.
-    case SC.CoreView.UNRENDERED:
-    case SC.CoreView.UNATTACHED:
-    case SC.CoreView.ATTACHED_HIDDEN:
+    case UNRENDERED:
+    case UNATTACHED:
+    case ATTACHED_HIDDEN:
       break;
 
     // Invalid states.
@@ -1716,7 +1735,7 @@ SC.CoreView.reopen(
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // All animating states should have been canceled when parent will hide is called.
       // ATTACHED_HIDING, ATTACHED_BUILDING_IN, ATTACHED_SHOWING, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_PARTIAL, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_SHOWN_ANIMATING
-      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentDidHideInDocument".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view %@ in _parentDidHideInDocument".fmt(this));
       //@endif
     }
 
@@ -1732,7 +1751,7 @@ SC.CoreView.reopen(
   _parentDidDetach: function () {
     var state = this.get('viewState');
 
-    if (state & SC.CoreView.IS_ATTACHED) {
+    if (state & IS_ATTACHED) {
       // Update states after *will* and before *did* notifications!
       this._gotoAttachedPartialState();
     } else {
@@ -1751,7 +1770,7 @@ SC.CoreView.reopen(
 
     // Scenario: The child view was unrendered and now is rendered.
     // Result: Add rendered state observers and move it to the proper rendered state.
-    case SC.CoreView.UNRENDERED:
+    case UNRENDERED:
       this._sc_addRenderedStateObservers();
 
       // Go to the proper state.
@@ -1764,7 +1783,7 @@ SC.CoreView.reopen(
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // All other states should be impossible if parent was UNRENDERED:
       // ATTACHED_BUILDING_IN, ATTACHED_SHOWING, ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_HIDING, ATTACHED_HIDDEN, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_PARTIAL, UNATTACHED
-      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentDidRender".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view %@ in _parentDidRender".fmt(this));
       //@endif
 
       // There's no need to continue to further child views.
@@ -1789,16 +1808,16 @@ SC.CoreView.reopen(
 
     // Scenario: The child view is only hidden because of the parent.
     // Result: Go to shown state. This will notify.
-    case SC.CoreView.ATTACHED_HIDDEN_BY_PARENT:
+    case ATTACHED_HIDDEN_BY_PARENT:
       this._gotoAttachedShownState();
 
       break;
 
     // Scenario: The child view is hidden on its own or has been forced to an unrendered or unattached state.
     // Result: Do nothing and don't notify.
-    case SC.CoreView.UNRENDERED:
-    case SC.CoreView.UNATTACHED:
-    case SC.CoreView.ATTACHED_HIDDEN:
+    case UNRENDERED:
+    case UNATTACHED:
+    case ATTACHED_HIDDEN:
       // There's no need to continue to further child views.
       shouldContinue = false;
       break;
@@ -1811,7 +1830,7 @@ SC.CoreView.reopen(
       // ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_SHOWING, ATTACHED_HIDING, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT
       // This state should be impossible if its parent was UNATTACHED (it should have been trimmed above):
       // ATTACHED_PARTIAL
-      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentDidShowInDocument".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view %@ in _parentDidShowInDocument".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -1832,21 +1851,21 @@ SC.CoreView.reopen(
       shouldContinue = true;
 
     switch (state) {
-    case SC.CoreView.UNRENDERED:
-    case SC.CoreView.UNATTACHED:
-    case SC.CoreView.ATTACHED_BUILDING_OUT:
-    case SC.CoreView.ATTACHED_HIDDEN:
+    case UNRENDERED:
+    case UNATTACHED:
+    case ATTACHED_BUILDING_OUT:
+    case ATTACHED_HIDDEN:
       // There's no need to continue to further child views.
       shouldContinue = false;
       break;
 
     // Scenario: The child view is building in at the same time that its ancestor wants to detach.
     // Result: If the child wants to build out, switch to building out by parent, otherwise let the build in run for as long as it can.
-    case SC.CoreView.ATTACHED_BUILDING_IN:
+    case ATTACHED_BUILDING_IN:
 
       // Cancel the build in transition.
       if (transitionOut) {
-        this.cancelAnimation(SC.LayoutState.CURRENT);
+        this.cancelAnimation(LayoutState.CURRENT);
       } else {
         this.cancelAnimation();
       }
@@ -1863,10 +1882,10 @@ SC.CoreView.reopen(
 
     // Scenario: The view is shown and possibly transitioning.
     // Result: Allow any transitions to continue concurrent with build out transition (may be conflicts).
-    case SC.CoreView.ATTACHED_HIDING:
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING:
-    case SC.CoreView.ATTACHED_SHOWING:
-    case SC.CoreView.ATTACHED_SHOWN:
+    case ATTACHED_HIDING:
+    case ATTACHED_SHOWN_ANIMATING:
+    case ATTACHED_SHOWING:
+    case ATTACHED_SHOWN:
 
       // Build out the view by parent.
       if (transitionOut) {
@@ -1879,7 +1898,7 @@ SC.CoreView.reopen(
       //@if(debug)
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // These states should not be reachable here: ATTACHED_PARTIAL, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_OUT_BY_PARENT
-      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentWillBuildOutFromDocument".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view %@ in _parentWillBuildOutFromDocument".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -1899,25 +1918,25 @@ SC.CoreView.reopen(
 
     // Scenario: The child view is visible.
     // Result: Do nothing and continue.
-    case SC.CoreView.ATTACHED_SHOWN:
+    case ATTACHED_SHOWN:
       break;
 
     // Scenario: The child view is animating.
     // Result: Complete its animation immediately and continue.
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING:
-    case SC.CoreView.ATTACHED_SHOWING:
-    case SC.CoreView.ATTACHED_BUILDING_IN:
-    case SC.CoreView.ATTACHED_BUILDING_OUT:
-    case SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT:
-    case SC.CoreView.ATTACHED_HIDING:
+    case ATTACHED_SHOWN_ANIMATING:
+    case ATTACHED_SHOWING:
+    case ATTACHED_BUILDING_IN:
+    case ATTACHED_BUILDING_OUT:
+    case ATTACHED_BUILDING_OUT_BY_PARENT:
+    case ATTACHED_HIDING:
       this.cancelAnimation();
       break;
 
     // Scenario: The child view is hidden or has been forced to an unrendered or unattached state.
     // Result: Do nothing and don't notify.
-    case SC.CoreView.UNRENDERED:
-    case SC.CoreView.UNATTACHED:
-    case SC.CoreView.ATTACHED_HIDDEN:
+    case UNRENDERED:
+    case UNATTACHED:
+    case ATTACHED_HIDDEN:
       // There's no need to continue to further child views.
       break;
 
@@ -1927,7 +1946,7 @@ SC.CoreView.reopen(
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // This state should be impossible if its parent was UNATTACHED or HIDDEN/HIDING (it should have been trimmed above):
       // ATTACHED_PARTIAL, ATTACHED_HIDDEN_BY_PARENT
-      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentWillHideInDocument".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view %@ in _parentWillHideInDocument".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -1951,24 +1970,24 @@ SC.CoreView.reopen(
 
     // Scenario: The child view is visible.
     // Result: Do nothing and continue.
-    case SC.CoreView.ATTACHED_SHOWN:
+    case ATTACHED_SHOWN:
       break;
 
     // Scenario: The child view is animating.
     // Result: Complete its animation immediately and continue.
-    case SC.CoreView.ATTACHED_SHOWN_ANIMATING: // TODO: We need concurrent states!
-    case SC.CoreView.ATTACHED_SHOWING:
-    case SC.CoreView.ATTACHED_BUILDING_IN: // Was building in and didn't have a build out.
-    case SC.CoreView.ATTACHED_BUILDING_OUT: // Was building out on its own at the same time.
-    case SC.CoreView.ATTACHED_HIDING:
+    case ATTACHED_SHOWN_ANIMATING: // TODO: We need concurrent states!
+    case ATTACHED_SHOWING:
+    case ATTACHED_BUILDING_IN: // Was building in and didn't have a build out.
+    case ATTACHED_BUILDING_OUT: // Was building out on its own at the same time.
+    case ATTACHED_HIDING:
       this.cancelAnimation();
       break;
 
     // Scenario: The child view has forced to unattached or unrendered state, or it's hidden.
     // Result: Don't continue.
-    case SC.CoreView.UNRENDERED:
-    case SC.CoreView.UNATTACHED:
-    case SC.CoreView.ATTACHED_HIDDEN:
+    case UNRENDERED:
+    case UNATTACHED:
+    case ATTACHED_HIDDEN:
       shouldContinue = false;
       break;
 
@@ -1977,7 +1996,7 @@ SC.CoreView.reopen(
       //@if(debug)
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // These states should not be reachable here: ATTACHED_PARTIAL, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_OUT_BY_PARENT
-      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentWillDetach".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view %@ in _parentWillDetach".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -2001,16 +2020,16 @@ SC.CoreView.reopen(
 
     // Scenario: The child view is only hidden because of the parent.
     // Result: Run queued updates. This will notify.
-    case SC.CoreView.ATTACHED_HIDDEN_BY_PARENT:
+    case ATTACHED_HIDDEN_BY_PARENT:
       this._executeQueuedUpdates();
 
       break;
 
     // Scenario: The child view is hidden on its own or has been forced to an unrendered or unattached state.
     // Result: Do nothing and don't notify.
-    case SC.CoreView.UNRENDERED:
-    case SC.CoreView.UNATTACHED:
-    case SC.CoreView.ATTACHED_HIDDEN:
+    case UNRENDERED:
+    case UNATTACHED:
+    case ATTACHED_HIDDEN:
       // There's no need to continue to further child views.
       shouldContinue = false;
       break;
@@ -2023,7 +2042,7 @@ SC.CoreView.reopen(
       // ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_SHOWING, ATTACHED_HIDING, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT
       // This state should be impossible if its parent was UNATTACHED (it should have been trimmed above):
       // ATTACHED_PARTIAL
-      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentWillShowInDocument".fmt(this));
+      warn("Core Developer Warning: Found invalid state for view %@ in _parentWillShowInDocument".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -2040,12 +2059,12 @@ SC.CoreView.reopen(
   /** @private */
   _setupTransition: function (transition) {
     // Get a copy of the layout.
-    var layout = SC.clone(this.get('layout'));
+    var layout = clone(this.get('layout'));
     // Prepare for a transition.
     this._preTransitionLayout = layout;
     this._preTransitionFrame = this.get('borderFrame');
     // Cache appropriate layout values.
-    var layoutProperties = SC.get(transition, 'layoutProperties');
+    var layoutProperties = get(transition, 'layoutProperties');
     // If the transition specifies any layouts, cache them.
     if (layoutProperties && layoutProperties.length) {
       this._transitionLayoutCache = {};
@@ -2083,15 +2102,15 @@ SC.CoreView.reopen(
       options = this.get('transitionHideOptions') || {};
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _transitionHide()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _transitionHide()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
     // switch (state) {
-    // case SC.CoreView.ATTACHED_SHOWING:
-    // case SC.CoreView.ATTACHED_BUILDING_IN:
-    //   this.cancelAnimation(SC.LayoutState.CURRENT);
+    // case ATTACHED_SHOWING:
+    // case ATTACHED_BUILDING_IN:
+    //   this.cancelAnimation(LayoutState.CURRENT);
     //   inPlace = true;
     //   break;
     // default:
@@ -2118,8 +2137,8 @@ SC.CoreView.reopen(
       options = this.get('transitionInOptions') || {};
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _transitionIn()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _transitionIn()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -2145,8 +2164,8 @@ SC.CoreView.reopen(
       options = this.get('transitionOutOptions') || {};
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _transitionOut()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _transitionOut()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -2179,8 +2198,8 @@ SC.CoreView.reopen(
       options = this.get('transitionShowOptions') || {};
 
     //@if (debug)
-    if (SC.LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      SC.Logger.log('%c%@ — _transitionShow()'.fmt(this), SC.LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+    if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
+      Logger.log('%c%@ — _transitionShow()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -2203,9 +2222,9 @@ SC.CoreView.reopen(
   /** @private Goes to the proper attached state depending on its parents state*/
   _gotoSomeAttachedState: function () {
     var parentView = this.get('parentView'),
-      isParentHidden = parentView ? parentView.get('viewState') & SC.CoreView.IS_HIDDEN : false,
+      isParentHidden = parentView ? parentView.get('viewState') & IS_HIDDEN : false,
       // Views without a parent are not limited by a parent's current state.
-      isParentShown = parentView ? parentView.get('viewState') & SC.CoreView.IS_SHOWN : true;
+      isParentShown = parentView ? parentView.get('viewState') & IS_SHOWN : true;
 
     // Set the proper state.
     if (isParentShown) {
@@ -2221,4 +2240,4 @@ SC.CoreView.reopen(
     }
   }
 
-});
+};
