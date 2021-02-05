@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import jQuery from 'jquery';
+import '../../node_modules/jquery/dist/jquery.slim.js';
 import { SC } from '../../core/core.js';
 
 export const CoreQuery = jQuery;
@@ -87,7 +87,7 @@ SC.mixin(CoreQuery.fn,
     },
 
     // indexOf() is best implemented using the jQuery index()
-    indexOf: SC.$.index,
+    indexOf: CoreQuery.index,
 
     // map() is a little tricky because jQuery is non-standard.  If you pass
     // a context object, we will treat it like SC.Enumerable.  Otherwise use

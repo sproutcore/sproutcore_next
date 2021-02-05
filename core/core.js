@@ -18,12 +18,12 @@ import './ext/array.js';
 import { RunLoop, run } from './system/runloop.js';
 import { Binding, __runtimeDeps as bindingRuntimeDeps } from './system/binding.js';
 import { IndexSet } from './system/index_set.js';
-import { Logger } from './system/logger.js';
+import { Logger, warn } from './system/logger.js';
 import { SCError, ok, val, $throw, $error, $ok, $val } from './system/error.js';
 import { SCSet } from './system/set.js';
 import { RangeObserver } from './system/range_observer.js';
 import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath, mixin } from './system/base.js';
-import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T_STRING, T_BOOL, T_CLASS, T_DATE, T_ERROR, FROZEN_ERROR } from './system/constants.js';
+import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T_STRING, T_BOOL, T_CLASS, T_DATE, T_ERROR, FROZEN_ERROR, UNSUPPORTED } from './system/constants.js';
 import { Controller } from './controllers/controller.js';
 import { ObjectController } from './controllers/object_controller.js';
 import { ArrayController } from './controllers/array_controller.js';
@@ -34,6 +34,7 @@ import { Builder } from './system/builder.js';
 import { DelegateSupport } from './mixins/delegate_support.js';
 
 import { detectedBrowser, OS, CLASS_PREFIX, CSS_PREFIX, BROWSER, ENGINE, DEVICE, DOM_PREFIX } from './system/browser.js';
+import { readyMixin } from './system/ready.js';
 
 export const GLOBAL = global;
 
@@ -115,12 +116,14 @@ export const SC = {
   T_NULL,
   T_FUNCTION,
   FROZEN_ERROR,
+  UNSUPPORTED,
   $error,
   $ok,
   $throw,
   $val,
   val,
   ok,
+  warn,
   json: {
     encode (root) {
       return JSON.stringify(root);
@@ -139,14 +142,16 @@ export const SC = {
   Builder,
   browser: detectedBrowser,
   OS,
-  // CLASS_PREFIX,
-  // CSS_PREFIX,
-  // BROWSER,
-  // ENGINE,
-  // DEVICE,
-  // DOM_PREFIX
+  CLASS_PREFIX,
+  CSS_PREFIX,
+  BROWSER,
+  ENGINE,
+  DEVICE,
+  DOM_PREFIX,
   DelegateSupport
 };
+
+mixin(SC, readyMixin);
 
 const runtimeDeps = [
   scWorkerRuntimeDeps(),

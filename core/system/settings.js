@@ -11,7 +11,7 @@ const settings = {
  *
  * @export
  * @param {String} name
- * @returns {Boolean|Number|String}
+ * @returns {any}
  */
 export function getSetting(name) {
   return settings[name] || false; // if undefined, return false
@@ -24,7 +24,7 @@ export function getSetting(name) {
  * @param {String} name
  * @param {Boolean|Number|String} value
  * @param {Boolean} [overWrite] Optional: set to false to prevent overwrite
- * @returns {Boolean|Number|String}
+ * @returns {any}
  */
 export function setSetting(name, value, overWrite = true) {
   settings[name] = value;

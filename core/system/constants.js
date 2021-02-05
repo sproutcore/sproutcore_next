@@ -27,3 +27,6 @@ export const FROZEN_ERROR = "Cannot modify a frozen object";
   A constant indicating an unsupported method, property or other.
 */
 export const UNSUPPORTED = '_sc_unsupported';
+
+export const APP_MODE = "APP_MODE";
+export const TEST_MODE = "TEST_MODE";

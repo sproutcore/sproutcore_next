@@ -141,14 +141,13 @@ const LOGGER_LEVEL_NONE = 'none';
   @author Colin Campbell
   @author Benedikt Böhm
   @author William Kakes
-  @lends SCObject
   @type Object
   @since SproutCore 1.0
   @see <a href="http://getfirebug.com/logging.html">Firebug Logging Reference</a>
 */
 
 export const Logger = SCObject.create({
-  /** Logger.prototype */
+  /** @namespace Logger.prototype */
     // ..........................................................
     // PROPERTIES
     //

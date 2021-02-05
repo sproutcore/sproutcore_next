@@ -9,6 +9,7 @@
  * This is a kind of stub, to make the reponder and more specifically the state chart system
  * run inside NodeJS
  */
+import { SC } from '../../core/core.js';
 
 
 
