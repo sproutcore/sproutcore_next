@@ -13,7 +13,7 @@ import { SC } from '../../core/core.js';
 
 
 /** Set to false to leave the backspace key under the control of the browser.*/
-// SC.CAPTURE_BACKSPACE_KEY = false ;
+// CAPTURE_BACKSPACE_KEY = false ;
 // convert to setting
 SC.setSetting('CAPTURE_BACKSPACE_KEY', false);
 
@@ -56,7 +56,7 @@ SC.setSetting('CAPTURE_BACKSPACE_KEY', false);
      view is found that handles it.
 */
 export const RootResponder = SC.Object.extend(
-  /** @scope SC.RootResponder.prototype */{
+  /** @scope RootResponder.prototype */{
 
   /**
     Contains a list of all panes currently visible on screen.  Every time a
@@ -82,7 +82,7 @@ export const RootResponder = SC.Object.extend(
     should use a MainPane subclass, which will automatically make itself main
     when you append it to the document.
 
-    @type SC.MainPane
+    @type MainPane
   */
   mainPane: null,
 
@@ -95,7 +95,7 @@ export const RootResponder = SC.Object.extend(
     Note that this method does not actually change the Pane's place in the
     document body.  That will be handled by the Pane itself.
 
-    @param {SC.Pane} pane
+    @param {Pane} pane
     @returns {RootResponder}
   */
   makeMainPane: function(pane) {
@@ -126,7 +126,7 @@ export const RootResponder = SC.Object.extend(
     The current menu pane. This pane receives keyboard events before all other
     panes, but tends to be transient, as it is only set when a pane is open.
 
-    @type SC.MenuPane
+    @type MenuPane
   */
   menuPane: null,
 
@@ -135,13 +135,13 @@ export const RootResponder = SC.Object.extend(
     pane, but the current key pane will not lose focus.
 
     Usually you would not call this method directly, but allow instances of
-    SC.MenuPane to manage the menu pane for you. If your pane does need to
+    MenuPane to manage the menu pane for you. If your pane does need to
     become menu pane, you should relinquish control by calling this method
     with a null parameter. Otherwise, key events will always be delivered to
     that pane.
 
-    @param {SC.MenuPane} pane
-    @returns {SC.RootResponder} receiver
+    @param {MenuPane} pane
+    @returns {RootResponder} receiver
   */
   makeMenuPane: function(pane) {
     // Does the specified pane accept being the menu pane?  If not, there's
@@ -167,7 +167,7 @@ export const RootResponder = SC.Object.extend(
     actions first, unless a menu is open. This pane is usually the highest
     ordered pane or the mainPane.
 
-    @type SC.Pane
+    @type Pane
   */
   keyPane: null,
 
@@ -185,8 +185,8 @@ export const RootResponder = SC.Object.extend(
     key pane (if it is still attached), and so on down the stack.  This will
     notify both the old pane and the new root View that key focus has changed.
 
-    @param {SC.Pane} pane
-    @returns {SC.RootResponder} receiver
+    @param {Pane} pane
+    @returns {RootResponder} receiver
   */
   makeKeyPane: function(pane) {
     // Quick note about previousKeyPanes: if a pane is destroyed while in the
@@ -328,11 +328,11 @@ export const RootResponder = SC.Object.extend(
     var newSize = this.computeWindowSize(), oldSize = this.get('currentWindowSize');
     this.set('currentWindowSize', newSize); // update size
 
-    if (!SC.rectsEqual(newSize, oldSize)) {
-      SC.run(function() {
+    if (!rectsEqual(newSize, oldSize)) {
+      run(function() {
         //Notify orientation change. This is faster than waiting for the orientation
         //change event.
-        SC.device.windowSizeDidChange(newSize);
+        device.windowSizeDidChange(newSize);
 
         // notify panes
         if (this.panes) {
@@ -353,7 +353,7 @@ export const RootResponder = SC.Object.extend(
       this.set('currentDesignMode', newDesignMode);
 
       if (this.panes) {
-        SC.run(function() {
+        run(function() {
           this.panes.invoke('updateDesignMode', oldDesignMode, newDesignMode);
         }, this);
       }
@@ -376,13 +376,13 @@ export const RootResponder = SC.Object.extend(
   */
   focus: function(evt) {
     if (!this.get('hasFocus')) {
-      SC.$('body').addClass('sc-focus').removeClass('sc-blur');
+      $('body').addClass('sc-focus').removeClass('sc-blur');
 
-      SC.run(function () {
+      run(function () {
       // If the app is getting focus again set the first responder to the first
       // valid firstResponder view in the view's tree
-      if(!SC.TABBING_ONLY_INSIDE_DOCUMENT && !SC.browser.isIE8OrLower){
-        var keyPane = SC.RootResponder.responder.get('keyPane');
+      if(!TABBING_ONLY_INSIDE_DOCUMENT && !browser.isIE8OrLower){
+        var keyPane = RootResponder.responder.get('keyPane');
         if (keyPane) {
           var nextValidKeyView = keyPane.get('nextValidKeyView');
           if (nextValidKeyView) keyPane.makeFirstResponder(nextValidKeyView);
@@ -423,9 +423,9 @@ export const RootResponder = SC.Object.extend(
   */
   blur: function(evt) {
     if (this.get('hasFocus')) {
-      SC.$('body').addClass('sc-blur').removeClass('sc-focus');
+      $('body').addClass('sc-blur').removeClass('sc-focus');
 
-      SC.run(function() {
+      run(function() {
         this.set('hasFocus', false);
       }, this);
     }
@@ -444,7 +444,7 @@ export const RootResponder = SC.Object.extend(
   /** @private */
   currentDesignMode: null,
 
-  /** @private Managed by SC.Application. */
+  /** @private Managed by Application. */
   designModes: function (key, value) {
     if (SC.none(value)) {
       // Clear previous values.
@@ -490,12 +490,12 @@ export const RootResponder = SC.Object.extend(
       designMode = designModeNames.objectAt(i);
     }
 
-    return SC.device.orientation === SC.PORTRAIT_ORIENTATION ? designMode + '_p' : designMode + '_l';
+    return device.orientation === PORTRAIT_ORIENTATION ? designMode + '_p' : designMode + '_l';
   },
 
   /** @private (semi-private)
     Returns the fallback design mode for the given design mode.  This is
-    primarily used by SC.View for the case where an adjustment isn't found
+    primarily used by View for the case where an adjustment isn't found
     for the current design mode and we want to apply the next best design
     mode as a fallback.
   */
@@ -553,7 +553,7 @@ export const RootResponder = SC.Object.extend(
     Set this to a delegate object that can respond to actions as they are sent
     down the responder chain.
 
-    @type SC.Object
+    @type Object
   */
   defaultResponder: null,
 
@@ -565,15 +565,15 @@ export const RootResponder = SC.Object.extend(
 
     **IMPORTANT**: This method's API and implementation will likely change
     significantly after SproutCore 1.0 to match the version found in
-    SC.ResponderContext.
+    ResponderContext.
 
     You generally should not call or override this method in your own
     applications.
 
     @param {String} action The action to perform - this is a method name.
-    @param {SC.Responder} target object to set method to (can be null)
+    @param {Responder} target object to set method to (can be null)
     @param {Object} sender The sender of the action
-    @param {SC.Pane} pane optional pane to start search with
+    @param {Pane} pane optional pane to start search with
     @param {Object} context optional. only passed to ResponderContexts
     @returns {Boolean} true if action was performed, false otherwise
     @test in targetForAction
@@ -604,8 +604,8 @@ export const RootResponder = SC.Object.extend(
     // HACK: Eventually we need to normalize the sendAction() method between
     // this and the ResponderContext, but for the moment just look for a
     // ResponderContext as the defaultResponder and return it if present.
-    if (typeof defaultResponder === SC.T_STRING) {
-      defaultResponder = SC.objectForPropertyPath(defaultResponder);
+    if (typeof defaultResponder === T_STRING) {
+      defaultResponder = objectForPropertyPath(defaultResponder);
     }
 
     if (!defaultResponder) return null;
@@ -631,30 +631,30 @@ export const RootResponder = SC.Object.extend(
     @param {Object|String} target or null if no target is specified
     @param {String} method name for target
     @param {Object} sender optional sender
-    @param {SC.Pane} optional pane
+    @param {Pane} optional pane
     @param {firstResponder} a first responder to use
     @returns {Object} target object or null if none found
   */
   targetForAction: function(methodName, target, sender, pane, firstResponder) {
 
     // 1. no action, no target...
-    if (!methodName || (SC.typeOf(methodName) !== SC.T_STRING)) {
+    if (!methodName || (typeOf(methodName) !== T_STRING)) {
       return null ;
     }
 
     // 2. an explicit target was passed...
     if (target) {
       // Normalize String targets to Objects
-      if (SC.typeOf(target) === SC.T_STRING) {
-        target = SC.objectForPropertyPath(target) ||
-                 SC.objectForPropertyPath(target, sender);
+      if (typeOf(target) === T_STRING) {
+        target = objectForPropertyPath(target) ||
+                 objectForPropertyPath(target, sender);
       }
 
       // Ensure that the target responds to the method.
       if (target && !target.isResponderContext) {
         if (target.respondsTo && !target.respondsTo(methodName)) {
           target = null ;
-        } else if (SC.typeOf(target[methodName]) !== SC.T_FUNCTION) {
+        } else if (typeOf(target[methodName]) !== T_FUNCTION) {
           target = null ;
         }
       }
@@ -682,14 +682,14 @@ export const RootResponder = SC.Object.extend(
 
     // ...still no target? check the defaultResponder...
     if (!target && (target = this.get('defaultResponder'))) {
-      if (SC.typeOf(target) === SC.T_STRING) {
-        target = SC.objectForPropertyPath(target) ;
+      if (typeOf(target) === T_STRING) {
+        target = objectForPropertyPath(target) ;
         if (target) this.set('defaultResponder', target) ; // cache if found
       }
       if (target && !target.isResponderContext) {
         if (target.respondsTo && !target.respondsTo(methodName)) {
           target = null ;
-        } else if (SC.typeOf(target[methodName]) !== SC.T_FUNCTION) {
+        } else if (typeOf(target[methodName]) !== T_FUNCTION) {
           target = null ;
         }
       }
@@ -702,12 +702,12 @@ export const RootResponder = SC.Object.extend(
     Finds the view that appears to be targeted by the passed event.  This only
     works on events with a valid target property.
 
-    @param {SC.Event} evt
-    @returns {SC.View} view instance or null
+    @param {Event} evt
+    @returns {View} view instance or null
   */
   targetViewForEvent: function (evt) {
     var ret = null;
-    if (evt.target) { ret = SC.viewFor(evt.target); }
+    if (evt.target) { ret = viewFor(evt.target); }
 
     return ret;
   },
@@ -722,14 +722,14 @@ export const RootResponder = SC.Object.extend(
     send the event down the responder chain.
 
     @param {String} action
-    @param {SC.Event} evt
+    @param {Event} evt
     @param {Object} target
     @returns {Object} object that handled the event or null if not handled
   */
   sendEvent: function(action, evt, target) {
     var pane, ret ;
 
-    SC.run(function send_event() {
+    run(function send_event() {
       // get the target pane
       if (target) pane = target.get('pane') ;
       else pane = this.get('menuPane') || this.get('keyPane') || this.get('mainPane') ;
@@ -756,13 +756,13 @@ export const RootResponder = SC.Object.extend(
     @param {Element} target
     @param {Object} receiver - optional if you don't want 'this'
     @param {Boolean} useCapture
-    @returns {SC.RootResponder} receiver
+    @returns {RootResponder} receiver
   */
   listenFor: function(keyNames, target, receiver, useCapture) {
     receiver = receiver ? receiver : this;
     keyNames.forEach( function(keyName) {
       var method = receiver[keyName] ;
-      if (method) SC.Event.add(target, keyName, receiver, method, null, useCapture) ;
+      if (method) Event.add(target, keyName, receiver, method, null, useCapture) ;
     },this) ;
 
     target = null ;
@@ -782,7 +782,7 @@ export const RootResponder = SC.Object.extend(
     this.listenFor(['touchstart', 'touchmove', 'touchend', 'touchcancel', 'keydown', 'keypress', 'keyup', 'beforedeactivate', 'mousedown', 'mouseup', 'dragenter', 'dragover', 'dragleave', 'drop', 'click', 'dblclick', 'mousemove', 'mouseleave', 'contextmenu'], document)
         .listenFor(['resize'], window);
 
-    if(SC.browser.isIE8OrLower) this.listenFor(['focusin', 'focusout'], document);
+    if(browser.isIE8OrLower) this.listenFor(['focusin', 'focusout'], document);
     else this.listenFor(['focus', 'blur'], window);
 
     // Add an array of transition listeners for immediate use (these will be cleaned up when actual testing completes).
@@ -790,8 +790,8 @@ export const RootResponder = SC.Object.extend(
     // delay the launch of the application in order to a transition test (the app won't
     // load if the browser tab is not visible), we start off by listening to everything
     // and when the test is completed, we remove the extras to avoid double callbacks.
-    if (SC.platform.supportsCSSTransitions) {
-      var domPrefix = SC.browser.domPrefix,
+    if (platform.supportsCSSTransitions) {
+      var domPrefix = browser.domPrefix,
         lowerDomPrefix = domPrefix.toLowerCase(),
         variation1 = lowerDomPrefix + 'transitionend',
         variation2 = lowerDomPrefix + 'TransitionEnd',
@@ -803,7 +803,7 @@ export const RootResponder = SC.Object.extend(
       // ex. transitionend, webkittransitionend, webkitTransitionEnd, WebkitTransitionEnd
       this.listenFor(['transitionend', variation1, variation2, variation3], document);
 
-      if (SC.platform.supportsCSSAnimations) {
+      if (platform.supportsCSSAnimations) {
         variation1 = lowerDomPrefix + 'animationstart';
         variation2 = lowerDomPrefix + 'AnimationStart';
         variation3 = domPrefix + 'AnimationStart';
@@ -840,20 +840,20 @@ export const RootResponder = SC.Object.extend(
     ['drag', 'selectstart'].forEach(function(keyName) {
       var method = this[keyName] ;
       if (method) {
-        if (SC.browser.isIE) {
+        if (browser.isIE) {
           var responder = this ;
 
           document.body['on' + keyName] = function(e) {
-            return method.call(responder, SC.Event.normalizeEvent(event || window.event)); // this is IE :(
+            return method.call(responder, Event.normalizeEvent(event || window.event)); // this is IE :(
           };
 
           // be sure to cleanup memory leaks
-           SC.Event.add(window, 'unload', this, function() {
+           Event.add(window, 'unload', this, function() {
             document.body['on' + keyName] = null;
           });
 
         } else {
-          SC.Event.add(document, keyName, this, method);
+          Event.add(document, keyName, this, method);
         }
       }
     }, this);
@@ -861,9 +861,9 @@ export const RootResponder = SC.Object.extend(
     var mousewheel = 'mousewheel';
 
     // Firefox emits different mousewheel events than other browsers
-    if (SC.browser.isMozilla) {
+    if (browser.isMozilla) {
       // For Firefox < 3.5, subscribe to DOMMouseScroll events
-      if (SC.browser.compare(SC.browser.engineVersion, '1.9.1') < 0) {
+      if (browser.compare(browser.engineVersion, '1.9.1') < 0) {
         mousewheel = 'DOMMouseScroll';
 
       // For Firefox 3.5 and greater, we can listen for MozMousePixelScroll,
@@ -873,12 +873,12 @@ export const RootResponder = SC.Object.extend(
         mousewheel = 'MozMousePixelScroll';
       }
     }
-    SC.Event.add(document, mousewheel, this, this.mousewheel);
+    Event.add(document, mousewheel, this, this.mousewheel);
 
     // Do some initial set up.
     this.set('currentWindowSize', this.computeWindowSize()) ;
 
-    var f = SC.RunLoop.prototype.endRunLoop,
+    var f = RunLoop.prototype.endRunLoop,
       patch = function() {
         // Call original endRunLoop implementation.
         if (f) f.apply(this, arguments);
@@ -889,7 +889,7 @@ export const RootResponder = SC.Object.extend(
         // end of every runloop, check to see if the target of any touches has been removed
         // from the DOM. If so, we re-append it to the DOM and hide it. We then mark the target
         // as having been moved, and it is de-allocated in the corresponding touchend event.
-        var touches = SC.RootResponder.responder._touches;
+        var touches = RootResponder.responder._touches;
         if (touches) {
           var touch, elem, target, found = false;
 
@@ -917,9 +917,9 @@ export const RootResponder = SC.Object.extend(
               }
 
               // Create a holding pen if needed for these views...
-              var pen = SC.touchHoldingPen;
+              var pen = touchHoldingPen;
               if (!pen) {
-                pen = SC.touchHoldingPen = document.createElement('div');
+                pen = touchHoldingPen = document.createElement('div');
                 pen.style.display = 'none';
                 document.body.appendChild(pen);
               }
@@ -933,20 +933,20 @@ export const RootResponder = SC.Object.extend(
           }
         }
       };
-    SC.RunLoop.prototype.endRunLoop = patch;
+    RunLoop.prototype.endRunLoop = patch;
   },
 
   /**
     Cleans up the additional transition event listeners.
 
-    falseTE: requires that SC.RootResponser.responder.transitionendEventName
+    falseTE: requires that RootResponser.responder.transitionendEventName
     has been determined.
 
     @returns {void}
   */
   cleanUpTransitionListeners: function () {
-    var actualEventName = SC.platform.transitionendEventName,
-      domPrefix = SC.browser.domPrefix,
+    var actualEventName = platform.transitionendEventName,
+      domPrefix = browser.domPrefix,
       lowerDomPrefix = domPrefix.toLowerCase(),
       variation1 = lowerDomPrefix + 'transitionend',
       variation2 = lowerDomPrefix + 'TransitionEnd',
@@ -956,7 +956,7 @@ export const RootResponder = SC.Object.extend(
     // This should prevent any problems with browsers that fire multiple events.
     ['transitionend', variation1, variation2, variation3].forEach(function (keyName) {
       if (keyName !== actualEventName) {
-        SC.Event.remove(document, keyName, this, this[keyName]);
+        Event.remove(document, keyName, this, this[keyName]);
         this[keyName] = null;
     }
     }, this);
@@ -965,17 +965,17 @@ export const RootResponder = SC.Object.extend(
   /**
     Cleans up the additional animation event listeners.
 
-    falseTE: requires that SC.RootResponser.responder.animationstartEventName,
-    SC.RootResponser.responder.animationendEventName and
-    SC.RootResponser.responder.animationiterationEventName have been
+    falseTE: requires that RootResponser.responder.animationstartEventName,
+    RootResponser.responder.animationendEventName and
+    RootResponser.responder.animationiterationEventName have been
     determined.
 
     @returns {void}
   */
   cleanUpAnimationListeners: function () {
-    var domPrefix = SC.browser.domPrefix,
+    var domPrefix = browser.domPrefix,
       lowerDomPrefix = domPrefix.toLowerCase(),
-      actualEventName = SC.platform.animationendEventName,
+      actualEventName = platform.animationendEventName,
       variation1 = lowerDomPrefix + 'animationend',
       variation2 = lowerDomPrefix + 'AnimationEnd',
       variation3 = domPrefix + 'AnimationEnd';
@@ -984,29 +984,29 @@ export const RootResponder = SC.Object.extend(
     // This should prevent any problems with browsers that fire multiple events.
     ['animationend', variation1, variation2, variation3].forEach(function (keyName) {
       if (keyName !== actualEventName) {
-        SC.Event.remove(document, keyName, this, this[keyName]);
+        Event.remove(document, keyName, this, this[keyName]);
         this[keyName] = null;
     }
     }, this);
 
-    actualEventName = SC.platform.animationiterationEventName;
+    actualEventName = platform.animationiterationEventName;
     variation1 = lowerDomPrefix + 'animationiteration';
     variation2 = lowerDomPrefix + 'AnimationIteration';
     variation3 = domPrefix + 'AnimationIteration';
     ['animationiteration', variation1, variation2, variation3].forEach(function (keyName) {
       if (keyName !== actualEventName) {
-        SC.Event.remove(document, keyName, this, this[keyName]);
+        Event.remove(document, keyName, this, this[keyName]);
         this[keyName] = null;
       }
     }, this);
 
-    actualEventName = SC.platform.animationstartEventName;
+    actualEventName = platform.animationstartEventName;
     variation1 = lowerDomPrefix + 'animationstart';
     variation2 = lowerDomPrefix + 'AnimationStart';
     variation3 = domPrefix + 'AnimationStart';
     ['animationstart', variation1, variation2, variation3].forEach(function (keyName) {
       if (keyName !== actualEventName) {
-        SC.Event.remove(document, keyName, this, this[keyName]);
+        Event.remove(document, keyName, this, this[keyName]);
         this[keyName] = null;
       }
     }, this);
@@ -1038,7 +1038,7 @@ export const RootResponder = SC.Object.extend(
     When views receive a touch event, they have the option to subscribe to it.
     They are then mapped to touch events and vice-versa. This returns touches mapped to the view.
 
-    This method is also available on SC.Touch objects, and you will usually call it from there.
+    This method is also available on Touch objects, and you will usually call it from there.
   */
   touchesForView: function(view) {
     if (this._touchedViews[SC.guidFor(view)]) {
@@ -1051,12 +1051,12 @@ export const RootResponder = SC.Object.extend(
     of all touches, and the average distance of all touches from that average. This is useful
     for implementing scaling.
 
-    This method is also available on SC.Touch objects, and you will usually call it from there.
+    This method is also available on Touch objects, and you will usually call it from there.
 
-    @param {SC.View} view The view whose touches should be averaged.
-    @param {SC.Touch} additionalTouch This method uses touchesForView; if you call it from
+    @param {View} view The view whose touches should be averaged.
+    @param {Touch} additionalTouch This method uses touchesForView; if you call it from
         touchStart, that touch will not yet be included in touchesForView. To accommodate this,
-        you should pass the view to this method (or pass true to SC.Touch#averagedTouchesForView's
+        you should pass the view to this method (or pass true to Touch#averagedTouchesForView's
         `addSelf` argument).
   */
   averagedTouchesForView: function(view, additionalTouch) {
@@ -1093,7 +1093,7 @@ export const RootResponder = SC.Object.extend(
       if (additionalTouch && !additionalTouchIsDuplicate) touches.push(additionalTouch);
 
       // Calculate the average.
-      SC.Touch.averagedTouch(touches, averaged);
+      Touch.averagedTouch(touches, averaged);
 
       // Clear the touches array to prevent touch object leaks.
       touches.length = 0;
@@ -1118,7 +1118,7 @@ export const RootResponder = SC.Object.extend(
     if (!this._touchedViews[SC.guidFor(view)]) {
       this._touchedViews[SC.guidFor(view)] = {
         view: view,
-        touches: SC.CoreSet.create([]),
+        touches: CoreSet.create([]),
         touchCount: 0
       };
       view.set("hasTouch", true);
@@ -1171,7 +1171,7 @@ export const RootResponder = SC.Object.extend(
     view which will receive touch events for that touch.
 
     You will usually not call this method directly, instead calling one of the convenience methods on
-    the touch itself. See documentation for SC.Touch for more.
+    the touch itself. See documentation for Touch for more.
 
     Possible gotchas:
 
@@ -1182,12 +1182,12 @@ export const RootResponder = SC.Object.extend(
       `nextResponder` like in a standard responder chain. To query the touch's current responder stack
       (or, though it's not recommended, change it), check touch.touchResponders.
 
-    @param {SC.Touch} touch
-    @param {SC.Responder} responder The view to assign to the touch. (It, or if bubbling then an ancestor,
+    @param {Touch} touch
+    @param {Responder} responder The view to assign to the touch. (It, or if bubbling then an ancestor,
       must implement touchStart.)
     @param {Boolean} shouldStack Whether the new responder should replace the old one, or stack with it.
-      Stacked responders are easy to revert via `SC.Touch#restoreLastTouchResponder`.
-    @param {Boolean|SC.Responder} bubblesTo If true, will attempt to find a `touchStart` responder up the
+      Stacked responders are easy to revert via `Touch#restoreLastTouchResponder`.
+    @param {Boolean|Responder} bubblesTo If true, will attempt to find a `touchStart` responder up the
       responder chain. If false or undefined, will only check the passed responder. If you pass a responder
       for this argument, the attempt will bubble until it reaches the passed responder, allowing you to
       restrict the bubbling to a portion of the responder chain. ((Note that this responder will not be
@@ -1195,7 +1195,7 @@ export const RootResponder = SC.Object.extend(
     @returns {Boolean} Whether a valid touch responder was found and assigned.
   */
   makeTouchResponder: function(touch, responder, shouldStack, bubblesTo) {
-    // In certain cases (SC.Gesture being one), we have to call makeTouchResponder
+    // In certain cases (Gesture being one), we have to call makeTouchResponder
     // from inside makeTouchResponder so we queue it up here.
     if (this._isMakingTouchResponder) {
       this._queuedTouchResponder = [touch, responder, shouldStack, bubblesTo];
@@ -1224,13 +1224,13 @@ export const RootResponder = SC.Object.extend(
     // if the responder is not already in the stack...
     if (stack.indexOf(responder) < 0) {
 
-      // if we need to go up the view chain, do so via SC.Pane#sendEvent.
+      // if we need to go up the view chain, do so via Pane#sendEvent.
       if (bubblesTo) {
         // if we found a valid pane, send the event to it
         try {
           responder = pane ? pane.sendEvent("touchStart", touch, responder, bubblesTo) : null ;
         } catch (e) {
-          SC.Logger.error("Error in touchStart: " + e);
+          Logger.error("Error in touchStart: " + e);
           responder = null;
         }
       } else {
@@ -1312,17 +1312,17 @@ export const RootResponder = SC.Object.extend(
     If no view captures the touch, this method will return false, and makeTouchResponder is then called for the
     target, proceeding with standard target-to-pane event bubbling for `touchStart`.
 
-    For an example of captureTouch in action, see SC.ScrollView's touch handling, which by default captures the
+    For an example of captureTouch in action, see ScrollView's touch handling, which by default captures the
     touch and holds it for 150ms to allow it to determine whether the user is tapping or scrolling.
 
     You will usually not call this method yourself, and if you do, you should call the corresponding convenience
     method on the touch itself.
 
-    @param {SC.Touch} touch The touch to offer up for capture.
-    @param {?SC.Responder} startingPoint The view whose children should be given an opportunity to capture
+    @param {Touch} touch The touch to offer up for capture.
+    @param {?Responder} startingPoint The view whose children should be given an opportunity to capture
       the event. (The starting point itself is not asked.)
     @param {Boolean} shouldStack Whether any capturing responder should stack with existing responders.
-      Stacked responders are easy to revert via `SC.Touch#restoreLastTouchResponder`.
+      Stacked responders are easy to revert via `Touch#restoreLastTouchResponder`.
 
     @returns {Boolean} Whether or not the touch was captured. If it was not, you should pass it to
       `makeTouchResponder` for standard event bubbling.
@@ -1334,8 +1334,8 @@ export const RootResponder = SC.Object.extend(
         chain = [], idx, len;
 
     //@if (debug)
-    if (SC.LOG_TOUCH_EVENTS) {
-      SC.Logger.info('  -- Received one touch on %@'.fmt(target.toString()));
+    if (LOG_TOUCH_EVENTS) {
+      Logger.info('  -- Received one touch on %@'.fmt(target.toString()));
     }
     //@endif
     // Generate the captureTouch responder chain by working backwards from the target
@@ -1349,13 +1349,13 @@ export const RootResponder = SC.Object.extend(
     for (len = chain.length, idx = 0; idx < len; idx++) {
       view = chain[idx];
       //@if (debug)
-      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
+      if (LOG_TOUCH_EVENTS) Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
       //@endif
 
       // see if it captured the touch
       if (view.tryToPerform('captureTouch', touch)) {
         //@if (debug)
-        if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('   -- Making %@ touch responder because it returns true to captureTouch'.fmt(view.toString()));
+        if (LOG_TOUCH_EVENTS) Logger.info('   -- Making %@ touch responder because it returns true to captureTouch'.fmt(view.toString()));
         //@endif
 
         // if so, make it the touch's responder
@@ -1365,7 +1365,7 @@ export const RootResponder = SC.Object.extend(
     }
 
     //@if (debug)
-    if (SC.LOG_TOUCH_EVENTS) SC.Logger.info("   -- Didn't find a view that returned true to captureTouch.");
+    if (LOG_TOUCH_EVENTS) Logger.info("   -- Didn't find a view that returned true to captureTouch.");
     //@endif
 
     return false;
@@ -1452,8 +1452,8 @@ export const RootResponder = SC.Object.extend(
     if (elem) {
       if (elem.swapNode && elem.swapNode.parentNode) {
         elem.swapNode.parentNode.replaceChild(elem, elem.swapNode);
-      } else if (elem.parentNode === SC.touchHoldingPen) {
-        SC.touchHoldingPen.removeChild(elem);
+      } else if (elem.parentNode === touchHoldingPen) {
+        touchHoldingPen.removeChild(elem);
       }
       delete touch._rescuedElement;
       elem.swapNode = null;
@@ -1488,7 +1488,7 @@ export const RootResponder = SC.Object.extend(
 
     var hidingTouchIntercept = false;
 
-    SC.run(function() {
+    run(function() {
       //@if(debug)
       // When using breakpoints on touch start, we will lose the end touch event.
       this.endMissingTouches(evt.touches);
@@ -1507,8 +1507,8 @@ export const RootResponder = SC.Object.extend(
       for (idx = 0; idx < len; idx++) {
         touch = changedTouches[idx];
 
-        // Create an SC.Touch instance for every touch.
-        touchEntry = SC.Touch.create(touch, this);
+        // Create an Touch instance for every touch.
+        touchEntry = Touch.create(touch, this);
 
         // skip the touch if there was no target
         if (!touchEntry.targetView) continue;
@@ -1519,7 +1519,7 @@ export const RootResponder = SC.Object.extend(
         // set timestamp
         touchEntry.timeStamp = evt.timeStamp;
 
-        // Store the SC.Touch object. We use the identifier property (provided
+        // Store the Touch object. We use the identifier property (provided
         // by the browser) to disambiguate between touches. These will be used
         // later to determine if the touches have changed.
         this._touches[touch.identifier] = touchEntry;
@@ -1556,14 +1556,14 @@ export const RootResponder = SC.Object.extend(
     // As a workaround just let the browser to use the default behavior.
     if(this.ignoreTouchHandle(evt)) return true;
 
-    SC.run(function() {
+    run(function() {
       // pretty much all we gotta do is update touches, and figure out which views need updating.
       var touches = evt.changedTouches, touch, touchEntry,
           idx, len = touches.length, view, changedTouches, viewTouches, firstTouch,
           changedViews = {}, guid, hidingTouchIntercept = false;
 
       if (this._drag) {
-        touch = SC.Touch.create(evt.changedTouches[0], this);
+        touch = Touch.create(evt.changedTouches[0], this);
         this._drag.tryToPerform('mouseDragged', touch);
       }
 
@@ -1680,7 +1680,7 @@ export const RootResponder = SC.Object.extend(
     // As a workaround just let the browser to use the default behavior.
     if(this.ignoreTouchHandle(evt)) return true;
 
-    SC.run(function() {
+    run(function() {
       var touches = evt.changedTouches, touch, touchEntry,
           idx, len = touches.length,
           action = evt.isCancel ? "touchCancelled" : "touchEnd";
@@ -1722,7 +1722,7 @@ export const RootResponder = SC.Object.extend(
         touchEntry.event = evt;
 
         //@if (debug)
-        if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('-- Received touch end');
+        if (LOG_TOUCH_EVENTS) Logger.info('-- Received touch end');
         //@endif
         if (touchEntry.hidesTouchIntercept) {
           touchEntry.unhideTouchIntercept();
@@ -1763,7 +1763,7 @@ export const RootResponder = SC.Object.extend(
      get touch events. Textfields just need to get the default focus action.
   */
   ignoreTouchHandle: function(evt) {
-    if(SC.browser.isMobileSafari){
+    if(browser.isMobileSafari){
       var tag = evt.target.tagName;
       if(tag==="INPUT" || tag==="TEXTAREA" || tag==="A" || tag==="SELECT"){
         evt.allowDefault();
@@ -1860,7 +1860,7 @@ export const RootResponder = SC.Object.extend(
     This function is only valid when called with a keydown event.
   */
   _isFunctionOrNonPrintableKey: function(evt) {
-    return !!(evt.altKey || evt.ctrlKey || evt.metaKey || SC.FUNCTION_KEYS[evt.which]);
+    return !!(evt.altKey || evt.ctrlKey || evt.metaKey || FUNCTION_KEYS[evt.which]);
   },
 
   /** @private
@@ -1868,7 +1868,7 @@ export const RootResponder = SC.Object.extend(
     events may generate a flagsChanged event, but are otherwise ignored.
   */
   _isModifierKey: function(evt) {
-    return !!SC.MODIFIER_KEYS[evt.charCode];
+    return !!MODIFIER_KEYS[evt.charCode];
   },
 
    /**
@@ -1916,14 +1916,14 @@ export const RootResponder = SC.Object.extend(
     }
 
     // Firefox does falseT handle delete here...
-    if (SC.browser.isMozilla && (evt.which === 8)) return true ;
+    if (browser.isMozilla && (evt.which === 8)) return true ;
 
     // modifier keys are handled separately by the 'flagsChanged' event
     // send event for modifier key changes, but only stop processing if this
     // is only a modifier change
     var ret = this._handleModifierChanges(evt),
         target = evt.target || evt.srcElement,
-        forceBlock = (evt.which === 8) && !SC.allowsBackspaceToPreviousPage && (target === document.body);
+        forceBlock = (evt.which === 8) && !allowsBackspaceToPreviousPage && (target === document.body);
 
     if (this._isModifierKey(evt)) return (forceBlock ? false : ret);
 
@@ -1939,7 +1939,7 @@ export const RootResponder = SC.Object.extend(
 
       // attempt key equivalent if key not handled
       if (!ret) {
-        SC.run(function () {
+        run(function () {
         ret = !this.attemptKeyEquivalent(evt) ;
         }, this);
       } else {
@@ -2003,7 +2003,7 @@ export const RootResponder = SC.Object.extend(
   beforedeactivate: function(evt) {
     var toElement = evt.toElement;
     if (toElement && toElement.tagName && toElement.tagName!=="IFRAME") {
-      var view = SC.viewFor(toElement);
+      var view = viewFor(toElement);
       //The following line is necessary to allow/block text selection for IE,
       // in combination with the selectstart event.
       if (view && view.get('blocksIEDeactivate')) return false;
@@ -2066,7 +2066,7 @@ export const RootResponder = SC.Object.extend(
       handler = null;
 
     if (dragView) {
-      SC.run(function () {
+      run(function () {
         dragView.tryToPerform('mouseUp', evt);
       });
     } else {
@@ -2154,7 +2154,7 @@ export const RootResponder = SC.Object.extend(
   },
 
   dblclick: function(evt){
-    if (SC.browser.isIE8OrLower) {
+    if (browser.isIE8OrLower) {
       this._clickCount = 2;
       // this._onmouseup(evt);
       this.mouseup(evt);
@@ -2185,7 +2185,7 @@ export const RootResponder = SC.Object.extend(
     // To prevent this, we make sure the event target is an instance of Element.
     if (!(evt.target instanceof Element)) return;
 
-    if (SC.browser.isIE) {
+    if (browser.isIE) {
       if (this._lastMoveX === evt.clientX && this._lastMoveY === evt.clientY) return;
     }
 
@@ -2194,7 +2194,7 @@ export const RootResponder = SC.Object.extend(
     this._lastMoveX = evt.clientX;
     this._lastMoveY = evt.clientY;
 
-    SC.run(function() {
+    run(function() {
       var dragView = this._drag;
 
        // make sure the view gets focus no matter what.  FF is inconsistent
@@ -2204,7 +2204,7 @@ export const RootResponder = SC.Object.extend(
        // drags send their own events, e.g. drag[Moved|Entered|Exited]
       if (dragView) {
          //IE triggers mousemove at the same time as mousedown
-         if(SC.browser.isIE){
+         if(browser.isIE){
            if (this._lastMouseDownX !== evt.clientX || this._lastMouseDownY !== evt.clientY) {
             dragView.tryToPerform('mouseDragged', evt);
            }
@@ -2245,7 +2245,7 @@ export const RootResponder = SC.Object.extend(
          // also, if a mouseDownView exists, call the mouseDragged action, if
          // it exists.
          if (this._mouseDownView) {
-           if(SC.browser.isIE){
+           if(browser.isIE){
              if (this._lastMouseDownX !== evt.clientX && this._lastMouseDownY !== evt.clientY) {
                this._mouseDownView.tryToPerform('mouseDragged', evt);
              }
@@ -2272,7 +2272,7 @@ export const RootResponder = SC.Object.extend(
   // These event handlers prevent default file handling, and enable the dataDrag API.
   /** @private The dragenter event comes from the browser when a data-ful drag enters any element. */
   dragenter: function(evt) {
-    SC.run(function() { this._dragenter(evt); }, this);
+    run(function() { this._dragenter(evt); }, this);
   },
 
   /** @private */
@@ -2286,7 +2286,7 @@ export const RootResponder = SC.Object.extend(
 
   /** @private The dragleave event comes from the browser when a data-ful drag leaves any element. */
   dragleave: function(evt) {
-    SC.run(function() { this._dragleave(evt); }, this);
+    run(function() { this._dragleave(evt); }, this);
   },
 
   /** @private */
@@ -2297,7 +2297,7 @@ export const RootResponder = SC.Object.extend(
   },
   /** @private
     Dragleave doesn't fire reliably in all browsers, so this method forces it (scheduled below). Note
-    that, being scheduled via SC.Timer, this method is already in a run loop.
+    that, being scheduled via Timer, this method is already in a run loop.
   */
   _forceDragLeave: function() {
     // Give it another runloop to ensure that we're not in the middle of a drag.
@@ -2311,7 +2311,7 @@ export const RootResponder = SC.Object.extend(
 
   /** @private This event fires continuously while the dataful drag is over the document. */
   dragover: function(evt) {
-    SC.run(function() { this._dragover(evt); }, this);
+    run(function() { this._dragover(evt); }, this);
   },
 
   /** @private */
@@ -2376,13 +2376,13 @@ export const RootResponder = SC.Object.extend(
       this._lastDraggedOver = nd;
       this._lastDraggedEvt = evt;
       // For browsers that don't reliably call a dragleave for every dragenter, we have a timer fallback.
-      this._dragLeaveTimer = SC.Timer.schedule({ target: this, action: '_forceDragLeave', interval: 300 });
+      this._dragLeaveTimer = Timer.schedule({ target: this, action: '_forceDragLeave', interval: 300 });
     }
   },
 
   /** @private This event is called if the most recent dragover event returned with a non-"none" dropEffect. */
   drop: function(evt) {
-    SC.run(function() { this._drop(evt); }, this);
+    run(function() { this._drop(evt); }, this);
   },
 
   /** @private */
@@ -2507,9 +2507,9 @@ export const RootResponder = SC.Object.extend(
   Invoked when the document is ready, but before main is called.  Creates
   an instance and sets up event listeners as needed.
 */
-SC.ready(SC.RootResponder, SC.RootResponder.ready = function () {
+SC.ready(RootResponder, RootResponder.ready = function () {
   var r;
 
-  r = SC.RootResponder.responder = SC.RootResponder.create();
+  r = RootResponder.responder = RootResponder.create();
   r.setup();
 });

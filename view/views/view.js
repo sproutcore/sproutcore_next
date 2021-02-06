@@ -1,7 +1,18 @@
 
+import { SC } from '../../core/core.js';
 import { CoreView } from './core_view.js';
+import { isPercentage } from './utils/utils.js';
+import { accelerationSupport } from './view/acceleration.js';
+import { animationSupport } from './view/animation.js';
 import { cursorSupport } from './view/cursor.js';
 import { viewEnabledSupport } from './view/enabled.js';
+import { keyboardSupport } from './view/keyboard.js';
+import { layoutSupport, LAYOUT_AUTO, staticViewLayout } from './view/layout.js';
+import { viewLayoutStyleSupport } from './view/layout_style.js';
+import { manipulationSupport } from './view/manipulation.js';
+import { themingSupport } from './view/theming.js';
+import { touchSupport } from './view/touch.js';
+import { visibilitySupport } from './view/visibility.js';
 
 /**
   @class
@@ -276,19 +287,22 @@ import { viewEnabledSupport } from './view/enabled.js';
   For a full list of available methods, see the key values on BASE_KEY_BINDINGS and
   MODIFIED_KEY_BINDINGS.
 
-  @extends Responder
-  @extends DelegateSupport
+
   @since SproutCore 1.0
 
 */
-export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursorSupport, /** @scope View.prototype */{
+export const View = CoreView.extend(
+    viewEnabledSupport, animationSupport, cursorSupport, viewLayoutStyleSupport, layoutSupport, 
+    accelerationSupport, keyboardSupport, manipulationSupport, touchSupport, visibilitySupport,
+    themingSupport,
+    /** @scope View.prototype */{
   classNames: ['sc-view'],
 
   displayProperties: [],
 
   /** @private Enhance. */
-  _executeQueuedUpdates: function () {
-    sc_super();
+  _executeQueuedUpdates: function _executeQueuedUpdates () {
+    _executeQueuedUpdates.base.apply(this, arguments);
 
     // Enabled
     // Update the layout style of the layer if necessary.
@@ -304,7 +318,7 @@ export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursor
   },
 
   /** Apply the attributes to the context. */
-  applyAttributesToContext: function (context) {
+  applyAttributesToContext: function applyAttributesToContext (context) {
     // Cursor
     var cursor = this.get('cursor');
     if (cursor) { context.addClass(cursor.get('className')); }
@@ -338,7 +352,7 @@ export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursor
       context.addClass(themeClassNames[idx]);
     }
 
-    sc_super();
+    applyAttributesToContext.base.apply(this, arguments);
 
     var renderDelegate = this.get('renderDelegate');
     if (renderDelegate && renderDelegate.className) {
@@ -347,8 +361,8 @@ export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursor
 
     // @if(debug)
     if (renderDelegate && renderDelegate.name) {
-      Logger.error("Render delegates now use 'className' instead of 'name'.");
-      Logger.error("Name '%@' will be ignored.", renderDelegate.name);
+      SC.Logger.error("Render delegates now use 'className' instead of 'name'.");
+      SC.Logger.error("Name '%@' will be ignored.", renderDelegate.name);
     }
     // @endif
   },
@@ -368,7 +382,7 @@ export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursor
     @param {Rect} pdim the projected parent dimensions (optional)
     @returns {Rect} the computed frame
   */
-  computeFrameWithParentFrame: function (pdim) {
+  computeFrameWithParentFrame: function computeFrameWithParentFrame (pdim) {
     // Layout.
     var layout = this.get('layout'),
         f;
@@ -376,13 +390,14 @@ export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursor
     // We can't predict the frame for static layout, so just return the view's
     // current frame (see original computeFrameWithParentFrame in views/view.js)
     if (this.get('useStaticLayout')) {
-      f = sc_super();
+      f = computeFrameWithParentFrame.apply(this, arguments);
       f = f ? this._sc_adjustForBorder(f, layout) : null;
       f = f ? this._sc_adjustForScale(f, layout) : null;
       return f;
     }
 
-    f = {};
+    f = {
+    };
 
     var error, layer, AUTO = LAYOUT_AUTO,
         dH, dW, //shortHand for parentDimensions
@@ -536,8 +551,8 @@ export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursor
     return f;
   },
 
-  init: function () {
-    sc_super();
+  init: function init () {
+    init.base.apply(this, arguments);
 
     // Enabled.
     // If the view is pre-configured as disabled, then go to the proper initial state.
@@ -575,15 +590,15 @@ export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursor
   },
 
   /** @private */
-  destroy: function () {
+  destroy: function destroy () {
     // Clean up.
     this._previousLayout = null;
 
-    return sc_super();
+    return destroy.base.apply(this);
   },
 
   /** CoreView.prototype. */
-  removeChild: function(view) {
+  removeChild: function removeChild (view) {
     // Manipulation
     if (!view) { return this; } // nothing to do
     if (view.parentView !== this) {
@@ -595,14 +610,12 @@ export const View = CoreView.extend(viewEnabledSupport, animationSupport, cursor
     if (view.willRemoveFromParent) { view.willRemoveFromParent() ; }
     if (this.willRemoveChild) { this.willRemoveChild(view) ; }
 
-    sc_super();
+    removeChild.base.apply(this, arguments);
 
     return this;
   }
 
 });
 
-//unload views for IE, trying to collect memory.
-if (browser.isIE) Event.add(window, 'unload', View, View.unload);
 
-
+View.mixin(staticViewLayout);

@@ -22,7 +22,7 @@ import { Logger, warn } from './system/logger.js';
 import { SCError, ok, val, $throw, $error, $ok, $val } from './system/error.js';
 import { SCSet } from './system/set.js';
 import { RangeObserver } from './system/range_observer.js';
-import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath, mixin } from './system/base.js';
+import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath, mixin, beget } from './system/base.js';
 import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T_STRING, T_BOOL, T_CLASS, T_DATE, T_ERROR, FROZEN_ERROR, UNSUPPORTED } from './system/constants.js';
 import { Controller } from './controllers/controller.js';
 import { ObjectController } from './controllers/object_controller.js';
@@ -32,6 +32,7 @@ import { ENV } from './system/env.js';
 import { scWorker, __runtimeDeps as scWorkerRuntimeDeps } from './system/scworker.js';
 import { Builder } from './system/builder.js';
 import { DelegateSupport } from './mixins/delegate_support.js';
+import { CoreSet } from './system/core_set.js';
 
 import { detectedBrowser, OS, CLASS_PREFIX, CSS_PREFIX, BROWSER, ENGINE, DEVICE, DOM_PREFIX } from './system/browser.js';
 import { readyMixin } from './system/ready.js';
@@ -64,6 +65,7 @@ export const SC = {
   set LOG_OBSERVERS (val) {
     setSetting('LOG_OBSERVERS', val);
   },
+  beget,
   String: SCString,
   Copyable,
   Comparable,
@@ -80,6 +82,7 @@ export const SC = {
   run,
   Binding,
   Logger,
+  CoreSet,
   ObserverSet,
   RangeObserver,
   ObserverQueue,

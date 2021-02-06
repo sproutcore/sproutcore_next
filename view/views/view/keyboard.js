@@ -1,17 +1,16 @@
-sc_require("views/view");
+// sc_require("views/view");
 
-SC.View.reopen(
-  /** @scope SC.View.prototype */ {
+export const keyboardSupport = /** @scope View.prototype */ {
   // ..........................................................
   // KEY RESPONDER
   //
 
   /** @property
-    YES if the view is currently first responder and the pane the view belongs
+    true if the view is currently first responder and the pane the view belongs
     to is also key pane.  While this property is set, you should expect to
     receive keyboard events.
   */
-  isKeyResponder: NO,
+  isKeyResponder: false,
 
   /**
     This method is invoked just before you lost the key responder status.
@@ -21,7 +20,7 @@ SC.View.reopen(
     pane is becoming first responder or because another pane is about to
     become key.
 
-    @param {SC.Responder} responder
+    @param {Responder} responder
   */
   willLoseKeyResponderTo: function(responder, evt) {},
 
@@ -33,13 +32,13 @@ SC.View.reopen(
     another view in the same pane is becoming first responder or because
     another pane is about to become key.
 
-    @param {SC.Responder} responder
+    @param {Responder} responder
   */
   willBecomeKeyResponderFrom: function(responder, evt) {},
 
   /**
     Invokved just after the responder loses key responder status.
-    @param {SC.Responder} responder
+    @param {Responder} responder
   */
   didLoseKeyResponderTo: function(responder, evt) {},
 
@@ -48,19 +47,19 @@ SC.View.reopen(
     By default, it calls focus on the view root element. For accessibility
     purposes.
 
-    @param {SC.Responder} responder
+    @param {Responder} responder
   */
   didBecomeKeyResponderFrom: function(responder, evt) {},
 
   /**
     This method will process a key input event, attempting to convert it to
     an appropriate action method and sending it up the responder chain.  The
-    event is converted using the key bindings hashes, (SC.BASE_KEY_BINDINGS
-    and SC.MODIFIED_KEY_BINDINGS) which map key events to method names. If
+    event is converted using the key bindings hashes, (BASE_KEY_BINDINGS
+    and MODIFIED_KEY_BINDINGS) which map key events to method names. If
     no key binding method is found, then the key event will be passed along
     to any insertText() method found.
 
-    @param {SC.Event} event
+    @param {Event} event
     @returns {Object} object that handled event, if any
   */
   interpretKeyEvents: function(event) {
@@ -79,9 +78,9 @@ SC.View.reopen(
     // if this is a command key, try to do something about it.
     if (cmd) {
       match = cmd.match(/[^_]+$/);
-      methodName = SC.MODIFIED_KEY_BINDINGS[cmd];
+      methodName = MODIFIED_KEY_BINDINGS[cmd];
       if (!methodName && match && match.length > 0) {
-        methodName = SC.BASE_KEY_BINDINGS[match[0]];
+        methodName = BASE_KEY_BINDINGS[match[0]];
       }
       if (methodName) {
         target = this;
@@ -99,7 +98,7 @@ SC.View.reopen(
       // of the text.  Since this is not an action, do not send it up the
       // responder chain.
       ret = this.insertText(chr, event);
-      return ret ? (ret===YES ? this : ret) : null ; // map YES|NO => this|nil
+      return ret ? (ret===true ? this : ret) : null ; // map true|false => this|nil
     }
 
     return null ; //nothing to do.
@@ -110,29 +109,29 @@ SC.View.reopen(
     event matching some plain text.  You can use this to actually insert the
     text into your application, if needed.
 
-    @param {SC.Event} event
+    @param {Event} event
     @returns {Object} receiver or object that handled event
   */
   insertText: function(chr) {
-    return NO ;
+    return false ;
   },
 
   /**
     Recursively travels down the view hierarchy looking for a view that
-    implements the key equivalent (returning to YES to indicate it handled
+    implements the key equivalent (returning to true to indicate it handled
     the event).  You can override this method to handle specific key
     equivalents yourself.
 
     The keystring is a string description of the key combination pressed.
-    The evt is the event itself. If you handle the equivalent, return YES.
+    The evt is the event itself. If you handle the equivalent, return true.
     Otherwise, you should just return sc_super.
 
     @param {String} keystring
-    @param {SC.Event} evt
+    @param {Event} evt
     @returns {Boolean}
   */
   performKeyEquivalent: function(keystring, evt) {
-    var ret = NO,
+    var ret = false,
         childViews = this.get('childViews'),
         len = childViews.length,
         idx = -1, view ;
@@ -151,7 +150,7 @@ SC.View.reopen(
     your view displays its child views in an order different from that
     given in childViews.
 
-    @type SC.View
+    @type View
     @default null
   */
   firstKeyView: null,
@@ -161,7 +160,7 @@ SC.View.reopen(
 
     Actually calculates the firstKeyView as described in firstKeyView.
 
-    @returns {SC.View}
+    @returns {View}
   */
   _getFirstKeyView: function() {
     // if first was given, just return it
@@ -180,7 +179,7 @@ SC.View.reopen(
 
     The first way is not very efficient, so if you provide firstKeyView you should also provide lastKeyView.
 
-    @type SC.View
+    @type View
     @default null
   */
   lastKeyView: null,
@@ -190,7 +189,7 @@ SC.View.reopen(
 
     Actually calculates the lastKeyView as described in lastKeyView.
 
-    @returns {SC.View}
+    @returns {View}
   */
   _getLastKeyView: function() {
     // if last was given, just return it
@@ -235,7 +234,7 @@ SC.View.reopen(
 
     Likewise, any view that sets nextKeyView should also set previousKeyView.
 
-    @type SC.View
+    @type View
     @default null
   */
 
@@ -247,7 +246,7 @@ SC.View.reopen(
     Gets the next key view by checking if the user set it and otherwise just
     getting the next by index in childViews.
 
-    @return {SC.View}
+    @return {View}
   */
   _getNextKeyView: function() {
     var pv = this.get('parentView'),
@@ -275,7 +274,7 @@ SC.View.reopen(
     return null if no valid view can be found.
 
     @property
-    @type SC.View
+    @type View
   */
   nextValidKeyView: function() {
     var cur = this, next;
@@ -298,7 +297,7 @@ SC.View.reopen(
 
       // if no parents have a next sibling, start over from the beginning
       if(!next) {
-        if(!SC.TABBING_ONLY_INSIDE_DOCUMENT) break;
+        if(!TABBING_ONLY_INSIDE_DOCUMENT) break;
         else next = this.get('pane');
       }
 
@@ -328,7 +327,7 @@ SC.View.reopen(
 
     Likewise, any view that sets previousKeyView should also set nextKeyView.
 
-    @type SC.View
+    @type View
     @default null
   */
   previousKeyView: undefined,
@@ -339,7 +338,7 @@ SC.View.reopen(
     Gets the previous key view by checking if the user set it and otherwise just
     getting the previous by index in childViews.
 
-    @return {SC.View}
+    @return {View}
   */
   _getPreviousKeyView: function() {
     var pv = this.get('parentView'),
@@ -368,7 +367,7 @@ SC.View.reopen(
     found.
 
     @property
-    @type SC.View
+    @type View
   */
   // TODO: clean this up
   previousValidKeyView: function() {
@@ -379,7 +378,7 @@ SC.View.reopen(
       if(cur.get('parentView')) prev = cur._getPreviousKeyView();
 
       // if we are the pane and address bar tabbing is enabled, trigger it now
-      else if(!SC.TABBING_ONLY_INSIDE_DOCUMENT) break;
+      else if(!TABBING_ONLY_INSIDE_DOCUMENT) break;
 
       // if we are the pane, get our own last child
       else prev = cur;
@@ -411,4 +410,4 @@ SC.View.reopen(
     // we started, just return null
     return null;
   }.property('previousKeyView')
-});
+};

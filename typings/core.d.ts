@@ -1,115 +1,341 @@
-// Type definitions for SproutCore 3
-// Project: SproutCore
-// Definitions by: Maurits Lamers
+import { Comparable } from "../core/mixins/comparable";
+import { Copyable } from "../core/mixins/copyable";
+import { Enumerable } from "../core/mixins/enumerable";
+import { get } from "../core/mixins/observable";
+import { clone } from "../core/system/base";
+import { getSetting, setSetting } from "../core/system/settings";
+import { SCString } from "../core/system/string";
 
-/*~ This is the global-modifying module template file. You should rename it to index.d.ts
- *~ and place it in a folder with the same name as the module.
- *~ For example, if you were writing a file for "super-greeter", this
- *~ file should be 'super-greeter/index.d.ts'
+/**
+ * Check that any arguments to `create()` match the type's properties.
+ *
+ * Accept any additional properties and add merge them into the instance.
  */
+type SCObjectInstanceArguments<T> = Partial<T> & {
+    [key: string]: any;
+};
 
-/*~ Note: If your global-modifying module is callable or constructable, you'll
- *~ need to combine the patterns here with those in the module-class or module-function
- *~ template files
+/**
+ * Accept any additional properties and add merge them into the prototype.
  */
-declare global {
-  /*~ Here, declare things that go in the global namespace, or augment
-   *~ existing declarations in the global namespace
-   */
-  interface String {
-    fmt: (...args: any[]) => string;
-    w: () => string[];
-    capitalize: () => string;
-    camelize: () => string;
-    decamelize: () => string;
-    dasherize: () => string;
-    mult: (value: number) => string;
-  }
+interface SCObjectClassArguments {
+    [key: string]: any;
+}
 
-  interface Function {
-    property: (...args: string[]) => SCMethod;
-    cacheable: (aFlag?: boolean) => SCMethod;
-    idempotent: (aFlag?: boolean) => SCMethod;
-    enhance: () => SCMethod;
-    observes: (...propertyPaths) => SCMethod;
-    handleEvents: (...events) => SCMethod;
-    stateObserves: (...args) => SCMethod;
-  }
+type Objectify<T> = Readonly<T>;
 
-  interface SCMethod extends Function {
-    isProperty?: boolean;
-    isCacheable?: boolean;
-    dependentKeys?: string[];
-    isVolatile?: boolean;
-    cacheKey?: string;
-    lastSetValueKey?: string;
-    isEnhancement?: boolean;
-    localPropertyPaths?: string[];
-    propertyPaths?: string[];
-    isEventHandler?: boolean;
-    events?: any[];
-    isStateObserveHandler?: boolean;
-    args?: string[];
-  }
+type SCObjectClassConstructor<T> = (new (properties?: object) => T) & (new (...args: any[]) => T);
 
-  class SCEnumerator {
-    enumerable: any;
-    nextObject: () => any;
-    reset: () => object;
-    destroy: () => void;
-    static create: (enumerableObject?: Enumerable) => Enumerator;
-  }
+type MixinOrLiteral<T, Base> = Mixin<T, Base> | T;
 
 
-  interface Enumerable {
-    isEnumerable: boolean;
-    nextObject: (index: number, previousObject?: any, context?: any) => any;
-    firstObject: function;
-    lastObject: function;
-    enumerator: () => Enumerator;
-    forEach: (callback: Function, target?: Object) => any;
-    getEach: (key: string) => any[];
-    setEach: (key: string, value: any) => any[];
-    map: (callback: Function, target?: any) => any[];
-    mapProperty: (key: string) => any[];
-    filter: (callback: Function, target?: any) => any[];
-    sortProperty: (key: string) => any[];
-    filterProperty: (key: string, value?: any) => any[];
-    find: (callback: Function, target?: any) => any;
-    findProperty: (key: string, value?: any) => any;
-    every: (callback: Function, target?: any) => boolean;
-    everyProperty: (key: string, value?: any) => boolean;
-    some: (callback: Function, target?: any) => boolean;
-    someProperty: (key: string, value?: any) => boolean;
-    reduce: (callback: Function, initialValue?: any, reducerProperty?: any) => any;
-    invoke: (methodName: string, ...args?: any[]) => any[];
-    invokeWhile: (targetValue: any, methodName: string, ...args?: any[]) => any;
-    toArray: () => any[];
-    groupBy: (key: string) => any[];
-  }
+// class SCObjectMethod extends Function {
+//     base: Function
+// }
 
-  interface Copyable {
-    isCopyable: boolean;
-    copy: (deep?: boolean) => any;
-    frozenCopy: () => any;
-  }
+// class SCComputedProperty extends SCObjectMethod {
+//     dependentKeys: string[];
+//     cacheKey: string;
+//     lastSetValueKey: string;
+//     isProperty: true;
+// }
 
-  interface Freezable {
-    isFreezable: boolean;
-    isFrozen: boolean;
-    freeze: () => object;
-  }
+// class SCCachedComputedProperty extends SCComputedProperty {
+//   
+// }
 
-  interface Comparable {
-    isComparable: boolean;
-    compare: (a: any, b: any) => number;
-  }
+// class SCIdempotentProperty extends SCComputedProperty {
+//     isVolatile: true;
+// }
 
-  interface Observable {
+// class SCEnhancedMethod extends Function {
+//     isEnhancement: true;
+// }
+
+// class SCObserverMethod extends Function {
+//     localPropertyPaths: string[];
+//     propertyPaths: string[];
+// }
+
+
+// type SCMethod<T> = (this: T, ...args? )
+
+interface SCObjectMethod<T> {
+    base: Function
+}
+
+interface SCComputedProperty<T> {
+    dependentKeys: string[];
+    cacheKey: string;
+    lastSetValueKey: string;
+    isProperty: true;
+}
+
+interface SCCachedComputedProperty<T> extends SCComputedProperty<T> {
+    isCacheable: true
+}
+
+type ComputedPropertyFunction<T> = (this: any, key: string, newVal?: T) => T;
+
+type ObserverMethod<Target, Sender> =
+    | keyof Target
+    | ((this: Target, sender: Sender, key: string, value: any, rev: number) => void);
+
+
+// type MethodDetector<T, U> = 
+//     T extends Function? SCObjectMethod<T> & ThisType<U>: 
+//     (T extends SCComputedProperty<T>? SCComputedProperty<T> & ThisType<U>:
+//         (T extends SCCachedComputedProperty<T>? SCCachedComputedProperty<T> & ThisType<U>: T));
+type MethodDetector<T, U> = 
+    T extends Function? SCObjectMethod<T> & ThisType<U>: T;
+    // unclear how to approach the computed properties atm
+
+type DetectMethods<T> = {
+    [P in keyof T]: MethodDetector<T[P], T>
+}
+
+class CoreObject {
+    constructor(properties?: object);
+    init(): void;
+    concatenatedProperties: any[];
+    isDestroyed: boolean;
+    destroy: CoreObject;
+    toString(): string;
+    static create<Class extends typeof CoreObject>(
+        this: Class
+    ): InstanceType<Class>;
+
+    static create<
+        Class extends typeof CoreObject,
+        T1 extends SCObjectInstanceArguments<DetectMethods<InstanceType<Class>>>
+    >(
+        this: Class,
+        arg1: T1 & ThisType<T1 & InstanceType<Class>>
+    ): InstanceType<Class> & T1;
+
+    static create<
+        Class extends typeof CoreObject,
+        T1 extends SCObjectInstanceArguments<DetectMethods<InstanceType<Class>>>
+        ,
+        T2 extends SCObjectInstanceArguments<DetectMethods<InstanceType<Class>>>
+    >(
+        this: Class,
+        arg1: T1 & ThisType<T1 & InstanceType<Class>>,
+        arg2: T2 & ThisType<T2 & InstanceType<Class>>
+    ): InstanceType<Class> & T1 & T2;
+
+    static create<
+        Class extends typeof CoreObject,
+        T1 extends SCObjectInstanceArguments<
+            DetectMethods<InstanceType<Class>>
+        >,
+        T2 extends SCObjectInstanceArguments<
+            DetectMethods<InstanceType<Class>>
+        >,
+        T3 extends SCObjectInstanceArguments<
+            DetectMethods<InstanceType<Class>>
+        >
+    >(
+        this: Class,
+        arg1: T1 & ThisType<T1 & InstanceType<Class>>,
+        arg2: T2 & ThisType<T2 & InstanceType<Class>>,
+        arg3: T3 & ThisType<T3 & InstanceType<Class>>
+    ): InstanceType<Class> & T1 & T2 & T3;
+
+    static extend<Statics, Instance>(
+        this: Statics & SCObjectClassConstructor<Instance>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance>;
+
+    static extend<
+        Statics,
+        Instance extends B1,
+        T1 extends SCObjectClassArguments,
+        B1
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>
+    ): Objectify<Statics> & SCObjectClassConstructor<T1 & Instance>;
+
+    static extend<
+        Statics,
+        Instance extends B1 & B2,
+        T1 extends SCObjectClassArguments,
+        B1,
+        T2 extends SCObjectClassArguments,
+        B2
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
+        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>
+    ): Objectify<Statics> & SCObjectClassConstructor<T1 & T2 & Instance>;
+
+    static extend<
+        Statics,
+        Instance extends B1 & B2 & B3,
+        T1 extends SCObjectClassArguments,
+        B1,
+        T2 extends SCObjectClassArguments,
+        B2,
+        T3 extends SCObjectClassArguments,
+        B3
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
+        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>,
+        arg3: MixinOrLiteral<T3, B3> & ThisType<Fix<Instance & T1 & T2 & T3>>
+    ): Objectify<Statics> & SCObjectClassConstructor<T1 & T2 & T3 & Instance>;
+
+    static extend<
+        Statics,
+        Instance extends B1 & B2 & B3 & B4,
+        T1 extends SCObjectClassArguments,
+        B1,
+        T2 extends SCObjectClassArguments,
+        B2,
+        T3 extends SCObjectClassArguments,
+        B3,
+        T4 extends SCObjectClassArguments,
+        B4
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
+        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>,
+        arg3: MixinOrLiteral<T3, B3> & ThisType<Fix<Instance & T1 & T2 & T3>>,
+        arg4: MixinOrLiteral<T4, B4> &
+            ThisType<Fix<Instance & T1 & T2 & T3 & T4>>
+    ): Objectify<Statics> & SCObjectClassConstructor<T1 & T2 & T3 & T4 & Instance>;
+
+    static reopen<Statics, Instance>(
+        this: Statics & SCObjectClassConstructor<Instance>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance>;
+
+    static reopen<
+        Statics,
+        Instance extends B1,
+        T1 extends SCObjectClassArguments,
+        B1
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance & T1>;
+
+    static reopen<
+        Statics,
+        Instance extends B1 & B2,
+        T1 extends SCObjectClassArguments,
+        B1,
+        T2 extends SCObjectClassArguments,
+        B2
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
+        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance & T1 & T2>;
+
+    static reopen<
+        Statics,
+        Instance extends B1 & B2 & B3,
+        T1 extends SCObjectClassArguments,
+        B1,
+        T2 extends SCObjectClassArguments,
+        B2,
+        T3 extends SCObjectClassArguments,
+        B3
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
+        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>,
+        arg3: MixinOrLiteral<T3, B3> & ThisType<Fix<Instance & T1 & T2 & T3>>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance & T1 & T2 & T3>;
+}
+
+class Mixin<T, Base = SCObject> {
+    /**
+     * Mixin needs to have *something* on its prototype, otherwise it's treated like an empty interface.
+     * It cannot be private, sadly.
+     */
+    __sc_mixin__: never;
+
+    static create<T, Base = SCObject>(
+        args?: MixinOrLiteral<T, Base> & ThisType<Fix<T & Base>>
+    ): Mixin<T, Base>;
+
+    static create<T1, T2, Base = SCObject>(
+        arg1: MixinOrLiteral<T1, Base> & ThisType<Fix<T1 & Base>>,
+        arg2: MixinOrLiteral<T2, Base> & ThisType<Fix<T2 & Base>>
+    ): Mixin<T1 & T2, Base>;
+
+    static create<T1, T2, T3, Base = SCObject>(
+        arg1: MixinOrLiteral<T1, Base> & ThisType<Fix<T1 & Base>>,
+        arg2: MixinOrLiteral<T2, Base> & ThisType<Fix<T2 & Base>>,
+        arg3: MixinOrLiteral<T3, Base> & ThisType<Fix<T3 & Base>>
+    ): Mixin<T1 & T2 & T3, Base>;
+
+    static create<T1, T2, T3, T4, Base = SCObject>(
+        arg1: MixinOrLiteral<T1, Base> & ThisType<Fix<T1 & Base>>,
+        arg2: MixinOrLiteral<T2, Base> & ThisType<Fix<T2 & Base>>,
+        arg3: MixinOrLiteral<T3, Base> & ThisType<Fix<T3 & Base>>,
+        arg4: MixinOrLiteral<T4, Base> & ThisType<Fix<T4 & Base>>
+    ): Mixin<T1 & T2 & T3 & T4, Base>;
+}
+  
+interface Observable {
+    /**
+     * Retrieves the value of a property from the object.
+     */
+    get<K extends keyof this>(key: K): this[K];
+
+    /**
+     * Sets the provided key or path to the value.
+     */
+    set<K extends keyof this>(key: K, value: this[K]): this[K];
+    set<T>(key: keyof this, value: T): T;
+
+    /**
+     * Convenience method to call `propertyWillChange` and `propertyDidChange` in
+     * succession.
+     */
+    notifyPropertyChange(keyName: string): this;
+    /**
+     * Adds an observer on a property.
+     */
+    addObserver<Target>(
+        key: keyof this,
+        target: Target,
+        method: ObserverMethod<Target, this>
+    ): this;
+    addObserver(key: keyof this, method: ObserverMethod<this, this>): this;
+    /**
+     * Remove an observer you have previously registered on this object. Pass
+     * the same key, target, and method you passed to `addObserver()` and your
+     * target will no longer receive notifications.
+     */
+    removeObserver<Target>(
+        key: keyof this,
+        target: Target,
+        method: ObserverMethod<Target, this>
+    ): this;
+    removeObserver(key: keyof this, method: ObserverMethod<this, this>): this;
+
+    /**
+     * Set the value of a property to the current value plus some amount.
+     */
+    incrementProperty(keyName: keyof this, increment?: number): number;
+    /**
+     * Set the value of a property to the current value minus some amount.
+     */
+    decrementProperty(keyName: keyof this, decrement?: number): number;
+    /**
+     * Set the value of a boolean property to the opposite of its
+     * current value.
+     */
+    toggleProperty(keyName: keyof this): boolean;
+
+
     addProbe: (key: string) => void;
     removeProbe: (key: string) => void;
     logProperty: (...propertyNames: string[]) => void;
-    isObservable: boolean;
+    isObservable: true;
     automaticallyNotifiesObserversFor: (key: string) => boolean;
     get: (key: string) => any;
     set: (key: string, value: any) => Object;
@@ -121,8 +347,8 @@ declare global {
     registerDependentKey: (key: string, dependentKeys: string[]) => void;
     registerDependentKeyWithChain: (property: string, chain: object) => void;
     removeDependentKeyWithChain: (property: string, chain: object) => void;
-    addObserver: (key: string, target: object | Function, method?: string | Function, context?: object) => object;
-    removeObserver: (key: string, target: object | Function, method?: string | Function) => object;
+    // addObserver: (key: string, target: object | Function, method?: string | Function, context?: object) => object;
+    // removeObserver: (key: string, target: object | Function, method?: string | Function) => object;
     hasObserverFor: (key: string, target?: object | Function, method?: string | Function) => boolean;
     initObservable: () => void;
     destroyObservable: () => object;
@@ -137,99 +363,79 @@ declare global {
     setPath: (path: string, value: any) => object;
     setPathIfChanged: (path: string, value: any) => object;
     getEach: (...propertyNames: string[]) => any[];
-    incrementProperty: (key: string, increment?: number) => number;
-    decrementProperty: (key: string, increment?: number) => number;
-    toggleProperty: (key: string, value?: any, alt?: any) => any;
-    notifyPropertyChange: (key: string, value?: any) => object;
+    // incrementProperty: (key: string, increment?: number) => number;
+    // decrementProperty: (key: string, increment?: number) => number;
+    // toggleProperty: (key: string, value?: any, alt?: any) => any;
+    // notifyPropertyChange: (key: string, value?: any) => object;
     allPropertiesDidChange: () => object;
     propertyRevision: number;
-  }
+}
+declare const Observable: Mixin<Observable, CoreObject>;
 
-  class Reducers {
-    '[]': function;
-    enumerableContentDidChange: (start: number, length: number, deltas?: number) => void;
-    reducedProperty: (key: string, value?: any, generateProperty?: boolean) => any;
-  }
-
-  interface SCClass {
-    create: (...objs: object[]) => object;
-    extend: (...objs: object[]) => object;
-    subclasses: SCClass[];
-    reopen: (...objs: object[]) => object;
-    subclassOf: (obj: object) => boolean;
-    hasSubclass: (obj: object) => boolean;
-  }
-
-  interface CoreArray {
-    isSCArray: boolean;
-    replace: (idx: number, amt?: number, objects: any[]) => any[];
-    indexOf: (object: object, startAt?: number) => number;
-    lastIndexOf: (object: object, startAt?: number) => number;
-    objectAt: (idx: number) => any;
-    '[]': function;
-    insertAt: (idx: number, object: object) => object;
-    removeAt: (start: number, length?: number) => object;
-    removeObject: (obj: object) => any[];
-    removeObjects: (objects: object[]) => any[];
-    slice: (beginIndex?: number, endIndex?: number) => any[];
-    pushObject: (obj: object) => any;
-    pushObjects: (objects: object[]) => any[];
-    popObject: () => any;
-    shiftObject: () => any;
-    unshiftObject: (obj: object) => any;
-    unshiftObjects: (objects: object[]) => any;
-    isEqual: (ary: any[]) => boolean;
-    compact: () => any[];
-    without: (value: any) => any[];
-    uniq: () => any[];
-    flatten: () => any[];
-    max: () => number;
-    min: () => number;
-    contains: (obj: object) => boolean;
-  }
-
-  interface Array extends CoreArray, Observable, Enumerable {
-    copy: (deep?: boolean) => any[];
-    nextObject: (index: number, previousObject?: any, context?: any) => Function;
-    enumerator: () => SCEnumerator;
-    sortProperty: (key: string) => any[];
-    mapProperty: (key: string) => any[];
-    filterProperty: (key: string, value?: any) => any[];
-    groupBy: (key: string) => Array;
-    findProperty: (key: string, value?: any) => any;
-    everyProperty: (key: string, value?: any) => boolean;
-    someProperty: (key: string, value?: any) => boolean;
-    invoke: (methodName: string) => Array;
-    invokeWhile: (targetValue: any, methodName: string) => any;
-    toArray: () => any[];
-    getEach: (key: string) => any[];
-    setEach: (key: string, value: any) => any[];
-  }
+export class SCObject extends CoreObject.extend(Observable) {}
 
 
-  class SCObject implements Observable {
-    static create: (...objs: object[]) => object;
-    static extend: (...objs: object[]) => class;
-    static subclasses: any[];
-    static reopen: (...objs: object[]) => object;
-    static subclassOf: (obj: object) => boolean;
-    static hasSubclass: (obj: object) => boolean;
-    static superclass: SCObject;
-    static __sc_super__: object;
-    _object_init(): () => void;
-    static toString: () => string;
-  }
-
-
+export namespace SC {
+    class Object extends SCObject {};
+    getSetting: (name: string) => any;
+    setSetting: (name: string, val: any) => void;
+    LOG_BINDINGS: boolean;
+    LOG_DUPLICATE_BINDINGS: boolean;
+    LOG_OBSERVERS: boolean;
+    String: SCString,
+    Copyable,
+    Comparable,
+    Enumerable,
+    Observable,
+    get,
+    clone
 }
 
-// /*~ If your module exports types or values, write them as usual */
-// export interface StringFormatOptions {
-//   fancinessLevel: number;
-// }
+  
+global {
 
-// /*~ For example, declaring a method on the module (in addition to its global side effects) */
-// export function doSomething(): void;
+    interface String {
+        fmt(...args?: any[]): string;
+        w(): Array;
+        capitalize(str?: string): string;
+        camelize(str?: string): string;
+        decamelize(str?: string): string;
+        dasherize(str?: string): string;
+        mult(str?: string): string;
+        loc(...args?: any[]): string;
+        locMetric(): number;
+        locLayout(obj): object;
 
-// /*~ If your module exports nothing, you'll need this line. Otherwise, delete it */
-export { };
+        useAutodetectedLanguage: boolean;
+        preferredLanguage: string;
+        
+    }
+
+    interface Array implements CoreArray, Enumerable, Observable {
+        copy: (deep?: boolean) => any[];
+        nextObject: (index: number, previousObject?: any, context?: any) => Function;
+        enumerator: () => SCEnumerator;
+        sortProperty: (key: string) => any[];
+        mapProperty: (key: string) => any[];
+        filterProperty: (key: string, value?: any) => any[];
+        groupBy: (key: string) => Array;
+        findProperty: (key: string, value?: any) => any;
+        everyProperty: (key: string, value?: any) => boolean;
+        someProperty: (key: string, value?: any) => boolean;
+        invoke: (methodName: string) => Array;
+        invokeWhile: (targetValue: any, methodName: string) => any;
+        toArray: () => any[];
+        getEach: (key: string) => any[];
+        setEach: (key: string, value: any) => any[];
+    }
+
+    interface Function {
+        property: (...args?: string[]) => SCComputedProperty;
+        cacheable: () => SCCachedComputedProperty<T>;
+        idempotent: () => SCIdempotentProperty<T>;
+        enhance: (this: Function) => SCEnhancedMethod;
+        observes: (...args: string[]) => ObserverMethod;
+    }
+}
+
+export default SC;

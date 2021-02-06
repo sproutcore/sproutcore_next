@@ -1,21 +1,20 @@
-sc_require("views/view");
+// sc_require("views/view");
 
-SC.View.reopen(
-  /** @scope SC.View.prototype */ {
+export const touchSupport = /** @scope View.prototype */ {
 
   // ..........................................................
   // MULTITOUCH SUPPORT
   //
   /**
-    Set to YES if you want to receive touch events for each distinct touch
+    Set to true if you want to receive touch events for each distinct touch
     (rather than only the first touch start and last touch end).
   */
-  acceptsMultitouch: NO,
+  acceptsMultitouch: false,
 
   /**
-    Is YES if the view is currently being touched. NO otherwise.
+    Is true if the view is currently being touched. false otherwise.
   */
-  hasTouch: NO,
+  hasTouch: false,
 
   /**
     A boundary set of distances outside which the touch will no longer be
@@ -50,11 +49,11 @@ SC.View.reopen(
   }.property('touchBoundary', 'clippingFrame').cacheable(),
 
   /**
-    Returns YES if the provided touch is within the boundary set by
+    Returns true if the provided touch is within the boundary set by
     touchBoundary.
   */
   touchIsInBoundary: function(touch) {
-    return SC.pointInRect({x: touch.pageX, y: touch.pageY},
+    return pointInRect({x: touch.pageX, y: touch.pageY},
       this.get("_touchBoundaryFrame"));
   }
-});
+};

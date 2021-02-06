@@ -1,6 +1,7 @@
 // sc_require("views/view/base");
 
-
+import { SC } from '../../../core/core.js';
+import { LayoutState } from './animation.js';
 
 
 // When in debug mode, core developers can log the view state.
@@ -223,8 +224,8 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
   /* BEGIN DEBUG ONLY PROPERTIES AND METHODS */
 
   /** @private Creates string representation of view, with view state. */
-  toString: function () {
-    return "%@ (%@)".fmt(sc_super(), this._viewStateString());
+  toString: function fn () {
+    return "%@ (%@)".fmt(fn.base.apply(this, arguments), this._viewStateString());
   },
 
   /** @private Creates string representation of view state.  */
@@ -285,7 +286,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
     * CoreView.ATTACHED_BUILDING_OUT
     * CoreView.ATTACHED_BUILDING_OUT_BY_PARENT
 
-    @type String
+    @type Number
     @default CoreView.UNRENDERED
     @readonly
   */
@@ -356,14 +357,14 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doAdopt(%@, %@): curParentView: %@'.fmt(this, parentView, beforeView, curParentView), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doAdopt(%@, %@): curParentView: %@'.fmt(this, parentView, beforeView, curParentView), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
     if (curParentView && curParentView !== parentView) {
       //@if(debug)
       // This should be avoided, because using the same view instance without explicitly orphaning it first is a dangerous practice.
-      warn("Developer Warning: You should not adopt the view, %@, to a new parent without removing it from its old parent first.".fmt(this));
+      SC.warn("Developer Warning: You should not adopt the view, %@, to a new parent without removing it from its old parent first.".fmt(this));
       //@endif
 
       // Force orphaning the view.
@@ -463,7 +464,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doAttach(%@, %@)'.fmt(this, parentNode, nextNode), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doAttach(%@, %@)'.fmt(this, parentNode, nextNode), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -514,7 +515,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
         //@if (debug)
         if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-          Logger.log('%c       — cancelling build out outright'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+          SC.Logger.log('%c       — cancelling build out outright'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
         }
         //@endif
 
@@ -551,13 +552,13 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       //@if(debug)
       if (parentNode !== this.getPath('parentView.layer')) {
         // This should be avoided, because moving the view layer without explicitly removing it first is a dangerous practice.
-        warn("Developer Warning: You can not attach the view, %@, to a new node without properly detaching it first.".fmt(this));
+        SC.warn("Developer Warning: You can not attach the view, %@, to a new node without properly detaching it first.".fmt(this));
       }
       //@endif
       break;
     case ATTACHED_PARTIAL:
       //@if(debug)
-      warn("Developer Warning: You can not attach the child view, %@, directly.".fmt(this));
+      SC.warn("Developer Warning: You can not attach the child view, %@, directly.".fmt(this));
       //@endif
       break;
     }
@@ -572,7 +573,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doDestroyLayer()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doDestroyLayer()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -614,7 +615,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doDetach()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doDetach()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -681,7 +682,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // } else {
         //@if (debug)
         if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-          Logger.log('%c       — cancelling build in outright'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+          SC.Logger.log('%c       — cancelling build in outright'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
         }
         //@endif
 
@@ -730,7 +731,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       //@if(debug)
       // Add some debugging only warnings for if the view statechart code is being improperly used.
       // Telling the view to detach when it is already detached isn't correct: UNRENDERED, UNATTACHED
-      warn("Core Developer Warning: Found invalid state for view, %@, in _doDetach".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _doDetach".fmt(this));
       //@endif
 
       shouldHandle = false;
@@ -747,7 +748,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doHide()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doHide()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -830,7 +831,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // Add some debugging only warnings for if the view statechart code is being improperly used.
       // Telling the view to hide when it is already hidden isn't correct:
       //
-      warn("Core Developer Warning: Found invalid state for view, %@, in _doHide".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _doHide".fmt(this));
       //@endif
 
       shouldHandle = false;
@@ -846,7 +847,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doOrphan()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doOrphan()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -876,7 +877,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doRender()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doRender()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -911,7 +912,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // Add some debugging only warnings for if the view statechart code is being improperly used.
       // All other states should be impossible if parent was UNATTACHED:
       // ATTACHED_SHOWING, ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_HIDING, ATTACHED_HIDDEN, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT, UNATTACHED, ATTACHED_PARTIAL
-      warn("Core Developer Warning: Found invalid state for view, %@, in _doRender".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _doRender".fmt(this));
       //@endif
       shouldHandle = false;
     }
@@ -927,7 +928,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doShow()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doShow()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -1017,7 +1018,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // Add some debugging only warnings for if the view statechart code is being improperly used.
       // Telling the view to show when it is already visible isn't correct:
       // ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_SHOWING, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_BUILDING_OUT
-      warn("Core Developer Warning: Found invalid state for view, %@, in _doShow".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _doShow".fmt(this));
       //@endif
 
       shouldHandle = false;
@@ -1033,7 +1034,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _doUpdateContent(%@)'.fmt(this, force), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _doUpdateContent(%@)'.fmt(this, force), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -1069,7 +1070,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — didTransitionIn()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — didTransitionIn()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -1095,7 +1096,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — didTransitionOut()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — didTransitionOut()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 

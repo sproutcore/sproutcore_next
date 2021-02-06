@@ -1,40 +1,45 @@
-sc_require("views/view");
-sc_require('views/view/layout_style');
+// sc_require("views/view");
+// sc_require('views/view/layout_style');
+
+import { SC } from '../../../core/core.js';
+import { platform } from '../../../responder/responder.js';
+import { scaleRect } from '../utils/rect.js';
+import { isPercentage } from "../utils/utils.js";
+import { IS_SHOWN } from './statechart.js';
 
 /** Select a horizontal layout for various views.*/
-SC.LAYOUT_HORIZONTAL = 'sc-layout-horizontal';
+export const LAYOUT_HORIZONTAL = 'sc-layout-horizontal';
 
 /** Select a vertical layout for various views.*/
-SC.LAYOUT_VERTICAL = 'sc-layout-vertical';
+export const LAYOUT_VERTICAL = 'sc-layout-vertical';
 
 /**
   Layout properties to take up the full width of a parent view.
 */
-SC.FULL_WIDTH = { left: 0, right: 0 };
+export const FULL_WIDTH = { left: 0, right: 0 };
 
 /**
   Layout properties to take up the full height of a parent view.
 */
-SC.FULL_HEIGHT = { top: 0, bottom: 0 };
+export const FULL_HEIGHT = { top: 0, bottom: 0 };
 
 /**
   Layout properties to center.  Note that you must also specify a width and
   height for this to work.
 */
-SC.ANCHOR_CENTER = { centerX: 0, centerY: 0 };
+export const ANCHOR_CENTER = { centerX: 0, centerY: 0 };
 
 /**
   Layout property for width, height
 */
 
-SC.LAYOUT_AUTO = 'auto';
+export const LAYOUT_AUTO = 'auto';
 
 // Regexes representating valid values for rotation and scale layout properties
-SC._ROTATION_VALUE_REGEX = /^\-?\d+(\.\d*)?(rad|deg)$/;
-SC._SCALE_VALUE_REGEX = /^\d+(,\d+){0,2}$/;
+export const ROTATION_VALUE_REGEX = /^\-?\d+(\.\d*)?(rad|deg)$/;
+export const SCALE_VALUE_REGEX = /^\d+(,\d+){0,2}$/;
 
-SC.View.reopen(
-  /** @scope SC.View.prototype */ {
+export const layoutSupport = /** @scope View.prototype */ {
 
   // ------------------------------------------------------------------------
   // Properties
@@ -46,7 +51,7 @@ SC.View.reopen(
   /**
     The view's background color. Only recommended for use during prototyping and in views
     where the background color may change arbitrarily, for example in connection with an
-    instance of `SC.Color`. Otherwise you should use CSS and `classNames` or
+    instance of `Color`. Otherwise you should use CSS and `classNames` or
     `classNameBindings`.
 
     If set at create time, will be added to the view's layer. For dynamic background colors,
@@ -74,10 +79,13 @@ SC.View.reopen(
         borderLeft = this._sc_explicitValueFor(layout.borderLeft, defaultValue);
 
       ret = {
+          scale: null,
           x: frame.x,
           y: frame.y,
           width: frame.width,
-          height: frame.height
+          height: frame.height,
+          transformOriginX: null,
+          transformOriginY: null
         };
 
       var scale = frame.scale;
@@ -114,13 +122,13 @@ SC.View.reopen(
 
 
   /**
-    Set this property to YES whenever the view needs to layout its child
+    Set this property to true whenever the view needs to layout its child
     views.  Normally this property is set automatically whenever the layout
     property for a child view changes.
 
     @type Boolean
   */
-  childViewsNeedLayout: NO,
+  childViewsNeedLayout: false,
 
   /**
     The child view layout plugin to use when laying out child views.
@@ -128,21 +136,21 @@ SC.View.reopen(
     You can set this property to a child layout plugin object to
     automatically set and adjust the layouts of this view's child views
     according to some specific layout style.  For instance, SproutCore includes
-    two such plugins, SC.View.VERTICAL_STACK and SC.View.HORIZONTAL_STACK.
+    two such plugins, View.VERTICAL_STACK and View.HORIZONTAL_STACK.
 
-    SC.View.VERTICAL_STACK will arrange child views in order in a vertical
+    View.VERTICAL_STACK will arrange child views in order in a vertical
     stack, which only requires that the height of each child view be specified.
-    Likewise, SC.View.HORIZONTAL_STACK does the same in the horizontal
+    Likewise, View.HORIZONTAL_STACK does the same in the horizontal
     direction, which requires that the width of each child view be specified.
 
     Where child layout plugins are extremely useful, besides simplifying
     the amount of layout code you need to write, is that they can update the
     layouts automatically as things change.  For more details and examples,
-    please see the documentation for SC.View.VERTICAL_STACK and
-    SC.View.HORIZONTAL_STACK.
+    please see the documentation for View.VERTICAL_STACK and
+    View.HORIZONTAL_STACK.
 
     To define your own child view layout plugin, simply create an object that
-    conforms to the SC.ChildViewLayoutProtocol protocol.
+    conforms to the ChildViewLayoutProtocol protocol.
 
     **Note** This should only be set once and is not bindable.
 
@@ -155,7 +163,7 @@ SC.View.reopen(
     The options for the given child view layout plugin.
 
     These options are specific to the current child layout plugin being used and
-    are used to modify the applied layouts.  For example, SC.View.VERTICAL_STACK
+    are used to modify the applied layouts.  For example, View.VERTICAL_STACK
     accepts options like:
 
         childViewLayoutOptions: {
@@ -197,7 +205,7 @@ SC.View.reopen(
     When `true` and using a childViewLayout plugin, the view and its child views
     will be observed for any changes that would affect the layout of all the
     child views.  For example, if `isChildViewLayout` is true and using
-    SC.View.VERTICAL_STACK, if any child view's height or visibility changes
+    View.VERTICAL_STACK, if any child view's height or visibility changes
     all of the child views will be re-adjusted.
 
     If you only want to automatically layout the child views once, you can
@@ -214,16 +222,16 @@ SC.View.reopen(
     to their parent view's height.
 
     @field
-    @returns {Boolean} YES if fixed, NO otherwise
+    @returns {Boolean} true if fixed, false otherwise
     @test in layout
   */
   isFixedHeight: function() {
     var layout = this.get('layout');
 
-    // Height is fixed if it has a height and it isn't SC.LAYOUT_AUTO or a percent.
+    // Height is fixed if it has a height and it isn't LAYOUT_AUTO or a percent.
     return (layout.height !== undefined) &&
-      !SC.isPercentage(layout.height) &&
-      (layout.height !== SC.LAYOUT_AUTO);
+      !isPercentage(layout.height) &&
+      (layout.height !== LAYOUT_AUTO);
   }.property('layout').cacheable(),
 
   /**
@@ -231,7 +239,7 @@ SC.View.reopen(
     fixed left & top position and fixed width & height.  Fixed layouts are
     therefore unaffected by changes to their parent view's layout.
 
-    @returns {Boolean} YES if fixed, NO otherwise
+    @returns {Boolean} true if fixed, false otherwise
     @test in layoutStyle
   */
   isFixedLayout: function () {
@@ -244,7 +252,7 @@ SC.View.reopen(
     therefore unaffected by changes to their parent view's size.
 
     @field
-    @returns {Boolean} YES if fixed, NO otherwise
+    @returns {Boolean} true if fixed, false otherwise
     @test in layoutStyle
   */
   isFixedPosition: function () {
@@ -254,9 +262,9 @@ SC.View.reopen(
       hasFixedLeft,
       hasFixedTop;
 
-    // Position is fixed if it has left + top, but not as percentages and not as SC.LAYOUT_AUTO.
-    hasFixedLeft = left !== undefined && !SC.isPercentage(left) && left !== SC.LAYOUT_AUTO;
-    hasFixedTop = top !== undefined && !SC.isPercentage(top) && top !== SC.LAYOUT_AUTO;
+    // Position is fixed if it has left + top, but not as percentages and not as LAYOUT_AUTO.
+    hasFixedLeft = left !== undefined && !isPercentage(left) && left !== LAYOUT_AUTO;
+    hasFixedTop = top !== undefined && !isPercentage(top) && top !== LAYOUT_AUTO;
 
     return hasFixedLeft && hasFixedTop;
   }.property('explicitLayout').cacheable(),
@@ -267,7 +275,7 @@ SC.View.reopen(
     parent view's size.
 
     @field
-    @returns {Boolean} YES if fixed, NO otherwise
+    @returns {Boolean} true if fixed, false otherwise
     @test in layout
   */
   isFixedSize: function () {
@@ -280,16 +288,16 @@ SC.View.reopen(
     to their parent view's width.
 
     @field
-    @returns {Boolean} YES if fixed, NO otherwise
+    @returns {Boolean} true if fixed, false otherwise
     @test in layout
   */
   isFixedWidth: function() {
     var layout = this.get('layout');
 
-    // Width is fixed if it has a width and it isn't SC.LAYOUT_AUTO or a percent.
+    // Width is fixed if it has a width and it isn't LAYOUT_AUTO or a percent.
     return (layout.width !== undefined) &&
-      !SC.isPercentage(layout.width) &&
-      (layout.width !== SC.LAYOUT_AUTO);
+      !isPercentage(layout.width) &&
+      (layout.width !== LAYOUT_AUTO);
   }.property('layout').cacheable(),
 
   /**
@@ -328,7 +336,7 @@ SC.View.reopen(
     can define a view which takes up the full screen until it reaches a certain width, and aligns to
     the left thereafter, with { left: 0, right: 0, maxWidth: 400 }. (If you need the flexibility to
     assign entirely different layouts at different screen or window sizes, see the Design Modes
-    documentation under SC.Application.)
+    documentation under Application.)
 
     Certain layout combinations are nonsensical and of course should be avoided. For example, you
     can use left + right or left + width, but not left + right + width.
@@ -371,7 +379,7 @@ SC.View.reopen(
     The transition plugin to use when this view is moved or resized by adjusting
     its layout.
 
-    SC.CoreView uses a pluggable transition architecture where the transition
+    CoreView uses a pluggable transition architecture where the transition
     setup, execution and cleanup can be handled by a plugin.  This allows you
     to create complex transition animations and share them across all your views
     with only a single line of code.
@@ -379,17 +387,17 @@ SC.View.reopen(
     There are a number of pre-built transition adjust plugins available in
     the SproutCore foundation framework:
 
-      SC.View.SMOOTH_ADJUST
-      SC.View.BOUNCE_ADJUST
-      SC.View.SPRING_ADJUST
+      View.SMOOTH_ADJUST
+      View.BOUNCE_ADJUST
+      View.SPRING_ADJUST
 
     To create a custom transition plugin simply create a regular JavaScript
-    object that conforms to the SC.ViewTransitionProtocol protocol.
+    object that conforms to the ViewTransitionProtocol protocol.
 
-    NOTE: When creating custom transition adjust plugins, be aware that SC.View
+    falseTE: When creating custom transition adjust plugins, be aware that View
     will not call the `setup` method of the plugin, only the `run` method.
 
-    @type Object (SC.ViewTransitionProtocol)
+    @type Object (ViewTransitionProtocol)
     @default null
     @since Version 1.10
   */
@@ -404,7 +412,7 @@ SC.View.reopen(
     see the documentation for the transition plugin being used.
 
     Most transitions will accept a duration and timing option, but may
-    also use other options.  For example, SC.View.BOUNCE_ADJUST accepts options
+    also use other options.  For example, View.BOUNCE_ADJUST accepts options
     like:
 
         transitionAdjustOptions: {
@@ -421,12 +429,12 @@ SC.View.reopen(
   transitionAdjustOptions: null,
 
   /**
-    Activates use of brower's static layout. To activate, set this property to YES.
+    Activates use of brower's static layout. To activate, set this property to true.
 
     @type Boolean
-    @default NO
+    @default false
   */
-  useStaticLayout: NO,
+  useStaticLayout: false,
 
   // ------------------------------------------------------------------------
   // Methods
@@ -453,14 +461,14 @@ SC.View.reopen(
   _sc_adjustForScale: function (frame, layout) {
 
     // Scale not supported on this platform, ignore the layout values.
-    if (!SC.platform.supportsCSSTransforms) {
+    if (!platform.supportsCSSTransforms) {
       frame.scale = 1;
       frame.transformOriginX = frame.transformOriginY = 0.5;
 
     // Use scale.
     } else {
 
-      // Get the scale and transform origins, if not provided. (Note inlining of SC.none for performance)
+      // Get the scale and transform origins, if not provided. (Note inlining of none for performance)
       /*jshint eqnull:true*/
       var scale = layout.scale,
           oX = layout.transformOriginX,
@@ -469,7 +477,7 @@ SC.View.reopen(
       // If the scale is set and isn't 1, do some calculations.
       if (scale != null && scale !== 1) {
         // Scale the rect.
-        frame = SC.scaleRect(frame, scale, oX, oY);
+        frame = scaleRect(frame, scale, oX, oY);
 
         // Add the scale and original unscaled height and width.
         frame.scale = scale;
@@ -671,7 +679,7 @@ SC.View.reopen(
     // Debug-only warning when layout isn't valid.
     // UNUSED: This is too noisy for certain views that adjust their own layouts based on top of the default layout.
     // if (hasRight && hasLeft && hasWidth) {
-    //   SC.warn("Developer Warning: When setting `width` in the layout, you must only set `left` or `right`, but not both: %@".fmt(this));
+    //   warn("Developer Warning: When setting `width` in the layout, you must only set `left` or `right`, but not both: %@".fmt(this));
     // }
     //@endif
 
@@ -691,7 +699,7 @@ SC.View.reopen(
     // Debug-only warning when layout isn't valid.
     // UNUSED: This is too noisy for certain views that adjust their own layouts based on top of the default layout.
     // if (hasBottom && hasTop && hasHeight) {
-    //   SC.warn("Developer Warning: When setting `height` in the layout, you must only set `top` or `bottom`, but not both: %@".fmt(this));
+    //   warn("Developer Warning: When setting `height` in the layout, you must only set `top` or `bottom`, but not both: %@".fmt(this));
     // }
     //@endif
 
@@ -843,9 +851,9 @@ SC.View.reopen(
     This method will avoid actually setting the layout if the value you pass
     does not edit the layout.
 
-    @param {String|Hash} key
+    @param {String|Object} key
     @param {Object} value
-    @returns {SC.View} receiver
+    @returns {View} receiver
   */
   adjust: function (key, value) {
     if (key === undefined) { return this; } // FAST PATH! Nothing to do.
@@ -868,7 +876,7 @@ SC.View.reopen(
     if (newLayout) {
       var transitionAdjust = this.get('transitionAdjust');
 
-      if (this.get('viewState') & SC.CoreView.IS_SHOWN && transitionAdjust) {
+      if (this.get('viewState') & IS_SHOWN && transitionAdjust) {
         // Run the adjust transition.
         this._sc_transitionAdjust(newLayout);
       } else {
@@ -918,7 +926,7 @@ SC.View.reopen(
         var newFrame = pv ? pv.convertFrameToView(frame, null) : frame;
 
     @param {Rect} frame the source frame
-    @param {SC.View} targetView the target view to convert to
+    @param {View} targetView the target view to convert to
     @returns {Rect} converted frame
     @test in convertFrames
   */
@@ -938,7 +946,7 @@ SC.View.reopen(
         var newFrame = this.convertFrameFromView(frame, view.get('parentView'));
 
     @param {Rect} frame the source frame
-    @param {SC.View} targetView the target view to convert to
+    @param {View} targetView the target view to convert to
     @returns {Rect} converted frame
     @test in converFrames
   */
@@ -960,14 +968,14 @@ SC.View.reopen(
     immediately after 'layout' is updated to avoid the potential for stale
     (incorrect) cached 'frame' values.
 
-    @returns {SC.View} receiver
+    @returns {View} receiver
   */
   layoutDidChange: function () {
     var currentLayout = this.get('layout');
 
     // Handle old style rotation.
     if (!SC.none(currentLayout.rotate)) {
-      if (SC.none(currentLayout.rotateZ) && SC.platform.get('supportsCSS3DTransforms')) {
+      if (SC.none(currentLayout.rotateZ) && platform.get('supportsCSS3DTransforms')) {
         currentLayout.rotateZ = currentLayout.rotate;
         delete currentLayout.rotate;
       }
@@ -977,7 +985,7 @@ SC.View.reopen(
     var didResize = this._sc_checkForResize(this._sc_previousLayout, currentLayout);
 
     // Cache the last layout to fine-tune notifications when the layout changes.
-    // NOTE: Do this before continuing so that any adjustments that occur in viewDidResize or from
+    // falseTE: Do this before continuing so that any adjustments that occur in viewDidResize or from
     //  _sc_viewFrameDidChange (say to the position after a resize), don't result in _sc_checkForResize
     //  running against the old _sc_previousLayout.
     this._sc_previousLayout = currentLayout;
@@ -993,7 +1001,7 @@ SC.View.reopen(
     // Notify layoutView/parentView, unless we are transitioning.
     var layoutView = this.get('layoutView');
     if (layoutView) {
-      layoutView.set('childViewsNeedLayout', YES);
+      layoutView.set('childViewsNeedLayout', true);
       layoutView.layoutDidChangeFor(this);
 
       // Check if childViewsNeedLayout is still true.
@@ -1020,10 +1028,10 @@ SC.View.reopen(
 
     Note that if as a result of running this method you decide that you do not
     need your layoutChildViews() method run later, you can set the
-    childViewsNeedsLayout property to NO from this method and the layout
+    childViewsNeedsLayout property to false from this method and the layout
     method will not be called layer.
 
-    @param {SC.View} childView the view whose layout has changed.
+    @param {View} childView the view whose layout has changed.
     @returns {void}
   */
   layoutDidChangeFor: function (childView) {
@@ -1039,14 +1047,14 @@ SC.View.reopen(
     child views.
 
     @param {Boolean} force if true assume view is visible even if it is not.
-    @returns {SC.View} receiver
+    @returns {View} receiver
     @test in layoutChildViews
   */
   layoutChildViewsIfNeeded: function (force) {
     if (this.get('childViewsNeedLayout')) {
       this.layoutChildViews(force);
 
-      this.set('childViewsNeedLayout', NO);
+      this.set('childViewsNeedLayout', false);
     }
 
     return this;
@@ -1141,7 +1149,7 @@ SC.View.reopen(
     be invalid, we need to force layoutDidChange() to immediately run
     whenever 'layout' is set.
   */
-  propertyDidChange: function (key, value, _keepCache) {
+  propertyDidChange: function propertyDidChange (key, value, _keepCache) {
     //@if(debug)
     // Debug mode only property validation.
     if (key === 'layout') {
@@ -1151,9 +1159,9 @@ SC.View.reopen(
         if (!value.hasOwnProperty(property)) { continue; }
 
         var layoutValue = value[property];
-        if (isNaN(layoutValue) && (layoutValue !== SC.LAYOUT_AUTO) &&
-            !SC._ROTATION_VALUE_REGEX.exec(layoutValue) && !SC._SCALE_VALUE_REGEX.exec(layoutValue)) {
-          throw new Error("SC.View layout property set to invalid value, %@: %@.".fmt(property, layoutValue));
+        if (isNaN(layoutValue) && (layoutValue !== LAYOUT_AUTO) &&
+            !ROTATION_VALUE_REGEX.exec(layoutValue) && !SCALE_VALUE_REGEX.exec(layoutValue)) {
+          throw new Error("View layout property set to invalid value, %@: %@.".fmt(property, layoutValue));
         }
       }
     }
@@ -1175,7 +1183,7 @@ SC.View.reopen(
     }
 
     // Resume notification as usual.
-    return sc_super();
+    return propertyDidChange.base.apply(this, arguments);
   },
 
   /**
@@ -1201,7 +1209,7 @@ SC.View.reopen(
     view hierarchy looking looking for a scrollable view.  It will then
     call scrollToVisible() on it.
 
-    Returns YES if an actual scroll took place, no otherwise.
+    Returns true if an actual scroll took place, no otherwise.
 
     @returns {Boolean}
   */
@@ -1214,7 +1222,7 @@ SC.View.reopen(
       pv.scrollToVisible();
       return pv.scrollToVisible(this);
     } else {
-      return NO;
+      return false;
     }
   },
 
@@ -1267,7 +1275,7 @@ SC.View.reopen(
     notify the receiver view and any of its children that are interested
     that the resize is about to begin.
 
-    @returns {SC.View} receiver
+    @returns {View} receiver
     @test in viewDidResize
   */
   beginLiveResize: function () {
@@ -1288,7 +1296,7 @@ SC.View.reopen(
     notify the receiver view and any of its children that are interested
     that the live resize has ended.
 
-    @returns {SC.View} receiver
+    @returns {View} receiver
     @test in viewDidResize
   */
   endLiveResize: function () {
@@ -1314,7 +1322,7 @@ SC.View.reopen(
     implement layoutChildViews() in a view yourself.
 
     @param {Boolean} force Force the update to the layer's layout style immediately even if the view is not in a shown state.  Otherwise the style will be updated when the view returns to a shown state.
-    @returns {SC.View} receiver
+    @returns {View} receiver
     @test in layoutChildViews
   */
   updateLayout: function (force) {
@@ -1329,7 +1337,7 @@ SC.View.reopen(
     current layoutStyle to the layer.  This method is also called whenever
     the layer is first created.
 
-    @param {SC.RenderContext} the render context
+    @param {RenderContext} the render context
     @returns {void}
     @test in layoutChildViews
   */
@@ -1391,7 +1399,7 @@ SC.View.reopen(
   },
 
   /** @private Override: The 'adopted' event (uses isFixedSize so our childViews are notified if our frame changes). */
-  _adopted: function (beforeView) {
+  _adopted: function _adopted (beforeView) {
     // If our size depends on our parent, it will have changed on adoption.
     var isFixedSize = this.get('isFixedSize');
     if (isFixedSize) {
@@ -1401,12 +1409,12 @@ SC.View.reopen(
       this.viewDidResize();
     }
 
-    sc_super();
+    _adopted.base.apply(this, arguments);
   },
 
   /** @private Extension: The 'updatedContent' event. */
-  _updatedContent: function () {
-    sc_super();
+  _updatedContent: function _updatedContent () {
+    _updatedContent.base.apply(this, arguments);
 
     // If this view uses static layout, then notify that the frame (likely)
     // changed.
@@ -1419,10 +1427,9 @@ SC.View.reopen(
     this.didRenderAnimations();
   }
 
-});
+};
 
-SC.View.mixin(
-  /** @scope SC.View */ {
+export const staticViewLayout = /** @scope View */ {
 
   /**
     Convert any layout to a Top, Left, Width, Height layout
@@ -1442,14 +1449,14 @@ SC.View.mixin(
     // X Conversion
     // handle left aligned and left/right
     if (!SC.none(lL)) {
-      if (SC.isPercentage(lL)) ret.left = lL * pFW;
+      if (isPercentage(lL)) ret.left = lL * pFW;
       else ret.left = lL;
       if (lW !== undefined) {
-        if (lW === SC.LAYOUT_AUTO) ret.width = SC.LAYOUT_AUTO;
-        else if (SC.isPercentage(lW)) ret.width = lW * pFW;
+        if (lW === LAYOUT_AUTO) ret.width = LAYOUT_AUTO;
+        else if (isPercentage(lW)) ret.width = lW * pFW;
         else ret.width = lW;
       } else {
-        if (lR && SC.isPercentage(lR)) ret.width = pFW - ret.left - (lR * pFW);
+        if (lR && isPercentage(lR)) ret.width = pFW - ret.left - (lR * pFW);
         else ret.width = pFW - ret.left - (lR || 0);
       }
 
@@ -1459,34 +1466,34 @@ SC.View.mixin(
       // if no width, calculate it from the parent frame
       if (SC.none(lW)) {
         ret.left = 0;
-        if (lR && SC.isPercentage(lR)) ret.width = pFW - (lR * pFW);
+        if (lR && isPercentage(lR)) ret.width = pFW - (lR * pFW);
         else ret.width = pFW - (lR || 0);
 
       // If has width, calculate the left anchor from the width and right and parent frame
       } else {
-        if (lW === SC.LAYOUT_AUTO) ret.width = SC.LAYOUT_AUTO;
+        if (lW === LAYOUT_AUTO) ret.width = LAYOUT_AUTO;
         else {
-          if (SC.isPercentage(lW)) ret.width = lW * pFW;
+          if (isPercentage(lW)) ret.width = lW * pFW;
           else ret.width = lW;
-          if (SC.isPercentage(lR)) ret.left = pFW - (ret.width + lR);
+          if (isPercentage(lR)) ret.left = pFW - (ret.width + lR);
           else ret.left = pFW - (ret.width + lR);
         }
       }
 
     // handle centered
     } else if (!SC.none(lcX)) {
-      if (lW && SC.isPercentage(lW)) ret.width = (lW * pFW);
+      if (lW && isPercentage(lW)) ret.width = (lW * pFW);
       else ret.width = (lW || 0);
       ret.left = ((pFW - ret.width) / 2);
-      if (SC.isPercentage(lcX)) ret.left = ret.left + lcX * pFW;
+      if (isPercentage(lcX)) ret.left = ret.left + lcX * pFW;
       else ret.left = ret.left + lcX;
 
     // if width defined, assume left of zero
     } else if (!SC.none(lW)) {
       ret.left =  0;
-      if (lW === SC.LAYOUT_AUTO) ret.width = SC.LAYOUT_AUTO;
+      if (lW === LAYOUT_AUTO) ret.width = LAYOUT_AUTO;
       else {
-        if (SC.isPercentage(lW)) ret.width = lW * pFW;
+        if (isPercentage(lW)) ret.width = lW * pFW;
         else ret.width = lW;
       }
 
@@ -1503,15 +1510,15 @@ SC.View.mixin(
     // Y Conversion
     // handle left aligned and top/bottom
     if (!SC.none(lT)) {
-      if (SC.isPercentage(lT)) ret.top = lT * pFH;
+      if (isPercentage(lT)) ret.top = lT * pFH;
       else ret.top = lT;
       if (lH !== undefined) {
-        if (lH === SC.LAYOUT_AUTO) ret.height = SC.LAYOUT_AUTO;
-        else if (SC.isPercentage(lH)) ret.height = lH * pFH;
+        if (lH === LAYOUT_AUTO) ret.height = LAYOUT_AUTO;
+        else if (isPercentage(lH)) ret.height = lH * pFH;
         else ret.height = lH;
       } else {
         ret.height = pFH - ret.top;
-        if (lB && SC.isPercentage(lB)) ret.height = ret.height - (lB * pFH);
+        if (lB && isPercentage(lB)) ret.height = ret.height - (lB * pFH);
         else ret.height = ret.height - (lB || 0);
       }
 
@@ -1521,34 +1528,34 @@ SC.View.mixin(
       // if no height, calculate it from the parent frame
       if (SC.none(lH)) {
         ret.top = 0;
-        if (lB && SC.isPercentage(lB)) ret.height = pFH - (lB * pFH);
+        if (lB && isPercentage(lB)) ret.height = pFH - (lB * pFH);
         else ret.height = pFH - (lB || 0);
 
       // If has height, calculate the top anchor from the height and bottom and parent frame
       } else {
-        if (lH === SC.LAYOUT_AUTO) ret.height = SC.LAYOUT_AUTO;
+        if (lH === LAYOUT_AUTO) ret.height = LAYOUT_AUTO;
         else {
-          if (SC.isPercentage(lH)) ret.height = lH * pFH;
+          if (isPercentage(lH)) ret.height = lH * pFH;
           else ret.height = lH;
           ret.top = pFH - ret.height;
-          if (SC.isPercentage(lB)) ret.top = ret.top - (lB * pFH);
+          if (isPercentage(lB)) ret.top = ret.top - (lB * pFH);
           else ret.top = ret.top - lB;
         }
       }
 
     // handle centered
     } else if (!SC.none(lcY)) {
-      if (lH && SC.isPercentage(lH)) ret.height = (lH * pFH);
+      if (lH && isPercentage(lH)) ret.height = (lH * pFH);
       else ret.height = (lH || 0);
       ret.top = ((pFH - ret.height) / 2);
-      if (SC.isPercentage(lcY)) ret.top = ret.top + lcY * pFH;
+      if (isPercentage(lcY)) ret.top = ret.top + lcY * pFH;
       else ret.top = ret.top + lcY;
 
     // if height defined, assume top of zero
     } else if (!SC.none(lH)) {
       ret.top =  0;
-      if (lH === SC.LAYOUT_AUTO) ret.height = SC.LAYOUT_AUTO;
-      else if (SC.isPercentage(lH)) ret.height = lH * pFH;
+      if (lH === LAYOUT_AUTO) ret.height = LAYOUT_AUTO;
+      else if (isPercentage(lH)) ret.height = lH * pFH;
       else ret.height = lH;
 
     // fallback, full height.
@@ -1561,8 +1568,8 @@ SC.View.mixin(
     if (ret.bottom) ret.bottom = Math.floor(ret.bottom);
     if (ret.left) ret.left = Math.floor(ret.left);
     if (ret.right) ret.right = Math.floor(ret.right);
-    if (ret.width !== SC.LAYOUT_AUTO) ret.width = Math.floor(ret.width);
-    if (ret.height !== SC.LAYOUT_AUTO) ret.height = Math.floor(ret.height);
+    if (ret.width !== LAYOUT_AUTO) ret.width = Math.floor(ret.width);
+    if (ret.height !== LAYOUT_AUTO) ret.height = Math.floor(ret.height);
 
     // handle min/max
     if (layout.minHeight !== undefined) ret.minHeight = layout.minHeight;
@@ -1578,4 +1585,4 @@ SC.View.mixin(
     // TODO: [EG] Create Top/Left/Width/Height to a Custom Layout conversion
   }
 
-});
+};

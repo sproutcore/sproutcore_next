@@ -62,7 +62,7 @@ export const platform = SC.Object.create({
        touch capability.
      - See: https://github.com/highslide-software/highcharts.com/issues/1331 for a discussion
        about why we need to check if ontouchstart is null in addition to check if it's defined
-     - The test for global._phantom provides support for phantomjs, the headless WebKit browser
+     - The test for GLOBAL._phantom provides support for phantomjs, the headless WebKit browser
        used in Travis-CI, and which incorredtly (see above) identifies itself as a touch browser.
        For more information on CI see https://github.com/sproutcore/sproutcore/pull/1025
        For discussion of the phantomjs touch issue see https://github.com/ariya/phantomjs/issues/10375
@@ -83,7 +83,7 @@ export const platform = SC.Object.create({
 
     @type Boolean
   */
-  //touch: (('ontouchstart' in global) || global.DocumentTouch && document instanceof DocumentTouch) && none(global._phantom),
+  //touch: (('ontouchstart' in GLOBAL) || GLOBAL.DocumentTouch && document instanceof DocumentTouch) && none(GLOBAL._phantom),
   touch: ('ontouchstart' in GLOBAL) && SC.none(GLOBAL._phantom),
 
   /**
@@ -364,7 +364,7 @@ export const platform = SC.Object.create({
           supportsPassiveOption = true;
         }
       });
-      global.addEventListener('test', null, opts);
+      GLOBAL.addEventListener('test', null, opts);
     } catch (e) {}
     return supportsPassiveOption;
   }(),
@@ -402,7 +402,7 @@ export const platform = SC.Object.create({
 
     @type Boolean
   */
-  supportsApplicationCache: ('applicationCache' in global),
+  supportsApplicationCache: ('applicationCache' in GLOBAL),
 
   /**
     Whether the browser supports the hashchange event.
@@ -412,7 +412,7 @@ export const platform = SC.Object.create({
   supportsHashChange: function () {
     // Code copied from Modernizr which copied code from YUI (MIT licenses)
     // documentMode logic from YUI to filter out IE8 Compat Mode which false positives
-    return ('onhashchange' in global) && (document.documentMode === undefined || document.documentMode > 7);
+    return ('onhashchange' in GLOBAL) && (document.documentMode === undefined || document.documentMode > 7);
   }(),
 
   /**
@@ -421,7 +421,7 @@ export const platform = SC.Object.create({
     @type Boolean
   */
   supportsHistory: function () {
-    return !!(global.history && global.history.pushState);
+    return !!(GLOBAL.history && GLOBAL.history.pushState);
   }(),
 
   /**
@@ -430,7 +430,7 @@ export const platform = SC.Object.create({
     @type Boolean
   */
   supportsIndexedDB: function () {
-    return !!(global.indexedDB || global[browser.domPrefix + 'IndexedDB']);
+    return !!(GLOBAL.indexedDB || GLOBAL[browser.domPrefix + 'IndexedDB']);
   }(),
 
   /**
@@ -451,14 +451,14 @@ export const platform = SC.Object.create({
 
     @type Boolean
   */
-  supportsXHR2ProgressEvent: ('ProgressEvent' in global),
+  supportsXHR2ProgressEvent: ('ProgressEvent' in GLOBAL),
 
   /**
     Whether the browser supports the XHR2 FormData specification.
 
     @type Boolean
   */
-  supportsXHR2FormData: ('FormData' in global),
+  supportsXHR2FormData: ('FormData' in GLOBAL),
 
   /**
     Whether the browser supports the XHR2 ProgressEvent's loadend event. If not
@@ -475,31 +475,31 @@ export const platform = SC.Object.create({
 
     @type Boolean
   */
-  supportsOrientationChange: ('onorientationchange' in global),
+  supportsOrientationChange: ('onorientationchange' in GLOBAL),
 
   /**
     Whether the browser supports WebSocket or not.
 
     @type Boolean
   */
-  supportsWebSocket: ("WebSocket" in global),
+  supportsWebSocket: ("WebSocket" in GLOBAL),
 
   /**
     Whether the browser supports WebSQL.
 
     @type Boolean
   */
-  supportsWebSQL: ('openDatabase' in global),
+  supportsWebSQL: ('openDatabase' in GLOBAL),
 
   /**
-    Because iOS is slow to dispatch the global.onorientationchange event,
-    we use the global size to determine the orientation on iOS devices
+    Because iOS is slow to dispatch the GLOBAL.onorientationchange event,
+    we use the GLOBAL size to determine the orientation on iOS devices
     and desktop environments when platform.touch is true (ie. when
     platform.simulateTouchEvents has been called)
 
     @type Boolean
   */
-  windowSizeDeterminesOrientation: browser.os === OS.ios || !('onorientationchange' in global),
+  windowSizeDeterminesOrientation: browser.os === OS.ios || !('onorientationchange' in GLOBAL),
 
   /**
     Does this browser support the Apache Cordova (formerly phonegap) runtime?
@@ -516,8 +516,8 @@ export const platform = SC.Object.create({
     @type Boolean
     @see http://incubator.apache.org/cordova/
   */
-  // Check for the global cordova property.
-  cordova: (typeof global.cordova !== "undefined")
+  // Check for the GLOBAL cordova property.
+  cordova: (typeof GLOBAL.cordova !== "undefined")
 
 });
 
@@ -530,7 +530,7 @@ export const platform = SC.Object.create({
   Once the tests are completed the RootResponder is notified in order to clean up
   unnecessary transition and animation event listeners.
 */
-ready(function () {
+SC.ready(function () {
   // This will add 4 different variations of the named event listener and clean
   // them up again.
   // Note: we pass in capitalizedEventName, because we can't just capitalize

@@ -5,23 +5,25 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require("views/view");
-sc_require("views/view/layout");
-sc_require("views/view/layout_style");
+// sc_require("views/view");
+// sc_require("views/view/layout");
+// sc_require("views/view/layout_style");
 
-SC.View.reopen({
+import { platform } from '../../../responder/responder.js';
+
+export const accelerationSupport = {
 
   /**
-    Setting wantsAcceleratedLayer to YES will use transforms to move the
+    Setting wantsAcceleratedLayer to true will use transforms to move the
     layer when available. On some platforms transforms are hardware accelerated.
   */
-  wantsAcceleratedLayer: NO,
+  wantsAcceleratedLayer: false,
 
   /**
     Specifies whether transforms can be used to move the layer.
   */
   hasAcceleratedLayer: function () {
-    return (SC.platform.supportsCSSTransforms && this.get('wantsAcceleratedLayer') && this.get('isFixedLayout'));
+    return (platform.supportsCSSTransforms && this.get('wantsAcceleratedLayer') && this.get('isFixedLayout'));
   }.property('wantsAcceleratedLayer', 'isFixedLayout').cacheable()
 
-});
+};

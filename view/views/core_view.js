@@ -9,9 +9,10 @@
 import { SC } from '../../core/core.js';
 import { CoreQuery } from '../../event/event.js';
 
-import { Responder } from '../../../responder/responder.js';
+import { Responder } from '../../responder/responder.js';
 import { viewStates, viewStatechart } from './view/statechart.js'
 import { coreViewEnabledSupport } from './view/enabled.js';
+import { viewManager } from './view_manager.js';
 
 
 // sc_require('system/browser');
@@ -48,7 +49,7 @@ EMPTY_CHILD_VIEWS_ARRAY.needsClone = true;
   @class
 
 */
-export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
+export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, 
 /** @scope View.prototype */ {
 
   /**
@@ -166,7 +167,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
     @default true
   */
   isVisible: true,
-  isVisibleBindingDefault: Binding.bool(),
+  isVisibleBindingDefault: SC.Binding.bool(),
 
   // ..........................................................
   // CHILD VIEW SUPPORT
@@ -263,7 +264,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
   layerId: function (key, value) {
     if (value) { this._layerId = value; }
     if (this._layerId) { return this._layerId; }
-    return guidFor(this);
+    return SC.guidFor(this);
   }.property().cacheable(),
 
   /**
@@ -308,7 +309,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
   */
   displayDidChange: function () {
     //@if (debug)
-    if (LOG_VIEW_STATES) {
+    if (SC.getSetting('LOG_VIEW_STATES')) {
       SC.Logger.log('%c%@:%@ — displayDidChange()'.fmt(this, this.get('viewState')), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
@@ -952,21 +953,21 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
      - register the view with the global views hash, which is used for event
        dispatch
   */
-  init: function () {
+  init: function init () {
     var childViews, layerId;
 
-    sc_super();
+    init.base.apply(this, arguments);
 
     layerId = this._lastLayerId = this.get('layerId');
 
     // Register the view for event handling. This hash is used by
     // RootResponder to dispatch incoming events.
     //@if (debug)
-    if (View.views[layerId]) {
+    if (viewManager.views[layerId]) {
       throw new Error("Developer Error: A view with layerId, '%@', already exists.  Each view must have a unique layerId.".fmt(this.get('layerId')));
     }
     //@endif
-    View.views[layerId] = this;
+    viewManager.views[layerId] = this;
 
     // setup classNames
     this.classNames = this.get('classNames').slice();
@@ -1290,14 +1291,14 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
 
     @returns {View} receiver
   */
-  destroy: function () {
+  destroy: function destroy () {
     // Fast path!
     if (this.get('isDestroyed')) { return this; }
 
     // Do generic destroy. It takes care of mixins and sets isDestroyed to true.
     // Do this first, since it cleans up bindings that may apply to parentView
     // (which we will soon null out).
-    var ret = sc_super();
+    var ret = destroy.base.apply(this, arguments);
 
     // If our parent is already destroyed, then we can defer destroying ourself
     // and our own child views momentarily.
@@ -1322,7 +1323,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
     }
 
     // Remove the view from the global hash.
-    delete View.views[this.get('layerId')];
+    delete viewManager.views[this.get('layerId')];
 
     // Destroy any children.  Loop backwards since childViews will shrink.
     var childViews = this.get('childViews');
@@ -1374,7 +1375,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
       key = view = childViews[idx];
 
       // is this is a key name, lookup view class
-      if (typeof key === T_STRING) {
+      if (typeof key === SC.T_STRING) {
         view = this[key];
       } else {
         key = null;
@@ -1382,7 +1383,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart, (
 
       if (!view) {
         //@if (debug)
-        warn("Developer Warning: The child view named '%@' was not found in the view, %@.  This child view will be ignored.".fmt(key, this));
+        SC.warn("Developer Warning: The child view named '%@' was not found in the view, %@.  This child view will be ignored.".fmt(key, this));
         //@endif
 
         // skip this one.
@@ -1717,7 +1718,7 @@ CoreView.mixin(
     the passed attributes in case you want to use a view builder later, if
     needed.
 
-    @param {Hash} attrs Attributes to add to view
+    @param {Object} attrs Attributes to add to view
     @returns {Class} View subclass to create
     @function
   */
@@ -1731,9 +1732,9 @@ CoreView.mixin(
 
     var ret = this.extend.apply(this, arguments);
     ret.isDesign = true;
-    if (ViewDesigner) {
-      ViewDesigner.didLoadDesign(ret, this, A(arguments));
-    }
+    // if (ViewDesigner) {
+    //   ViewDesigner.didLoadDesign(ret, this, A(arguments));
+    // }
     return ret;
   },
 
@@ -1745,7 +1746,7 @@ CoreView.mixin(
       delete last.theme;
     }
 
-    return Object.extend.apply(this, arguments);
+    return SC.Object.extend.apply(this, arguments);
   },
 
   /**
@@ -1828,7 +1829,7 @@ CoreView.mixin(
     existing HTML.
 
     @param {String|Element} element
-    @param {Hash} attrs
+    @param {Object} attrs
     @returns {View} instance
   */
   viewFor: function (element, attrs) {
@@ -1854,9 +1855,9 @@ CoreView.mixin(
     }
 
     var C = this, ret = new C(arguments);
-    if (ViewDesigner) {
-      ViewDesigner.didCreateView(ret, SC.A(arguments));
-    }
+    // if (ViewDesigner) {
+    //   ViewDesigner.didCreateView(ret, SC.A(arguments));
+    // }
     return ret;
   },
 
@@ -1867,7 +1868,7 @@ CoreView.mixin(
 
     view = View.design({...}).loc(localizationHash).create();
 
-    @param {Hash} loc
+    @param {Object} loc
     @param rootElement {String} optional rootElement with prepped HTML
     @returns {View} receiver
   */
@@ -1876,9 +1877,9 @@ CoreView.mixin(
     delete loc.childViews; // clear out child views before applying to attrs
 
     this.applyLocalizedAttributes(loc);
-    if (ViewDesigner) {
-      ViewDesigner.didLoadLocalization(this, SC.A(arguments));
-    }
+    // if (ViewDesigner) {
+    //   ViewDesigner.didLoadLocalization(this, SC.A(arguments));
+    // }
 
     // apply localization recursively to childViews
     var childViews = this.prototype.childViews, idx = childViews.length,
@@ -1886,7 +1887,7 @@ CoreView.mixin(
     while (--idx >= 0) {
       viewClass = childViews[idx];
       loc = childLocs[idx];
-      if (loc && viewClass && typeof viewClass === T_STRING) String.loc(viewClass, loc);
+      if (loc && viewClass && typeof viewClass === SC.T_STRING) String.loc(viewClass, loc);
     }
 
     return this; // done!
@@ -1897,10 +1898,11 @@ CoreView.mixin(
     class.  This is overloaded in design mode to also save the attributes.
   */
   applyLocalizedAttributes: function (loc) {
-    mixin(this.prototype, loc);
+    SC.mixin(this.prototype, loc);
   },
 
-  views: {}
+  // This have been moved to the separate view manager, to save us loads of recursive dependencies.
+  // views: {}
 
 });
 
@@ -1920,7 +1922,7 @@ CoreView.mixin(coreViewEnabledSupport);
 */
 export const outlet = function (path, root) {
   return function (key) {
-    return (this[key] = objectForPropertyPath(path, (root !== undefined) ? root : this));
+    return (this[key] = SC.objectForPropertyPath(path, (root !== undefined) ? root : this));
   }.property();
 };
 
@@ -1928,7 +1930,7 @@ export const outlet = function (path, root) {
 CoreView.unload = function () {
   // delete view items this way to ensure the views are cleared.  The hash
   // itself may be owned by multiple view subclasses.
-  var views = View.views;
+  var views = viewManager.views;
   if (views) {
     for (var key in views) {
       if (!views.hasOwnProperty(key)) continue;

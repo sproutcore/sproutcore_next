@@ -1,3 +1,4 @@
+import { SC } from '../../../core/core.js';
 import { ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_SHOWING, ATTACHED_BUILDING_IN } from './statechart.js';
 
 // sc_require("views/view");
@@ -57,8 +58,7 @@ export const coreViewEnabledSupport = /** @scope CoreView */ {
 };
 
 
-export const viewEnabledSupport = 
-  /** @scope View.prototype */ {
+export const viewEnabledSupport = /** @scope View.prototype */ {
 
   // ------------------------------------------------------------------------
   // Properties
@@ -73,7 +73,7 @@ export const viewEnabledSupport =
     * CoreView.DISABLED
     * CoreView.DISABLED_BY_PARENT
 
-    @type String
+    @type Number
     @default CoreView.ENABLED
     @readonly
   */

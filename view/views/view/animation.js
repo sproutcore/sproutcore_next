@@ -79,7 +79,7 @@ export const LayoutState = {
 };
 
 
-const animationSupport = /** @scope View.prototype */ {
+export const animationSupport = /** @scope View.prototype */ {
 
   /** @private Shared object used to avoid continually initializing/destroying objects. */
   _SC_DECOMPOSED_TRANSFORM_MAP: null,

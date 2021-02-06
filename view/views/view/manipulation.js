@@ -1,7 +1,9 @@
-sc_require("views/view");
+// sc_require("views/view");
 
-SC.View.reopen(
-  /** @scope SC.View.prototype */{
+import { SC } from '../../../core/core.js';
+import { viewManager } from '../view_manager.js';
+
+export const manipulationSupport = /** @scope View.prototype */{
 
   /**
     Handles changes in the layer id.
@@ -13,15 +15,15 @@ SC.View.reopen(
 
     if (lid !== lastId) {
       // if we had an earlier one, remove from view hash.
-      if (lastId && SC.View.views[lastId] === this) {
-        delete SC.View.views[lastId];
+      if (lastId && viewManager.views[lastId] === this) {
+        delete viewManager.views[lastId];
       }
 
       // set the current one as the new old one
       this._lastLayerId = lid;
 
       // and add the new one
-      SC.View.views[lid] = this;
+      viewManager.views[lid] = this;
 
       // and finally, set the actual layer id.
       if (layer) { layer.id = lid; }
@@ -43,9 +45,9 @@ SC.View.reopen(
     If the specified view already belongs to another parent, it will be
     removed from that view first.
 
-    @param {SC.View} view
-    @param {SC.View} beforeView
-    @returns {SC.View} the receiver
+    @param {View} view
+    @param {View} beforeView
+    @returns {View} the receiver
   */
   insertBefore: function(view, beforeView) {
     view.beginPropertyChanges(); // limit notifications
@@ -67,9 +69,9 @@ SC.View.reopen(
     If the specified view already belongs to another parent, it will be
     removed from that view first.
 
-    @param view {SC.View} the view to insert in the DOM
-    @param view {SC.View} the view to remove from the DOM.
-    @returns {SC.View} the receiver
+    @param view {View} the view to insert in the DOM
+    @param view {View} the view to remove from the DOM.
+    @returns {View} the receiver
   */
   replaceChild: function(view, oldView) {
     // suspend notifications
@@ -98,7 +100,7 @@ SC.View.reopen(
     this.createChildView() on the parent).
 
     @param {Array} newChildViews Child views you want to add
-    @returns {SC.View} receiver
+    @returns {View} receiver
   */
   replaceAllChildren: function (newChildViews) {
     this.beginPropertyChanges();
@@ -143,8 +145,8 @@ SC.View.reopen(
     Appends the specified view to the end of the receivers childViews array.
     This is equivalent to calling insertBefore(view, null);
 
-    @param view {SC.View} the view to insert
-    @returns {SC.View} the receiver
+    @param view {View} the view to insert
+    @returns {View} the receiver
   */
   appendChild: function(view) {
     return this.insertBefore(view, null);
@@ -197,38 +199,14 @@ SC.View.reopen(
 
     @deprecated Version 1.10
   */
-  isBuildingIn: NO,
+  isBuildingIn: false,
 
   /**
     Whether the view is currently building out.
 
     @deprecated Version 1.10
   */
-  isBuildingOut: NO,
-
-  /**
-    Implement this, and call didFinishBuildIn when you are done.
-
-    @deprecated Version 1.10
-  */
-  buildIn: function() {
-    //@if(debug)
-    SC.warn("The SC.View build methods have been deprecated in favor of the transition plugins.  To build in a view, please provide a transitionIn plugin (many are pre-built in SproutCore) and to build out a view, please provide a transitionOut plugin.");
-    //@endif
-    this.buildInDidFinish();
-  },
-
-  /**
-    Implement this, and call didFinishBuildOut when you are done.
-
-    @deprecated Version 1.10
-  */
-  buildOut: function() {
-    //@if(debug)
-    SC.warn("The SC.View build methods have been deprecated in favor of the transition plugins.  To build in a view, please provide a transitionIn plugin (many are pre-built in SproutCore) and to build out a view, please provide a transitionOut plugin.");
-    //@endif
-    this.buildOutDidFinish();
-  },
+  isBuildingOut: false,
 
   /**
     This should reset (without animation) any internal states; sometimes called before.
@@ -273,7 +251,7 @@ SC.View.reopen(
     @deprecated Version 1.10
   */
   buildInDidFinish: function() {
-    this.isBuildingIn = NO;
+    this.isBuildingIn = false;
     this._buildingInTo.buildInDidFinishFor(this);
     this._buildingInTo = null;
   },
@@ -284,7 +262,7 @@ SC.View.reopen(
     @deprecated Version 1.10
   */
   buildOutDidFinish: function() {
-    this.isBuildingOut = NO;
+    this.isBuildingOut = false;
     this._buildingOutFrom.buildOutDidFinishFor(this);
     this._buildingOutFrom = null;
   },
@@ -297,11 +275,11 @@ SC.View.reopen(
   resetBuildState: function() {
     if (this.isBuildingIn) {
       this.buildInDidCancel();
-      this.isBuildingIn = NO;
+      this.isBuildingIn = false;
     }
     if (this.isBuildingOut) {
       this.buildOutDidCancel();
-      this.isBuildingOut = NO;
+      this.isBuildingOut = false;
     }
 
     // finish cleaning up
@@ -335,8 +313,8 @@ SC.View.reopen(
     if (this.isBuildingIn) { return; }
 
     this._buildingInTo = view;
-    this.isBuildingOut = NO;
-    this.isBuildingIn = YES;
+    this.isBuildingOut = false;
+    this.isBuildingIn = true;
     this.buildIn();
   },
 
@@ -356,9 +334,9 @@ SC.View.reopen(
     }
 
     // in any case, we need to build out
-    this.isBuildingOut = YES;
-    this.isBuildingIn = NO;
+    this.isBuildingOut = true;
+    this.isBuildingIn = false;
     this._buildingOutFrom = view;
     this.buildOut();
   }
-});
+};

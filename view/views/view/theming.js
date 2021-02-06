@@ -1,7 +1,8 @@
-sc_require("views/view");
+// sc_require("views/view");
+import { SC } from '../../../core/core.js';
+import { Theme } from '../../theme/theme.js';
 
-SC.View.reopen(
-  /** @scope SC.View.prototype */ {
+export const themingSupport = /** @scope View.prototype */ {
 
   // ..........................................................
   // THEME SUPPORT
@@ -27,7 +28,7 @@ SC.View.reopen(
   /**
     Selects which theme to use as a 'base theme'. If null, the 'baseTheme'
     property will be set to the parent's theme. If there is no parent, the theme
-    named by SC.defaultTheme is used.
+    named by defaultTheme is used.
 
     This property is private for the time being.
 
@@ -37,13 +38,13 @@ SC.View.reopen(
   baseThemeName: null,
 
   /**
-    The SC.Theme instance which this view should use to render.
+    The Theme instance which this view should use to render.
 
     Note: the actual code for this function is in _themeProperty for backwards-compatibility:
     some older views specify a string value for 'theme', which would override this property,
     breaking it.
 
-    @property {SC.Theme}
+    @property {Theme}
   */
   theme: function() {
     var base = this.get('baseTheme'), themeName = this.get('themeName');
@@ -58,7 +59,7 @@ SC.View.reopen(
         if (theme) { return theme; }
       }
 
-      theme = SC.Theme.find(themeName);
+      theme = Theme.find(themeName);
       if (theme) { return theme; }
 
       // Create a new invisible subtheme. This will cause the themeName to
@@ -90,25 +91,25 @@ SC.View.reopen(
   }.observes('theme'),
 
   /**
-    The SC.Theme instance in which the 'theme' property should look for the theme
+    The Theme instance in which the 'theme' property should look for the theme
     named by 'themeName'.
 
-    For example, if 'baseTheme' is SC.AkiTheme, and 'themeName' is 'popover',
-    it will look to see if SC.AkiTheme has a child theme named 'popover',
+    For example, if 'baseTheme' is AkiTheme, and 'themeName' is 'popover',
+    it will look to see if AkiTheme has a child theme named 'popover',
     and _then_, if it is not found, look globally.
 
     @private
-    @property {SC.Theme}
+    @property {Theme}
   */
   baseTheme: function() {
     var parent;
     var baseThemeName = this.get('baseThemeName');
     if (baseThemeName) {
-      return SC.Theme.find(baseThemeName);
+      return Theme.find(baseThemeName);
     } else {
       parent = this.get('parentView');
       var theme  = parent && parent.get('theme');
-      return   theme || SC.Theme.find(SC.defaultTheme);
+      return   theme || Theme.find(SC.getSetting('defaultTheme'));
     }
   }.property('baseThemeName', 'parentView').cacheable(),
 
@@ -119,7 +120,7 @@ SC.View.reopen(
     By default, views are responsible for creating their own HTML
     representation. In some cases, however, you may want to create an object
     that is responsible for rendering all views of a certain type. For example,
-    you may want rendering of SC.ButtonView to be controlled by an object that
+    you may want rendering of ButtonView to be controlled by an object that
     is specific to the current theme.
 
     By setting a render delegate, the render and update methods will be called
@@ -167,7 +168,7 @@ SC.View.reopen(
     of the theme.
 
     For example, to tell the view that it should render using the
-    SC.ButtonView render delegate, set this property to
+    ButtonView render delegate, set this property to
     'buttonRenderDelegate'. When the view is created, it will retrieve the
     buttonRenderDelegate property from its theme and set the renderDelegate
     property to that object.
@@ -186,7 +187,7 @@ SC.View.reopen(
     handling display*, keeps track of the delegate's state, etc.
   */
   renderDelegateProxy: function() {
-    return SC.View._RenderDelegateProxy.createForView(this);
+    return _RenderDelegateProxy.createForView(this);
   }.property('renderDelegate').cacheable(),
 
   /**
@@ -206,7 +207,7 @@ SC.View.reopen(
     For backwards compatibility, this method will also call the appropriate
     method on a render delegate object, if your view has one.
 
-    @param {SC.RenderContext} context the render context
+    @param {RenderContext} context the render context
     @returns {void}
   */
   render: function(context, firstTime) {
@@ -239,12 +240,12 @@ SC.View.reopen(
     args.unshift(this.get('renderDelegateProxy'));
     return renderDelegate[method].apply(renderDelegate, args);
   }
-});
+};
 
 /**
   @class
   @private
-  View Render Delegate Proxies are tool SC.Views use to:
+  View Render Delegate Proxies are tool Views use to:
 
   - look up 'display*' ('displayTitle' instead of 'title') to help deal with
     differences between the render delegate's API and the view's.
@@ -253,13 +254,13 @@ SC.View.reopen(
   act as proxies to the view, interpreting the .get and .didChangeFor commands
   based on the view's displayProperties.
 
-  This tool is not useful outside of SC.View itself, and as such, is private.
+  This tool is not useful outside of View itself, and as such, is private.
 */
-SC.View._RenderDelegateProxy = {
+export const _RenderDelegateProxy = {
 
   //@if(debug)
   // for testing:
-  isViewRenderDelegateProxy: YES,
+  isViewRenderDelegateProxy: true,
   //@endif
 
   /**
@@ -270,8 +271,8 @@ SC.View._RenderDelegateProxy = {
     displayProperty or not. This could cause issues if the view's displayProperties
     array is modified after instantiation.
 
-    @param {SC.View} view The view this proxy should proxy to.
-    @returns SC.View._RenderDelegateProxy
+    @param {View} view The view this proxy should proxy to.
+    @returns View._RenderDelegateProxy
   */
   createForView: function(view) {
     var ret = SC.beget(this);
@@ -279,11 +280,11 @@ SC.View._RenderDelegateProxy = {
     // set up displayProperty lookup for performance
     var dp = view.get('displayProperties'), lookup = {};
     for (var idx = 0, len = dp.length; idx < len; idx++) {
-      lookup[dp[idx]] = YES;
+      lookup[dp[idx]] = true;
     }
 
     // also allow the few special properties through
-    lookup.theme = YES;
+    lookup.theme = true;
 
     ret._displayPropertiesLookup = lookup;
     ret.renderState = {};
@@ -330,13 +331,13 @@ SC.View._RenderDelegateProxy = {
           displayProperty = 'display' + property.capitalize();
 
       if (this._displayPropertiesLookup[displayProperty]) {
-        if (this._view.didChangeFor(context, displayProperty)) { return YES; }
+        if (this._view.didChangeFor(context, displayProperty)) { return true; }
       } else {
-        if (this._view.didChangeFor(context, property)) { return YES; }
+        if (this._view.didChangeFor(context, property)) { return true; }
       }
     }
 
-    return NO;
+    return false;
   }
 };
 
@@ -350,7 +351,7 @@ SC.View._RenderDelegateProxy = {
   @param {String} propertyName The name of the property to get from the render delegate..
   @param {Value} def The default value to use if the property is not present.
 */
-SC.propertyFromRenderDelegate = function(propertyName, def) {
+export const propertyFromRenderDelegate = function(propertyName, def) {
   return function(key, value) {
     // first, handle set() case
     if (value !== undefined) {

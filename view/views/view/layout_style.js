@@ -1,16 +1,18 @@
 
-sc_require('ext/string');
-sc_require('views/view');
-sc_require('views/view/animation');
+// sc_require('ext/string');
+// sc_require('views/view');
+// sc_require('views/view/animation');
 
 /**
   Map to CSS Transforms
 */
 
-// The scale transform must be last in order to decompose the transformation matrix.
-SC.CSS_TRANSFORM_NAMES = ['rotateX', 'rotateY', 'rotateZ', 'scale'];
+import { SC } from '../../../core/core.js';
 
-SC.CSS_TRANSFORM_MAP = {
+// The scale transform must be last in order to decompose the transformation matrix.
+export const CSS_TRANSFORM_NAMES = ['rotateX', 'rotateY', 'rotateZ', 'scale'];
+
+export const CSS_TRANSFORM_MAP = {
 
   rotate: function (val) {
     if (SC.typeOf(val) === SC.T_NUMBER) { val += 'deg'; }
@@ -33,14 +35,14 @@ SC.CSS_TRANSFORM_MAP = {
   },
 
   scale: function (val) {
-    if (SC.typeOf(val) === SC.T_ARRAY) { val = val.join(', '); }
+    if (SC.typeOf(val) === T_ARRAY) { val = val.join(', '); }
     return 'scale(' + val + ')';
   }
 };
 
 
 /** @private */
-SC.View.LayoutStyleCalculator = {
+export const LayoutStyleCalculator = {
 
   /** @private Shared object used to avoid continually initializing/destroying objects. */
   _SC_STATE_MAP: null,
@@ -96,18 +98,18 @@ SC.View.LayoutStyleCalculator = {
     style.backgroundPosition = this._valueOrNull(layout.backgroundPosition);
 
     // Handle transforms (including reset).
-    if (SC.platform.supportsCSSTransforms) {
-      var transformAttribute = SC.browser.experimentalStyleNameFor('transform'),
+    if (platform.supportsCSSTransforms) {
+      var transformAttribute = browser.experimentalStyleNameFor('transform'),
         transforms = this._SC_TRANSFORMS_ARRAY, // Shared object used to avoid continually initializing/destroying objects.
-        transformMap = SC.CSS_TRANSFORM_MAP;
+        transformMap = CSS_TRANSFORM_MAP;
 
       // Create the array once. Note: This is a shared array; it must be set to 0 length each time.
       if (!transforms) { transforms = this._SC_TRANSFORMS_ARRAY = []; }
 
       // The order of the transforms is important so that we can decompose them
       // from the transformation matrix later if necessary.
-      for (var i = 0, len = SC.CSS_TRANSFORM_NAMES.length; i < len; i++) {
-        var transformName = SC.CSS_TRANSFORM_NAMES[i],
+      for (var i = 0, len = CSS_TRANSFORM_NAMES.length; i < len; i++) {
+        var transformName = CSS_TRANSFORM_NAMES[i],
           layoutTransform = layout[transformName];
 
         if (layoutTransform != null) {
@@ -120,7 +122,7 @@ SC.View.LayoutStyleCalculator = {
       style[transformAttribute] = transforms.length > 0 ? transforms.join(' ') : null;
 
       // Transform origin.
-      var transformOriginAttribute = SC.browser.experimentalStyleNameFor('transformOrigin'),
+      var transformOriginAttribute = browser.experimentalStyleNameFor('transformOrigin'),
         originX = layout.transformOriginX,
         originY = layout.transformOriginY;
       if (originX == null && originY == null) {
@@ -133,8 +135,8 @@ SC.View.LayoutStyleCalculator = {
     }
 
     // Reset any transitions.
-    if (SC.platform.supportsCSSTransitions) {
-      style[SC.browser.experimentalStyleNameFor('transition')] = null;
+    if (platform.supportsCSSTransitions) {
+      style[browser.experimentalStyleNameFor('transition')] = null;
     }
 
     // Reset shared object!
@@ -159,7 +161,7 @@ SC.View.LayoutStyleCalculator = {
 
   // handles the case where you do width:auto or height:auto and are not using "staticLayout"
   _invalidAutoValue: function (view, property) {
-    SC.throw("%@.layout() you cannot use %@:auto if staticLayout is disabled".fmt(view, property), "%@".fmt(view), -1);
+    throw("%@.layout() you cannot use %@:auto if staticLayout is disabled".fmt(view, property), "%@".fmt(view), -1);
   },
 
   /** @private */
@@ -250,7 +252,7 @@ SC.View.LayoutStyleCalculator = {
       finishBorderVal = this._cssNumber(style[finishBorder]),
       sizeValue   = style[size],
       centerValue = style[center],
-      sizeIsPercent = SC.isPercentage(sizeValue),
+      sizeIsPercent = isPercentage(sizeValue),
       value;
 
     style[startBorder] = startBorderVal;
@@ -278,8 +280,8 @@ SC.View.LayoutStyleCalculator = {
   _cssNumber: function (val) {
     /*jshint eqnull:true*/
     if (val == null) { return null; }
-    else if (val === SC.LAYOUT_AUTO) { return SC.LAYOUT_AUTO; }
-    else if (SC.isPercentage(val)) { return (val * 100) + "%"; }
+    else if (val === LAYOUT_AUTO) { return LAYOUT_AUTO; }
+    else if (isPercentage(val)) { return (val * 100) + "%"; }
     else { return Math.floor(val); }
   },
 
@@ -300,7 +302,7 @@ SC.View.LayoutStyleCalculator = {
     // should not insert the styles "left: 0px; right: 0px; top: 0px; bottom: 0px" as they could
     // conflict with the developer's intention.  However, if they do provide a unique `layout`,
     // use it.
-    if (useStaticLayout && layout === SC.View.prototype.layout) { return {}; }
+    if (useStaticLayout && layout === View.prototype.layout) { return {}; }
 
     // Reset and prep the style object.
     this._prepareStyle(style, layout);
@@ -313,8 +315,8 @@ SC.View.LayoutStyleCalculator = {
 
     // handle invalid use of auto in absolute layouts
     if (!useStaticLayout) {
-      if (style.width === SC.LAYOUT_AUTO) { this._invalidAutoValue(view, "width"); }
-      if (style.height === SC.LAYOUT_AUTO) { this._invalidAutoValue(view, "height"); }
+      if (style.width === LAYOUT_AUTO) { this._invalidAutoValue(view, "width"); }
+      if (style.height === LAYOUT_AUTO) { this._invalidAutoValue(view, "height"); }
     }
 
     // X DIRECTION
@@ -350,33 +352,33 @@ SC.View.LayoutStyleCalculator = {
 
     // Handle transforms
     if (hasAcceleratedLayer) {
-      shouldTranslate = YES;
+      shouldTranslate = true;
 
       // If we're animating other transforms at different speeds, don't use acceleratedLayer
       if (animations && (animations.top || animations.left)) {
         for (key in animations) {
-          if (SC.CSS_TRANSFORM_MAP[key] &&
+          if (CSS_TRANSFORM_MAP[key] &&
               ((animations.top &&
                 animations.top.duration !== animations[key].duration) ||
                (animations.left &&
                 animations.left.duration !== animations[key].duration))) {
-            shouldTranslate = NO;
+            shouldTranslate = false;
           }
         }
       }
 
       if (shouldTranslate) {
-        var transformAttribute = SC.browser.experimentalStyleNameFor('transform'),
+        var transformAttribute = browser.experimentalStyleNameFor('transform'),
           curValue = style[transformAttribute],
           newValue;
 
         newValue = 'translateX(' + style.left + 'px) translateY(' + style.top + 'px)';
 
         // double check to make sure this is needed
-        if (SC.platform.supportsCSS3DTransforms) { newValue += ' translateZ(0px)'; }
+        if (platform.supportsCSS3DTransforms) { newValue += ' translateZ(0px)'; }
 
         // Append any current transforms.
-        // NOTE: The order of transforms is important. If we scale before translate, our translations
+        // falseTE: The order of transforms is important. If we scale before translate, our translations
         // will be scaled and incorrect.
         if (curValue) { newValue += ' ' + curValue; }
         style[transformAttribute] = newValue;
@@ -389,7 +391,7 @@ SC.View.LayoutStyleCalculator = {
 
     // Handle animations
     if (animations) {
-      if (SC.platform.supportsCSSTransitions) {
+      if (platform.supportsCSSTransitions) {
         var transitions = this._SC_TRANSITIONS_ARRAY; // Shared object used to avoid continually initializing/destroying objects.
 
         // Create the array once. Note: This is a shared array; it must be set to 0 length each time.
@@ -397,15 +399,15 @@ SC.View.LayoutStyleCalculator = {
 
         for (key in animations) {
           var animation = animations[key],
-            isTransformProperty = !!SC.CSS_TRANSFORM_MAP[key],
+            isTransformProperty = !!CSS_TRANSFORM_MAP[key],
             isTurboProperty = shouldTranslate && (key === 'top' || key === 'left');
 
-          if (SC.platform.supportsCSSTransforms && (isTurboProperty || isTransformProperty)) {
+          if (platform.supportsCSSTransforms && (isTurboProperty || isTransformProperty)) {
             // Untrack the un-transformed property name.
             delete animations[key];
 
             // The key will be either 'transform' or one of '-webkit-transform', '-ms-transform', '-moz-transform', '-o-transform'
-            key = SC.browser.experimentalCSSNameFor('transform');
+            key = browser.experimentalCSSNameFor('transform');
 
             var curTransformAnimation = animations[key];
 
@@ -414,7 +416,7 @@ SC.View.LayoutStyleCalculator = {
             if (curTransformAnimation) {
               //@if(debug)
               if (curTransformAnimation.duration !== animation.duration || curTransformAnimation.timing !== animation.timing || curTransformAnimation.delay !== animation.delay) {
-                SC.Logger.warn("Developer Warning: Can't animate transforms with different durations, timings or delays! Using the first options specified.");
+                Logger.warn("Developer Warning: Can't animate transforms with different durations, timings or delays! Using the first options specified.");
               }
               //@endif
               animation = curTransformAnimation;
@@ -439,7 +441,7 @@ SC.View.LayoutStyleCalculator = {
           }
         }
 
-        style[SC.browser.experimentalStyleNameFor('transition')] = transitions.join(", ");
+        style[browser.experimentalStyleNameFor('transition')] = transitions.join(", ");
 
         // Reset shared object!
         this._SC_TRANSITIONS_ARRAY.length = 0;
@@ -452,9 +454,7 @@ SC.View.LayoutStyleCalculator = {
 };
 
 
-
-SC.View.reopen(
-  /** @scope SC.View.prototype */ {
+export const viewLayoutStyleSupport = /** @scope View.prototype */ {
 
   /** @private Shared object used to avoid continually initializing/destroying objects. */
   _SC_STYLE_MAP: null,
@@ -475,9 +475,9 @@ SC.View.reopen(
     // Create the object once. Note: This is a shared object; all properties must be overwritten each time.
     if (!style) { style = this._SC_STYLE_MAP = {}; }
 
-    return SC.View.LayoutStyleCalculator.calculate(this, style);
+    return LayoutStyleCalculator.calculate(this, style);
 
   // 'hasAcceleratedLayer' is dependent on 'layout' so we don't need 'layout' to be a dependency here
   }.property('hasAcceleratedLayer', 'useStaticLayout').cacheable()
 
-});
+};
