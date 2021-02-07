@@ -4,8 +4,8 @@
 /*globals SC */
 
 
-import { SC } from '/core/core.js';
-import { Statechart, State, StatechartDelegate, StateRouteHandlerContext } from '/statechart/statechart.js';
+
+import { Statechart, State, StatechartDelegate, StateRouteHandlerContext } from '../../../../../statechart/statechart.js';
 
 
 var sc, root, stateFoo, stateBar, stateA, stateB, stateX, stateY, stateA1, stateA2, stateB1, stateB2, stateX1, stateX2, stateY1, stateY2;

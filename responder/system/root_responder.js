@@ -10,7 +10,11 @@
 // sc_require('system/touch');
 
 import { SC } from '../../core/core.js';
-
+import { device, PORTRAIT_ORIENTATION } from './device.js';
+import { platform } from './platform.js';
+import { SCEvent, browser, MODIFIER_KEYS, FUNCTION_KEYS } from '../../event/event.js'; 
+import { rectsEqual } from '../../view/views/utils/rect.js';
+import { viewFor } from '../../view/view.js';
 
 /** Set to false to leave the backspace key under the control of the browser.*/
 // CAPTURE_BACKSPACE_KEY = false ;
@@ -329,7 +333,7 @@ export const RootResponder = SC.Object.extend(
     this.set('currentWindowSize', newSize); // update size
 
     if (!rectsEqual(newSize, oldSize)) {
-      run(function() {
+      SC.run(function() {
         //Notify orientation change. This is faster than waiting for the orientation
         //change event.
         device.windowSizeDidChange(newSize);
@@ -353,7 +357,7 @@ export const RootResponder = SC.Object.extend(
       this.set('currentDesignMode', newDesignMode);
 
       if (this.panes) {
-        run(function() {
+        SC.run(function() {
           this.panes.invoke('updateDesignMode', oldDesignMode, newDesignMode);
         }, this);
       }
@@ -378,10 +382,10 @@ export const RootResponder = SC.Object.extend(
     if (!this.get('hasFocus')) {
       $('body').addClass('sc-focus').removeClass('sc-blur');
 
-      run(function () {
+      SC.run(function () {
       // If the app is getting focus again set the first responder to the first
       // valid firstResponder view in the view's tree
-      if(!TABBING_ONLY_INSIDE_DOCUMENT && !browser.isIE8OrLower){
+      if(!SC.getSetting('TABBING_ONLY_INSIDE_DOCUMENT') && !browser.isIE8OrLower){
         var keyPane = RootResponder.responder.get('keyPane');
         if (keyPane) {
           var nextValidKeyView = keyPane.get('nextValidKeyView');
@@ -425,7 +429,7 @@ export const RootResponder = SC.Object.extend(
     if (this.get('hasFocus')) {
       $('body').addClass('sc-blur').removeClass('sc-focus');
 
-      run(function() {
+      SC.run(function() {
         this.set('hasFocus', false);
       }, this);
     }
@@ -604,8 +608,8 @@ export const RootResponder = SC.Object.extend(
     // HACK: Eventually we need to normalize the sendAction() method between
     // this and the ResponderContext, but for the moment just look for a
     // ResponderContext as the defaultResponder and return it if present.
-    if (typeof defaultResponder === T_STRING) {
-      defaultResponder = objectForPropertyPath(defaultResponder);
+    if (typeof defaultResponder === SC.T_STRING) {
+      defaultResponder = SC.objectForPropertyPath(defaultResponder);
     }
 
     if (!defaultResponder) return null;
@@ -638,23 +642,23 @@ export const RootResponder = SC.Object.extend(
   targetForAction: function(methodName, target, sender, pane, firstResponder) {
 
     // 1. no action, no target...
-    if (!methodName || (typeOf(methodName) !== T_STRING)) {
+    if (!methodName || (SC.typeOf(methodName) !== SC.T_STRING)) {
       return null ;
     }
 
     // 2. an explicit target was passed...
     if (target) {
       // Normalize String targets to Objects
-      if (typeOf(target) === T_STRING) {
-        target = objectForPropertyPath(target) ||
-                 objectForPropertyPath(target, sender);
+      if (SC.typeOf(target) === SC.T_STRING) {
+        target = SC.objectForPropertyPath(target) ||
+                 SC.objectForPropertyPath(target, sender);
       }
 
       // Ensure that the target responds to the method.
       if (target && !target.isResponderContext) {
         if (target.respondsTo && !target.respondsTo(methodName)) {
           target = null ;
-        } else if (typeOf(target[methodName]) !== T_FUNCTION) {
+        } else if (SC.typeOf(target[methodName]) !== SC.T_FUNCTION) {
           target = null ;
         }
       }
@@ -682,14 +686,14 @@ export const RootResponder = SC.Object.extend(
 
     // ...still no target? check the defaultResponder...
     if (!target && (target = this.get('defaultResponder'))) {
-      if (typeOf(target) === T_STRING) {
-        target = objectForPropertyPath(target) ;
+      if (SC.typeOf(target) === SC.T_STRING) {
+        target = SC.objectForPropertyPath(target) ;
         if (target) this.set('defaultResponder', target) ; // cache if found
       }
       if (target && !target.isResponderContext) {
         if (target.respondsTo && !target.respondsTo(methodName)) {
           target = null ;
-        } else if (typeOf(target[methodName]) !== T_FUNCTION) {
+        } else if (SC.typeOf(target[methodName]) !== SC.T_FUNCTION) {
           target = null ;
         }
       }
@@ -729,7 +733,7 @@ export const RootResponder = SC.Object.extend(
   sendEvent: function(action, evt, target) {
     var pane, ret ;
 
-    run(function send_event() {
+    SC.run(function send_event() {
       // get the target pane
       if (target) pane = target.get('pane') ;
       else pane = this.get('menuPane') || this.get('keyPane') || this.get('mainPane') ;
@@ -762,7 +766,7 @@ export const RootResponder = SC.Object.extend(
     receiver = receiver ? receiver : this;
     keyNames.forEach( function(keyName) {
       var method = receiver[keyName] ;
-      if (method) Event.add(target, keyName, receiver, method, null, useCapture) ;
+      if (method) SCEvent.add(target, keyName, receiver, method, null, useCapture) ;
     },this) ;
 
     target = null ;
@@ -844,16 +848,16 @@ export const RootResponder = SC.Object.extend(
           var responder = this ;
 
           document.body['on' + keyName] = function(e) {
-            return method.call(responder, Event.normalizeEvent(event || window.event)); // this is IE :(
+            return method.call(responder, SCEvent.normalizeEvent(event || window.event)); // this is IE :(
           };
 
           // be sure to cleanup memory leaks
-           Event.add(window, 'unload', this, function() {
+           SCEvent.add(window, 'unload', this, function() {
             document.body['on' + keyName] = null;
           });
 
         } else {
-          Event.add(document, keyName, this, method);
+          SCEvent.add(document, keyName, this, method);
         }
       }
     }, this);
@@ -873,12 +877,12 @@ export const RootResponder = SC.Object.extend(
         mousewheel = 'MozMousePixelScroll';
       }
     }
-    Event.add(document, mousewheel, this, this.mousewheel);
+    SCEvent.add(document, mousewheel, this, this.mousewheel);
 
     // Do some initial set up.
     this.set('currentWindowSize', this.computeWindowSize()) ;
 
-    var f = RunLoop.prototype.endRunLoop,
+    var f = SC.RunLoop.prototype.endRunLoop,
       patch = function() {
         // Call original endRunLoop implementation.
         if (f) f.apply(this, arguments);
@@ -933,7 +937,7 @@ export const RootResponder = SC.Object.extend(
           }
         }
       };
-    RunLoop.prototype.endRunLoop = patch;
+    SC.RunLoop.prototype.endRunLoop = patch;
   },
 
   /**
@@ -956,7 +960,7 @@ export const RootResponder = SC.Object.extend(
     // This should prevent any problems with browsers that fire multiple events.
     ['transitionend', variation1, variation2, variation3].forEach(function (keyName) {
       if (keyName !== actualEventName) {
-        Event.remove(document, keyName, this, this[keyName]);
+        SCEvent.remove(document, keyName, this, this[keyName]);
         this[keyName] = null;
     }
     }, this);
@@ -984,7 +988,7 @@ export const RootResponder = SC.Object.extend(
     // This should prevent any problems with browsers that fire multiple events.
     ['animationend', variation1, variation2, variation3].forEach(function (keyName) {
       if (keyName !== actualEventName) {
-        Event.remove(document, keyName, this, this[keyName]);
+        SCEvent.remove(document, keyName, this, this[keyName]);
         this[keyName] = null;
     }
     }, this);
@@ -995,7 +999,7 @@ export const RootResponder = SC.Object.extend(
     variation3 = domPrefix + 'AnimationIteration';
     ['animationiteration', variation1, variation2, variation3].forEach(function (keyName) {
       if (keyName !== actualEventName) {
-        Event.remove(document, keyName, this, this[keyName]);
+        SCEvent.remove(document, keyName, this, this[keyName]);
         this[keyName] = null;
       }
     }, this);
@@ -1006,7 +1010,7 @@ export const RootResponder = SC.Object.extend(
     variation3 = domPrefix + 'AnimationStart';
     ['animationstart', variation1, variation2, variation3].forEach(function (keyName) {
       if (keyName !== actualEventName) {
-        Event.remove(document, keyName, this, this[keyName]);
+        SCEvent.remove(document, keyName, this, this[keyName]);
         this[keyName] = null;
       }
     }, this);
@@ -1230,7 +1234,7 @@ export const RootResponder = SC.Object.extend(
         try {
           responder = pane ? pane.sendEvent("touchStart", touch, responder, bubblesTo) : null ;
         } catch (e) {
-          Logger.error("Error in touchStart: " + e);
+          SC.Logger.error("Error in touchStart: " + e);
           responder = null;
         }
       } else {
@@ -1334,8 +1338,8 @@ export const RootResponder = SC.Object.extend(
         chain = [], idx, len;
 
     //@if (debug)
-    if (LOG_TOUCH_EVENTS) {
-      Logger.info('  -- Received one touch on %@'.fmt(target.toString()));
+    if (SC.getSetting('LOG_TOUCH_EVENTS')) {
+      SC.Logger.info('  -- Received one touch on %@'.fmt(target.toString()));
     }
     //@endif
     // Generate the captureTouch responder chain by working backwards from the target
@@ -1349,13 +1353,13 @@ export const RootResponder = SC.Object.extend(
     for (len = chain.length, idx = 0; idx < len; idx++) {
       view = chain[idx];
       //@if (debug)
-      if (LOG_TOUCH_EVENTS) Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
+      if (SC.getSetting('LOG_TOUCH_EVENTS')) SC.Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
       //@endif
 
       // see if it captured the touch
       if (view.tryToPerform('captureTouch', touch)) {
         //@if (debug)
-        if (LOG_TOUCH_EVENTS) Logger.info('   -- Making %@ touch responder because it returns true to captureTouch'.fmt(view.toString()));
+        if (SC.getSetting('LOG_TOUCH_EVENTS')) SC.Logger.info('   -- Making %@ touch responder because it returns true to captureTouch'.fmt(view.toString()));
         //@endif
 
         // if so, make it the touch's responder
@@ -1365,7 +1369,7 @@ export const RootResponder = SC.Object.extend(
     }
 
     //@if (debug)
-    if (LOG_TOUCH_EVENTS) Logger.info("   -- Didn't find a view that returned true to captureTouch.");
+    if (SC.getSetting('LOG_TOUCH_EVENTS')) SC.Logger.info("   -- Didn't find a view that returned true to captureTouch.");
     //@endif
 
     return false;
@@ -1488,7 +1492,7 @@ export const RootResponder = SC.Object.extend(
 
     var hidingTouchIntercept = false;
 
-    run(function() {
+    SC.run(function() {
       //@if(debug)
       // When using breakpoints on touch start, we will lose the end touch event.
       this.endMissingTouches(evt.touches);
@@ -1556,7 +1560,7 @@ export const RootResponder = SC.Object.extend(
     // As a workaround just let the browser to use the default behavior.
     if(this.ignoreTouchHandle(evt)) return true;
 
-    run(function() {
+    SC.run(function() {
       // pretty much all we gotta do is update touches, and figure out which views need updating.
       var touches = evt.changedTouches, touch, touchEntry,
           idx, len = touches.length, view, changedTouches, viewTouches, firstTouch,
@@ -1680,7 +1684,7 @@ export const RootResponder = SC.Object.extend(
     // As a workaround just let the browser to use the default behavior.
     if(this.ignoreTouchHandle(evt)) return true;
 
-    run(function() {
+    SC.run(function() {
       var touches = evt.changedTouches, touch, touchEntry,
           idx, len = touches.length,
           action = evt.isCancel ? "touchCancelled" : "touchEnd";
@@ -1939,7 +1943,7 @@ export const RootResponder = SC.Object.extend(
 
       // attempt key equivalent if key not handled
       if (!ret) {
-        run(function () {
+        SC.run(function () {
         ret = !this.attemptKeyEquivalent(evt) ;
         }, this);
       } else {
@@ -2066,7 +2070,7 @@ export const RootResponder = SC.Object.extend(
       handler = null;
 
     if (dragView) {
-      run(function () {
+      SC.run(function () {
         dragView.tryToPerform('mouseUp', evt);
       });
     } else {
@@ -2194,7 +2198,7 @@ export const RootResponder = SC.Object.extend(
     this._lastMoveX = evt.clientX;
     this._lastMoveY = evt.clientY;
 
-    run(function() {
+    SC.run(function() {
       var dragView = this._drag;
 
        // make sure the view gets focus no matter what.  FF is inconsistent
@@ -2272,7 +2276,7 @@ export const RootResponder = SC.Object.extend(
   // These event handlers prevent default file handling, and enable the dataDrag API.
   /** @private The dragenter event comes from the browser when a data-ful drag enters any element. */
   dragenter: function(evt) {
-    run(function() { this._dragenter(evt); }, this);
+    SC.run(function() { this._dragenter(evt); }, this);
   },
 
   /** @private */
@@ -2286,7 +2290,7 @@ export const RootResponder = SC.Object.extend(
 
   /** @private The dragleave event comes from the browser when a data-ful drag leaves any element. */
   dragleave: function(evt) {
-    run(function() { this._dragleave(evt); }, this);
+    SC.run(function() { this._dragleave(evt); }, this);
   },
 
   /** @private */
@@ -2311,7 +2315,7 @@ export const RootResponder = SC.Object.extend(
 
   /** @private This event fires continuously while the dataful drag is over the document. */
   dragover: function(evt) {
-    run(function() { this._dragover(evt); }, this);
+    SC.run(function() { this._dragover(evt); }, this);
   },
 
   /** @private */
@@ -2382,7 +2386,7 @@ export const RootResponder = SC.Object.extend(
 
   /** @private This event is called if the most recent dragover event returned with a non-"none" dropEffect. */
   drop: function(evt) {
-    run(function() { this._drop(evt); }, this);
+    SC.run(function() { this._drop(evt); }, this);
   },
 
   /** @private */
@@ -2503,13 +2507,19 @@ export const RootResponder = SC.Object.extend(
 
 });
 
+const r = RootResponder.responder = RootResponder.create(); // setup later
+// do the complete setup later, if possible. It turns out device needs currentWindowSize
+r.set('currentWindowSize', r.computeWindowSize()) ;
+
+// RootResponder.responder.setup();
 /*
   Invoked when the document is ready, but before main is called.  Creates
   an instance and sets up event listeners as needed.
 */
 SC.ready(RootResponder, RootResponder.ready = function () {
-  var r;
+  // var r;
 
-  r = RootResponder.responder = RootResponder.create();
+  // r = RootResponder.responder = RootResponder.create();
+  const r = RootResponder.responder;
   r.setup();
 });

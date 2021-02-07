@@ -118,6 +118,3 @@ SC.mixin(CoreQuery.fn,
   }
 })();
 
-
-
-

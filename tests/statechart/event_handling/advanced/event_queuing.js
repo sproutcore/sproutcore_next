@@ -5,8 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { SC } from '/core/core.js';
-import { Async, Statechart, State, EmptyState } from '/statechart/statechart.js';
+import { Async, Statechart, State, EmptyState } from '../../../../statechart/statechart.js';
 
 
 var TestState, statechart, expectedEvents;

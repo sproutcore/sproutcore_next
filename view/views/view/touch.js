@@ -1,5 +1,7 @@
 // sc_require("views/view");
 
+import { pointInRect } from "../utils/rect.js";
+
 export const touchSupport = /** @scope View.prototype */ {
 
   // ..........................................................

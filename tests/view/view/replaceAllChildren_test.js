@@ -7,132 +7,135 @@
 
 /*global module, test, equals, ok */
 
+import { View } from '../../../view/view.js';
+
+
 var parentView;
 
 /*
- * SC.CoreView.UNRENDERED
- * SC.CoreView.UNATTACHED
- * SC.CoreView.ATTACHED_PARTIAL
- * SC.CoreView.ATTACHED_SHOWING
- * SC.CoreView.ATTACHED_SHOWN
- * SC.CoreView.ATTACHED_HIDING
- * SC.CoreView.ATTACHED_HIDDEN
- * SC.CoreView.ATTACHED_HIDDEN_BY_PARENT
- * SC.CoreView.ATTACHED_BUILDING_IN
- * SC.CoreView.ATTACHED_BUILDING_OUT
- * SC.CoreView.ATTACHED_BUILDING_OUT_BY_PARENT
+ * CoreView.UNRENDERED
+ * CoreView.UNATTACHED
+ * CoreView.ATTACHED_PARTIAL
+ * CoreView.ATTACHED_SHOWING
+ * CoreView.ATTACHED_SHOWN
+ * CoreView.ATTACHED_HIDING
+ * CoreView.ATTACHED_HIDDEN
+ * CoreView.ATTACHED_HIDDEN_BY_PARENT
+ * CoreView.ATTACHED_BUILDING_IN
+ * CoreView.ATTACHED_BUILDING_OUT
+ * CoreView.ATTACHED_BUILDING_OUT_BY_PARENT
  */
 
 
-module("SC.View.prototype.replaceAllChildren", {
+module("View.prototype.replaceAllChildren", {
 
-  setup: function () {
-    parentView = SC.View.create({
-      childViews: ['a', 'b', SC.View],
+  beforeEach: function () {
+    parentView = View.create({
+      childViews: ['a', 'b', View],
 
-      a: SC.View,
-      b: SC.View
+      a: View,
+      b: View
     });
   },
 
-  teardown: function () {
+  afterEach: function () {
     parentView.destroy();
     parentView = null;
   }
 
 });
 
-test("Replaces all children. UNRENDERED parent view.", function () {
+test("Replaces all children. UNRENDERED parent view.", function (assert) {
   var childViews = parentView.get('childViews'),
-    newChildViews = [SC.View.create(), SC.View.create()];
+    newChildViews = [View.create(), View.create()];
 
-  equals(childViews.get('length'), 3, "There are this many child views originally");
+  assert.equal(childViews.get('length'), 3, "There are this many child views originally");
 
   // Replace all children.
   parentView.replaceAllChildren(newChildViews);
 
   childViews = parentView.get('childViews');
-  equals(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
+  assert.equal(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
 });
 
 
-test("Replaces all children.  UNATTACHED parent view.", function () {
+test("Replaces all children.  UNATTACHED parent view.", function (assert) {
   var childViews = parentView.get('childViews'),
-    newChildViews = [SC.View.create(), SC.View.create()],
+    newChildViews = [View.create(), View.create()],
     childView, jq;
 
   // Render the parent view.
   parentView.createLayer();
 
-  equals(childViews.get('length'), 3, "There are this many child views originally");
+  assert.equal(childViews.get('length'), 3, "There are this many child views originally");
 
   jq = parentView.$();
   for (var i = 0, len = childViews.get('length'); i < len; i++) {
     childView = childViews.objectAt(i);
 
-    ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
+    assert.ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
   }
 
   // Replace all children.
   parentView.replaceAllChildren(newChildViews);
 
   childViews = parentView.get('childViews');
-  equals(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
+  assert.equal(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
 
   jq = parentView.$();
   for (i = 0, len = childViews.get('length'); i < len; i++) {
     childView = childViews.objectAt(i);
 
-    ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The new child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
+    assert.ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The new child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
   }
 });
 
 
-test("Replaces all children.  ATTACHED_SHOWN parent view.", function () {
+test("Replaces all children.  ATTACHED_SHOWN parent view.", function (assert) {
   var childViews = parentView.get('childViews'),
-    newChildViews = [SC.View.create(), SC.View.create()],
+    newChildViews = [View.create(), View.create()],
     childView, jq;
 
   // Render the parent view and attach.
   parentView.createLayer();
   parentView._doAttach(document.body);
 
-  equals(childViews.get('length'), 3, "There are this many child views originally");
+  assert.equal(childViews.get('length'), 3, "There are this many child views originally");
 
   jq = parentView.$();
   for (var i = 0, len = childViews.get('length'); i < len; i++) {
     childView = childViews.objectAt(i);
 
-    ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
+    assert.ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
   }
 
   // Replace all children.
   parentView.replaceAllChildren(newChildViews);
 
   childViews = parentView.get('childViews');
-  equals(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
+  assert.equal(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
 
   jq = parentView.$();
   for (i = 0, len = childViews.get('length'); i < len; i++) {
     childView = childViews.objectAt(i);
 
-    ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The new child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
+    assert.ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The new child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
   }
 });
 
 
-module("SC.View.prototype.replaceAllChildren", {
+module("View.prototype.replaceAllChildren", {
 
-  setup: function () {
-    parentView = SC.View.create({
-      childViews: ['a', 'b', SC.View],
+  beforeEach: function () {
+    parentView = View.create({
+      childViews: ['a', 'b', View],
 
       containerLayer: function () {
         return this.$('._wrapper')[0];
       }.property('layer').cacheable(),
 
-      a: SC.View,
-      b: SC.View,
+      a: View,
+      b: View,
 
       render: function (context) {
         context = context.begin().addClass('_wrapper');
@@ -142,7 +145,7 @@ module("SC.View.prototype.replaceAllChildren", {
     });
   },
 
-  teardown: function () {
+  afterEach: function () {
     parentView.destroy();
     parentView = null;
   }
@@ -150,80 +153,80 @@ module("SC.View.prototype.replaceAllChildren", {
 });
 
 
-test("Replaces all children. UNRENDERED parent view.", function () {
+test("Replaces all children. UNRENDERED parent view.", function (assert) {
   var childViews = parentView.get('childViews'),
-    newChildViews = [SC.View.create(), SC.View.create()];
+    newChildViews = [View.create(), View.create()];
 
-  equals(childViews.get('length'), 3, "There are this many child views originally");
+  assert.equal(childViews.get('length'), 3, "There are this many child views originally");
 
   // Replace all children.
   parentView.replaceAllChildren(newChildViews);
 
   childViews = parentView.get('childViews');
-  equals(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
+  assert.equal(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
 });
 
 
-test("Replaces all children.  UNATTACHED parent view.", function () {
+test("Replaces all children.  UNATTACHED parent view.", function (assert) {
   var childViews = parentView.get('childViews'),
-    newChildViews = [SC.View.create(), SC.View.create()],
+    newChildViews = [View.create(), View.create()],
     childView, jq;
 
   // Render the parent view.
   parentView.createLayer();
 
-  equals(childViews.get('length'), 3, "There are this many child views originally");
+  assert.equal(childViews.get('length'), 3, "There are this many child views originally");
 
   jq = parentView.$('._wrapper');
   for (var i = 0, len = childViews.get('length'); i < len; i++) {
     childView = childViews.objectAt(i);
 
-    ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
+    assert.ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
   }
 
   // Replace all children.
   parentView.replaceAllChildren(newChildViews);
 
   childViews = parentView.get('childViews');
-  equals(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
+  assert.equal(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
 
   jq = parentView.$('._wrapper');
   for (i = 0, len = childViews.get('length'); i < len; i++) {
     childView = childViews.objectAt(i);
 
-    ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The new child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
+    assert.ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The new child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
   }
 });
 
 
-test("Replaces all children using containerLayer.  ATTACHED_SHOWN parent view.", function () {
+test("Replaces all children using containerLayer.  ATTACHED_SHOWN parent view.", function (assert) {
   var childViews = parentView.get('childViews'),
-    newChildViews = [SC.View.create(), SC.View.create()],
+    newChildViews = [View.create(), View.create()],
     childView, jq;
 
   // Render the parent view and attach.
   parentView.createLayer();
   parentView._doAttach(document.body);
 
-  equals(childViews.get('length'), 3, "There are this many child views originally");
+  assert.equal(childViews.get('length'), 3, "There are this many child views originally");
 
   jq = parentView.$('._wrapper');
   for (var i = 0, len = childViews.get('length'); i < len; i++) {
     childView = childViews.objectAt(i);
 
-    ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
+    assert.ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
   }
 
   // Replace all children.
   parentView.replaceAllChildren(newChildViews);
 
   childViews = parentView.get('childViews');
-  equals(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
+  assert.equal(childViews.get('length'), 2, "There are this many child views after replaceAllChildren");
 
   jq = parentView.$('._wrapper');
   for (i = 0, len = childViews.get('length'); i < len; i++) {
     childView = childViews.objectAt(i);
 
-    ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The new child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
+    assert.ok(jq.find('#' + childView.get('layerId')).get('length') === 1, "The new child view with layer id %@ exists in the parent view's layer".fmt(childView.get('layerId')));
   }
 });

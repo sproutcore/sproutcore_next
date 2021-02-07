@@ -4,17 +4,21 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+
+import { View } from '../../../view/view.js';
+
+
 /*global module test equals context ok same */
 
 // .......................................................
 //  render()
 //
-module("SC.View#render");
+module("View#render");
 
-test("default implementation invokes renderChildViews if firstTime = YES", function() {
+test("default implementation invokes renderChildViews if firstTime = true", function (assert) {
 
   var rendered = 0, updated = 0, parentRendered = 0, parentUpdated = 0 ;
-  var view = SC.View.create({
+  var view = View.create({
     displayProperties: ["triggerRenderProperty"],
     childViews: ["child"],
 
@@ -26,7 +30,7 @@ test("default implementation invokes renderChildViews if firstTime = YES", funct
       parentUpdated++;
     },
 
-    child: SC.View.create({
+    child: View.create({
       render: function(context) {
         rendered++;
       },
@@ -38,23 +42,23 @@ test("default implementation invokes renderChildViews if firstTime = YES", funct
   });
 
   view.createLayer();
-  equals(rendered, 1, 'rendered the child');
-  equals(parentRendered, 1);
+  assert.equal(rendered, 1, 'rendered the child');
+  assert.equal(parentRendered, 1);
 
   view.updateLayer(true);
-  equals(rendered, 1, 'didn\'t call render again');
-  equals(parentRendered, 1, 'didn\'t call the parent\'s render again');
-  equals(parentUpdated, 1, 'called the parent\'s update');
-  equals(updated, 0, 'didn\'t call the child\'s update');
+  assert.equal(rendered, 1, 'didn\'t call render again');
+  assert.equal(parentRendered, 1, 'didn\'t call the parent\'s render again');
+  assert.equal(parentUpdated, 1, 'called the parent\'s update');
+  assert.equal(updated, 0, 'didn\'t call the child\'s update');
 
   // Clean up.
   view.destroy();
 });
 
-test("default implementation does not invoke renderChildViews if explicitly rendered in render method", function() {
+test("default implementation does not invoke renderChildViews if explicitly rendered in render method", function (assert) {
 
   var rendered = 0, updated = 0, parentRendered = 0, parentUpdated = 0 ;
-  var view = SC.View.create({
+  var view = View.create({
     displayProperties: ["triggerRenderProperty"],
     childViews: ["child"],
 
@@ -67,7 +71,7 @@ test("default implementation does not invoke renderChildViews if explicitly rend
       parentUpdated++;
     },
 
-    child: SC.View.create({
+    child: View.create({
       render: function(context) {
         rendered++;
       },
@@ -79,24 +83,24 @@ test("default implementation does not invoke renderChildViews if explicitly rend
   });
 
   view.createLayer();
-  equals(rendered, 1, 'rendered the child once');
-  equals(parentRendered, 1);
-  equals(view.$('div').length, 1);
+  assert.equal(rendered, 1, 'rendered the child once');
+  assert.equal(parentRendered, 1);
+  assert.equal(view.$('div').length, 1);
 
   view.updateLayer(true);
-  equals(rendered, 1, 'didn\'t call render again');
-  equals(parentRendered, 1, 'didn\'t call the parent\'s render again');
-  equals(parentUpdated, 1, 'called the parent\'s update');
-  equals(updated, 0, 'didn\'t call the child\'s update');
+  assert.equal(rendered, 1, 'didn\'t call render again');
+  assert.equal(parentRendered, 1, 'didn\'t call the parent\'s render again');
+  assert.equal(parentUpdated, 1, 'called the parent\'s update');
+  assert.equal(updated, 0, 'didn\'t call the child\'s update');
 
   // Clean up.
   view.destroy();
 });
 
-test("should invoke renderChildViews if layer is destroyed then re-rendered", function() {
+test("should invoke renderChildViews if layer is destroyed then re-rendered", function (assert) {
 
   var rendered = 0, updated = 0, parentRendered = 0, parentUpdated = 0 ;
-  var view = SC.View.create({
+  var view = View.create({
     displayProperties: ["triggerRenderProperty"],
     childViews: ["child"],
 
@@ -108,7 +112,7 @@ test("should invoke renderChildViews if layer is destroyed then re-rendered", fu
       parentUpdated++;
     },
 
-    child: SC.View.create({
+    child: View.create({
       render: function(context) {
         rendered++;
       },
@@ -120,15 +124,15 @@ test("should invoke renderChildViews if layer is destroyed then re-rendered", fu
   });
 
   view.createLayer();
-  equals(rendered, 1, 'rendered the child once');
-  equals(parentRendered, 1);
-  equals(view.$('div').length, 1);
+  assert.equal(rendered, 1, 'rendered the child once');
+  assert.equal(parentRendered, 1);
+  assert.equal(view.$('div').length, 1);
 
   view.destroyLayer();
   view.createLayer();
-  equals(rendered, 2, 'rendered the child twice');
-  equals(parentRendered, 2);
-  equals(view.$('div').length, 1);
+  assert.equal(rendered, 2, 'rendered the child twice');
+  assert.equal(parentRendered, 2);
+  assert.equal(view.$('div').length, 1);
 
   // Clean up.
   view.destroy();
@@ -137,17 +141,17 @@ test("should invoke renderChildViews if layer is destroyed then re-rendered", fu
 // renderChildViews()
 //
 
-module("SC.View#renderChildViews");
+module("View#renderChildViews");
 
-test("creates a context and then invokes renderToContext or updateLayer on each childView", function() {
+test("creates a context and then invokes renderToContext or updateLayer on each childView", function (assert) {
 
   var runCount = 0, curContext, curFirstTime ;
 
-  var ChildView = SC.View.extend({
+  var ChildView = View.extend({
     renderToContext: function(context) {
-      equals(context.prevObject, curContext, 'passed child context of curContext');
+      assert.equal(context.prevObject, curContext, 'passed child context of curContext');
 
-      equals(context.tagName(), this.get('tagName'), 'context setup with current tag name');
+      assert.equal(context.tagName(), this.get('tagName'), 'context setup with current tag name');
 
       runCount++; // record run
     },
@@ -157,7 +161,7 @@ test("creates a context and then invokes renderToContext or updateLayer on each 
     }
   });
 
-  var view = SC.View.create({
+  var view = View.create({
     childViews: [
       ChildView.extend({ tagName: 'foo' }),
       ChildView.extend({ tagName: 'bar' }),
@@ -165,37 +169,37 @@ test("creates a context and then invokes renderToContext or updateLayer on each 
     ]
   });
 
-  // VERIFY: firstTime= YES
+  // VERIFY: firstTime= true
   curContext = view.renderContext('div');
-  curFirstTime= YES ;
-  equals(view.renderChildViews(curContext, curFirstTime), curContext, 'returns context');
-  equals(runCount, 3, 'renderToContext() invoked for each child view');
+  curFirstTime= true ;
+  assert.equal(view.renderChildViews(curContext, curFirstTime), curContext, 'returns context');
+  assert.equal(runCount, 3, 'renderToContext() invoked for each child view');
 
 
-  // VERIFY: firstTime= NO
+  // VERIFY: firstTime= false
   runCount = 0 ; //reset
   curContext = view.renderContext('div');
-  curFirstTime= NO ;
-  equals(view.renderChildViews(curContext, curFirstTime), curContext, 'returns context');
-  equals(runCount, 3, 'updateLayer() invoked for each child view');
+  curFirstTime= false ;
+  assert.equal(view.renderChildViews(curContext, curFirstTime), curContext, 'returns context');
+  assert.equal(runCount, 3, 'updateLayer() invoked for each child view');
 
   // Clean up.
   view.destroy();
 });
 
-test("creates a context and then invokes renderChildViews to call renderToContext on each childView", function() {
+test("creates a context and then invokes renderChildViews to call renderToContext on each childView", function (assert) {
 
   var runCount = 0, curContext ;
 
-  var ChildView = SC.View.extend({
+  var ChildView = View.extend({
     renderToContext: function(context) {
-      equals(context.prevObject, curContext, 'passed child context of curContext');
-      equals(context.tagName(), this.get('tagName'), 'context setup with current tag name');
+      assert.equal(context.prevObject, curContext, 'passed child context of curContext');
+      assert.equal(context.tagName(), this.get('tagName'), 'context setup with current tag name');
       runCount++; // record run
     }
   });
 
-  var view = SC.View.create({
+  var view = View.create({
     childViews: [
       ChildView.extend({ tagName: 'foo' }),
       ChildView.extend({ tagName: 'bar' }),
@@ -203,10 +207,10 @@ test("creates a context and then invokes renderChildViews to call renderToContex
     ]
   });
 
-  // VERIFY: firstTime= YES
+  // VERIFY: firstTime= true
   curContext = view.renderContext('div');
   view.renderChildViews(curContext);
-  equals(runCount, 3, 'renderToContext() invoked for each child view');
+  assert.equal(runCount, 3, 'renderToContext() invoked for each child view');
 
   // Clean up.
   view.destroy();

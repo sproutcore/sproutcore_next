@@ -6,9 +6,9 @@
 // ==========================================================================
 
 import { SC, GLOBAL } from '../../core/core.js';
-import { SCEvent } from '../../event/event.js';
+import { SCEvent, browser } from '../../event/event.js';
+import { RootResponder } from './root_responder.js';
 
-const browser = SC.browser;
 const OS = SC.OS;
 
 /**
@@ -91,14 +91,14 @@ export const platform = SC.Object.create({
 
     @type Boolean
   */
-  bounceOnScroll: browser.os === OS.ios,
+  bounceOnScroll: SC.browser.os === OS.ios,
 
   /**
     True if pinch-to-zoom is expected in the current platform.
 
     @type Boolean
   */
-  pinchToZoom: browser.os === OS.ios,
+  pinchToZoom: SC.browser.os === OS.ios,
 
   /**
     A hash that contains properties that indicate support for new HTML5
@@ -160,12 +160,12 @@ export const platform = SC.Object.create({
   /** @deprecated Since version 1.10. Use browser.cssPrefix.
     Prefix for browser specific CSS attributes.
   */
-  cssPrefix: browser.cssPrefix,
+  cssPrefix: SC.browser.cssPrefix,
 
   /** @deprecated Since version 1.10. Use browser.domPrefix.
     Prefix for browser specific CSS attributes when used in the DOM.
   */
-  domCSSPrefix: browser.domPrefix,
+  domCSSPrefix: SC.browser.domPrefix,
 
   /**
     Call this method to swap out the default mouse handlers with proxy methods
@@ -374,28 +374,52 @@ export const platform = SC.Object.create({
 
     @type Boolean
   */
-  supportsCSSAnimations: browser.experimentalStyleNameFor('animation') !== UNSUPPORTED,
+  get supportsCSSAnimations () {
+    return this._supportsCSSAnimations !== undefined? this._supportsCSSAnimations : browser.experimentalStyleNameFor('animation') !== UNSUPPORTED;
+  },
+
+  set supportsCSSAnimations (val) {
+    this._supportsCSSAnimations = val;
+  },
 
   /**
     Whether the browser supports CSS transitions.
 
     @type Boolean
   */
-  supportsCSSTransitions: browser.experimentalStyleNameFor('transition') !== UNSUPPORTED,
+  get supportsCSSTransitions () {
+    return this._supportsCSSTransitions !== undefined? this._supportsCSSTransitions : browser.experimentalStyleNameFor('transition') !== UNSUPPORTED;
+  },
+
+  set supportsCSSTransitions (val) {
+    this._supportsCSSTransitions = val;
+  },
 
   /**
     Whether the browser supports 2D CSS transforms.
 
     @type Boolean
   */
-  supportsCSSTransforms: browser.experimentalStyleNameFor('transform') !== UNSUPPORTED,
+  get supportsCSSTransforms () {
+    return this._supportsCSSTransforms !== undefined? this._supportsCSSTransforms : browser.experimentalStyleNameFor('transform') !== UNSUPPORTED;
+  },
+
+  set supportsCSSTransforms (val) {
+    this._supportsCSSTransforms = val;
+  },
 
   /**
     Whether the browser can properly handle 3D CSS transforms.
 
     @type Boolean
   */
-  supportsCSS3DTransforms: browser.experimentalStyleNameFor('perspective') !== UNSUPPORTED,
+  get supportsCSS3DTransforms () {
+    return this._supportsCSS3DTransforms !== undefined? this._supportsCSS3DTransforms : browser.experimentalStyleNameFor('perspective') !== UNSUPPORTED;
+  },
+
+  set supportsCSS3DTransforms (val) {
+    this._supportsCSS3DTransforms = val;
+  },
 
   /**
     Whether the browser supports the application cache.
@@ -499,7 +523,7 @@ export const platform = SC.Object.create({
 
     @type Boolean
   */
-  windowSizeDeterminesOrientation: browser.os === OS.ios || !('onorientationchange' in GLOBAL),
+  windowSizeDeterminesOrientation: SC.browser.os === OS.ios || !('onorientationchange' in GLOBAL),
 
   /**
     Does this browser support the Apache Cordova (formerly phonegap) runtime?

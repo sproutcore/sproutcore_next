@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { SC } from '/core/core.js';
+import { SC } from '../../../core/core.js';
 
 let LocaleObject;
 module("object.Locale()", {

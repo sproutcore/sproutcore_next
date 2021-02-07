@@ -8,6 +8,7 @@
 
 import { SC } from '../../core/core.js';
 import { CoreQuery } from '../../event/event.js';
+import { RenderContext } from '../render_context/render_context.js';
 
 import { Responder } from '../../responder/responder.js';
 import { viewStates, viewStatechart } from './view/statechart.js'

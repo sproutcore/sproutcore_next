@@ -3,8 +3,8 @@
 // ==========================================================================
 /*globals SC statechart */
 
-import { SC } from '/core/core.js';
-import { Async, Statechart, State, EmptyState } from '/statechart/statechart.js';
+
+import { Async, Statechart, State, EmptyState } from '../../../../statechart/statechart.js';
 
 
 var pane, viewA, viewB, stateA, stateB, responder = null;

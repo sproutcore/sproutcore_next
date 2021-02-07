@@ -8,6 +8,10 @@
 */
 
 import { SC } from '../../../core/core.js';
+import { platform } from '../../../responder/responder.js';
+import { browser } from '../../../event/event.js';
+import { isPercentage } from '../utils/utils.js';
+import { LAYOUT_AUTO, defaultLayout } from './layout.js';
 
 // The scale transform must be last in order to decompose the transformation matrix.
 export const CSS_TRANSFORM_NAMES = ['rotateX', 'rotateY', 'rotateZ', 'scale'];
@@ -35,7 +39,7 @@ export const CSS_TRANSFORM_MAP = {
   },
 
   scale: function (val) {
-    if (SC.typeOf(val) === T_ARRAY) { val = val.join(', '); }
+    if (SC.typeOf(val) === SC.T_ARRAY) { val = val.join(', '); }
     return 'scale(' + val + ')';
   }
 };
@@ -302,7 +306,7 @@ export const LayoutStyleCalculator = {
     // should not insert the styles "left: 0px; right: 0px; top: 0px; bottom: 0px" as they could
     // conflict with the developer's intention.  However, if they do provide a unique `layout`,
     // use it.
-    if (useStaticLayout && layout === View.prototype.layout) { return {}; }
+    if (useStaticLayout && layout === defaultLayout) { return {}; }
 
     // Reset and prep the style object.
     this._prepareStyle(style, layout);

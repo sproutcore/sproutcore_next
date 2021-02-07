@@ -5,6 +5,9 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { SC } from '../../../core/core.js';
+import { maxX, maxY, minX, minY } from "./utils.js";
+
 
   /** A Point at {0,0} */
 export const ZERO_POINT = { x: 0, y: 0 };
@@ -96,12 +99,12 @@ export const scaleRect = function (rect, scale, originX, originY) {
 
   // Unpack scale.
   var scaleX, scaleY;
-  switch (typeOf(scale)) {
-    case T_ARRAY:
+  switch (SC.typeOf(scale)) {
+    case SC.T_ARRAY:
       scaleX = scale[0];
       scaleY = scale[1];
       break;
-    case T_HASH:
+    case SC.T_HASH:
       scaleX = scale.x;
       scaleY = scale.y;
       break;

@@ -3,8 +3,8 @@
 // ==========================================================================
 /*globals SC */
 
-import { SC } from '/core/core.js';
-import { Async, Statechart, State, EmptyState } from '/statechart/statechart.js';
+import { SC } from '../../../../core/core.js';
+import { Async, Statechart, State, EmptyState } from '../../../../statechart/statechart.js';
 
 
 var statechart1 = null;

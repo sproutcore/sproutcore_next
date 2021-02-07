@@ -3,8 +3,8 @@
 // ==========================================================================
 /*globals SC externalState1 externalState2 */
 
-import { SC } from '/core/core.js';
-import { Async, Statechart, State, StateRouteHandlerContext } from '/statechart/statechart.js';
+import { SC } from '../../../../../core/core.js';
+import { Async, Statechart, State, StateRouteHandlerContext } from '../../../../../statechart/statechart.js';
 
 
 var state, params, context;

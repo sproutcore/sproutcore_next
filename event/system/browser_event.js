@@ -9,7 +9,7 @@
 
 import { SC } from '../../core/core.js';
 import { CoreQuery } from './core_query.js';
-
+import { platform } from '../../responder/responder.js';
 
 export const MODIFIER_KEYS = {
   16:'shift', 17:'ctrl', 18: 'alt'
@@ -284,7 +284,7 @@ SC.mixin(SCEvent, /** @scope SCEvent */ {
     // don't do events on text and comment nodes
     if ( elem.nodeType === 3 || elem.nodeType === 8 ) return SCEvent;
 
-    var handlers, key, events = SC.data(elem, "sc_events") ;
+    var handlers, key, events = CoreQuery.data(elem, "sc_events") ;
     if (!events) return this ; // nothing to do if no events are registered
 
     // if no type is provided, remove all types for this element.
@@ -670,7 +670,7 @@ SC.mixin(SCEvent, /** @scope SCEvent */ {
 
       // Bind the global event handler to the element
       if (elem.addEventListener) {
-        if (SC.platform.supportsPassiveEventlisteners) {
+        if (platform.supportsPassiveEventlisteners) {
           elem.addEventListener(eventType, listener, {
             capture: useCapture,
             passive: false

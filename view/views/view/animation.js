@@ -4,6 +4,11 @@
 // ==========================================================================
 // sc_require("views/view");
 
+import { SC } from '../../../core/core.js';
+import { platform } from '../../../responder/responder.js';
+import { ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING } from './statechart.js';
+
+
 /** @private
   Properties that can be animated
   (Hash for faster lookup)
@@ -429,8 +434,8 @@ export const animationSupport = /** @scope View.prototype */ {
       this.set('layout', animationLayout);
 
       // Route.
-      if (this.get('viewState') === CoreView.ATTACHED_SHOWN) {
-        this.set('viewState', CoreView.ATTACHED_SHOWN_ANIMATING);
+      if (this.get('viewState') === ATTACHED_SHOWN) {
+        this.set('viewState', ATTACHED_SHOWN_ANIMATING);
       }
     }
   },
@@ -508,8 +513,8 @@ export const animationSupport = /** @scope View.prototype */ {
     }
 
     // Route.
-    if (this.get('viewState') === CoreView.ATTACHED_SHOWN_ANIMATING) {
-      this.set('viewState', CoreView.ATTACHED_SHOWN);
+    if (this.get('viewState') === ATTACHED_SHOWN_ANIMATING) {
+      this.set('viewState', ATTACHED_SHOWN);
     }
 
     // Immediately remove the pending animations while calling the callbacks.
@@ -566,8 +571,8 @@ export const animationSupport = /** @scope View.prototype */ {
       }
 
       // Route.
-      if (this.get('viewState') === CoreView.ATTACHED_SHOWN_ANIMATING) {
-        this.set('viewState', CoreView.ATTACHED_SHOWN);
+      if (this.get('viewState') === ATTACHED_SHOWN_ANIMATING) {
+        this.set('viewState', ATTACHED_SHOWN);
       }
 
       // Reset the placeholder variables now that the layout style has been applied.
@@ -833,8 +838,8 @@ export const animationSupport = /** @scope View.prototype */ {
       this._activeAnimationsLength -= 1;
       if (this._activeAnimationsLength === 0) {
         // Route.
-        if (this.get('viewState') === CoreView.ATTACHED_SHOWN_ANIMATING) {
-          this.set('viewState', CoreView.ATTACHED_SHOWN);
+        if (this.get('viewState') === ATTACHED_SHOWN_ANIMATING) {
+          this.set('viewState', ATTACHED_SHOWN);
         }
 
         this._activeAnimations = this._prevLayout = null;

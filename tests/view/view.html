@@ -12,28 +12,29 @@
     <script src="/tests/qunit/qunit-2.11.3.js"></script>
     <script>
       window.module = QUnit.module;
-      window.test = QUnit.test;
-      window.equals = QUnit.assert.equal;
-      window.same = QUnit.assert.deepEqual;
-      window.ok = QUnit.assert.ok;
+      window.test = QUnit.test.bind(QUnit.assert);
+      window.equals = QUnit.assert.equal.bind(QUnit.assert);
+      window.same = QUnit.assert.deepEqual.bind(QUnit.assert);
+      window.ok = QUnit.assert.ok.bind(QUnit.assert);
       window.assert = QUnit.assert;
+      QUnit.config.autostart = false;
     </script>
     <script src="./view/view.js" type="module"></script>
-    <!-- <script src="./private/state_path_matcher.js" type="module"></script> -->
-    <!-- <script src="./state//initial_substate.js" type="module"></script> -->
-    <!-- <script src="./state/is_current_state.js" type="module"></script> -->
-    <!-- <script src="./state/state_observes.js" type="module"></script> -->
-    <!-- <script src="./state/methods/add_substate.js" type="module"></script> -->
-    <!-- <script src="./state/methods/get_state.js" type="module"></script> -->
-    <!-- <script src="./state/methods/get_substate.js" type="module"></script> -->
-    <!-- <script src="./state/methods/route_triggered.js" type="module"></script> -->
-    <!-- <script src="./state/methods/try_to_handle_event.js" type="module"></script>  -->
-    <!-- <script src="./state/methods/find_first_relative_current_state/with_concurrent.js" type="module"></script> -->
-    <!-- <script src="./state/methods/find_first_relative_current_state/without_concurrent.js" type="module"></script> -->
-    <!-- <script src="./state/plugin/mixin.js" type="module"></script> -->
-    <!-- <script src="./state/plugin/nesting.js" type="module"></script>  -->
-    <!-- <script src="./statechart/destroy.js" type="module"></script> -->
-    <!-- <script src="./statechart/owner.js" type="module"></script> -->
+    <script src="./view/view_states_test.js" type="module"></script>
+    <script src="./view/viewDidResize.js" type="module"></script>
+    <script src="./view/updateLayer.js" type="module"></script>
+    <script src="./view/static_layout.js" type="module"></script>
+    <script src="./view/replaceChild.js" type="module"></script>
+    <script src="./view/replaceAllChildren_test.js" type="module"></script>
+    <script src="./view/render.js" type="module"></script>
+    <script src="./view/render_delegate_support.js" type="module"></script>
+    <script src="./view/touch.js" type="module"></script> 
+    <!-- <script src="./view/theme.js" type="module"></script> because no content -->
+    <script src="./view/removeChild.js" type="module"></script>
+    <script src="./view/layoutChildViews.js" type="module"></script>
+    <script src="./view/layout_test.js" type="module"></script> 
+    <script src="./view/layout_style_test.js" type="module"></script>
+    <script src="./view/layer.js" type="module"></script>
     <!-- <script src="./statechart/respond_to_event.js" type="module"></script> -->
     <!-- <script src="./statechart/create/assigned_root_state.js" type="module"></script> -->
     <!-- <script src="./statechart/create/unassigned_root_state.js" type="module"></script> -->
@@ -63,7 +64,11 @@
     <!-- <script src="./event_handling/responder/responder_chain.js" type="module"></script> -->
     <!-- <script src="./event_handling/responder/root_responder.js" type="module"></script> -->
     <!-- <script src="./system/state_route_handler_context/methods/retry.js" type="module"></script> -->
-
+    <script type="module">
+      import { SC } from '../../core/core.js';
+      SC.ready(function () { QUnit.start(); });
+      // jQuery(SC.onReady.done);
+    </script>
     
 </body>
 </html>

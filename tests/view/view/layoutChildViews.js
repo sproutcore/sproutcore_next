@@ -5,20 +5,21 @@
 // ==========================================================================
 
 /*global module test equals context ok same */
+import { View } from '../../../view/view.js';
 
 // .......................................................
 // layoutChildViews()
 //
-module("SC.View#layoutChildViews");
+module("View#layoutChildViews");
 
-test("calls renderLayout() on child views on views that need layout if they have a layer", function() {
+test("calls renderLayout() on child views on views that need layout if they have a layer", function (assert) {
 
 	var callCount = 0 ;
-	var ChildView = SC.View.extend({
+	var ChildView = View.extend({
 		updateLayout: function(context) { callCount++; }
 	});
 
-	var view = SC.View.create({
+	var view = View.create({
 		childViews: [ChildView, ChildView, ChildView]
 	});
 
@@ -30,7 +31,7 @@ test("calls renderLayout() on child views on views that need layout if they have
 	view.layoutDidChangeFor(cv2);
 
 	view.layoutChildViews();
-	equals(callCount, 2, 'updateLayout should be called on two dirty child views');
+	assert.equal(callCount, 2, 'updateLayout should be called on two dirty child views');
 
 	// Clean up.
 	view.destroy();
@@ -39,61 +40,61 @@ test("calls renderLayout() on child views on views that need layout if they have
 // .......................................................
 // updateLayout()
 //
-module("SC.View#updateLayout");
+module("View#updateLayout");
 
-test("if view has layout, calls _doUpdateLayoutStyle", function() {
+test("if view has layout, calls _doUpdateLayoutStyle", function (assert) {
 
-	// NOTE: renderLayout() is also called when a view's
+	// falseTE: renderLayout() is also called when a view's
 	// layer is first created.  We use isTesting below to
 	// avoid running the renderLayout() test code until we
 	// are actually doing layout.
-	var callCount = 0, isTesting = NO ;
-	var view = SC.View.create({
+	var callCount = 0, isTesting = false ;
+	var view = View.create({
 		_doUpdateLayoutStyle: function() {
 			callCount++;
 		}
 	});
 
 	view.createLayer(); // we need a layer
-	ok(view.get('layer'), 'precond - should have a layer');
+	assert.ok(view.get('layer'), 'precond - should have a layer');
 
 	view.updateLayout();
-	equals(callCount, 0, 'should not call _doUpdateLayoutStyle() because the view isn\'t shown');
+	assert.equal(callCount, 0, 'should not call _doUpdateLayoutStyle() because the view isn\'t shown');
 
 	view.updateLayout(true);
-	equals(callCount, 1, 'should call _doUpdateLayoutStyle() because we force it');
+	assert.equal(callCount, 1, 'should call _doUpdateLayoutStyle() because we force it');
 
 	// Clean up.
 	view.destroy();
 });
 
-test("if view has NO layout, should not call renderLayout", function() {
+test("if view has false layout, should not call renderLayout", function (assert) {
 
-	// NOTE: renderLayout() is also called when a view's
+	// falseTE: renderLayout() is also called when a view's
 	// layer is first created.  We use isTesting below to
 	// avoid running the renderLayout() test code until we
 	// are actually doing layout.
-	var callCount = 0, isTesting = NO ;
-	var view = SC.View.create({
+	var callCount = 0, isTesting = false ;
+	var view = View.create({
 		renderLayout: function(context) {
 			if (!isTesting) return ;
 			callCount++;
 		}
 	});
 
-	ok(!view.get('layer'), 'precond - should NOT have a layer');
+	assert.ok(!view.get('layer'), 'precond - should falseT have a layer');
 
-	isTesting= YES ;
+	isTesting= true ;
 	view.updateLayout();
-	equals(callCount, 0, 'should NOT call renderLayout()');
+	assert.equal(callCount, 0, 'should falseT call renderLayout()');
 
 	// Clean up.
 	view.destroy();
 });
 
-test("returns receiver", function() {
-	var view = SC.View.create();
-	equals(view.updateLayout(), view, 'should return receiver');
+test("returns receiver", function (assert) {
+	var view = View.create();
+	assert.equal(view.updateLayout(), view, 'should return receiver');
 
 	// Clean up.
 	view.destroy();
@@ -102,24 +103,24 @@ test("returns receiver", function() {
 // .......................................................
 //  renderLayout()
 //
-module('SC.View#renderLayout');
+module('View#renderLayout');
 
-test("adds layoutStyle property to passed context", function() {
+test("adds layoutStyle property to passed context", function (assert) {
 
-	var view = SC.View.create({
+	var view = View.create({
 		// mock style for testing...
 		layoutStyle: { width: 50, height: 50 }
 	});
 	var context = view.renderContext();
 
-	ok(context.styles().width !== 50, 'precond - should NOT have width style');
-	ok(context.styles().height !== 50, 'precond - should NOT have height style');
+	assert.ok(context.styles().width !== 50, 'precond - should falseT have width style');
+	assert.ok(context.styles().height !== 50, 'precond - should falseT have height style');
 
 
 	view.renderLayout(context);
 
-	equals(context.styles().width, 50, 'should have width style');
-	equals(context.styles().height, 50, 'should have height style');
+	assert.equal(context.styles().width, 50, 'should have width style');
+	assert.equal(context.styles().height, 50, 'should have height style');
 
 	// Clean up.
 	view.destroy();
@@ -129,39 +130,39 @@ test("adds layoutStyle property to passed context", function() {
 // layoutChildViewsIfNeeded()
 //
 var view, callCount ;
-module('SC.View#layoutChildViewsIfNeeded', {
-	setup: function() {
+module('View#layoutChildViewsIfNeeded', {
+	beforeEach: function() {
 		callCount = 0;
-		view = SC.View.create({
+		view = View.create({
 			layoutChildViews: function() { callCount++; }
 		});
 	},
-	teardown: function() {
+	afterEach: function() {
 		// Clean up.
 		view.destroy();
 		view = null;
 	}
 });
 
-test("calls layoutChildViews() if childViewsNeedLayout and isVisibleInWindow & sets childViewsNeedLayout to NO", function() {
+test("calls layoutChildViews() if childViewsNeedLayout and isVisibleInWindow & sets childViewsNeedLayout to false", function (assert) {
 
-	view.childViewsNeedLayout = YES ;
-	view.isVisibleInWindow = YES ;
+	view.childViewsNeedLayout = true ;
+	view.isVisibleInWindow = true ;
 	view.layoutChildViewsIfNeeded();
-	equals(callCount, 1, 'should call layoutChildViews()');
-	equals(view.get('childViewsNeedLayout'),NO,'should set childViewsNeedLayout to NO');
+	assert.equal(callCount, 1, 'should call layoutChildViews()');
+	assert.equal(view.get('childViewsNeedLayout'),false,'should set childViewsNeedLayout to false');
 });
 
-test("does not call layoutChildViews() if childViewsNeedLayout is NO", function() {
+test("does not call layoutChildViews() if childViewsNeedLayout is false", function (assert) {
 
-	view.childViewsNeedLayout = NO ;
-	view.isVisibleInWindow = YES ;
+	view.childViewsNeedLayout = false ;
+	view.isVisibleInWindow = true ;
 	view.layoutChildViewsIfNeeded();
-	equals(callCount, 0, 'should NOT call layoutChildViews()');
+	assert.equal(callCount, 0, 'should falseT call layoutChildViews()');
 });
 
-test("returns receiver", function() {
-	equals(view.layoutChildViewsIfNeeded(), view, 'should return receiver');
+test("returns receiver", function (assert) {
+	assert.equal(view.layoutChildViewsIfNeeded(), view, 'should return receiver');
 });
 
 

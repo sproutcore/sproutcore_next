@@ -5,25 +5,27 @@
 // ==========================================================================
 
 /*global module test equals context ok same */
+import { View } from '../../../view/view.js';
+
 
 var parent, child;
-module("SC.View#replaceChild", {
-	setup: function() {
-	  child = SC.View.create();
-	  parent = SC.View.create({
-	    childViews: [SC.View, SC.View, SC.View]
+module("View#replaceChild", {
+	beforeEach: function() {
+	  child = View.create();
+	  parent = View.create({
+	    childViews: [View, View, View]
 	  });		
 	}
 });
 
 
-test("swaps the old child with the new child", function() {
+test("swaps the old child with the new child", function (assert) {
   var oldChild = parent.childViews[1];
 
   parent.replaceChild(child, oldChild);
-  equals(child.get('parentView'), parent, 'child has new parent');
-  ok(!oldChild.get('parentView'), 'old child no longer has parent');
+  assert.equal(child.get('parentView'), parent, 'child has new parent');
+  assert.ok(!oldChild.get('parentView'), 'old child no longer has parent');
   
-  equals(parent.childViews[1], child, 'parent view has new child at loc 1');
-  equals(parent.childViews.length, 3, 'parent has same number of children');
+  assert.equal(parent.childViews[1], child, 'parent view has new child at loc 1');
+  assert.equal(parent.childViews.length, 3, 'parent has same number of children');
 });

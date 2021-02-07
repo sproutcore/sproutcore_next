@@ -3,8 +3,8 @@
 // ==========================================================================
 /*globals SC */
 
-import { SC } from '/core/core.js';
-import { Statechart, State } from '/statechart/statechart.js';
+
+import { Statechart, State } from '../../../../statechart/statechart.js';
 
 var sc, root;
 

@@ -2,6 +2,7 @@
 
 import { SC } from '../../../core/core.js';
 import { LayoutState } from './animation.js';
+import { CoreView } from '../core_view.js';
 
 
 // When in debug mode, core developers can log the view state.
@@ -1664,7 +1665,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // All other states should be impossible if parent was UNATTACHED:
       // ATTACHED_BUILDING_IN, ATTACHED_SHOWING, ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_HIDING, ATTACHED_HIDDEN, ATTACHED_HIDDEN_BY_PARENT
-      warn("Core Developer Warning: Found invalid state for view, %@, in _parentDidAttach".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view, %@, in _parentDidAttach".fmt(this));
       //@endif
 
       // There's no need to continue to further child views.
@@ -1736,7 +1737,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // All animating states should have been canceled when parent will hide is called.
       // ATTACHED_HIDING, ATTACHED_BUILDING_IN, ATTACHED_SHOWING, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_PARTIAL, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_SHOWN_ANIMATING
-      warn("Core Developer Warning: Found invalid state for view %@ in _parentDidHideInDocument".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentDidHideInDocument".fmt(this));
       //@endif
     }
 
@@ -1784,7 +1785,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // All other states should be impossible if parent was UNRENDERED:
       // ATTACHED_BUILDING_IN, ATTACHED_SHOWING, ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT, ATTACHED_HIDING, ATTACHED_HIDDEN, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_PARTIAL, UNATTACHED
-      warn("Core Developer Warning: Found invalid state for view %@ in _parentDidRender".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentDidRender".fmt(this));
       //@endif
 
       // There's no need to continue to further child views.
@@ -1831,7 +1832,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_SHOWING, ATTACHED_HIDING, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT
       // This state should be impossible if its parent was UNATTACHED (it should have been trimmed above):
       // ATTACHED_PARTIAL
-      warn("Core Developer Warning: Found invalid state for view %@ in _parentDidShowInDocument".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentDidShowInDocument".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -1899,7 +1900,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       //@if(debug)
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // These states should not be reachable here: ATTACHED_PARTIAL, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_OUT_BY_PARENT
-      warn("Core Developer Warning: Found invalid state for view %@ in _parentWillBuildOutFromDocument".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentWillBuildOutFromDocument".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -1947,7 +1948,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // This state should be impossible if its parent was UNATTACHED or HIDDEN/HIDING (it should have been trimmed above):
       // ATTACHED_PARTIAL, ATTACHED_HIDDEN_BY_PARENT
-      warn("Core Developer Warning: Found invalid state for view %@ in _parentWillHideInDocument".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentWillHideInDocument".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -1997,7 +1998,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       //@if(debug)
       // Add some debugging only warnings for if the view statechart is breaking assumptions.
       // These states should not be reachable here: ATTACHED_PARTIAL, ATTACHED_HIDDEN_BY_PARENT, ATTACHED_BUILDING_OUT_BY_PARENT
-      warn("Core Developer Warning: Found invalid state for view %@ in _parentWillDetach".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentWillDetach".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -2043,7 +2044,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
       // ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING, ATTACHED_SHOWING, ATTACHED_HIDING, ATTACHED_BUILDING_IN, ATTACHED_BUILDING_OUT, ATTACHED_BUILDING_OUT_BY_PARENT
       // This state should be impossible if its parent was UNATTACHED (it should have been trimmed above):
       // ATTACHED_PARTIAL
-      warn("Core Developer Warning: Found invalid state for view %@ in _parentWillShowInDocument".fmt(this));
+      SC.warn("Core Developer Warning: Found invalid state for view %@ in _parentWillShowInDocument".fmt(this));
       //@endif
       // There's no need to continue to further child views.
       shouldContinue = false;
@@ -2060,12 +2061,12 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
   /** @private */
   _setupTransition: function (transition) {
     // Get a copy of the layout.
-    var layout = clone(this.get('layout'));
+    var layout = SC.clone(this.get('layout'));
     // Prepare for a transition.
     this._preTransitionLayout = layout;
     this._preTransitionFrame = this.get('borderFrame');
     // Cache appropriate layout values.
-    var layoutProperties = get(transition, 'layoutProperties');
+    var layoutProperties = SC.get(transition, 'layoutProperties');
     // If the transition specifies any layouts, cache them.
     if (layoutProperties && layoutProperties.length) {
       this._transitionLayoutCache = {};
@@ -2104,7 +2105,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _transitionHide()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _transitionHide()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -2139,7 +2140,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _transitionIn()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _transitionIn()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -2166,7 +2167,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _transitionOut()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _transitionOut()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 
@@ -2200,7 +2201,7 @@ export const viewStatechart = /** @scope CoreView.prototype */ {
 
     //@if (debug)
     if (LOG_VIEW_STATES || this.SC_LOG_VIEW_STATE) {
-      Logger.log('%c%@ — _transitionShow()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
+      SC.Logger.log('%c%@ — _transitionShow()'.fmt(this), LOG_VIEW_STATES_STYLE[this.get('viewState')]);
     }
     //@endif
 

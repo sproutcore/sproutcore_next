@@ -3,25 +3,27 @@
 // Copyright: @2012 7x7 Software, Inc.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-sc_require("views/view");
+// sc_require("views/view");
+
+import { SC } from '../../../core/core.js';
 
 // When in debug mode, developers can log the design mode.
 //@if (debug)
-SC.LOG_DESIGN_MODE = false;
+SC.setSetting('LOG_DESIGN_MODE', false);
 //@endif
 
 // The class names assigned to view elements depending on the current design
 // mode.
-SC.DESIGN_MODE_CLASS_NAMES = {
+export const DESIGN_MODE_CLASS_NAMES = {
   s: 'sc-small',
   m: 'sc-medium',
   l: 'sc-large',
   xl: 'sc-xlarge'
 };
 
-/** @private This adds design modes support to SC.View. */
-SC.View.reopen(
-  /** @scope SC.View.prototype */ {
+/** @private This adds design modes support to View. */
+
+export const designModeSupport = /** @scope View.prototype */ {
 
   // ------------------------------------------------------------------------
   // Properties
@@ -68,6 +70,8 @@ SC.View.reopen(
   },
 
   _sc_assignProperty: function (key, value) {
+
+    const LOG_DESIGN_MODE = SC.getSetting('LOG_DESIGN_MODE');
     if (key === 'layout') {
       var newExplicitLayout = this._sc_computeExplicitLayout(value), // Convert the layout to an explicit layout.
           layoutDiff = {},
@@ -97,15 +101,15 @@ SC.View.reopen(
     // Apply the override.
     if (key === 'layout') {
       //@if(debug)
-      if (SC.LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
-        SC.Logger.log('  - Adjusting %@: %@ (cached as %@)'.fmt(key, SC.inspect(value), SC.inspect(this._originalProperties[key])));
+      if (LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
+        SC.Logger.log('  - Adjusting %@: %@ (cached as %@)'.fmt(key, inspect(value), inspect(this._originalProperties[key])));
       }
       //@endif
       this.adjust(value);
     } else {
       //@if(debug)
-      if (SC.LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
-        SC.Logger.log('  - Setting %@: %@ (cached as %@)'.fmt(key, SC.inspect(value), SC.inspect(this._originalProperties[key])));
+      if (LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
+        SC.Logger.log('  - Setting %@: %@ (cached as %@)'.fmt(key, inspect(value), inspect(this._originalProperties[key])));
       }
       //@endif
       this.set(key,value);
@@ -114,7 +118,7 @@ SC.View.reopen(
 
   _sc_revertProperty: function (key, oldValue) {
     //@if(debug)
-    if (SC.LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
+    if (SC.getSetting('LOG_DESIGN_MODE') || this.SC_LOG_DESIGN_MODE) {
       SC.Logger.log('  - Resetting %@ to %@'.fmt(key, SC.inspect(oldValue)));
     }
     //@endif
@@ -147,7 +151,7 @@ SC.View.reopen(
   updateDesignMode: function (lastDesignMode, designMode) {
     // Fast path.
     if (lastDesignMode === designMode) { return; }
-
+    const LOG_DESIGN_MODE = SC.getSetting('LOG_DESIGN_MODE');
     var classNames = this.get('classNames'),
       modeAdjust,
       elem,
@@ -173,7 +177,7 @@ SC.View.reopen(
       prevProperties = this._originalProperties;
       if (prevProperties) {
         //@if(debug)
-        if (SC.LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
+        if (LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
           SC.Logger.log('%@ — Removing previous design property overrides set by "%@":'.fmt(this, lastDesignMode));
         }
         //@endif
@@ -192,7 +196,7 @@ SC.View.reopen(
           newProperties = SC.merge(modeAdjust[size], modeAdjust[designMode]);
 
           //@if(debug)
-          if (SC.LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
+          if (LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
             SC.Logger.log('%@ — Applying design properties for "%@":'.fmt(this, designMode));
           }
           //@endif
@@ -219,20 +223,20 @@ SC.View.reopen(
 
       // If we had previously added a class to the element, remove it.
       if (lastDesignMode) {
-        designClass = SC.DESIGN_MODE_CLASS_NAMES[lastDesignMode.split('_')[0]];
+        designClass = DESIGN_MODE_CLASS_NAMES[lastDesignMode.split('_')[0]];
         elem.removeClass(designClass);
         classNames.removeObject(designClass);
       }
 
       // If necessary, add a new class.
       if (designMode) {
-        designClass = SC.DESIGN_MODE_CLASS_NAMES[size];
+        designClass = DESIGN_MODE_CLASS_NAMES[size];
         elem.addClass(designClass);
         classNames.push(designClass);
       }
     } else {
       if (designMode) {
-        designClass = SC.DESIGN_MODE_CLASS_NAMES[size];
+        designClass = DESIGN_MODE_CLASS_NAMES[size];
         // Ensure that it gets into the classNames array
         // so it is displayed when we render.
         classNames.push(designClass);
@@ -243,4 +247,4 @@ SC.View.reopen(
     this.adjustChildDesignModes(lastDesignMode, designMode);
   }
 
-});
+};

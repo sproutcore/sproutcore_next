@@ -5,14 +5,17 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-module("SC.View - Static Layout functionality");
+import { View } from '../../../view/view.js';
 
-test("Static layout", function() {
-  var view = SC.View.create({
-    useStaticLayout: YES
+
+module("View - Static Layout functionality");
+
+test("Static layout", function (assert) {
+  var view = View.create({
+    useStaticLayout: true
   });
 
   view.createLayer();
 
-  ok(view.$().is('.sc-static-layout'), "views with useStaticLayout get the sc-static-layout class");
+  assert.ok(view.$().is('.sc-static-layout'), "views with useStaticLayout get the sc-static-layout class");
 });

@@ -17,8 +17,9 @@ setSetting('isReady', false);
 setSetting('suppressOnReady', false);
 setSetting('suppressMain', false);
 
-let _readyQueue = [];
-
+if (!getSetting('_readyQueue')) {
+  setSetting('_readyQueue', []);
+}
 
 export const readyMixin = {
 
@@ -66,6 +67,8 @@ export const readyMixin = {
     setSetting('mode', val);
   },
 
+  _readyQueue: null,
+
   /**
     Add the passed target and method to the queue of methods to invoke when
     the document is ready.  These methods will be called after the document
@@ -81,8 +84,9 @@ export const readyMixin = {
     @returns {SC}
   */
   ready: function (target, method) {
-    var queue = _readyQueue;
-
+    
+    var queue = getSetting('_readyQueue');
+    
     // normalize
     if (method === undefined) {
       method = target;
@@ -93,13 +97,16 @@ export const readyMixin = {
 
     if (getSetting('isReady')) {
       if (global.jQuery) {
-        jQuery(document).ready(function () { method.call(target); });
+        console.log('we have jquery queue, use jquery');
+        jQuery(function () { method.call(target); });
       }
       else {
         method.call(target);
       }
     } else {
-      _readyQueue.push(function () { method.call(target); });
+      console.log('pushing method to queue');
+      const idx = queue.push(function () { method.call(target); });
+      console.log('function pushed to ', idx);
     }
 
     return this;
@@ -110,9 +117,12 @@ export const readyMixin = {
     Locale: null, // to be set by the Locale later
 
     done: function () {
+      console.log("SPROUTCORE_READY_DONE_FUNCTION");
       if (getSetting('isReady')) return;
-
+      
       setSetting('isReady', true);
+
+      // debugger; 
 
       RunLoop.begin();
 
@@ -125,14 +135,16 @@ export const readyMixin = {
   
         jQuery("#loading").remove();  
       }
-
-      var queue = _readyQueue, idx, len;
-
+      // debugger;
+      var queue = getSetting('_readyQueue'), idx, len;
+      
       if (queue) {
         for (idx = 0, len = queue.length; idx < len; idx++) {
+          // console.log('calling', idx);
+          // debugger;
           queue[idx].call();
         }
-        _readyQueue = null;
+        // _readyQueue = null;
       }
 
       if (global.main && !getSetting('suppressMain') && (getSetting('mode') === APP_MODE)) { global.main(); }
@@ -145,7 +157,9 @@ export const readyMixin = {
 if (global.jQuery) {
   // let apps ignore the regular onReady handling if they need to
   if (!getSetting('suppressOnReady')) {
-    global.$(document).ready(readyMixin.onReady.done);
+    // global.$(document).ready(readyMixin.onReady.done.bind(readyMixin.onReady));
+    jQuery(readyMixin.onReady.done);
+    // jQuery(readyMixin.onReady.done.bind(readyMixin.onReady));
   }
 }
 

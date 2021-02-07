@@ -7,7 +7,8 @@
 
 /*globals module, test, equals, context, ok, same */
 
-import { View, Theme } from '/view/view.js';
+import { SC } from '../../../core/core.js';
+import { View, Theme } from '../../../view/view.js';
 
 module("View");
 
@@ -67,12 +68,14 @@ test("it still works with the backward compatible theme property when extending"
 var view;
 module("View methods", {
   beforeEach: function () {
+    SC.RunLoop.begin();
     view = View.create({});
   },
 
   afterEach: function () {
     view.destroy();
     view = null;
+    SC.RunLoop.end();
   }
 });
 

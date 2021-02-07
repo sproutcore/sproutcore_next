@@ -3,10 +3,9 @@
 // ==========================================================================
 /*globals Ki */
 
-var statechart = null;
-import { SC } from '/core/core.js';
-import { Async, Statechart, State, EmptyState } from '/statechart/statechart.js';
+import { Async, Statechart, State, EmptyState } from '../../../../../statechart/statechart.js';
 
+var statechart = null;
 // ..........................................................
 // CONTENT CHANGING
 // 

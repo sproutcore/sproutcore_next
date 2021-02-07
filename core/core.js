@@ -41,6 +41,8 @@ import { Locale, metricsFor, stringsFor, methodForLocale,  hashesForLocale } fro
 
 export const GLOBAL = global;
 
+console.log('COREJS, executed...');
+
 // /** @type {import('../typings/core').SC} */
 
 export const SC = {
@@ -159,6 +161,7 @@ export const SC = {
   stringsFor,
   metricsFor,
   hashesForLocale
+
 };
 
 mixin(SC, readyMixin);
@@ -172,9 +175,22 @@ const runtimeDeps = [
   objRuntimeDeps(),
 ];
 
+// if (global.jQuery) {
+//   // let apps ignore the regular onReady handling if they need to
+//   if (!getSetting('suppressOnReady')) {
+//     // global.$(document).ready(readyMixin.onReady.done.bind(readyMixin.onReady));
+//     global.jQuery(readyMixin.onReady.done.bind(readyMixin.onReady));
+//   }
+// }
+
 // there might be a more dynamic way to do this...
 Promise.all(runtimeDeps).then(r => {
   if (SC.onload && typeof SC.onload === 'function') {
     SC.onload();
   }  
+  // if (!global.jQuery) {
+  //   SC.onReady.done();
+  // }
+  // trigger SC.onReady?
+  // SC.onReady.done();
 })

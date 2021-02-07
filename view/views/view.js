@@ -13,6 +13,7 @@ import { manipulationSupport } from './view/manipulation.js';
 import { themingSupport } from './view/theming.js';
 import { touchSupport } from './view/touch.js';
 import { visibilitySupport } from './view/visibility.js';
+import { designModeSupport } from './view/design_mode.js';
 
 /**
   @class
@@ -294,7 +295,7 @@ import { visibilitySupport } from './view/visibility.js';
 export const View = CoreView.extend(
     viewEnabledSupport, animationSupport, cursorSupport, viewLayoutStyleSupport, layoutSupport, 
     accelerationSupport, keyboardSupport, manipulationSupport, touchSupport, visibilitySupport,
-    themingSupport,
+    themingSupport, designModeSupport,
     /** @scope View.prototype */{
   classNames: ['sc-view'],
 
@@ -390,7 +391,7 @@ export const View = CoreView.extend(
     // We can't predict the frame for static layout, so just return the view's
     // current frame (see original computeFrameWithParentFrame in views/view.js)
     if (this.get('useStaticLayout')) {
-      f = computeFrameWithParentFrame.apply(this, arguments);
+      f = computeFrameWithParentFrame.base.apply(this, arguments);
       f = f ? this._sc_adjustForBorder(f, layout) : null;
       f = f ? this._sc_adjustForScale(f, layout) : null;
       return f;

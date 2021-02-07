@@ -6,46 +6,49 @@
 
 /*global module, test, equals, context, ok, same, precondition */
 
-// NOTE: it is very important to make sure that the layer is not created
+// falseTE: it is very important to make sure that the layer is not created
 // until the view is actually visible in the window.
+import { SC } from '../../../core/core.js';
+import { View, Pane } from '../../../view/view.js';
 
-module("SC.View#layer");
 
-test("returns null if the view has no layer and no parent view", function() {
-  var view = SC.View.create() ;
-  equals(view.get('parentView'), null, 'precond - has no parentView');
-  equals(view.get('layer'), null, 'has no layer');
+module("View#layer");
+
+test("returns null if the view has no layer and no parent view", function (assert) {
+  var view = View.create() ;
+  assert.equal(view.get('parentView'), null, 'precond - has no parentView');
+  assert.equal(view.get('layer'), null, 'has no layer');
 });
 
-test("returns null if the view has no layer and parent view has no layer", function() {
-  var parent = SC.View.create({
-     childViews: [ SC.View.extend() ]
+test("returns null if the view has no layer and parent view has no layer", function (assert) {
+  var parent = View.create({
+     childViews: [ View.extend() ]
   });
   var view = parent.childViews[0];
 
-  equals(view.get('parentView'), parent, 'precond - has parent view');
-  equals(parent.get('layer'), null, 'parentView has no layer');
-  equals(view.get('layer'), null, ' has no layer');
+  assert.equal(view.get('parentView'), parent, 'precond - has parent view');
+  assert.equal(parent.get('layer'), null, 'parentView has no layer');
+  assert.equal(view.get('layer'), null, ' has no layer');
 });
 
-test("returns layer if you set the value", function() {
-  var view = SC.View.create();
-  equals(view.get('layer'), null, 'precond- has no layer');
+test("returns layer if you set the value", function (assert) {
+  var view = View.create();
+  assert.equal(view.get('layer'), null, 'precond- has no layer');
 
   var dom = document.createElement('div');
   view.set('layer', dom);
 
-  equals(view.get('layer'), dom, 'now has set layer');
+  assert.equal(view.get('layer'), dom, 'now has set layer');
 
   dom = null;
 });
 
 var parent, child, parentDom, childDom ;
-module("SC.View#layer - autodiscovery", {
-  setup: function() {
+module("View#layer - autodiscovery", {
+  beforeEach: function() {
 
-    parent = SC.View.create({
-       childViews: [ SC.View.extend({
+    parent = View.create({
+       childViews: [ View.extend({
          // redefine this method in order to isolate testing of layer prop.
          // simple version just returns firstChild of parentLayer.
          findLayerInParentLayer: function(parentLayer) {
@@ -64,36 +67,36 @@ module("SC.View#layer - autodiscovery", {
     parent.set('layer', parentDom);
   },
 
-  teardown: function() {
+  afterEach: function() {
     parent = child = parentDom = childDom = null ;
   }
 });
 
-test("discovers layer if has no layer but parent view does have layer", function() {
-  equals(parent.get('layer'), parentDom, 'precond - parent has layer');
-  ok(!!parentDom.firstChild, 'precond - parentDom has first child');
+test("discovers layer if has no layer but parent view does have layer", function (assert) {
+  assert.equal(parent.get('layer'), parentDom, 'precond - parent has layer');
+  assert.ok(!!parentDom.firstChild, 'precond - parentDom has first child');
 
-  equals(child.get('layer'), childDom, 'view discovered child');
+  assert.equal(child.get('layer'), childDom, 'view discovered child');
 });
 
-test("once its discovers layer, returns the same element, even if you remove it from the parent view", function() {
-  equals(child.get('layer'), childDom, 'precond - view discovered child');
+test("once its discovers layer, returns the same element, even if you remove it from the parent view", function (assert) {
+  assert.equal(child.get('layer'), childDom, 'precond - view discovered child');
   parentDom.removeChild(childDom) ;
 
-  equals(child.get('layer'), childDom, 'view kept layer cached (i.e. did not do a discovery again)');
+  assert.equal(child.get('layer'), childDom, 'view kept layer cached (i.e. did not do a discovery again)');
 });
 
-module("SC.View#layer - destroying");
+module("View#layer - destroying");
 
-test("returns null again if it has layer and layer is destroyed");
+// test("returns null again if it has layer and layer is destroyed");
 
-test("returns null again if parent view's layer is destroyed");
+// test("returns null again if parent view's layer is destroyed");
 
 var pane, view ;
-module("SC.View#$", {
-  setup: function() {
-    pane = SC.Pane.design()
-      .childView(SC.View.design({
+module("View#$", {
+  beforeEach: function() {
+    pane = Pane.design()
+      .childView(View.design({
         render: function(context, firstTime) {
           context.push('<span></span>');
         }
@@ -106,57 +109,57 @@ module("SC.View#$", {
     SC.RunLoop.end();
   },
 
-  teardown: function() {
+  afterEach: function() {
     SC.RunLoop.begin();
     pane.remove();
     SC.RunLoop.end();
   }
 });
 
-test("returns an empty CQ object if no layer", function() {
-  var v = SC.View.create();
-  ok(!v.get('layer'), 'precond - should have no layer');
-  equals(v.$().length, 0, 'should return empty CQ object');
-  equals(v.$('span').length, 0, 'should return empty CQ object even if filter passed');
+test("returns an empty CQ object if no layer", function (assert) {
+  var v = View.create();
+  assert.ok(!v.get('layer'), 'precond - should have no layer');
+  assert.equal(v.$().length, 0, 'should return empty CQ object');
+  assert.equal(v.$('span').length, 0, 'should return empty CQ object even if filter passed');
 });
 
-test("returns CQ object selecting layer if provided", function() {
-  ok(view.get('layer'), 'precond - should have layer');
+test("returns CQ object selecting layer if provided", function (assert) {
+  assert.ok(view.get('layer'), 'precond - should have layer');
 
   var cq = view.$();
-  equals(cq.length, 1, 'view.$() should have one element');
-  equals(cq.get(0), view.get('layer'), 'element should be layer');
+  assert.equal(cq.length, 1, 'view.$() should have one element');
+  assert.equal(cq.get(0), view.get('layer'), 'element should be layer');
 });
 
-test("returns CQ object selecting element inside layer if provided", function() {
-  ok(view.get('layer'), 'precond - should have layer');
+test("returns CQ object selecting element inside layer if provided", function (assert) {
+  assert.ok(view.get('layer'), 'precond - should have layer');
 
   var cq = view.$('span');
-  equals(cq.length, 1, 'view.$() should have one element');
-  equals(cq.get(0).parentNode, view.get('layer'), 'element should be in layer');
+  assert.equal(cq.length, 1, 'view.$() should have one element');
+  assert.equal(cq.get(0).parentNode, view.get('layer'), 'element should be in layer');
 });
 
-test("returns empty CQ object if filter passed that does not match item in parent", function() {
-  ok(view.get('layer'), 'precond - should have layer');
+test("returns empty CQ object if filter passed that does not match item in parent", function (assert) {
+  assert.ok(view.get('layer'), 'precond - should have layer');
 
   var cq = view.$('body'); // would normally work if not scoped to view
-  equals(cq.length, 0, 'view.$(body) should have no elements');
+  assert.equal(cq.length, 0, 'view.$(body) should have no elements');
 });
 
 var parentView;
 
 module("Notifies that layer has changed whenever re-render", {
 
-  setup: function () {
-    parentView = SC.View.create({
-      childViews: ['a', 'b', SC.View],
+  beforeEach: function () {
+    parentView = View.create({
+      childViews: ['a', 'b', View],
 
       containerLayer: function () {
         return this.$('._wrapper')[0];
       }.property('layer').cacheable(),
 
-      a: SC.View,
-      b: SC.View,
+      a: View,
+      b: View,
 
       render: function (context) {
         context = context.begin().addClass('_wrapper');
@@ -166,7 +169,7 @@ module("Notifies that layer has changed whenever re-render", {
     });
   },
 
-  teardown: function () {
+  afterEach: function () {
     parentView.destroy();
     parentView = null;
   }
@@ -178,7 +181,7 @@ module("Notifies that layer has changed whenever re-render", {
   element is lost, the containerLayer property will be invalid.  Instead, whenever the view updates,
   we have to indicate that the 'layer' property has changed.
   */
-test("containerLayer should be able to be dependent on layer so that it invalidates when updated", function () {
+test("containerLayer should be able to be dependent on layer so that it invalidates when updated", function (assert) {
   var containerLayer;
 
   // Render the parent view and attach.
@@ -193,5 +196,5 @@ test("containerLayer should be able to be dependent on layer so that it invalida
     parentView.displayDidChange();
   });
 
-  ok(containerLayer !== parentView.get('containerLayer'), "The container layer should not be the same anymore.");
+  assert.ok(containerLayer !== parentView.get('containerLayer'), "The container layer should not be the same anymore.");
 });

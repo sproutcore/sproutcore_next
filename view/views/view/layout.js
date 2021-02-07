@@ -39,6 +39,8 @@ export const LAYOUT_AUTO = 'auto';
 export const ROTATION_VALUE_REGEX = /^\-?\d+(\.\d*)?(rad|deg)$/;
 export const SCALE_VALUE_REGEX = /^\d+(,\d+){0,2}$/;
 
+export const defaultLayout = { top: 0, left: 0, bottom: 0, right: 0 };
+
 export const layoutSupport = /** @scope View.prototype */ {
 
   // ------------------------------------------------------------------------
@@ -78,14 +80,16 @@ export const layoutSupport = /** @scope View.prototype */ {
         borderBottom = this._sc_explicitValueFor(layout.borderBottom, defaultValue),
         borderLeft = this._sc_explicitValueFor(layout.borderLeft, defaultValue);
 
+      // the idea that all properties are already available is to prevent unnecessary shape-shifting
+      // This doesn't play nice with the tests though yet.
       ret = {
-          scale: null,
+          // scale: undefined,
           x: frame.x,
           y: frame.y,
           width: frame.width,
           height: frame.height,
-          transformOriginX: null,
-          transformOriginY: null
+          // transformOriginX: undefined,
+          // transformOriginY: undefined
         };
 
       var scale = frame.scale;
@@ -365,7 +369,7 @@ export const layoutSupport = /** @scope View.prototype */ {
     @default { top: 0, left: 0, bottom: 0, right: 0 }
     @test in layoutStyle
   */
-  layout: { top: 0, left: 0, bottom: 0, right: 0 },
+  layout: defaultLayout,
 
   /**
     The view responsible for laying out this view.  The default version

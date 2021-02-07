@@ -10,6 +10,10 @@
 
 /*globals module, test, ok, same, equals */
 
+import { SC } from '../../../core/core.js';
+import { View, rectsEqual, Pane } from '../../../view/view.js';
+import { platform } from '../../../responder/responder.js';
+import { browser } from '../../../event/event.js';
 
 /* These unit tests verify:  layout(), frame(), styleLayout() and clippingFrame(). */
 (function () {
@@ -21,7 +25,7 @@
     'borderLeftWidth', 'borderRightWidth'];
 
   // On supported platforms, test CSS transforms too.
-  if (SC.platform.supportsCSSTransforms) {
+  if (platform.supportsCSSTransforms) {
     layoutKeys.push('transform');
     layoutKeys.push('transformOrigin');
   }
@@ -34,11 +38,11 @@
     You can pass frame rects with some properties missing and they will be
     filled in for you just so you don't have to write so much code.
 
-    @param {Hash} layout layout hash to test
-    @param {Hash} no_f expected frame for view with no parent
-    @param {Hash} no_s expected layoutStyle for view with no parent
-    @param {Hash} with_f expected frame for view with parent
-    @param {Hash} with_s expected layoutStyle for view with parent
+    @param {Object} layout layout hash to test
+    @param {Object} no_f expected frame for view with no parent
+    @param {Object} no_s expected layoutStyle for view with no parent
+    @param {Object} with_f expected frame for view with parent
+    @param {Object} with_s expected layoutStyle for view with parent
     @param {Boolean} isFixedShouldBe expected value for view.get('isFixedLayout')
     @returns {void}
   */
@@ -65,19 +69,19 @@
     // test
     layoutKeys.forEach(function (key) {
       var testKey;
-      if (key === 'transform') testKey = SC.browser.experimentalStyleNameFor('transform');
-      else if (key === 'transformOrigin') testKey = SC.browser.experimentalStyleNameFor('transformOrigin');
+      if (key === 'transform') testKey = browser.experimentalStyleNameFor('transform');
+      else if (key === 'transformOrigin') testKey = browser.experimentalStyleNameFor('transformOrigin');
       else testKey = key;
-      equals(layoutStyle[testKey], no_s[key], "STYLE NO PARENT %@".fmt(key));
+      assert.equal(layoutStyle[testKey], no_s[key], "STYLE false PARENT %@".fmt(key));
     });
 
     if (no_f !== undefined) {
       if (frame && no_f) {
         frameKeys.forEach(function (key) {
-          equals(frame[key], no_f[key], "FRAME NO PARENT %@".fmt(key));
+          assert.equal(frame[key], no_f[key], "FRAME false PARENT %@".fmt(key));
         });
       } else {
-        equals(frame, no_f, "FRAME NO PARENT");
+        assert.equal(frame, no_f, "FRAME false PARENT");
       }
     }
 
@@ -93,25 +97,25 @@
     // test again
     layoutKeys.forEach(function (key) {
       var testKey;
-      if (key === 'transform') testKey = SC.browser.experimentalStyleNameFor('transform');
-      else if (key === 'transformOrigin') testKey = SC.browser.experimentalStyleNameFor('transformOrigin');
+      if (key === 'transform') testKey = browser.experimentalStyleNameFor('transform');
+      else if (key === 'transformOrigin') testKey = browser.experimentalStyleNameFor('transformOrigin');
       else testKey = key;
-      equals(layoutStyle[testKey], with_s[key], "STYLE W/ PARENT %@".fmt(key));
+      assert.equal(layoutStyle[testKey], with_s[key], "STYLE W/ PARENT %@".fmt(key));
     });
 
     if (with_f !== undefined) {
       if (frame && with_f) {
         frameKeys.forEach(function (key) {
-          equals(frame[key], with_f[key], "FRAME W/ PARENT %@".fmt(key));
+          assert.equal(frame[key], with_f[key], "FRAME W/ PARENT %@".fmt(key));
         });
       } else {
-        equals(frame, with_f, "FRAME W/ PARENT");
+        assert.equal(frame, with_f, "FRAME W/ PARENT");
       }
     }
 
     // check if isFixedLayout is correct
 
-    equals(child.get('isFixedLayout'), isFixedShouldBe, "isFixedLayout");
+    assert.equal(child.get('isFixedLayout'), isFixedShouldBe, "isFixedLayout");
   }
 
   /**
@@ -119,37 +123,37 @@
     tests.
   */
   var commonSetup = {
-    setup: function () {
+    beforeEach: function () {
 
       // create basic parent view
-      parent = SC.View.create({
+      parent = View.create({
         layout: { top: 0, left: 0, width: 200, height: 200 }
       });
 
       // create child view to test against.
-      child = SC.View.create();
+      child = View.create();
     },
 
-    teardown: function () {
+    afterEach: function () {
       child.destroy();
       parent.destroy();
       parent = child = null;
     }
   };
 
-  module("NOTIFICATIONS", commonSetup);
+  module("falseTIFICATIONS", commonSetup);
 
   test("Setting layout will notify frame observers", function () {
-    var didNotify = NO, didNotifyStyle = NO;
-    child.addObserver('frame', this, function () { didNotify = YES; });
-    child.addObserver('layoutStyle', this, function () { didNotifyStyle = YES; });
+    var didNotify = false, didNotifyStyle = false;
+    child.addObserver('frame', this, function () { didNotify = true; });
+    child.addObserver('layoutStyle', this, function () { didNotifyStyle = true; });
 
     SC.run(function () {
       child.set('layout', { left: 0, top: 10, bottom: 20, right: 50 });
     });
 
-    ok(didNotify, "didNotify");
-    ok(didNotifyStyle, 'didNotifyStyle');
+    assert.ok(didNotify, "didNotify");
+    assert.ok(didNotifyStyle, 'didNotifyStyle');
   });
 
   // ..........................................................
@@ -167,7 +171,7 @@
     var no_f = { x: 10, y: 10, width: 50, height: 50 };
     var with_f = { x: 10, y: 10, width: 50, height: 50 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, YES);
+    performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
   test("layout {top, left, bottom, right}", function () {
@@ -177,7 +181,7 @@
     var with_f = { x: 10, y: 10, width: 180, height: 180 };
     var s = { top: 10, left: 10, bottom: 10, right: 10 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {bottom, right, width, height}", function () {
@@ -187,7 +191,7 @@
     var with_f = { x: 140, y: 140, width: 50, height: 50 };
     var s = { bottom: 10, right: 10, width: 50, height: 50 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {centerX, centerY, width, height}", function () {
@@ -197,15 +201,15 @@
     var with_f = { x: 80, y: 80, width: 60, height: 60 };
     var s = { marginLeft: -20, marginTop: -20, width: 60, height: 60, top: "50%", left: "50%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, width: auto, height: auto}", function () {
     // Reset.
     child.destroy();
 
-    child = SC.View.create({
-      useStaticLayout: YES,
+    child = View.create({
+      useStaticLayout: true,
       render: function (context) {
         // needed for auto
         context.push('<div style="padding: 10px"></div>');
@@ -223,21 +227,21 @@
     var with_f; // { x: 0, y: 0, width: 200, height: 200 };
     var s = { top: 0, left: 0, width: 'auto', height: 'auto' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
     layer.parentNode.removeChild(layer);
     child.destroy();
   });
 
   // See comment in above test
-  test("layout {top, left, width: auto, height: auto} - frame");
+  // test("layout {top, left, width: auto, height: auto} - frame");
 
 
 
   // ..........................................................
   // TEST FRAME/STYLEFRAME WITH BASIC LAYOUT VARIATIONS
   //
-  // NOTE:  Each test evaluates the frame before and after adding it to the
+  // falseTE:  Each test evaluates the frame before and after adding it to the
   // parent.
 
   module('BASIC LAYOUT VARIATIONS PERCENTAGE', commonSetup);
@@ -249,7 +253,7 @@
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
     var with_f = { x: 20, y: 20, width: 100, height: 100 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, bottom, right}", function () {
@@ -259,7 +263,7 @@
     var with_f =  { x: 20, y: 20, width: 160, height: 160 };
     var s = { top: '10%', left: '10%', bottom: '10%', right: '10%' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {bottom, right, width, height}", function () {
@@ -269,7 +273,7 @@
     var with_f = { x: 80, y: 80, width: 100, height: 100 };
     var s = { bottom: '10%', right: '10%', width: '50%', height: '50%' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {centerX, centerY, width, height}", function () {
@@ -279,7 +283,7 @@
     var with_f = { x: 60, y: 60, width: 120, height: 120 };
     var s = { marginLeft: '-20%', marginTop: '-20%', width: '60%', height: '60%', top: "50%", left: "50%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   // Previously, you couldn't set a % width or height with a centerX/centerY of 0.
@@ -294,7 +298,7 @@
     var with_f = { x: (200 - size) * 0.5, y: (200 - size) * 0.5, width: size, height: size };
     var s = { marginLeft: '-30%', marginTop: '-30%', width: '60%', height: '60%', top: "50%", left: "50%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   // Edge case: although rare, centered views should be able to have metrics of zero.
@@ -307,15 +311,15 @@
     var with_f = { x: (200 - size) * 0.5, y: (200 - size) * 0.5, width: size, height: size };
     var s = { marginLeft: '0px', marginTop: '0px', width: '0px', height: '0px', top: '50%', left: '50%' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, width: auto, height: auto}", function () {
     // Reset.
     child.destroy();
 
-    child = SC.View.create({
-      useStaticLayout: YES,
+    child = View.create({
+      useStaticLayout: true,
       render: function (context) {
         // needed for auto
         context.push('<div style="padding: 10px"></div>');
@@ -333,14 +337,14 @@
     var with_f; // { x: 20, y: 20, width: 180, height: 180 };
     var s = { top: '10%', left: '10%', width: 'auto', height: 'auto' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
     layer.parentNode.removeChild(layer);
     child.destroy();
   });
 
   // See commented out lines in test above
-  test("layout {top, left, width: auto, height: auto} - frame");
+  // test("layout {top, left, width: auto, height: auto} - frame");
 
 
 
@@ -348,7 +352,7 @@
   // ..........................................................
   // TEST FRAME/STYLEFRAME WITH BASIC LAYOUT VARIATIONS
   //
-  // NOTE:  Each test evaluates the frame before and after adding it to the
+  // falseTE:  Each test evaluates the frame before and after adding it to the
   // parent.
 
   module('BASIC LAYOUT VARIATIONS WITH SCALE AND ORIGIN', commonSetup);
@@ -363,7 +367,7 @@
     var no_f = { x: -15, y: -15, width: 100, height: 100, scale: 2 };
     var with_f = { x: -15, y: -15, width: 100, height: 100, scale: 2 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, YES);
+    performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
   test("layout {top, left, width, height, scale down}", function () {
@@ -373,7 +377,7 @@
     var no_f = { x: 20, y: 20, width: 30, height: 30, scale: 0.6 };
     var with_f = { x: 20, y: 20, width: 30, height: 30, scale: 0.6 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, YES);
+    performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
   test("layout {top, left, width, height, scale up, origin top left}", function () {
@@ -383,7 +387,7 @@
     var no_f = { x: 10, y: 10, width: 100, height: 100, scale: 2, transformOriginX: 0, transformOriginY: 0 };
     var with_f = { x: 10, y: 10, width: 100, height: 100, scale: 2, transformOriginX: 0, transformOriginY: 0 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, YES);
+    performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
   test("layout {top, left, width, height, scale down, origin top left}", function () {
@@ -393,7 +397,7 @@
     var no_f = { x: 10, y: 10, width: 30, height: 30, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
     var with_f = { x: 10, y: 10, width: 30, height: 30, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, YES);
+    performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
   test("layout {top, left, width, height, scale up, origin bottom right}", function () {
@@ -403,7 +407,7 @@
     var no_f = { x: -40, y: -40, width: 100, height: 100, scale: 2, transformOriginX: 1, transformOriginY: 1 };
     var with_f = { x: -40, y: -40, width: 100, height: 100, scale: 2, transformOriginX: 1, transformOriginY: 1 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, YES);
+    performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
   test("layout {top, left, width, height, scale down, origin bottom right}", function () {
@@ -413,7 +417,7 @@
     var no_f = { x: 30, y: 30, width: 30, height: 30, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
     var with_f = { x: 30, y: 30, width: 30, height: 30, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, YES);
+    performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
   //
@@ -426,7 +430,7 @@
     var with_f = { x: -80, y: -80, width: 360, height: 360, scale: 2 };
     var s = { top: 10, left: 10, bottom: 10, right: 10, transform: "scale(2)" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, bottom, right, scale down}", function () {
@@ -436,7 +440,7 @@
     var with_f = { x: 55, y: 55, width: 90, height: 90, scale: 0.5 };
     var s = { top: 10, left: 10, bottom: 10, right: 10, transform: "scale(0.5)" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, bottom, right, scale up, origin top left}", function () {
@@ -446,7 +450,7 @@
     var with_f = { x: 10, y: 10, width: 360, height: 360, scale: 2, transformOriginX: 0, transformOriginY: 0 };
     var s = { top: 10, left: 10, bottom: 10, right: 10, transform: "scale(2)", transformOrigin: "0% 0%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, bottom, right, scale down, origin top left}", function () {
@@ -456,7 +460,7 @@
     var with_f = { x: 10, y: 10, width: 90, height: 90, scale: 0.5, transformOriginX: 0, transformOriginY: 0 };
     var s = { top: 10, left: 10, bottom: 10, right: 10, transform: "scale(0.5)", transformOrigin: "0% 0%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, bottom, right, scale up, origin bottom right}", function () {
@@ -466,7 +470,7 @@
     var with_f = { x: -170, y: -170, width: 360, height: 360, scale: 2, transformOriginX: 1, transformOriginY: 1 };
     var s = { top: 10, left: 10, bottom: 10, right: 10, transform: "scale(2)", transformOrigin: "100% 100%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, bottom, right, scale down, origin bottom right}", function () {
@@ -476,7 +480,7 @@
     var with_f = { x: 100, y: 100, width: 90, height: 90, scale: 0.5, transformOriginX: 1, transformOriginY: 1 };
     var s = { top: 10, left: 10, bottom: 10, right: 10, transform: "scale(0.5)", transformOrigin: "100% 100%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   //
@@ -489,7 +493,7 @@
     var with_f = { x: 115, y: 115, width: 100, height: 100, scale: 2 };
     var s = { bottom: 10, right: 10, width: 50, height: 50, transform: "scale(2)" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {bottom, right, width, height, scaled down}", function () {
@@ -499,7 +503,7 @@
     var with_f = { x: 150, y: 150, width: 30, height: 30, scale: 0.6 };
     var s = { bottom: 10, right: 10, width: 50, height: 50, transform: "scale(0.6)" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {bottom, right, width, height, scaled up, origin top left}", function () {
@@ -509,7 +513,7 @@
     var with_f = { x: 140, y: 140, width: 100, height: 100, scale: 2, transformOriginX: 0, transformOriginY: 0 };
     var s = { bottom: 10, right: 10, width: 50, height: 50, transform: "scale(2)", transformOrigin: "0% 0%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {bottom, right, width, height, scaled down, origin top left}", function () {
@@ -519,7 +523,7 @@
     var with_f = { x: 140, y: 140, width: 30, height: 30, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
     var s = { bottom: 10, right: 10, width: 50, height: 50, transform: "scale(0.6)", transformOrigin: "0% 0%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {bottom, right, width, height, scaled up, origin bottom right}", function () {
@@ -529,7 +533,7 @@
     var with_f = { x: 90, y: 90, width: 100, height: 100, scale: 2, transformOriginX: 1, transformOriginY: 1 };
     var s = { bottom: 10, right: 10, width: 50, height: 50, transform: "scale(2)", transformOrigin: "100% 100%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {bottom, right, width, height, scaled down, origin bottom right}", function () {
@@ -539,7 +543,7 @@
     var with_f = { x: 160, y: 160, width: 30, height: 30, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
     var s = { bottom: 10, right: 10, width: 50, height: 50, transform: "scale(0.6)", transformOrigin: "100% 100%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   //
@@ -552,7 +556,7 @@
     var with_f = { x: 50, y: 50, width: 120, height: 120, scale: 2 };
     var s = { marginLeft: -20, marginTop: -20, width: 60, height: 60, top: "50%", left: "50%", transform: "scale(2)" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {centerX, centerY, width, height, scale down}", function () {
@@ -562,7 +566,7 @@
     var with_f = { x: 92, y: 92, width: 36, height: 36, scale: 0.6 };
     var s = { marginLeft: -20, marginTop: -20, width: 60, height: 60, top: "50%", left: "50%", transform: "scale(0.6)" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {centerX, centerY, width, height, scale up, origin top left}", function () {
@@ -572,7 +576,7 @@
     var with_f = { x: 80, y: 80, width: 120, height: 120, scale: 2, transformOriginX: 0, transformOriginY: 0 };
     var s = { marginLeft: -20, marginTop: -20, width: 60, height: 60, top: "50%", left: "50%", transform: "scale(2)", transformOrigin: "0% 0%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {centerX, centerY, width, height, scale down, origin top left}", function () {
@@ -582,7 +586,7 @@
     var with_f = { x: 80, y: 80, width: 36, height: 36, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
     var s = { marginLeft: -20, marginTop: -20, width: 60, height: 60, top: "50%", left: "50%", transform: "scale(0.6)", transformOrigin: "0% 0%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {centerX, centerY, width, height, scale up, origin bottom right}", function () {
@@ -592,7 +596,7 @@
     var with_f = { x: 20, y: 20, width: 120, height: 120, scale: 2, transformOriginX: 1, transformOriginY: 1 };
     var s = { marginLeft: -20, marginTop: -20, width: 60, height: 60, top: "50%", left: "50%", transform: "scale(2)", transformOrigin: "100% 100%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {centerX, centerY, width, height, scale down, origin bottom right}", function () {
@@ -602,15 +606,15 @@
     var with_f = { x: 104, y: 104, width: 36, height: 36, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
     var s = { marginLeft: -20, marginTop: -20, width: 60, height: 60, top: "50%", left: "50%", transform: "scale(0.6)", transformOrigin: "100% 100%" };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, width: auto, height: auto, scale}", function () {
     // Reset.
     child.destroy();
 
-    child = SC.View.create({
-      useStaticLayout: YES,
+    child = View.create({
+      useStaticLayout: true,
       render: function (context) {
         // needed for auto
         context.push('<div style="padding: 10px"></div>');
@@ -628,38 +632,38 @@
     var with_f; // { x: 0, y: 0, width: 200, height: 200 };
     var s = { top: 0, left: 0, width: 'auto', height: 'auto', transform: 'scale(2)' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
     layer.parentNode.removeChild(layer);
     child.destroy();
   });
 
   // See comment in above test
-  test("layout {top, left, width: auto, height: auto} - frame");
+  // test("layout {top, left, width: auto, height: auto} - frame");
 
 
   // ..........................................................
   // TEST CSS TRANSFORM LAYOUT VARIATIONS
   //
-  // NOTE:  Each test evaluates the frame before and after adding it to the
+  // falseTE:  Each test evaluates the frame before and after adding it to the
   // parent.
 
   module('ROTATE LAYOUT VARIATIONS', {
-    setup: function () {
-      commonSetup.setup();
+    beforeEach: function () {
+      commonSetup.beforeEach();
       child.createLayer();
       document.body.appendChild(child.get('layer'));
     },
 
-    teardown: function () {
+    afterEach: function () {
       document.body.removeChild(child.get('layer'));
       child.destroyLayer();
-      commonSetup.teardown();
+      commonSetup.afterEach();
     }
   });
 
   function transformFor(view) {
-    return view.get('layer').style[SC.browser.experimentalStyleNameFor('transform')];
+    return view.get('layer').style[browser.experimentalStyleNameFor('transform')];
   }
 
   test("layout {rotateX}", function () {
@@ -667,14 +671,14 @@
       child.adjust('rotateX', 45).updateLayout(true);
     });
 
-    equals(transformFor(child), 'rotateX(45deg)', 'transform attribute should be "rotateX(45deg)"');
+    assert.equal(transformFor(child), 'rotateX(45deg)', 'transform attribute should be "rotateX(45deg)"');
   });
 
   test("layout {rotateY}", function () {
     SC.run(function () {
       child.adjust('rotateY', 45).updateLayout(true);
     });
-    equals(transformFor(child), 'rotateY(45deg)', 'transform attribute should be "rotateY(45deg)"');
+    assert.equal(transformFor(child), 'rotateY(45deg)', 'transform attribute should be "rotateY(45deg)"');
   });
 
   test("layout {rotateZ}", function () {
@@ -682,7 +686,7 @@
       child.adjust('rotateZ', 45).updateLayout(true);
     });
 
-    equals(transformFor(child), 'rotateZ(45deg)', 'transform attribute should be "rotateZ(45deg)"');
+    assert.equal(transformFor(child), 'rotateZ(45deg)', 'transform attribute should be "rotateZ(45deg)"');
   });
 
   test("layout {rotate}", function () {
@@ -690,7 +694,7 @@
       child.adjust('rotate', 45).updateLayout(true);
     });
 
-    equals(transformFor(child), 'rotateZ(45deg)', 'transform attribute should be "rotateZ(45deg)"');
+    assert.equal(transformFor(child), 'rotateZ(45deg)', 'transform attribute should be "rotateZ(45deg)"');
   });
 
   test("layout {rotateX} with units", function () {
@@ -698,7 +702,7 @@
       child.adjust('rotateX', '1rad').updateLayout(true);
     });
 
-    equals(transformFor(child), 'rotateX(1rad)', 'transform attribute should be "rotateX(1rad)"');
+    assert.equal(transformFor(child), 'rotateX(1rad)', 'transform attribute should be "rotateX(1rad)"');
   });
 
   // Scale is now a first-class layout property re: frame. The following are simple integration tests with
@@ -708,7 +712,7 @@
       child.adjust('scale', 2).updateLayout(true);
     });
 
-    equals(transformFor(child), 'scale(2)', 'transform attribute should be "scale(2)"');
+    assert.equal(transformFor(child), 'scale(2)', 'transform attribute should be "scale(2)"');
   });
 
   test("layout {scale} with multiple", function () {
@@ -716,7 +720,7 @@
       child.adjust('scale', [2, 3]).updateLayout(true);
     });
 
-    equals(transformFor(child), 'scale(2, 3)', 'transform attribute should be "scale(2, 3)"');
+    assert.equal(transformFor(child), 'scale(2, 3)', 'transform attribute should be "scale(2, 3)"');
   });
 
   test("layout {rotateX, scale}", function () {
@@ -724,7 +728,7 @@
       child.adjust({ rotateX: 45, scale: 2 }).updateLayout(true);
     });
 
-    equals(transformFor(child), 'rotateX(45deg) scale(2)', 'transform attribute should be "rotateX(45deg) scale(2)"');
+    assert.equal(transformFor(child), 'rotateX(45deg) scale(2)', 'transform attribute should be "rotateX(45deg) scale(2)"');
   });
 
   test("layout {rotateX} update", function () {
@@ -733,36 +737,36 @@
       child.adjust('rotateX', 90).updateLayout(true);
     });
 
-    equals(transformFor(child), 'rotateX(90deg)', 'transform attribute should be "rotateX(90deg)"');
+    assert.equal(transformFor(child), 'rotateX(90deg)', 'transform attribute should be "rotateX(90deg)"');
   });
 
 
-  if (SC.platform.supportsCSSTransforms) {
+  if (platform.supportsCSSTransforms) {
 
     // ..........................................................
     // TEST FRAME/STYLEFRAME WITH ACCELERATE LAYOUT VARIATIONS
     //
-    // NOTE:  Each test evaluates the frame before and after adding it to the
+    // falseTE:  Each test evaluates the frame before and after adding it to the
     // parent.
 
     module('ACCELERATED LAYOUT VARIATIONS', {
-      setup: function () {
-        commonSetup.setup();
-        child.set('wantsAcceleratedLayer', YES);
+      beforeEach: function () {
+        commonSetup.beforeEach();
+        child.set('wantsAcceleratedLayer', true);
       },
 
-      teardown: commonSetup.teardown
+      afterEach: commonSetup.afterEach
     });
 
     test("layout {top, left, width, height}", function () {
       var layout = { top: 10, left: 10, width: 50, height: 50 };
       var expectedTransform = 'translateX(10px) translateY(10px)';
-      if (SC.platform.supportsCSS3DTransforms) expectedTransform += ' translateZ(0px)';
+      if (platform.supportsCSS3DTransforms) expectedTransform += ' translateZ(0px)';
       var s = { top: 0, left: 0, width: 50, height: 50, transform: expectedTransform };
       var no_f = { x: 10, y: 10, width: 50, height: 50 };
       var with_f = { x: 10, y: 10, width: 50, height: 50 };
 
-      performLayoutTest(layout, no_f, s, with_f, s, YES);
+      performLayoutTest(layout, no_f, s, with_f, s, true);
     });
 
     test("layout {top, left, bottom, right}", function () {
@@ -772,16 +776,16 @@
       var with_f = { x: 10, y: 10, width: 180, height: 180 };
       var s = { top: 10, left: 10, bottom: 10, right: 10, transform: null };
 
-      performLayoutTest(layout, no_f, s, with_f, s, NO);
+      performLayoutTest(layout, no_f, s, with_f, s, false);
     });
 
     test("layout {top, left, width: auto, height: auto}", function () {
       // Reset.
       child.destroy();
 
-      child = SC.View.create({
-        wantsAcceleratedLayer: YES,
-        useStaticLayout: YES,
+      child = View.create({
+        wantsAcceleratedLayer: true,
+        useStaticLayout: true,
         render: function (context) {
           // needed for auto
           context.push('<div style="padding: 10px"></div>');
@@ -799,7 +803,7 @@
       var with_f; // { x: 0, y: 0, width: 200, height: 200 };
       var s = { top: 0, left: 0, width: 'auto', height: 'auto', transform: null };
 
-      performLayoutTest(layout, no_f, s, with_f, s, NO);
+      performLayoutTest(layout, no_f, s, with_f, s, false);
 
       layer.parentNode.removeChild(layer);
 
@@ -807,7 +811,7 @@
     });
 
     // See commented lines in test above
-    test("layout {top, left, width: auto, height: auto} - frame");
+    // test("layout {top, left, width: auto, height: auto} - frame");
 
     test("layout w/ percentage {top, left, width, height}", function () {
 
@@ -816,7 +820,7 @@
       var no_f = { x: 0, y: 0, width: 0, height: 0 };
       var with_f = { x: 20, y: 20, width: 100, height: 100 };
 
-      performLayoutTest(layout, no_f, s, with_f, s, NO);
+      performLayoutTest(layout, no_f, s, with_f, s, false);
     });
 
   }
@@ -826,7 +830,7 @@
   // ..........................................................
   // TEST FRAME/STYLEFRAME WITH INVALID LAYOUT VARIATIONS
   //
-  // NOTE:  Each test evaluates the frame before and after adding it to the
+  // falseTE:  Each test evaluates the frame before and after adding it to the
   // parent.
 
   module('INVALID LAYOUT VARIATIONS', commonSetup);
@@ -838,7 +842,7 @@
     var with_f = { x: 20, y: 20, width: 180, height: 180 };
     var s = { bottom: 0, right: 0, top: '10%', left: '10%' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {height, width} - assume top/left=0", function () {
@@ -848,7 +852,7 @@
     var with_f = { x: 0, y: 0, width: 120, height: 120 };
     var s = { width: '60%', height: '60%', top: 0, left: 0 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
   });
 
@@ -859,7 +863,7 @@
     var with_f = { x: 0, y: 0, width: 180, height: 180 };
     var s = { bottom: '10%', right: '10%', top: 0, left: 0 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
   });
 
@@ -870,7 +874,7 @@
     var with_f = { x: 0, y: 0, width: 10, height: 10 };
     var s = { bottom: '10%', right: '10%', top: null, left: null, maxWidth: 10, maxHeight: 10 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
   });
 
@@ -880,7 +884,7 @@
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
     var with_f = { x: 120, y: 120, width: 0, height: 0 };
     var s = { width: 0, height: 0, top: "50%", left: "50%", marginTop: "50%", marginLeft: "50%" };
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
   });
 
@@ -891,7 +895,7 @@
     var with_f = { x: 20, y: 20, width: 120, height: 120 };
     var s = { width: '60%', height: '60%', top: '10%', left: '10%' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
   });
 
@@ -902,7 +906,7 @@
     var with_f = { x: 60, y: 60, width: 120, height: 120 };
     var s = { width: '60%', height: '60%', bottom: '10%', right: '10%' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
   });
 
@@ -913,7 +917,7 @@
     var with_f = { x: 20, y: 20, width: 120, height: 120 };
     var s = { width: '60%', height: '60%', top: '10%', left: '10%' };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
   });
 
@@ -931,7 +935,7 @@
       error = e;
     }
 
-    ok(error, 'Layout style functions should throw an ' +
+    assert.ok(error, 'Layout style functions should throw an ' +
                                            'error if centerx/y and width/height are set at the same time ' + error);
   });
 
@@ -949,7 +953,7 @@
     var no_f = { x: 12, y: 12, width: 46, height: 46 };
     var with_f = { x: 12, y: 12, width: 46, height: 46 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, YES);
+    performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
   test("layout {top, left, bottom, right, border}", function () {
@@ -959,7 +963,7 @@
     var s = { top: 10, left: 10, bottom: 10, right: 10,
                borderTopWidth: 2, borderRightWidth: 2, borderBottomWidth: 2, borderLeftWidth: 2 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, bottom, right, borderTop, borderLeft, borderRight, borderBottom}", function () {
@@ -969,7 +973,7 @@
     var s = { top: 10, left: 10, bottom: 10, right: 10,
                borderTopWidth: 1, borderRightWidth: 2, borderBottomWidth: 3, borderLeftWidth: 4 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, bottom, right, border, borderTop, borderLeft}", function () {
@@ -979,7 +983,7 @@
     var s = { top: 10, left: 10, bottom: 10, right: 10,
                borderTopWidth: 1, borderRightWidth: 2, borderBottomWidth: 5, borderLeftWidth: 5 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {bottom, right, width, height, border}", function () {
@@ -990,7 +994,7 @@
     var s = { bottom: 10, right: 10, width: 46, height: 46,
               borderTopWidth: 2, borderRightWidth: 2, borderBottomWidth: 2, borderLeftWidth: 2 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {centerX, centerY, width, height, border}", function () {
@@ -1001,15 +1005,15 @@
     var s = { marginLeft: -20, marginTop: -20, width: 56, height: 56, top: "50%", left: "50%",
               borderTopWidth: 2, borderRightWidth: 2, borderBottomWidth: 2, borderLeftWidth: 2 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
   test("layout {top, left, width: auto, height: auto}", function () {
     // Reset.
     child.destroy();
 
-    child = SC.View.create({
-      useStaticLayout: YES,
+    child = View.create({
+      useStaticLayout: true,
       render: function (context) {
         // needed for auto
         context.push('<div style="padding: 10px"></div>');
@@ -1027,7 +1031,7 @@
     var s = { top: 0, left: 0, width: 'auto', height: 'auto',
               borderTopWidth: 2, borderRightWidth: 2, borderBottomWidth: 2, borderLeftWidth: 2 };
 
-    performLayoutTest(layout, no_f, s, with_f, s, NO);
+    performLayoutTest(layout, no_f, s, with_f, s, false);
 
     layer.parentNode.removeChild(layer);
 
@@ -1045,10 +1049,10 @@
     parent.appendChild(child);
     SC.run(function () { child.set('layout', layout); });
 
-    ok(SC.rectsEqual(child.get('frame'), before), "Before: %@ == %@".fmt(SC.inspect(child.get('frame')), SC.inspect(before)));
+    assert.ok(rectsEqual(child.get('frame'), before), "Before: %@ == %@".fmt(SC.inspect(child.get('frame')), SC.inspect(before)));
     SC.run(function () { parent.adjust('width', 300).adjust('height', 300); });
 
-    ok(SC.rectsEqual(child.get('frame'), after), "After: %@ == %@".fmt(SC.inspect(child.get('frame')), SC.inspect(after)));
+    assert.ok(rectsEqual(child.get('frame'), after), "After: %@ == %@".fmt(SC.inspect(child.get('frame')), SC.inspect(after)));
 
   }
 
@@ -1110,7 +1114,7 @@
     verifyFrameResize(layout, before, after);
   });
 
-  test("for proper null variables");
+  // test("for proper null variables");
   // nothing should get passed through as undefined, instead we want null in certain cases
 
   module('STATIC LAYOUT VARIATIONS', commonSetup);
@@ -1124,7 +1128,7 @@
 
     child.set('useStaticLayout', true);
 
-    performLayoutTest(SC.View.prototype.layout, no_f, no_s, with_f, with_s, NO);
+    performLayoutTest(View.prototype.layout, no_f, no_s, with_f, with_s, false);
   });
 
   test("with layout", function () {
@@ -1137,7 +1141,7 @@
 
     child.set('useStaticLayout', true);
 
-    performLayoutTest(layout, no_f, no_s, with_f, with_s, YES);
+    performLayoutTest(layout, no_f, no_s, with_f, with_s, true);
   });
 
   // test("frame size shifts with top/left/bottom/right", function () {
@@ -1152,7 +1156,7 @@
   //   }catch(e) {
   //     error=e;
   //   }
-  //   equals(SC.T_ERROR,SC.typeOf(error),'Layout style functions should throw and '+
+  //   assert.equal(T_ERROR,typeOf(error),'Layout style functions should throw and '+
   //   'error if centerx/y and width/height are set at the same time ' + error );
   //
   //
@@ -1160,12 +1164,12 @@
 
   var pane, view;
   module("COMPUTED LAYOUT", {
-    setup: function () {
+    beforeEach: function () {
 
       SC.run(function () {
         // create basic view
-        view = SC.View.create({
-          useTopLayout: YES,
+        view = View.create({
+          useTopLayout: true,
 
           layout: function () {
             if (this.get('useTopLayout')) {
@@ -1176,14 +1180,14 @@
           }.property('useTopLayout').cacheable()
         });
 
-        pane = SC.Pane.create({
+        pane = Pane.create({
           layout: { centerX: 0, centerY: 0, width: 400, height: 400 },
           childViews: [view]
         }).append();
       });
     },
 
-    teardown: function () {
+    afterEach: function () {
       pane.destroy();
       pane = view = null;
     }
@@ -1200,54 +1204,54 @@
       layoutStyle,
       styleAttr;
 
-    same(view.get('layout'), { top: 10, left: 10, width: 100, height: 100 }, "Test the value of the computed layout.");
+    assert.deepEqual(view.get('layout'), { top: 10, left: 10, width: 100, height: 100 }, "Test the value of the computed layout.");
     layoutStyle = view.get('layoutStyle');
     expectedLayoutStyle = { top: "10px", left: "10px", width: "100px", height: "100px" };
     for (var key in layoutStyle) {
-      equals(layoutStyle[key], expectedLayoutStyle[key], "Test the value of %@ in the layout style.".fmt(key));
+      assert.equal(layoutStyle[key], expectedLayoutStyle[key], "Test the value of %@ in the layout style.".fmt(key));
     }
     styleAttr = view.$().attr('style');
     styleAttr = styleAttr.split(/;\s*/).filter(function (o) { return o; });
     expectedStyleAttr = ['left: 10px', 'width: 100px', 'top: 10px', 'height: 100px'];
     for (var i = styleAttr.length - 1; i >= 0; i--) {
-      ok(expectedStyleAttr.indexOf(styleAttr[i]) >= 0, "Test the expected style attribute includes `%@` found in the actual style attribute.".fmt(styleAttr[i]));
+      assert.ok(expectedStyleAttr.indexOf(styleAttr[i]) >= 0, "Test the expected style attribute includes `%@` found in the actual style attribute.".fmt(styleAttr[i]));
     }
 
     SC.run(function () {
-      view.set('useTopLayout', NO);
+      view.set('useTopLayout', false);
     });
 
-    same(view.get('layout'), { bottom: 10, right: 10, width: 200, height: 50 }, "Test the value of the computed layout.");
+    assert.deepEqual(view.get('layout'), { bottom: 10, right: 10, width: 200, height: 50 }, "Test the value of the computed layout.");
     layoutStyle = view.get('layoutStyle');
     expectedLayoutStyle = { bottom: "10px", right: "10px", width: "200px", height: "50px" };
     for (key in layoutStyle) {
-      equals(layoutStyle[key], expectedLayoutStyle[key], "Test the value of %@ in the layout style.".fmt(key));
+      assert.equal(layoutStyle[key], expectedLayoutStyle[key], "Test the value of %@ in the layout style.".fmt(key));
     }
 
     styleAttr = view.$().attr('style');
     styleAttr = styleAttr.split(/;\s*/).filter(function (o) { return o; });
     expectedStyleAttr = ['bottom: 10px', 'width: 200px', 'right: 10px', 'height: 50px'];
     for (i = styleAttr.length - 1; i >= 0; i--) {
-      ok(expectedStyleAttr.indexOf(styleAttr[i]) >= 0, "Test the expected style attribute includes `%@` found in the actual style attribute.".fmt(styleAttr[i]));
+      assert.ok(expectedStyleAttr.indexOf(styleAttr[i]) >= 0, "Test the expected style attribute includes `%@` found in the actual style attribute.".fmt(styleAttr[i]));
     }
   });
 
 
   module("OTHER LAYOUT STYLE TESTS", {
-    setup: function () {
+    beforeEach: function () {
 
       SC.run(function () {
         // create basic view
-        view = SC.View.create({});
+        view = View.create({});
 
-        pane = SC.Pane.create({
+        pane = Pane.create({
           layout: { centerX: 0, centerY: 0, width: 400, height: 400 },
           childViews: [view]
         }).append();
       });
     },
 
-    teardown: function () {
+    afterEach: function () {
       pane.destroy();
       pane = view = null;
     }
@@ -1274,7 +1278,7 @@
     styleAttr = styleAttr.split(/;\s*/).filter(function (o) { return o; });
     var expectedStyleAttr = ['left: 10px', 'top: 10px', 'width: 60px', 'height: 60px'];
     for (var i = styleAttr.length - 1; i >= 0; i--) {
-      ok(expectedStyleAttr.indexOf(styleAttr[i]) >= 0, "Test the expected style attribute includes `%@` found in the actual style attribute.".fmt(styleAttr[i]));
+      assert.ok(expectedStyleAttr.indexOf(styleAttr[i]) >= 0, "Test the expected style attribute includes `%@` found in the actual style attribute.".fmt(styleAttr[i]));
     }
   });
 })();

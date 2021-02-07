@@ -3,8 +3,8 @@
 // ==========================================================================
 /*globals SC */
 
-import { SC } from '/core/core.js';
-import { Statechart, StatechartDelegate, State, StateRouteHandlerContext } from '/statechart/statechart.js';
+import { SC } from '../../../../../core/core.js';
+import { Statechart, StatechartDelegate, State, StateRouteHandlerContext } from '../../../../../statechart/statechart.js';
 
 
 var statechart, del, monitor, stateFoo, stateBar, stateA, stateB, stateC, stateX, stateY, TestState;

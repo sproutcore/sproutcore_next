@@ -2,6 +2,8 @@
 A set of default settings used throughout the framework
 */
 
+console.log('executing settings');
+
 const settings = {
   debug: false
 };
