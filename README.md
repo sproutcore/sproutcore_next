@@ -1,5 +1,4 @@
 # SproutCore Next
-
 This is a very basic first start of trying to modernize SproutCore, using modern elements of ES6+ JS where possible.
 
 # Author
@@ -16,6 +15,9 @@ Maurits Lamers
 # Current status
 - Implemented the old runtime system 
 - Array and Object controllers included
+- Responder system
+- Event system
+- View system (partly)
 
 # How to use
 
@@ -26,6 +28,11 @@ import { SC } from './core/core.js
 ```
 
 Tests can be run by running a http-server in the root of the project, and loading the tests/core/*.html files.
+
+**IMPORTANT** 
+Because of the caching behavior of the browser, it is important that only relative imports are being used.
+ES6 imports using absolute urls are regarded as different modules, causing modules to be loaded _and executed_ twice.
+This causes all kinds of unpredictable behavior!
 
 # Notes
 While it seems that the ES6 class system is a good fit for SproutCore it would break certain functionality of the framework itself
