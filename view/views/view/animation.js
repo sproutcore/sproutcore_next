@@ -331,18 +331,18 @@ export const animationSupport = /** @scope View.prototype */ {
 
     // Get the layout (may be a previous layout already animating).
     if (!this._prevLayout) {
-      this._prevLayout = clone(this.get('explicitLayout'));
+      this._prevLayout = SC.clone(this.get('explicitLayout'));
     }
 
     if (!pendingAnimations) { pendingAnimations = this._pendingAnimations = {}; }
 
     // Get the layout (may be a partially adjusted one already queued up).
-    layout = this._animateLayout || clone(this.get('explicitLayout'));
+    layout = this._animateLayout || SC.clone(this.get('explicitLayout'));
 
     // Handle old style rotation.
     if (!SC.none(hash.rotate)) {
       //@if(debug)
-      Logger.warn('Developer Warning: Please animate rotateZ instead of rotate.');
+      SC.Logger.warn('Developer Warning: Please animate rotateZ instead of rotate.');
       //@endif
       if (SC.none(hash.rotateZ)) {
         hash.rotateZ = hash.rotate;
@@ -358,7 +358,7 @@ export const animationSupport = /** @scope View.prototype */ {
 
         //@if(debug)
         if (!ANIMATABLE_PROPERTIES[property]) {
-          warn("Developer Warning: The property `%@` is not animatable using View:animate().".fmt(property));
+          SC.warn("Developer Warning: The property `%@` is not animatable using View:animate().".fmt(property));
         }
         //@endif
         continue;

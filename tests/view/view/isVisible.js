@@ -9,10 +9,14 @@
 // ========================================================================
 /*globals module test ok isObj equals expects */
 
+import { SC } from '../../../core/core.js';
+import { View, MainPane, Pane, CoreView } from '../../../view/view.js';
+
 /**
   These tests verify that all view metrics -- frame, clippingFrame,
   isVisibleInWindow, etc. are correct.
 */
+
 
 // ..........................................................
 // BASE TESTS
@@ -27,12 +31,12 @@ var pane, view; // test globals
 
 module("isVisible", {
 
-  setup: function() {
-    pane = SC.MainPane.create();
-    view = SC.View.create();
+  beforeEach: function() {
+    pane = MainPane.create();
+    view = View.create();
   },
 
-  teardown: function() {
+  afterEach: function() {
     view.destroy();
     pane.remove().destroy();
     pane = view = null;
@@ -40,12 +44,12 @@ module("isVisible", {
 
 });
 
-test("a new view should not be visible initially", function() {
-  ok(view.get('isVisible'), "view.get('isVisible') === NO");
+test("a new view should not be visible initially", function (assert) {
+  assert.ok(view.get('isVisible'), "view.get('isVisible') === false");
 });
 
-test("initializing with isVisible: false, should still add the proper class on append", function() {
-  var newView = SC.View.create({
+test("initializing with isVisible: false, should still add the proper class on append", function (assert) {
+  var newView = View.create({
     isVisible: false
   });
 
@@ -53,28 +57,28 @@ test("initializing with isVisible: false, should still add the proper class on a
   pane.append();
   pane.appendChild(newView);
   SC.RunLoop.end();
-  ok(newView.$().hasClass('sc-hidden'), "newView.$().hasClass('sc-hidden') should be true");
+  assert.ok(newView.$().hasClass('sc-hidden'), "newView.$().hasClass('sc-hidden') should be true");
 });
 
-test("adding a new view to a visible pane should make it visible", function() {
-  ok(view.get('isVisible'), "view.get('isVisible') === YES");
-  ok(pane.get('isVisible'), "pane.get('isVisible') === YES");
+test("adding a new view to a visible pane should make it visible", function (assert) {
+  assert.ok(view.get('isVisible'), "view.get('isVisible') === true");
+  assert.ok(pane.get('isVisible'), "pane.get('isVisible') === true");
   SC.RunLoop.begin();
   pane.appendChild(view);
   pane.append();
-  view.set('isVisible', NO);
+  view.set('isVisible', false);
   SC.RunLoop.end();
-  ok(!view.get('isVisible'), "after pane.appendChild(view), view.get('isVisible') === YES");
-  ok(view.$().hasClass('sc-hidden'), "after view.set('isVisible', NO), view.$().hasClass('sc-hidden') should be true");
+  assert.ok(!view.get('isVisible'), "after pane.appendChild(view), view.get('isVisible') === true");
+  assert.ok(view.$().hasClass('sc-hidden'), "after view.set('isVisible', false), view.$().hasClass('sc-hidden') should be true");
 });
 
-test("a view with visibility can have a child view without visibility", function() {
-  var pane = SC.Pane.create({
+test("a view with visibility can have a child view without visibility", function (assert) {
+  var pane = Pane.create({
     childViews: ['visibleChild'],
 
-    visibleChild: SC.View.design({
+    visibleChild: View.design({
       childViews: ['noVisibilityChild'],
-      noVisibilityChild: SC.CoreView
+      noVisibilityChild: CoreView
     })
   });
 
@@ -93,28 +97,28 @@ test("a view with visibility can have a child view without visibility", function
     }
   }
 
-  ok(!errored, "Inserting a pane containing a child with visibility that itself has a child without visibility does not cause an error");
+  assert.ok(!errored, "Inserting a pane containing a child with visibility that itself has a child without visibility does not cause an error");
 });
 
 // Test for issue #1093.
-test("a view whose pane is removed during an isVisible transition gets correctly hidden", function() {
+test("a view whose pane is removed during an isVisible transition gets correctly hidden", function (assert) {
   SC.RunLoop.begin();
-  var pane = SC.Pane.create({
+  var pane = Pane.create({
     childViews: ['childView'],
-    childView: SC.View.extend({
+    childView: View.extend({
       transitionHide: { run: function (view) {
         view.animate('opacity', 0, 0.4, function () { this.didTransitionOut(); });
       }}
     })
   });
   pane.append();
-  pane.childView.set('isVisible', NO);
-  equals(pane.childView.get('viewState'), SC.CoreView.ATTACHED_HIDING, 'View is transitioning');
+  pane.childView.set('isVisible', false);
+  assert.equal(pane.childView.get('viewState'), CoreView.ATTACHED_HIDING, 'View is transitioning');
   pane.remove();
   SC.RunLoop.end();
   SC.RunLoop.begin();
   pane.append();
-  ok(pane.childView.$().hasClass('sc-hidden'), 'View was successfully hidden.')
+  assert.ok(pane.childView.$().hasClass('sc-hidden'), 'View was successfully hidden.')
   pane.remove();
   pane.destroy();
   SC.RunLoop.end();

@@ -8,7 +8,7 @@
 import { SC } from '../../core/core.js';
 import { View } from '../../view/view.js';
 import { ResponderContext } from '../mixins/responder_context.js';
-import { RootResponder } from '../../responder/responder.js';
+import { RootResponder, platform } from '../../responder/responder.js';
 import { bodyOverflowArbitrator } from './body_overflow.js';
 
 /**
@@ -352,8 +352,8 @@ export const Pane = View.extend(ResponderContext,
 
     @returns {Rect} current window size
   */
-  computeParentDimensions: function (frame) {
-    if (this.get('designer') && suppressMain) { return init.base.apply(this, arguments); }
+  computeParentDimensions: function computeParentDimensions (frame) {
+    if (this.get('designer') && suppressMain) { return computeParentDimensions.base.apply(this, arguments); }
 
     var wDim = {x: 0, y: 0, width: 1000, height: 1000},
         layout = this.get('layout');
@@ -369,7 +369,7 @@ export const Pane = View.extend(ResponderContext,
 
       // IE7 is the only browser which reports clientHeight _including_ scrollbar.
       if (SC.browser.name === SC.BROWSER.ie &&
-          browser.compare(browser.version, "7") === 0) {
+          SC.browser.compare(SC.browser.version, "7") === 0) {
 
         var scrollbarSize = platform.get('scrollbarSize');
         if (document.body.scrollWidth > wDim.width) {
