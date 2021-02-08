@@ -14,6 +14,7 @@ import { themingSupport } from './view/theming.js';
 import { touchSupport } from './view/touch.js';
 import { visibilitySupport } from './view/visibility.js';
 import { designModeSupport } from './view/design_mode.js';
+import { staticStackLayoutMixin } from './child_view_layouts/stack_layout.js';
 
 /**
   @class
@@ -619,4 +620,4 @@ export const View = CoreView.extend(
 });
 
 
-View.mixin(staticViewLayout);
+View.mixin(staticViewLayout, staticStackLayoutMixin);
