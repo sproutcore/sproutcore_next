@@ -9,6 +9,7 @@ import { SC } from '../../core/core.js';
 import { View } from '../../view/view.js';
 import { ResponderContext } from '../mixins/responder_context.js';
 import { RootResponder } from '../../responder/responder.js';
+import { bodyOverflowArbitrator } from './body_overflow.js';
 
 /**
   Indicates a value has a mixed state of both on and off.
