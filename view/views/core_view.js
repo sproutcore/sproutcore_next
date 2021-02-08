@@ -726,7 +726,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
     var split = property.split(':'), className = split[1];
     property = split[0];
 
-    var val = getPath(this, property);
+    var val = SC.getPath(this, property);
 
     // If value is a Boolean and true, return the dasherized property
     // name.
@@ -736,7 +736,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
       // Normalize property path to be suitable for use
       // as a class name. For exaple, content.foo.barBaz
       // becomes bar-baz.
-      return String.dasherize(property.split('.').get('lastObject'));
+      return SC.String.dasherize(property.split('.').get('lastObject'));
 
     // If the value is not false, undefined, or null, return the current
     // value of the property.
