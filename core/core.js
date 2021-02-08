@@ -1,6 +1,5 @@
-import { __runtimeDeps as obsRuntimeDeps } from './mixins/observable.js';
-import { __runtimeDeps as aryRuntimeDeps } from './mixins/array.js';
-import { __runtimeDeps as obsSetRuntimeDeps, ObserverSet } from './private/observer_set.js';
+
+import { ObserverSet } from './private/observer_set.js';
 
 import global from "./system/global.js";
 import { getSetting, setSetting } from "./system/settings.js";
@@ -10,13 +9,13 @@ import './ext/string.js';
 import { Copyable } from './mixins/copyable.js';
 import { Comparable } from './mixins/comparable.js';
 import { Enumerable } from './mixins/enumerable.js';
-import { SCObject, __runtimeDeps as objRuntimeDeps, kindOf, instanceOf, _object_className } from './system/object.js';
+import { SCObject, kindOf, instanceOf, _object_className } from './system/object.js';
 import { Observable, get, getPath } from './mixins/observable.js';
 import { CoreArray, SCArray } from './mixins/array.js';
 import { ObserverQueue } from './private/observer_queue.js';
 import './ext/array.js';
 import { RunLoop, run } from './system/runloop.js';
-import { Binding, __runtimeDeps as bindingRuntimeDeps } from './system/binding.js';
+import { Binding } from './system/binding.js';
 import { IndexSet } from './system/index_set.js';
 import { Logger, warn } from './system/logger.js';
 import { SCError, ok, val, $throw, $error, $ok, $val } from './system/error.js';
@@ -29,7 +28,7 @@ import { ObjectController } from './controllers/object_controller.js';
 import { ArrayController } from './controllers/array_controller.js';
 import { SCProxy } from './system/proxy.js';
 import { ENV } from './system/env.js';
-import { scWorker, __runtimeDeps as scWorkerRuntimeDeps } from './system/scworker.js';
+import { scWorker } from './system/scworker.js';
 import { Builder } from './system/builder.js';
 import { DelegateSupport } from './mixins/delegate_support.js';
 import { CoreSet } from './system/core_set.js';
@@ -166,32 +165,3 @@ export const SC = {
 
 mixin(SC, readyMixin);
 
-const runtimeDeps = [
-  scWorkerRuntimeDeps(),
-  obsRuntimeDeps(),
-  aryRuntimeDeps(),
-  bindingRuntimeDeps(),
-  obsSetRuntimeDeps(),
-  objRuntimeDeps(),
-];
-
-// if (global.jQuery) {
-//   // let apps ignore the regular onReady handling if they need to
-//   if (!getSetting('suppressOnReady')) {
-//     // global.$(document).ready(readyMixin.onReady.done.bind(readyMixin.onReady));
-//     global.jQuery(readyMixin.onReady.done.bind(readyMixin.onReady));
-//   }
-// }
-
-// there might be a more dynamic way to do this...
-Promise.all(runtimeDeps).then(r => {
-  console.log("PROMISE OF imports");
-  if (SC.onload && typeof SC.onload === 'function') {
-    SC.onload();
-  }  
-  // if (!global.jQuery) {
-  //   SC.onReady.done();
-  // }
-  // trigger SC.onReady?
-  // SC.onReady.done();
-})

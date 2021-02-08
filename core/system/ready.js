@@ -11,6 +11,14 @@ import { APP_MODE, T_STRING } from './constants.js';
 import { typeOf } from './base.js';
 import { RunLoop } from './runloop.js';
 
+import { __runtimeDeps as obsRuntimeDeps } from '../mixins/observable.js';
+import { __runtimeDeps as aryRuntimeDeps } from '../mixins/array.js';
+import { __runtimeDeps as obsSetRuntimeDeps } from '../private/observer_set.js';
+import { __runtimeDeps as objRuntimeDeps } from './object.js';
+import { __runtimeDeps as bindingRuntimeDeps } from './binding.js';
+import { __runtimeDeps as scWorkerRuntimeDeps } from './scworker.js';
+
+
 setSetting('BENCHMARK_LOG_READY', true);
 
 setSetting('isReady', false);
@@ -21,7 +29,39 @@ if (!getSetting('_readyQueue')) {
   setSetting('_readyQueue', []);
 }
 
-export const ready = {
+const runtimeDeps = [
+  scWorkerRuntimeDeps(),
+  obsRuntimeDeps(),
+  aryRuntimeDeps(),
+  bindingRuntimeDeps(),
+  obsSetRuntimeDeps(),
+  objRuntimeDeps(),
+];
+
+// if (global.jQuery) {
+//   // let apps ignore the regular onReady handling if they need to
+//   if (!getSetting('suppressOnReady')) {
+//     // global.$(document).ready(readyMixin.onReady.done.bind(readyMixin.onReady));
+//     global.jQuery(readyMixin.onReady.done.bind(readyMixin.onReady));
+//   }
+// }
+
+// there might be a more dynamic way to do this...
+// Promise.all(runtimeDeps).then(r => {
+//   console.log("PROMISE OF imports");
+//   if (SC.onload && typeof SC.onload === 'function') {
+//     SC.onload();
+//   }  
+//   // if (!global.jQuery) {
+//   //   SC.onReady.done();
+//   // }
+//   // trigger SC.onReady?
+//   // SC.onReady.done();
+// })
+
+
+
+export const readyMixin = {
 
   get isReady () {
     return getSetting('isReady');
@@ -118,35 +158,40 @@ export const ready = {
 
     done: function () {
       console.log("SPROUTCORE_READY_DONE_FUNCTION");
+      // first wait till the promises are resolved
       if (getSetting('isReady')) return;
-      
-      setSetting('isReady', true);
 
-      RunLoop.begin();
-
-      if (this.Locale) {
-        this.Locale.createCurrentLocale();
-        var loc = this.Locale.currentLanguage.toLowerCase();
-        jQuery("body").addClass(loc);
-  
-        jQuery("html").attr("lang", loc);
-  
-        jQuery("#loading").remove();  
-      }
-      // debugger;
-      var queue = getSetting('_readyQueue'), idx, len;
+      Promise.all(runtimeDeps).then( () => {  
       
-      if (queue) {
-        for (idx = 0, len = queue.length; idx < len; idx++) {
-          // console.log('calling', idx);
-          // debugger;
-          queue[idx].call();
+        setSetting('isReady', true);
+  
+        RunLoop.begin();
+  
+        if (this.Locale) {
+          this.Locale.createCurrentLocale();
+          var loc = this.Locale.currentLanguage.toLowerCase();
+          jQuery("body").addClass(loc);
+    
+          jQuery("html").attr("lang", loc);
+    
+          jQuery("#loading").remove();  
         }
-        // _readyQueue = null;
-      }
-
-      if (global.main && !getSetting('suppressMain') && (getSetting('mode') === APP_MODE)) { global.main(); }
-      RunLoop.end();
+        // debugger;
+        var queue = getSetting('_readyQueue'), idx, len;
+        
+        if (queue) {
+          for (idx = 0, len = queue.length; idx < len; idx++) {
+            // console.log('calling', idx);
+            // debugger;
+            queue[idx].call();
+          }
+          // _readyQueue = null;
+        }
+  
+        if (global.main && !getSetting('suppressMain') && (getSetting('mode') === APP_MODE)) { global.main(); }
+        RunLoop.end();
+      
+      })
     }
   }
 
