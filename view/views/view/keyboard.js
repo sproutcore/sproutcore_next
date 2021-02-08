@@ -1,5 +1,8 @@
 // sc_require("views/view");
 
+import { SC } from '../../../core/core.js';
+import { BASE_KEY_BINDINGS, MODIFIED_KEY_BINDINGS } from "../../../responder/responder.js";
+
 export const keyboardSupport = /** @scope View.prototype */ {
   // ..........................................................
   // KEY RESPONDER
@@ -297,7 +300,7 @@ export const keyboardSupport = /** @scope View.prototype */ {
 
       // if no parents have a next sibling, start over from the beginning
       if(!next) {
-        if(!TABBING_ONLY_INSIDE_DOCUMENT) break;
+        if(!SC.getSetting('TABBING_ONLY_INSIDE_DOCUMENT')) break;
         else next = this.get('pane');
       }
 
@@ -378,7 +381,7 @@ export const keyboardSupport = /** @scope View.prototype */ {
       if(cur.get('parentView')) prev = cur._getPreviousKeyView();
 
       // if we are the pane and address bar tabbing is enabled, trigger it now
-      else if(!TABBING_ONLY_INSIDE_DOCUMENT) break;
+      else if(!SC.getSetting('TABBING_ONLY_INSIDE_DOCUMENT')) break;
 
       // if we are the pane, get our own last child
       else prev = cur;
