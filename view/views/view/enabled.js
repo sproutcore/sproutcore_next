@@ -74,7 +74,7 @@ export const viewEnabledSupport = /** @scope View.prototype */ {
     * CoreView.DISABLED_BY_PARENT
 
     @type Number
-    @default CoreView.ENABLED
+    @default ENABLED
     @readonly
   */
   enabledState: ENABLED,
@@ -134,7 +134,7 @@ export const viewEnabledSupport = /** @scope View.prototype */ {
       enabledState = this.get('enabledState');
 
     // If the view itself is disabled, then we can enable it.
-    if (enabledState === CoreView.DISABLED) {
+    if (enabledState === DISABLED) {
       // Update the enabled state of all children. Top-down, because if a child is disabled on its own it
       // won't affect its childrens' state and we can bail out early.
       this._callOnChildViews('_parentDidEnableInPane');
@@ -159,7 +159,7 @@ export const viewEnabledSupport = /** @scope View.prototype */ {
       enabledState = this.get('enabledState');
 
     // If the view is not itself disabled, then we can disable it.
-    if (enabledState === CoreView.ENABLED) {
+    if (enabledState === ENABLED) {
       // Update the disabled state of all children. Top-down, because if a child is disabled on its own it
       // won't affect its childrens' state and we can bail out early.
       this._callOnChildViews('_parentDidDisableInPane');
