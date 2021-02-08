@@ -8,6 +8,9 @@
 // View Convertion Layout Unit Tests
 // ========================================================================
 
+import { SC } from '../../../core/core.js';
+import { View } from '../../../view/view.js';
+
 /*globals module test ok same equals */
 
 /* These unit tests verify:  convertLayoutToAnchoredLayout(), convertLayoutToCustomLayout() */
@@ -19,18 +22,18 @@ var parent, child;
   tests.
 */
 var commonSetup = {
-  setup: function() {
+  beforeEach: function() {
     
     // create basic parent view
-    parent = SC.View.create({
+    parent = View.create({
       layout: { top: 0, left: 0, width: 500, height: 500 }
     });
     
     // create child view to test against.
-    child = SC.View.create();
+    child = View.create();
   },
   
-  teardown: function() {
+  afterEach: function() {
     parent = child = null ;
   }
 };
@@ -41,34 +44,34 @@ var commonSetup = {
 
 module('BASIC LAYOUT CONVERSION', commonSetup);
 
-test("layout {top, left, width, height}", function() {
+test("layout {top, left, width, height}", function (assert) {
   var layout = { top: 10, left: 10, width: 50, height: 50 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
-  same(cl, layout, 'conversion is equal');
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  assert.deepEqual(cl, layout, 'conversion is equal');
 }) ;
 
-test("layout {top, left, bottom, right}", function() {
+test("layout {top, left, bottom, right}", function (assert) {
   var layout = { top: 10, left: 10, bottom: 10, right: 10 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 10, left: 10, width: 480, height: 480 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
-test("layout {bottom, right, width, height}", function() {
+test("layout {bottom, right, width, height}", function (assert) {
   var layout = { bottom: 10, right: 10, width: 50, height: 50 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 440, left: 440, width: 50, height: 50 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
-test("layout {centerX, centerY, width, height}", function() {
+test("layout {centerX, centerY, width, height}", function (assert) {
   var layout = { centerX: 10, centerY: 10, width: 50, height: 50 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 235, left: 235, width: 50, height: 50 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
 
@@ -78,67 +81,67 @@ test("layout {centerX, centerY, width, height}", function() {
 
 module('INVALID LAYOUT VARIATIONS', commonSetup);
 
-test("layout {top, left} - assume right/bottom=0", function() {
+test("layout {top, left} - assume right/bottom=0", function (assert) {
   var layout = { top: 10, left: 10 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 10, left: 10, width: 490, height: 490 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
-test("layout {height, width} - assume top/left=0", function() {
+test("layout {height, width} - assume top/left=0", function (assert) {
   var layout = { height: 60, width: 60 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 0, left: 0, width: 60, height: 60 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
-test("layout {right, bottom} - assume top/left=0", function() {
+test("layout {right, bottom} - assume top/left=0", function (assert) {
   var layout = { right: 10, bottom: 10 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 0, left: 0, width: 490, height: 490 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
-test("layout {centerX, centerY} - assume width/height=0", function() {
+test("layout {centerX, centerY} - assume width/height=0", function (assert) {
   var layout = { centerX: 10, centerY: 10 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 260, left: 260, width: 0, height: 0 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
-test("layout {top, left, centerX, centerY, height, width} - top/left take presidence", function() {
+test("layout {top, left, centerX, centerY, height, width} - top/left take presidence", function (assert) {
   var layout = { top: 10, left: 10, centerX: 10, centerY: 10, height: 60, width: 60 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 10, left: 10, width: 60, height: 60 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
-test("layout {bottom, right, centerX, centerY, height, width} - bottom/right take presidence", function() {
+test("layout {bottom, right, centerX, centerY, height, width} - bottom/right take presidence", function (assert) {
   var layout = { bottom: 10, right: 10, centerX: 10, centerY: 10, height: 60, width: 60 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 430, left: 430, width: 60, height: 60 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
   
 }) ;
 
-test("layout {top, left, bottom, right, centerX, centerY, height, width} - top/left take presidence", function() {
+test("layout {top, left, bottom, right, centerX, centerY, height, width} - top/left take presidence", function (assert) {
   var layout = { top: 10, left: 10, bottom: 10, right: 10, centerX: 10, centerY: 10, height: 60, width: 60 };
-  var cl = SC.View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
+  var cl = View.convertLayoutToAnchoredLayout(layout, parent.get('frame'));
   
   var testLayout = { top: 10, left: 10, width: 60, height: 60 };
-  same(cl, testLayout, 'conversion is equal');
+  assert.deepEqual(cl, testLayout, 'conversion is equal');
 }) ;
 
 
-test("layout {centerX, centerY, width:auto, height:auto}");
+// test("layout {centerX, centerY, width:auto, height:auto}");
 /*
-test("layout {centerX, centerY, width:auto, height:auto}", function() {
+test("layout {centerX, centerY, width:auto, height:auto}", function (assert) {
   var error=null;
   var layout = { centerX: 10, centerY: 10, width: 'auto', height: 'auto' };
   child.set('layout', layout) ;
@@ -147,7 +150,7 @@ test("layout {centerX, centerY, width:auto, height:auto}", function() {
   }catch(e){
     error=e;
   }
-  equals(SC.T_ERROR,SC.typeOf(error),'Layout style functions should throw and '+
+  assert.equal(T_ERROR,typeOf(error),'Layout style functions should throw and '+
     'error if centerx/y and width/height are set at the same time ' + error );
 }) ;
 */

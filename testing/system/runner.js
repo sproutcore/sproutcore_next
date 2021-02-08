@@ -7,7 +7,7 @@
 
 /*globals CoreTest Q$ */
 
-sc_require('system/plan');
+// sc_require('system/plan');
 
 /** @static
   The runner will automatically run the default CoreTest.plan when the
@@ -17,8 +17,15 @@ sc_require('system/plan');
   @since SproutCore 1.0
 */
 
+import { SC } from '../../core/core.js';
+import { CoreTest } from './core_test.js';
+import { Plan } from './plan.js';
 
-CoreTest.Runner = {
+const Q$ = jQuery;
+
+CoreTest.Plan = Plan;
+
+export const Runner = {
 
   /**
     The CoreTest plan.  If not set, a default plan will be created.

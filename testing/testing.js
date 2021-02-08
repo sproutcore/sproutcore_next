@@ -1,1 +1,1 @@
-export { CoreTest } from './core.js';
+export { CoreTest, htmlbody, clearHtmlbody, module, test } from './core.js';

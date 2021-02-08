@@ -5,7 +5,11 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { CoreTest } from './core_test.js';
+
 /*globals CoreTest Q$ */
+
+const Q$ = jQuery;
 
 var QUNIT_BREAK_ON_TEST_FAIL = false;
 
@@ -47,7 +51,7 @@ var QUNIT_BREAK_ON_TEST_FAIL = false;
 
   @since SproutCore 1.0
 */
-CoreTest.Plan = {
+export const Plan = {
 
   /**
     Define a new test plan instance.  Optionally pass attributes to apply
@@ -684,38 +688,4 @@ CoreTest.Plan = {
     return function() { return func.apply(plan, arguments); };
   }
 
-};
-
-// ..........................................................
-// EXPORT BASIC API
-//
-
-CoreTest.defaultPlan = function defaultPlan() {
-  var plan = CoreTest.plan;
-  if (!plan) {
-    CoreTest.runner = CoreTest.Runner.create();
-    plan = CoreTest.plan = CoreTest.runner.plan;
-  }
-  return plan;
-};
-
-// create a module.  If this is the first time, create the test plan and
-// runner.  This will cause the test to run on page load
-window.module = function(desc, l) {
-  CoreTest.defaultPlan().module(desc, l);
-};
-
-// create a test.  If this is the first time, create the test plan and
-// runner.  This will cause the test to run on page load
-window.test = function(desc, func) {
-  CoreTest.defaultPlan().test(desc, func);
-};
-
-// reset htmlbody for unit testing
-window.clearHtmlbody = function() {
-  CoreTest.defaultPlan().clearHtmlbody();
-};
-
-window.htmlbody = function(string) {
-  CoreTest.defaultPlan().htmlbody(string);
 };
