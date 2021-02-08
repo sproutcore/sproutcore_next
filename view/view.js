@@ -10,6 +10,7 @@ export { Pane } from './panes/pane.js';
 export { MainPane }  from './panes/main.js';
 export * from './views/utils/rect.js';
 export * from './views/utils/utils.js';
+export { viewManager } from './views/view_manager.js';
 
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework

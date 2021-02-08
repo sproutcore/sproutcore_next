@@ -600,8 +600,8 @@ export const Pane = View.extend(ResponderContext,
     @param evt {Event} the keydown event
     @returns {Boolean} true if you handled the method; false otherwise
   */
-  performKeyEquivalent: function (keystring, evt) {
-    var ret = init.base.apply(this, arguments); // try normal view behavior first
+  performKeyEquivalent: function performKeyEquivalent (keystring, evt) {
+    var ret = performKeyEquivalent.base.apply(this, arguments); // try normal view behavior first
 
     if (!ret) {
       var defaultResponder = this.get('defaultResponder') ;
@@ -646,7 +646,7 @@ export const Pane = View.extend(ResponderContext,
    */
   recomputeDependentProperties: function () {
     // Does nothing.  Left here so that subclasses that implement the method
-    // and call init.base.apply(this, arguments) won't fail.
+    // and call recomputeDependentProperties.base.apply(this, arguments) won't fail.
   },
 
   /**

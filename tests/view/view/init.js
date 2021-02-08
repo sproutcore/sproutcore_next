@@ -6,18 +6,21 @@
 
 /*global module test equals context ok same */
 
-module("SC.View#init");
+import { SC } from '../../../core/core.js';
+import { View, viewManager } from '../../../view/view.js';
 
-test("registers view in the global views hash using layerId for event targeted", function () {
-  var v = SC.View.create();
-  equals(SC.View.views[v.get('layerId')], v, 'registers view');
+module("View#init");
+
+test("registers view in the global views hash using layerId for event targeted", function (assert) {
+  var v = View.create();
+  assert.equal(viewManager.views[v.get('layerId')], v, 'registers view');
 });
 
-test("adds displayDidChange observer on all display properties (when rendered)", function () {
-  var didChange = NO;
-  var v = SC.View.create({
+test("adds displayDidChange observer on all display properties (when rendered)", function (assert) {
+  var didChange = false;
+  var v = View.create({
     // override just to make sure the registration works...
-    displayDidChange: function () { didChange = YES; },
+    displayDidChange: function () { didChange = true; },
 
     displayProperties: 'foo bar'.w(),
 
@@ -26,35 +29,35 @@ test("adds displayDidChange observer on all display properties (when rendered)",
   });
 
   v.set('foo', 'baz');
-  ok(!didChange, '!didChange on set(foo) before view is rendered');
-  didChange = NO;
+  assert.ok(!didChange, '!didChange on set(foo) before view is rendered');
+  didChange = false;
 
   v.set('bar', 'baz');
-  ok(!didChange, '!didChange on set(bar) before view is rendered');
+  assert.ok(!didChange, '!didChange on set(bar) before view is rendered');
 
   // Render the view.
   v._doRender();
 
   v.set('foo', 'buz');
-  ok(didChange, 'didChange on set(foo) after view is rendered');
-  didChange = NO;
+  assert.ok(didChange, 'didChange on set(foo) after view is rendered');
+  didChange = false;
 
   v.set('bar', 'buz');
-  ok(didChange, 'didChange on set(bar) after view is rendered');
+  assert.ok(didChange, 'didChange on set(bar) after view is rendered');
 });
 
-test("invokes createChildViews()", function () {
-  var didInvoke = NO;
-  var v = SC.View.create({
+test("invokes createChildViews()", function (assert) {
+  var didInvoke = false;
+  var v = View.create({
     // override just for test
-    createChildViews: function () { didInvoke = YES; }
+    createChildViews: function () { didInvoke = true; }
   });
-  ok(didInvoke, 'did invoke createChildViews()');
+  assert.ok(didInvoke, 'did invoke createChildViews()');
 });
 
-test("does NOT create layer", function () {
-  var v = SC.View.create();
-  equals(v.get('layer'), null, 'did not create layer');
+test("does falseT create layer", function (assert) {
+  var v = View.create();
+  assert.equal(v.get('layer'), null, 'did not create layer');
 });
 
 
