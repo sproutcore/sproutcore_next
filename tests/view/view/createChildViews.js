@@ -6,89 +6,92 @@
 
 /*global module test equals context ok same */
 
+import { SC } from '../../../core/core.js';
+import { View } from '../../../view/view.js';
+
 // ..........................................................
 // createChildViews()
 //
-module("SC.View#createChildViews");
+module("View#createChildViews");
 
-test("calls createChildView() for each class or string in childViews array", function() {
+test("calls createChildView() for each class or string in childViews array", function (assert) {
   var called = [];
-  var v = SC.View.create({
+  var v = View.create({
     childViews: [
-      SC.View.extend({ key: 0 }), // class - should be called
-      SC.View.create({ key: 1 }), // instance - will be called
+      View.extend({ key: 0 }), // class - should be called
+      View.create({ key: 1 }), // instance - will be called
       'customClassName'           // string - should be called
     ],
 
     // this should be used for the 'customClassName' item above
-    customClassName: SC.View.extend({ key: 2 }),
+    customClassName: View.extend({ key: 2 }),
 
     // patch to record results...
-    createChildView: function(childView) {
+    createChildView: function createChildView (childView) {
       if(childView.isClass) {
         called.push(childView.prototype.key);
       } else {
         called.push(childView.key);
       }
-      return sc_super();
+      return createChildView.base.apply(this, arguments);
     }
   });
 
   // createChildViews() is called automatically during create.
-  same(called, [0,1,2], 'called createChildView for correct children');
+  assert.deepEqual(called, [0,1,2], 'called createChildView for correct children');
 
   // make sure childViews array is correct now.
   var cv = v.childViews, len = cv.length, idx;
   for(idx=0;idx<len;idx++) {
-    equals(cv[idx].key, idx, 'has correct index key');
-    ok(cv[idx].isObject, 'isObject - %@'.fmt(cv[idx]));
+    assert.equal(cv[idx].key, idx, 'has correct index key');
+    assert.ok(cv[idx].isObject, 'isObject - %@'.fmt(cv[idx]));
   }
 });
 
-test("should not error when there is a dud view name in childViews list.", function() {
+test("should not error when there is a dud view name in childViews list.", function (assert) {
   var called = [];
-  var v = SC.View.create({
+  var v = View.create({
     childViews: [
-      'nonExistantClassName',       // string - should NOT be called
-      null,                       // null - should NOT be called
-      '',                         // empty string - should NOT be called
+      'nonExistantClassName',       // string - should falseT be called
+      null,                       // null - should falseT be called
+      '',                         // empty string - should falseT be called
       'customClassName'          // string - should be called
     ],
     // this should be used for the 'customClassName' item above
-    customClassName: SC.View.extend({ key: 2 }),
+    customClassName: View.extend({ key: 2 }),
 
     // patch to record results...
-    createChildView: function(childView) {
+    createChildView: function createChildView (childView) {
       called.push(childView.prototype.key);
-      ok(childView.isClass, "childView: %@ isClass".fmt(childView));
-      return sc_super();
+      assert.ok(childView.isClass, "childView: %@ isClass".fmt(childView));
+      return createChildView.base.apply(this, arguments);
     }
   });
 
   // createChildViews() is called automatically during create.
-  same(called, [2], 'called createChildView for correct children');
-  equals(v.getPath('childViews.length'), 1, "The childViews array should not contain any invalid childViews after creation.");
+  assert.deepEqual(called, [2], 'called createChildView for correct children');
+  assert.equal(v.getPath('childViews.length'), 1, "The childViews array should not contain any invalid childViews after creation.");
 });
 
-test("should not throw error when there is an extra space in the childViews list", function() {
+test("should not throw error when there is an extra space in the childViews list", function (assert) {
   var called = [];
-  var v = SC.View.create({
+  var v = View.create({
     childViews: "customClassName  customKlassName".w(),
     // this should be used for the 'customClassName' item above
-    customClassName: SC.View.extend({ key: 2 }),
-    customKlassName: SC.View.extend({ key: 3 })
+    customClassName: View.extend({ key: 2 }),
+    customKlassName: View.extend({ key: 3 })
   });
 
-  ok(true, "called awake without issue.");
+  assert.ok(true, "called awake without issue.");
 
 });
 
-test("should not create layer for created child views", function() {
-  var v = SC.View.create({
-    childViews: [SC.View]
+test("should not create layer for created child views", function (assert) {
+  var v = View.create({
+    childViews: [View]
   });
-  ok(v.childViews[0].isObject, 'precondition - did create child view');
-  equals(v.childViews[0].get('layer'), null, 'childView does not have layer');
+  assert.ok(v.childViews[0].isObject, 'precondition - did create child view');
+  assert.equal(v.childViews[0].get('layer'), null, 'childView does not have layer');
 });
 
 // ..........................................................
@@ -96,40 +99,40 @@ test("should not create layer for created child views", function() {
 //
 
 var view, myViewClass ;
-module("SC.View#createChildView", {
-  setup: function() {
-    view = SC.View.create({ page: SC.Object.create() });
-    myViewClass = SC.View.extend({ isMyView: YES, foo: 'bar' });
+module("View#createChildView", {
+  beforeEach: function() {
+    view = View.create({ page: SC.Object.create() });
+    myViewClass = View.extend({ isMyView: true, foo: 'bar' });
   }
 });
 
-test("should create view from class with any passed attributes", function() {
+test("should create view from class with any passed attributes", function (assert) {
   var v = view.createChildView(myViewClass, { foo: "baz" });
-  ok(v.isMyView, 'v is instance of myView');
-  equals(v.foo, 'baz', 'view did get custom attributes');
+  assert.ok(v.isMyView, 'v is instance of myView');
+  assert.equal(v.foo, 'baz', 'view did get custom attributes');
 });
 
-test("should set newView.parentView to receiver", function() {
+test("should set newView.parentView to receiver", function (assert) {
   var v = view.createChildView(myViewClass) ;
-  equals(v.get('parentView'), view, 'v.parentView == view');
+  assert.equal(v.get('parentView'), view, 'v.parentView == view');
 });
 
-test("should set newView.page to receiver.page unless custom attr is passed", function() {
+test("should set newView.page to receiver.page unless custom attr is passed", function (assert) {
   var v = view.createChildView(myViewClass) ;
-  equals(v.get('page'), view.get('page'), 'v.page == view.page');
+  assert.equal(v.get('page'), view.get('page'), 'v.page == view.page');
 
   var myPage = SC.Object.create();
   v = view.createChildView(myViewClass, { page: myPage }) ;
-  equals(v.get('page'), myPage, 'v.page == custom page');
+  assert.equal(v.get('page'), myPage, 'v.page == custom page');
 });
 
 // CoreView has basic visibility support based on state now.
 // test("should not change isVisibleInWindow property on views that do not have visibility support", function() {
-//   var coreView = SC.CoreView.extend({});
+//   var coreView = CoreView.extend({});
 
-//   SC.run(function() { view.set('isVisible', NO); });
+//   run(function() { view.set('isVisible', false); });
 //   var v = view.createChildView(coreView);
 
-//   ok(v.get('isVisibleInWindow'), "SC.CoreView instance always has isVisibleInWindow set to NO");
+//   assert.ok(v.get('isVisibleInWindow'), "CoreView instance always has isVisibleInWindow set to false");
 // });
 

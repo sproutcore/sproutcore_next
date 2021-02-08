@@ -11,14 +11,14 @@ import { View, Pane } from '../../../view/view.js';
 
 module("View#destroy");
 
-test('isDestroyed works.', function() {
+test('isDestroyed works.', function (assert) {
   var v = View.create();
   assert.ok(!v.get('isDestroyed'), 'undestroyed view\'s isDestroyed property is false.');
   v.destroy();
   assert.ok(v.get('isDestroyed'), 'destroyed view\'s isDestroyed property is true.');
 });
 
-test('childViews specified as classes are also destroyed.', function() {
+test('childViews specified as classes are also destroyed.', function (assert) {
   var v = View.create({ childViews: [ View.extend({ childViews: [ View ] }) ] }),
       v2 = v.childViews[0],
       v3 = v2.childViews[0];
@@ -33,7 +33,7 @@ test('childViews specified as classes are also destroyed.', function() {
   });
 });
 
-test('childViews specified as instances are also destroyed.', function() {
+test('childViews specified as instances are also destroyed.', function (assert) {
   var v2 = View.create(),
       v = View.create({ childViews: [v2] });
   v.destroy();
@@ -77,7 +77,7 @@ test("Destroying a view, should also destroy its binding objects", function (ass
   assert.ok(!v2.hasObserverFor('bar'), "The child view should no longer have an observer on 'bar'");
 });
 
-test('Resigns firstResponder when destroyed.', function() {
+test('Resigns firstResponder when destroyed.', function (assert) {
   var pane = Pane.create();
   var v = View.create({ parentView: pane, acceptsFirstResponder: true });
   v.becomeFirstResponder();

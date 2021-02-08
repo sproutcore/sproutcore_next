@@ -71,6 +71,7 @@ test("Check that didAppendToDocument gets called at the right moment", function 
 // // a layer and the parentView uses static layout, then the frame returned will be {x: 0, y:0, width: 0, height: 0}
 // // and any further requests for the childView's frame will not return a new value unless the parentViewDidChange
 // // or parentViewDidResize.  A weird case, but we prevent it from failing anyhow.
+
 // test("Check that childView is updated if the pane has a static layout and view doesn't have a fixed layout", function (assert) {
 //   var childFrame,
 //       wrongFrame = { x:0, y:0, width: 0, height: 0 },
