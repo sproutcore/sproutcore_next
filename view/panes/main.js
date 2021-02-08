@@ -24,7 +24,6 @@ import { Pane } from './pane.js';
   MainPane is to cover the entire document window and to resize with the
   window.
 
-  @extends Pane
   @since SproutCore 1.0
 */
 export const MainPane = Pane.extend({
@@ -58,8 +57,8 @@ export const MainPane = Pane.extend({
   },
 
   /** @private The 'updatedLayout' event. */
-  _updatedLayout: function () {
-    sc_super();
+  _updatedLayout: function updatedLayout () {
+    updatedLayout.base.apply(this, arguments);
 
     // If by chance the minHeight or minWidth changed we would need to alter the body overflow request.
     this.setBodyOverflowIfNeeded();

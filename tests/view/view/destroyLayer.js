@@ -5,41 +5,43 @@
 // ==========================================================================
 /*global module, test, equals, ok */
 
+import { SC } from '../../../core/core.js';
+import { View, Pane } from '../../../view/view.js';
 
-module("SC.View#destroyLayer");
+module("View#destroyLayer");
 
-test("it if has no layer, does nothing", function () {
+test("it if has no layer, does nothing", function (assert) {
   var callCount = 0;
-  var view = SC.View.create({
+  var view = View.create({
     willDestroyLayer: function () { callCount++; }
   });
-  ok(!view.get('layer'), 'precond - does NOT have layer');
+  assert.ok(!view.get('layer'), 'precond - does falseT have layer');
 
   view.destroyLayer();
-  equals(callCount, 0, 'did not invoke callback');
+  assert.equal(callCount, 0, 'did not invoke callback');
 });
 
-test("if it has a layer, calls willDestroyLayer on receiver and child views then deletes the layer", function () {
+test("if it has a layer, calls willDestroyLayer on receiver and child views then deletes the layer", function (assert) {
   var callCount = 0;
 
-  var view = SC.View.create({
+  var view = View.create({
     willDestroyLayer: function () { callCount++; },
-    childViews: [SC.View.extend({
+    childViews: [View.extend({
       // no willDestroyLayer here... make sure no errors are thrown
-      childViews: [SC.View.extend({
+      childViews: [View.extend({
         willDestroyLayer: function () { callCount++; }
       })]
     })]
   });
   view.createLayer();
-  ok(view.get('layer'), 'precond - view has layer');
+  assert.ok(view.get('layer'), 'precond - view has layer');
 
   view.destroyLayer();
-  equals(callCount, 2, 'invoked destroy layer');
-  ok(!view.get('layer'), 'view no longer has layer');
+  assert.equal(callCount, 2, 'invoked destroy layer');
+  assert.ok(!view.get('layer'), 'view no longer has layer');
 });
 
-test("if it has a layer, calls willDestroyLayerMixin on receiver and child views if defined (comes from mixins)", function () {
+test("if it has a layer, calls willDestroyLayerMixin on receiver and child views if defined (comes from mixins)", function (assert) {
   var callCount = 0;
 
   // make sure this will call both mixins...
@@ -51,19 +53,19 @@ test("if it has a layer, calls willDestroyLayerMixin on receiver and child views
     willDestroyLayerMixin: function () { callCount++; }
   };
 
-  var view = SC.View.create(mixinA, mixinB, {
-    childViews: [SC.View.extend(mixinA, mixinB, {
-      childViews: [SC.View.extend(mixinA)]
+  var view = View.create(mixinA, mixinB, {
+    childViews: [View.extend(mixinA, mixinB, {
+      childViews: [View.extend(mixinA)]
     })]
   });
   view.createLayer();
   view.destroyLayer();
-  equals(callCount, 5, 'invoked willDestroyLayerMixin on all mixins');
+  assert.equal(callCount, 5, 'invoked willDestroyLayerMixin on all mixins');
 });
 
-test("returns receiver", function () {
-  var view = SC.View.create().createLayer();
-  equals(view.destroyLayer(), view, 'returns receiver');
+test("returns receiver", function (assert) {
+  var view = View.create().createLayer();
+  assert.equal(view.destroyLayer(), view, 'returns receiver');
 });
 
 /**
@@ -78,34 +80,34 @@ test("returns receiver", function () {
 
   This left elements in the DOM.
 
-  UPDATE:  The addition of the SC.View statechart prevents this from happening.
+  UPDATE:  The addition of the View statechart prevents this from happening.
 */
-test("Tests that if the childView's layer was never cached and the childView is removed, it should still destroy the childView's layer", function () {
+test("Tests that if the childView's layer was never cached and the childView is removed, it should still destroy the childView's layer", function (assert) {
   var childView,
     layerId,
     pane,
     view;
 
-  childView = SC.View.create({});
+  childView = View.create({});
 
   layerId = childView.get('layerId');
 
-  view = SC.View.create({
+  view = View.create({
     childViews: [childView]
   });
 
-  pane = SC.Pane.create({
+  pane = Pane.create({
     childViews: [view]
   }).append();
 
-  ok(document.getElementById(layerId), 'child layer should be in the DOM');
-  ok(!childView._view_layer, 'child view should not have cached its layer');
+  assert.ok(document.getElementById(layerId), 'child layer should be in the DOM');
+  assert.ok(!childView._view_layer, 'child view should not have cached its layer');
   view.removeChild(childView);
-  // Before SC.View states, this would be the case
-  // ok(document.getElementById(layerId), 'child layer should be in the DOM');
-  ok(!document.getElementById(layerId), 'child layer should not be in the DOM');
+  // Before View states, this would be the case
+  // assert.ok(document.getElementById(layerId), 'child layer should be in the DOM');
+  assert.ok(!document.getElementById(layerId), 'child layer should not be in the DOM');
   childView.destroy();
-  ok(!document.getElementById(layerId), 'child layer should not be in the DOM');
+  assert.ok(!document.getElementById(layerId), 'child layer should not be in the DOM');
 
   pane.remove();
   pane.destroy();

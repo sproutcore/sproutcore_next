@@ -10,6 +10,7 @@ import { View } from '../../view/view.js';
 import { ResponderContext } from '../mixins/responder_context.js';
 import { RootResponder, platform } from '../../responder/responder.js';
 import { bodyOverflowArbitrator } from './body_overflow.js';
+import { browser } from '../../event/event.js';
 
 /**
   Indicates a value has a mixed state of both on and off.
@@ -147,16 +148,6 @@ export const Pane = View.extend(ResponderContext,
     @type Boolean
   */
   isPane: true,
-
-  /** @deprecated Version 1.11. Use `isAttached` instead. */
-  isPaneAttached: function () {
-
-    //@if(debug)
-    warn("Developer Warning: The `isPaneAttached` property of `Pane` has been deprecated. Please use the `isAttached` property instead.");
-    //@endif
-
-    return this.get('isAttached');
-  }.property('isAttached').cacheable(),
 
   /**
     Pane's never have a next responder.
@@ -353,7 +344,7 @@ export const Pane = View.extend(ResponderContext,
     @returns {Rect} current window size
   */
   computeParentDimensions: function computeParentDimensions (frame) {
-    if (this.get('designer') && suppressMain) { return computeParentDimensions.base.apply(this, arguments); }
+    if (this.get('designer') && SC.getSetting('suppressMain')) { return computeParentDimensions.base.apply(this, arguments); }
 
     var wDim = {x: 0, y: 0, width: 1000, height: 1000},
         layout = this.get('layout');
@@ -746,8 +737,8 @@ export const Pane = View.extend(ResponderContext,
         // If no responder was found in the responder chain, try a default responder (if set).
         if (defaultResponder) {
           // Coerce String default responders to actual Objects.
-          if (typeof defaultResponder === T_STRING) {
-            defaultResponder = objectForPropertyPath(defaultResponder);
+          if (typeof defaultResponder === SC.T_STRING) {
+            defaultResponder = SC.objectForPropertyPath(defaultResponder);
           }
 
           responder = defaultResponder.tryToPerform(action, evt) ? defaultResponder : null;

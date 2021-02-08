@@ -21,7 +21,7 @@ if (!getSetting('_readyQueue')) {
   setSetting('_readyQueue', []);
 }
 
-export const readyMixin = {
+export const ready = {
 
   get isReady () {
     return getSetting('isReady');
@@ -104,9 +104,9 @@ export const readyMixin = {
         method.call(target);
       }
     } else {
-      console.log('pushing method to queue');
+      // console.log('pushing method to queue');
       const idx = queue.push(function () { method.call(target); });
-      console.log('function pushed to ', idx);
+      // console.log('function pushed to ', idx);
     }
 
     return this;
@@ -121,8 +121,6 @@ export const readyMixin = {
       if (getSetting('isReady')) return;
       
       setSetting('isReady', true);
-
-      // debugger; 
 
       RunLoop.begin();
 
@@ -167,3 +165,8 @@ if (global.jQuery) {
 // default to app mode.  When loading unit tests, this will run in test mode
 
 setSetting('mode', APP_MODE);
+
+
+/** The onReady has to be revised here... it needs to be promise based somehow.
+ * it also can only start running the ready calls whenever the import promises have resolved...
+ */

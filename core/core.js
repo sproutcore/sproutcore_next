@@ -185,6 +185,7 @@ const runtimeDeps = [
 
 // there might be a more dynamic way to do this...
 Promise.all(runtimeDeps).then(r => {
+  console.log("PROMISE OF imports");
   if (SC.onload && typeof SC.onload === 'function') {
     SC.onload();
   }  

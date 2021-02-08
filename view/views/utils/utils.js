@@ -89,7 +89,7 @@ export const centerY = function(innerFrame, outerFrame) {
 
   @param {DOMElement|jQuery|String} elem the element to find the offset of.
     This is passed to `jQuery()`, so any value supported by `jQuery()` will work.
-  @param {String} relativeToFlag flag to determine which relative element to determine offset by.
+  @param {String} [relativeToFlag] flag to determine which relative element to determine offset by.
     One of either: 'document', 'viewport' or 'parent' (default: 'document').
   @returns {Object} the offset of the element as an Object (ie. Hash) in the form { x: value, y: value }.
   */

@@ -14,6 +14,8 @@ import { Responder } from '../../responder/responder.js';
 import { viewStates, viewStatechart } from './view/statechart.js'
 import { coreViewEnabledSupport } from './view/enabled.js';
 import { viewManager } from './view_manager.js';
+import { intersectRects } from './utils/rect.js';
+import { offset } from './utils/utils.js';
 
 
 // sc_require('system/browser');
@@ -1101,7 +1103,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
     if (scale !== 1) {
       var scaleX, scaleY;
       // We're scaling from parent space into our space, so the scale is reversed. (Layout scale may be an array.)
-      if (typeOf(scale) === T_ARRAY) {
+      if (SC.typeOf(scale) === SC.T_ARRAY) {
         scaleX = 1 / scale[0];
         scaleY = 1 / scale[1];
       } else {
@@ -1430,7 +1432,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
       if (!attrs) { attrs = {}; }
 
       // clone the hash that was given so we do not pollute it if it's being reused
-      else { attrs = clone(attrs); }
+      else { attrs = SC.clone(attrs); }
 
       // Assign the parentView & page to ourself.
       attrs.parentView = this;
@@ -1442,7 +1444,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
       // Insert the autoMixins if defined
       var applyMixins = this.autoMixins;
       if (!!applyMixins) {
-        applyMixins = clone(applyMixins);
+        applyMixins = SC.clone(applyMixins);
         applyMixins.push(attrs);
         view = view.create.apply(view, applyMixins);
       } else {
