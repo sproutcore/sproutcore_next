@@ -3,6 +3,8 @@
 // Copyright: ©2006-2011 Apple Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
+import { SC } from '../../../core/core.js';
+import { View } from '../../../view/view.js';
 
 /*global module test equals context ok same */
 
@@ -10,14 +12,14 @@
 // createChildViews()
 //
 var view, parentDom, childDom, layerId ;
-module("SC.View#findLayerInParentLayer", {
-  setup: function() {
+module("View#findLayerInParentLayer", {
+  beforeEach: function() {
 
     layerId = 'foo-123';
 
     // manually construct a test layer.  next childDom a few layers deep
     childDom = document.createElement('div');
-    SC.$(childDom).attr('id', layerId);
+    $(childDom).attr('id', layerId);
 
     var intermediate = document.createElement('div');
     intermediate.appendChild(childDom);
@@ -28,24 +30,24 @@ module("SC.View#findLayerInParentLayer", {
 
 
     // setup view w/ layerId
-    view = SC.View.create({ layerId: layerId });
+    view = View.create({ layerId: layerId });
   },
 
-  teardown: function() {
+  afterEach: function() {
     view.destroy();
     view = parentDom = childDom = layerId = null;
   }
 });
 
-test("discovers layer by finding element with matching layerId - when DOM is in document already", function() {
+test("discovers layer by finding element with matching layerId - when DOM is in document already", function (assert) {
   document.body.appendChild(parentDom);
-  equals(view.findLayerInParentLayer(parentDom), childDom, 'should find childDom');
+  assert.equal(view.findLayerInParentLayer(parentDom), childDom, 'should find childDom');
   document.body.removeChild(parentDom); // cleanup or else next test may fail
 });
 
-test("discovers layer by finding element with matching layerId - when parent DOM is NOT in document", function() {
-  if(parentDom.parentNode) equals(parentDom.parentNode.nodeType, 11, 'precond - NOT in parent doc');
-  else equals(parentDom.parentNode, null, 'precond - NOT in parent doc');
-  equals(view.findLayerInParentLayer(parentDom), childDom, 'found childDom');
+test("discovers layer by finding element with matching layerId - when parent DOM is falseT in document", function (assert) {
+  if(parentDom.parentNode) assert.equal(parentDom.parentNode.nodeType, 11, 'precond - falseT in parent doc');
+  else assert.equal(parentDom.parentNode, null, 'precond - falseT in parent doc');
+  assert.equal(view.findLayerInParentLayer(parentDom), childDom, 'found childDom');
 });
 
