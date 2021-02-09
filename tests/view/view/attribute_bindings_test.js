@@ -5,10 +5,13 @@
 // ==========================================================================
 /*global module test equals context ok same */
 
-module("SC.CoreView - Attribute Bindings");
+import { SC } from '../../../core/core.js';
+import { View } from '../../../view/view.js';
 
-test("should render and update attribute bindings", function() {
-  var view = SC.View.create({
+module("CoreView - Attribute Bindings");
+
+test("should render and update attribute bindings", function (assert) {
+  var view = View.create({
     classNameBindings: ['priority', 'isUrgent', 'isClassified:classified', 'canIgnore'],
     attributeBindings: ['type', 'exploded', 'destroyed', 'exists', 'explosions'],
 
@@ -20,19 +23,19 @@ test("should render and update attribute bindings", function() {
   });
 
   view.createLayer();
-  equals(view.$().attr('type'), 'reset', "adds type attribute");
-  ok(view.$().attr('exploded'), "adds exploded attribute when true");
-  ok(view.$().attr('destroyed'), "adds destroyed attribute when true");
-  ok(!view.$().attr('exists'), "does not add exists attribute when false");
-  equals(view.$().attr('explosions'), "15", "adds integer attributes");
+  assert.equal(view.$().attr('type'), 'reset', "adds type attribute");
+  assert.ok(view.$().attr('exploded'), "adds exploded attribute when true");
+  assert.ok(view.$().attr('destroyed'), "adds destroyed attribute when true");
+  assert.ok(!view.$().attr('exists'), "does not add exists attribute when false");
+  assert.equal(view.$().attr('explosions'), "15", "adds integer attributes");
 
   view.set('type', 'submit');
   view.set('exploded', false);
   view.set('destroyed', false);
   view.set('exists', true);
 
-  equals(view.$().attr('type'), 'submit', "updates type attribute");
-  ok(!view.$().attr('exploded'), "removes exploded attribute when false");
-  ok(!view.$().attr('destroyed'), "removes destroyed attribute when false");
-  ok(view.$().attr('exists'), "adds exists attribute when true");
+  assert.equal(view.$().attr('type'), 'submit', "updates type attribute");
+  assert.ok(!view.$().attr('exploded'), "removes exploded attribute when false");
+  assert.ok(!view.$().attr('destroyed'), "removes destroyed attribute when false");
+  assert.ok(view.$().attr('exists'), "adds exists attribute when true");
 });
