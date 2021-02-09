@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width">
     <title>Test Suite</title>
     <link rel="stylesheet" href="/tests/qunit/qunit-2.11.3.css">
+    <style>
+      /* The problem here is styling, I have focused on code first, but it seems that much of the styling is required in order to pass the tests...*/
+      .sc-view.sc-pane {
+        position:absolute;
+      }
+    </style>
   </head>
   <body>
-    <div id="qunit"></div>
-    <div id="qunit-fixture"></div>
     <script src="/tests/qunit/qunit-2.11.3.js"></script>
     <script>
       window.module = QUnit.module;
@@ -18,7 +22,14 @@
       window.ok = QUnit.assert.ok.bind(QUnit.assert);
       window.assert = QUnit.assert;
       QUnit.config.autostart = false;
-    </script>
+    </script> 
+    <!-- <script type="module">
+      import { CoreTest, module, test } from '../../testing/testing.js';
+
+      window.module = module;
+      window.test = test;
+      window.assert = CoreTest.assert;
+    </script> -->
     <script src="./view/view.js" type="module"></script>
     <script src="./view/view_states_test.js" type="module"></script>
     <script src="./view/viewDidResize.js" type="module"></script>
@@ -29,7 +40,6 @@
     <script src="./view/render.js" type="module"></script>
     <script src="./view/render_delegate_support.js" type="module"></script>
     <script src="./view/touch.js" type="module"></script> 
-    <!-- <script src="./view/theme.js" type="module"></script> because no content -->
     <script src="./view/removeChild.js" type="module"></script>
     <script src="./view/layoutChildViews.js" type="module"></script>
     <script src="./view/layout_test.js" type="module"></script> 
@@ -52,7 +62,11 @@
     <script src="./view/clippingFrame.js" type="module"></script> 
     <script src="./view/class_name_bindings_test.js" type="module"></script>
     <script src="./view/childViewLayout_test.js" type="module"></script>
-    <!-- <script src="./state_transitioning/standard/with_concurrent_states/intermediate.js" type="module"></script> -->
+    <script src="./view/border_frame_test.js" type="module"></script>
+
+
+
+    
     <!-- <script src="./state_transitioning/standard/without_concurrent_states/core.js" type="module"></script> -->
     <!-- <script src="./state_transitioning/standard/without_concurrent_states/context.js" type="module"></script>  -->
     <!-- <script src="./state_transitioning/transient/without_concurrent_states.js" type="module"></script> -->
@@ -64,11 +78,23 @@
     <!-- <script src="./event_handling/responder/responder_chain.js" type="module"></script> -->
     <!-- <script src="./event_handling/responder/root_responder.js" type="module"></script> -->
     <!-- <script src="./system/state_route_handler_context/methods/retry.js" type="module"></script> -->
+
+
+     <!-- <script src="./view/theme.js" type="module"></script> because no content -->
+   
     <script type="module">
       import { SC } from '../../core/core.js';
-      SC.ready(function () { QUnit.start(); });
+      import { SCEvent } from '../../event/event.js';
+      import { RootResponder } from '../../responder/responder.js';
+      SC.ready(function () { 
+        SCEvent.remove(document, 'selectstart', RootResponder.responder, RootResponder.responder.selectstart);
+        // SCEvent.remove(document, 'mousewheel', RootResponder.responder, RootResponder.responder.mousewheel)
+        QUnit.start(); 
+      });
       // jQuery(SC.onReady.done);
     </script>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
     
 </body>
 </html>

@@ -8,6 +8,7 @@
 // These are helpful utility functions for calculating range and rect values
 
 import { SC, GLOBAL } from '../../../core/core.js';
+import { browser } from '../../../event/event.js';
 
   /**
     Takes a URL of any type and normalizes it into a fully qualified URL with
@@ -110,12 +111,14 @@ export const offset = function (elem, relativeToFlag) {
     // offset to the results of getBoundingClientRect.
     //
     // See http://dev.jquery.it/ticket/6446
-    if (SC.browser.isMobileSafari) {
+    // if (browser.isMobileSafari) {
+    if (SC.browser.name === SC.BROWSER.safari && SC.browser.os === SC.OS.ios) {
       userAgent = navigator.userAgent;
       index = userAgent.indexOf('Mobile/');
       mobileBuildNumber = userAgent.substring(index + 7, index + 9);
 
-      if (parseInt(SC.browser.mobileSafari, 0) <= 532 || (mobileBuildNumber <= "8A")) {
+      // if (parseInt(browser.mobileSafari, 0) <= 532 || (mobileBuildNumber <= "8A")) {
+      if (parseInt(browser.version || '0') <= 532 || mobileBuildNumber <= "8A") {
         result.left -= window.pageXOffset;
         result.top -= window.pageYOffset;
       }
@@ -124,7 +127,7 @@ export const offset = function (elem, relativeToFlag) {
     // Subtract the scroll offset for viewport coordinates
     if (relativeToFlag === 'viewport') {
 
-      if(browser.isIE8OrLower){
+      if(SC.browser.compare(SC.browser.version, '8') <= 0){
         result.left -= $(window).scrollLeft();
         result.top -= $(window).scrollTop();
       }else{

@@ -5,6 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { SC } from '../../core/core.js';
 import { CoreTest } from './core_test.js';
 
 /*globals CoreTest Q$ */
@@ -237,7 +238,7 @@ export const Plan = {
     this.currentModule = desc;
 
     if (!lifecycle) lifecycle = {};
-    this.setup(lifecycle.setup).teardown(lifecycle.teardown);
+    this.setup(lifecycle.beforeEach).teardown(lifecycle.afterEach);
 
     return this ;
   },

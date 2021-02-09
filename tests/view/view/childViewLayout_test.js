@@ -4,8 +4,8 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 import { SC } from '../../../core/core.js';
-import { View, Pane } from '../../../view/view.js';
-import { htmlbody, clearHtmlbody } from '../../../testing/testing.js';
+import { View } from '../../../view/view.js';
+
 /*global module, test, equals, ok */
 
 var view;

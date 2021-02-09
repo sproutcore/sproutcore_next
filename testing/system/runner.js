@@ -18,6 +18,8 @@
 */
 
 import { SC } from '../../core/core.js';
+import { SCEvent } from '../../event/event.js';
+import { RootResponder } from '../../responder/responder.js';
 import { CoreTest } from './core_test.js';
 import { Plan } from './plan.js';
 
@@ -171,10 +173,10 @@ export const Runner = {
 
     // Unload the SproutCore event system so that the user can select the text
     // of the various events.  (It is handy when looking at failed tests.)
-    if (SC  &&  SC.Event  &&  SC.Event.unload) {
+    if (SCEvent  &&  SCEvent.unload) {
       try {
-        var responder = SC.RootResponder.responder;
-        SC.Event.remove(document, 'selectstart', responder, responder.selectstart);
+        var responder = RootResponder.responder;
+        SCEvent.remove(document, 'selectstart', responder, responder.selectstart);
       }
       catch (e) {}
     }

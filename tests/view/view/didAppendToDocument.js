@@ -65,35 +65,32 @@ test("Check that didAppendToDocument gets called at the right moment", function 
   assert.equal(counter, 2, "");
 });
 
-// TEMPORARY not test this, perhaps the origin of this problem will arise from somewhere else...
-
 // // Test for bug: when a childView has a non-fixed layout and we request its frame before the parentView has
 // // a layer and the parentView uses static layout, then the frame returned will be {x: 0, y:0, width: 0, height: 0}
 // // and any further requests for the childView's frame will not return a new value unless the parentViewDidChange
 // // or parentViewDidResize.  A weird case, but we prevent it from failing anyhow.
 
-// test("Check that childView is updated if the pane has a static layout and view doesn't have a fixed layout", function (assert) {
-//   var childFrame,
-//       wrongFrame = { x:0, y:0, width: 0, height: 0 },
-//       correctFrame;
+test("Check that childView is updated if the pane has a static layout and view doesn't have a fixed layout", function (assert) {
+  var childFrame,
+      wrongFrame = { x:0, y:0, width: 0, height: 0 },
+      correctFrame;
 
-//   pane.set('useStaticLayout', true);
+  pane.set('useStaticLayout', true);
 
-//   childFrame = view.get('frame');
-//   assert.ok(rectsEqual(childFrame, wrongFrame), 'getting frame before layer exists on non-fixed layout childView should return an empty frame');
+  childFrame = view.get('frame');
+  assert.ok(rectsEqual(childFrame, wrongFrame), 'getting frame before layer exists on non-fixed layout childView should return an empty frame');
 
-//   SC.run(function () {
-//     pane.append(); // make sure there is a layer...
-//   });
+  SC.run(function () {
+    pane.append(); // make sure there is a layer...
+  });
 
-//   debugger;
-//   childFrame = view.get('frame');
-//   correctFrame = pane.get('frame');
+  childFrame = view.get('frame');
+  correctFrame = pane.get('frame');
 
-//   console.log("childFrame", childFrame);
-//   console.log('correctFrame', correctFrame);
-//   assert.ok(rectsEqual(childFrame, correctFrame), 'getting frame after layer exists on non-fixed layout childView should return actual frame');
-// });
+  console.log("childFrame", childFrame);
+  console.log('correctFrame', correctFrame);
+  assert.ok(rectsEqual(childFrame, correctFrame), 'getting frame after layer exists on non-fixed layout childView should return actual frame');
+});
 
 
 test("Check that childView is updated if it has a static layout", function (assert) {

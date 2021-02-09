@@ -420,7 +420,7 @@ export const LayoutStyleCalculator = {
             if (curTransformAnimation) {
               //@if(debug)
               if (curTransformAnimation.duration !== animation.duration || curTransformAnimation.timing !== animation.timing || curTransformAnimation.delay !== animation.delay) {
-                Logger.warn("Developer Warning: Can't animate transforms with different durations, timings or delays! Using the first options specified.");
+                SC.Logger.warn("Developer Warning: Can't animate transforms with different durations, timings or delays! Using the first options specified.");
               }
               //@endif
               animation = curTransformAnimation;

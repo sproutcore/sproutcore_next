@@ -162,7 +162,7 @@ export const stringsFor = function(lang, strings) {
 export const viewFor = function (element) {
   //@if(debug)
   if (arguments.length > 1) {
-    warn("Developer Warning: viewFor() is meant to be used with only one argument: element");
+    SC.warn("Developer Warning: viewFor() is meant to be used with only one argument: element");
   }
   //@endif
 
