@@ -4,9 +4,10 @@
 // ==========================================================================
 // sc_require("views/view");
 
-import { SC } from '../../../core/core.js';
+import { GLOBAL, SC } from '../../../core/core.js';
 import { platform } from '../../../responder/responder.js';
 import { ATTACHED_SHOWN, ATTACHED_SHOWN_ANIMATING } from './statechart.js';
+import { browser } from '../../../event/event.js';
 
 
 /** @private
@@ -233,7 +234,7 @@ export const animationSupport = /** @scope View.prototype */ {
           myView.adjust({ right: -width, bottom: 10 });
         });
 
-    @param {Object|String} properties Hash of property names with new layout values or a single property name.
+    @param {Object|String} key Hash of property names with new layout values or a single property name.
     @param {Number} [value] The new layout value for a single property (only provide if the first parameter is a String).
     @param {Number|Object} Duration or hash of transition options.
     @param {Object} [target=this] The target for the method.
@@ -252,7 +253,7 @@ export const animationSupport = /** @scope View.prototype */ {
     //@if(debug)
     // Provide a little developer support if they are doing something that may not work.
     if (this.get('useStaticLayout')) {
-      warn("Developer Warning: View:animate() was called on a view with useStaticLayout and may not work.  If you are using CSS to layout the view (i.e. useStaticLayout: true), then you should manage the animation manually.");
+      SC.warn("Developer Warning: View:animate() was called on a view with useStaticLayout and may not work.  If you are using CSS to layout the view (i.e. useStaticLayout: true), then you should manage the animation manually.");
     }
     //@endif
 
@@ -583,12 +584,12 @@ export const animationSupport = /** @scope View.prototype */ {
   /** @private Decompose a transformation matrix. */
   // TODO: Add skew support
   _sc_decompose3DTransformMatrix: function (matrix, expectsScale) {
-    var ret = View._SC_DECOMPOSED_TRANSFORM_MAP,  // Shared object used to avoid continually initializing/destroying
+    var ret = this._SC_DECOMPOSED_TRANSFORM_MAP,  // Shared object used to avoid continually initializing/destroying
       toDegrees = 180 / Math.PI;
       // determinant;
 
     // Create the decomposition map once. Note: This is a shared object, all properties must be overwritten each time.
-    if (!ret) { ret = View._SC_DECOMPOSED_TRANSFORM_MAP = {}; }
+    if (!ret) { ret = this._SC_DECOMPOSED_TRANSFORM_MAP = {}; }
 
     // Calculate the scale.
     if (expectsScale) {
@@ -684,14 +685,14 @@ export const animationSupport = /** @scope View.prototype */ {
           var CSSMatrixClass = browser.experimentalNameFor(window, 'CSSMatrix'),
             matrix;
 
-          if (CSSMatrixClass !== UNSUPPORTED) {
+          if (CSSMatrixClass !== SC.UNSUPPORTED) {
 
             // Convert scientific E number representations to fixed numbers.
             // In WebKit at least, these throw exceptions when used to generate the matrix. To test,
             // paste the following in a browser console:
             //    new WebKitCSSMatrix('matrix(-1, 1.22464679914735e-16, -1.22464679914735e-16, -1, 0, 0)')
             value = this._sc_removeENotationFromMatrixString(value);
-            matrix = new window[CSSMatrixClass](value);
+            matrix = new GLOBAL[CSSMatrixClass](value);
 
             /* jshint eqnull:true */
             var layout = this.get('layout'),
@@ -718,11 +719,11 @@ export const animationSupport = /** @scope View.prototype */ {
             // Set scale.
             if (expectsScale) {
               // If the scale was set in the layout as an Array, return it as an Array.
-              if (SC.typeOf(scaleLayout) === T_ARRAY) {
+              if (SC.typeOf(scaleLayout) === SC.T_ARRAY) {
                 ret.scale = [decomposition.scaleX, decomposition.scaleY];
 
               // If the scale was set in the layout as an Object, return it as an Object.
-              } else if (SC.typeOf(scaleLayout) === T_HASH) {
+              } else if (SC.typeOf(scaleLayout) === SC.T_HASH) {
                 ret.scale = { x: decomposition.scaleX, y: decomposition.scaleY };
 
               // Return it as a single value.
@@ -789,7 +790,7 @@ export const animationSupport = /** @scope View.prototype */ {
   resetAnimation: function () {
     //@if(debug)
     // Reset gives the connotation that the animation would go back to the start layout, but that is not the case.
-    warn('Developer Warning: resetAnimation() has been renamed to cancelAnimation().  Please rename all calls to resetAnimation() with cancelAnimation().');
+    SC.warn('Developer Warning: resetAnimation() has been renamed to cancelAnimation().  Please rename all calls to resetAnimation() with cancelAnimation().');
     //@endif
 
     return this.cancelAnimation();

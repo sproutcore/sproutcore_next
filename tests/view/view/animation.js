@@ -8,66 +8,76 @@
 // View Animation Unit Tests
 // ========================================================================
 /*global module, test, ok, equals, stop, start, expect*/
-
+import { SC } from '../../../core/core.js';
+import { View, Pane, LayoutState } from '../../../view/view.js';
+import { platform } from '../../../responder/responder.js';
+import { browser}  from '../../../event/event.js';
 
 /* These unit tests verify:  animate(). */
-var view, pane, originalSupportsTransitions = SC.platform.supportsCSSTransitions;
+var view, pane, originalSupportsTransitions = platform.supportsCSSTransitions;
 
 function styleFor(view) {
   return view.get('layer').style;
 }
 
 function transitionFor(view) {
-  return styleFor(view)[SC.browser.experimentalStyleNameFor('transition')];
+  return styleFor(view)[browser.experimentalStyleNameFor('transition')];
 }
 
-var commonSetup = {
-  setup: function (wantsAcceleratedLayer) {
+var commonSetup = function (wantsAcceleratedLayer) {
+  return {
+    beforeEach: function () {
 
-    SC.run(function () {
-      pane = SC.Pane.create({
-        backgroundColor: '#ccc',
-        layout: { top: 0, right: 0, width: 200, height: 200, zIndex: 100 }
+      SC.run(function () {
+        pane = Pane.create({
+          backgroundColor: '#ccc',
+          layout: { top: 0, right: 0, width: 200, height: 200, zIndex: 100 }
+        });
+        pane.append();
+
+        view = View.create({
+          backgroundColor: '#888',
+          layout: { left: 0, top: 0, height: 100, width: 100 },
+          wantsAcceleratedLayer: wantsAcceleratedLayer || false
+        });
+        pane.appendChild(view);
       });
-      pane.append();
+    },
 
-      view = SC.View.create({
-        backgroundColor: '#888',
-        layout: { left: 0, top: 0, height: 100, width: 100 },
-        wantsAcceleratedLayer: wantsAcceleratedLayer || NO
+    afterEach: function () {
+      SC.run(function () {
+        pane.destroy();
       });
-      pane.appendChild(view);
-    });
-  },
+      pane = view = null;
+    }
+  };
+}
 
-  teardown: function () {
-    SC.run(function () {
-      pane.destroy();
-    });
-    pane = view = null;
-  }
-};
 
-if (SC.platform.supportsCSSTransitions) {
 
-  module("ANIMATION", commonSetup);
+if (platform.supportsCSSTransitions) {
 
-  test("should work", function () {
-    stop(4000);
+  module("ANIMATION", commonSetup());
+
+  test("should work", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
     SC.RunLoop.begin();
     view.animate('left', 100, { duration: 1 });
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(transitionFor(view), 'left 1s ease 0s', 'add transition');
-      equals(100, view.get('layout').left, 'left is 100');
+      assert.equal(transitionFor(view), 'left 1s ease 0s', 'add transition');
+      assert.equal(100, view.get('layout').left, 'left is 100');
 
-      start();
+      // start();
+      cb();
     }, 5);
   });
 
-  test("animate + adjust: no conflict", function () {
-    stop(4000);
+  test("animate + adjust: no conflict", function (assert) {
+    // stop(4000);
+    const cb = assert.async()
 
     SC.run(function () {
       view.animate('left', 100, { duration: 0.1 });
@@ -76,10 +86,10 @@ if (SC.platform.supportsCSSTransitions) {
     });
 
     setTimeout(function () {
-      equals(view.get('layout').left, 100, 'left is');
-      equals(view.get('layout').top, 100, 'top is');
-      equals(view.get('layout').right, 100, 'right is');
-      equals(view.get('layout').width, undefined, 'width is');
+      assert.equal(view.get('layout').left, 100, 'left is');
+      assert.equal(view.get('layout').top, 100, 'top is');
+      assert.equal(view.get('layout').right, 100, 'right is');
+      assert.equal(view.get('layout').width, undefined, 'width is');
 
       SC.run(function () {
         view.animate('top', 200, { duration: 0.1 });
@@ -88,18 +98,20 @@ if (SC.platform.supportsCSSTransitions) {
       });
 
       setTimeout(function () {
-        equals(view.get('layout').left, 0, 'left is');
-        equals(view.get('layout').top, 200, 'top is');
-        equals(view.get('layout').right, undefined, 'right is');
-        equals(view.get('layout').width, 100, 'width is');
+        assert.equal(view.get('layout').left, 0, 'left is');
+        assert.equal(view.get('layout').top, 200, 'top is');
+        assert.equal(view.get('layout').right, undefined, 'right is');
+        assert.equal(view.get('layout').width, 100, 'width is');
 
-        start();
+        // start();
+        cb();
       }, 200);
     }, 200);
   });
 
-  test("animate + adjust: conflict", function () {
-    stop(4000);
+  test("animate + adjust: conflict", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     SC.run(function () {
       view.animate('left', 100, { duration: 0.1 });
@@ -107,7 +119,7 @@ if (SC.platform.supportsCSSTransitions) {
     });
 
     setTimeout(function () {
-      equals(view.get('layout').left, 200, 'left is');
+      assert.equal(view.get('layout').left, 200, 'left is');
 
       SC.run(function () {
         view.animate('top', 200, { duration: 0.1 });
@@ -116,35 +128,39 @@ if (SC.platform.supportsCSSTransitions) {
       });
 
       setTimeout(function () {
-        equals(view.get('layout').top, 0, 'top is');
+        assert.equal(view.get('layout').top, 0, 'top is');
 
-        start();
+        // start();
+        cb();
       }, 200);
     }, 200);
   });
 
-  test("callbacks work in general", function () {
-    stop(4000);
-
+  test("callbacks work in general", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
     SC.run(function () {
       view.animate('left', 100, { duration: 0.5 }, function () {
-        ok(true, "Callback was called.");
-        equals(view, this, "`this` should be the view");
+        assert.ok(true, "Callback was called.");
+        assert.equal(view, this, "`this` should be the view");
 
-        start();
+        // start();
+        cb();
       });
     });
   });
 
-  test("callbacks work in general with target method", function () {
-    stop(4000);
+  test("callbacks work in general with target method", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     var ob = SC.Object.create({
       callback: function () {
-        ok(true, "Callback was called.");
-        equals(ob, this, "`this` should be the target object");
+        assert.ok(true, "Callback was called.");
+        assert.equal(ob, this, "`this` should be the target object");
 
-        start();
+        // start();
+        cb();
       }
     });
 
@@ -153,97 +169,107 @@ if (SC.platform.supportsCSSTransitions) {
     });
   });
 
-  test("callbacks should have appropriate data", function () {
-    stop(4000);
-
+  test("callbacks should have appropriate data", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
     SC.RunLoop.begin();
     view.animate('left', 100, { duration: 0.5 }, function (data) {
       // TODO: Test this better
-      ok(data.event, "has event");
-      equals(data.view, view, "view is correct");
-      equals(data.isCancelled, false, "animation is not cancelled");
+      assert.ok(data.event, "has event");
+      assert.equal(data.view, view, "view is correct");
+      assert.equal(data.isCancelled, false, "animation is not cancelled");
 
-      start();
+      // start();
+      cb();
     });
     SC.RunLoop.end();
   });
 
-  test("handles delay function string", function () {
-    stop(4000);
-
+  test("handles delay function string", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
     SC.RunLoop.begin();
     view.animate('left', 100, { duration: 1, delay: 1 });
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(transitionFor(view), 'left 1s ease 1s', 'uses delay');
+      assert.equal(transitionFor(view), 'left 1s ease 1s', 'uses delay');
 
-      start();
+      // start();
+      cb();
     }, 5);
   });
 
-  test("handles timing function string", function () {
-    stop(4000);
-
+  test("handles timing function string", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
     SC.RunLoop.begin();
     view.animate('left', 100, { duration: 1, timing: 'ease-in' });
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(transitionFor(view), 'left 1s ease-in 0s', 'uses ease-in timing');
+      assert.equal(transitionFor(view), 'left 1s ease-in 0s', 'uses ease-in timing');
 
-      start();
+      // start();
+      cb();
     }, 5);
   });
 
-  test("handles timing function array", function () {
-    stop(4000);
+  test("handles timing function array", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     SC.RunLoop.begin();
     view.animate('left', 100, { duration: 1, timing: [0.1, 0.2, 0.3, 0.4] });
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(transitionFor(view), 'left 1s cubic-bezier(0.1, 0.2, 0.3, 0.4) 0s', 'uses cubic-bezier timing');
+      assert.equal(transitionFor(view), 'left 1s cubic-bezier(0.1, 0.2, 0.3, 0.4) 0s', 'uses cubic-bezier timing');
 
-      start();
+      // start();
+      cb();
     }, 5);
   });
 
-  test("should allow multiple keys to be set at once", function () {
-    stop(4000);
+  test("should allow multiple keys to be set at once", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     SC.RunLoop.begin();
     view.animate({ top: 100, left: 100 }, { duration: 1 });
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(transitionFor(view), 'top 1s ease 0s, left 1s ease 0s', 'should add transition');
-      equals(100, view.get('layout').top, 'top is 100');
-      equals(100, view.get('layout').left, 'left is 100');
+      assert.equal(transitionFor(view), 'top 1s ease 0s, left 1s ease 0s', 'should add transition');
+      assert.equal(100, view.get('layout').top, 'top is 100');
+      assert.equal(100, view.get('layout').left, 'left is 100');
 
-      start();
+      // start();
+      cb();
     }, 5);
   });
 
-  test("should not animate any keys that don't change", function () {
-    stop(4000);
+  test("should not animate any keys that don't change", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     SC.RunLoop.begin();
     view.animate({ top: 0, left: 100 }, { duration: 1 });
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(transitionFor(view), 'left 1s ease 0s', 'should only add left transition');
-      equals(0, view.get('layout').top, 'top is 0');
-      equals(100, view.get('layout').left, 'left is 100');
+      assert.equal(transitionFor(view), 'left 1s ease 0s', 'should only add left transition');
+      assert.equal(0, view.get('layout').top, 'top is 0');
+      assert.equal(100, view.get('layout').left, 'left is 100');
 
-      start();
+      // start();
+      cb();
     }, 5);
   });
 
-  test("animating height with a centerY layout should also animate margin-top", function () {
-    stop(4000);
+  test("animating height with a centerY layout should also animate margin-top", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     SC.RunLoop.begin();
     view.adjust({ top: null, centerY: 0 });
@@ -251,16 +277,18 @@ if (SC.platform.supportsCSSTransitions) {
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(transitionFor(view), 'height 1s ease 0s, margin-top 1s ease 0s', 'should add height and margin-top transitions');
-      equals(view.get('layout').height, 10, 'height');
-      equals(view.get('layout').centerY, 0, 'centerY');
+      assert.equal(transitionFor(view), 'height 1s ease 0s, margin-top 1s ease 0s', 'should add height and margin-top transitions');
+      assert.equal(view.get('layout').height, 10, 'height');
+      assert.equal(view.get('layout').centerY, 0, 'centerY');
 
-      start();
+      // start();
+      cb();
     }, 5);
   });
 
-  test("animating width with a centerX layout should also animate margin-left", function () {
-    stop(4000);
+  test("animating width with a centerX layout should also animate margin-left", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     SC.RunLoop.begin();
     view.adjust({ left: null, centerX: 0 });
@@ -268,30 +296,32 @@ if (SC.platform.supportsCSSTransitions) {
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(transitionFor(view), 'width 1s ease 0s, margin-left 1s ease 0s', 'should add width and margin-left transitions');
-      equals(view.get('layout').width, 10, 'width');
-      equals(view.get('layout').centerX, 0, 'centerX');
+      assert.equal(transitionFor(view), 'width 1s ease 0s, margin-left 1s ease 0s', 'should add width and margin-left transitions');
+      assert.equal(view.get('layout').width, 10, 'width');
+      assert.equal(view.get('layout').centerX, 0, 'centerX');
 
-      start();
+      // start();
+      cb();
     }, 5);
   });
 
   // Pretty sure this does the job
-  test("callbacks should be called only once for a grouped animation", function () {
-    stop(4000);
+  test("callbacks should be called only once for a grouped animation", function (assert) {
+    // stop(4000);
     var stopped = true;
-
-    expect(1);
+    const cb = assert.async();
+    assert.expect(1);
 
     SC.run(function () {
       view.animate({ top: 100, left: 100, width: 400 }, { duration: 0.5 }, function () {
-        ok(stopped, 'callback called back');
+        assert.ok(stopped, 'callback called back');
         if (stopped) {
           stopped = false;
           // Continue on in a short moment.  Before the test times out, but after
           // enough time for a second callback to possibly come in.
           setTimeout(function () {
-            start();
+            // start();
+            cb();
           }, 200);
         }
       });
@@ -300,28 +330,29 @@ if (SC.platform.supportsCSSTransitions) {
 
   // This behavior should be up for debate.  Does the callback call immediately, or does it wait until the end of
   // the specified animation period?  Currently we're calling it immediately.
-  test("callback should be called immediately when a property is animated to its current value.", function () {
-    stop(4000);
-
-    expect(1);
+  test("callback should be called immediately when a property is animated to its current value.", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
+    assert.expect(1);
 
     SC.run(function () {
       view.animate('top', view.getPath('layout.top'), { duration: 0.5 }, function () {
-        ok(true, 'callback called back');
+        assert.ok(true, 'callback called back');
 
-        start();
+        // start();
+        cb();
       });
     });
   });
 
   // This behavior should be up for debate.  Does the callback call immediately, or does it wait until the end of
   // the specified animation period?  Currently we're calling it immediately.
-  test("callback should be called immediately when a property is animated to its current value (even if the value is implied).", function () {
-    stop(4000);
+  test("callback should be called immediately when a property is animated to its current value (even if the value is implied).", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
+    assert.expect(1);
 
-    expect(1);
-
-    var implicitView = SC.View.create({
+    var implicitView = View.create({
         backgroundColor: '#ABC',
         layout: { left: 0 } // implicit layout: { top: 0, right: 0, bottom: 0 }
       });
@@ -329,63 +360,67 @@ if (SC.platform.supportsCSSTransitions) {
 
     SC.run(function () {
       implicitView.animate('top', 0, { duration: 0.5 }, function () {
-        ok(true, 'callback called back');
+        assert.ok(true, 'callback called back');
 
-        start();
+        // start();
+        cb();
       });
     });
   });
 
-  test("callback should be called when a property is animated with a duration of zero.", function () {
-    stop(4000);
-
-    expect(1);
+  test("callback should be called when a property is animated with a duration of zero.", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
+    assert.expect(1);
 
     SC.RunLoop.begin();
     view.animate('top', 20, { duration: 0 }, function () {
-      ok(true, 'callback called back');
-      start();
+      assert.ok(true, 'callback called back');
+      // start();
+      cb();
     });
     SC.RunLoop.end();
   });
 
-  test("multiple animations should be able to run simultaneously", function () {
-    stop(4000);
-
-    expect(2);
+  test("multiple animations should be able to run simultaneously", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
+    assert.expect(2);
 
     SC.run(function () {
       view.animate('top', 100, { duration: 0.25 }, function () {
-        ok(true, 'top finished');
+        assert.ok(true, 'top finished');
       });
 
       view.animate('left', 100, { duration: 0.5 }, function () {
-        ok(true, 'left finished');
-        start();
+        assert.ok(true, 'left finished');
+        // start();
+        cb();
       });
     });
   });
 
-  test("altering existing animation should call callback as cancelled", function () {
-    stop(4000);
+  test("altering existing animation should call callback as cancelled", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     var order = 0;
-    expect(6);
+    assert.expect(6);
 
     SC.run(function () {
       view.animate('top', 100, { duration: 0.5 }, function (data) {
         // Test the order to ensure that this is the proper callback that is used.
-        equals(order, 0, 'should be called first');
+        assert.equal(order, 0, 'should be called first');
         order = 1;
-        equals(data.isCancelled, true, 'first cancelled');
+        assert.equal(data.isCancelled, true, 'first cancelled');
       });
 
       // Test calling animate twice in the same run loop.
       view.animate('top', 100, { duration: 0.75 }, function (data) {
         // Test the order to ensure that this is the proper callback that is used.
-        equals(order, 1, 'should be called second');
+        assert.equal(order, 1, 'should be called second');
         order = 2;
-        equals(data.isCancelled, true, 'second cancelled');
+        assert.equal(data.isCancelled, true, 'second cancelled');
       });
     });
 
@@ -393,18 +428,19 @@ if (SC.platform.supportsCSSTransitions) {
       SC.run(function () {
         view.animate('top', 0, { duration: 0.75 }, function (data) {
           // Test the order to ensure that this is the proper callback that is used.
-          equals(order, 2, 'should be called third');
-          equals(data.isCancelled, false, 'third not cancelled');
-          start();
+          assert.equal(order, 2, 'should be called third');
+          assert.equal(data.isCancelled, false, 'third not cancelled');
+          // start();
+          cb();
         });
       });
     }, 100);
   });
 
-  test("should not cancel callback when value hasn't changed", function () {
-    var callbacks = 0, wasCancelled = NO, check = 0;
-    stop(4000);
-
+  test("should not cancel callback when value hasn't changed", function (assert) {
+    var callbacks = 0, wasCancelled = false, check = 0;
+    // stop(4000);
+    const cb = assert.async();
     SC.run(function () {
       // this triggers the initial layoutStyle code
       view.animate('left', 79, { duration: 0.5 }, function (data) {
@@ -422,11 +458,12 @@ if (SC.platform.supportsCSSTransitions) {
     }, 250);
 
     setTimeout(function () {
-      equals(check, 0, "the callback should not have been cancelled initially");
-      equals(callbacks, 1, "the callback should have been fired");
-      equals(wasCancelled, NO, "the callback should not have been cancelled");
+      assert.equal(check, 0, "the callback should not have been cancelled initially");
+      assert.equal(callbacks, 1, "the callback should have been fired");
+      assert.equal(wasCancelled, false, "the callback should not have been cancelled");
 
-      start();
+      // start();
+      cb();
     }, 1000);
   });
 
@@ -434,19 +471,20 @@ if (SC.platform.supportsCSSTransitions) {
   // version of it existed in _activeAnimations, such that when another property
   // was animated it would throw an exception iterating through _activeAnimations
   // and not expecting a null value.
-  test("animating different attributes at different times should not throw an error", function () {
+  test("animating different attributes at different times should not throw an error", function (assert) {
     // Run test.
-    stop(4000);
+    // stop(4000);
+    const cb = assert.async();
 
-    expect(0);
+    // assert.expect(0);
 
     // Override and wrap the problematic method to capture the error.
     view.transitionDidEnd = function () {
       try {
-        SC.View.prototype.transitionDidEnd.apply(this, arguments);
-        ok(true);
+        View.prototype.transitionDidEnd.apply(this, arguments);
+        assert.ok(true);
       } catch (ex) {
-        ok(false);
+        assert.ok(false);
       }
     };
 
@@ -461,33 +499,37 @@ if (SC.platform.supportsCSSTransitions) {
     }, 400);
 
     setTimeout(function () {
-      start();
+      // start();
+      cb();
     }, 1000);
   });
 
-  test("should handle transform attributes", function () {
-    stop(4000);
+  test("should handle transform attributes", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
     SC.run(function () {
       view.animate('rotateX', 45, { duration: 1 });
     });
 
     setTimeout(function () {
-      equals(transitionFor(view), SC.browser.experimentalCSSNameFor('transform') + ' 1s ease 0s', 'add transition');
-      equals(styleFor(view)[SC.browser.experimentalStyleNameFor('transform')], 'rotateX(45deg)', 'has both transforms');
-      equals(45, view.get('layout').rotateX, 'rotateX is 45deg');
+      assert.equal(transitionFor(view), browser.experimentalCSSNameFor('transform') + ' 1s ease 0s', 'add transition');
+      assert.equal(styleFor(view)[browser.experimentalStyleNameFor('transform')], 'rotateX(45deg)', 'has both transforms');
+      assert.equal(45, view.get('layout').rotateX, 'rotateX is 45deg');
 
-      start();
+      // start();
+      cb();
     }, 50);
   });
 
-  test("should handle conflicting transform animations", function () {
+  test("should handle conflicting transform animations", function (assert) {
     /*global console*/
-    stop(4000);
+    // stop(4000);
+    const cb = assert.async();
 
     var originalConsoleWarn = console.warn;
     console.warn = function (warning) {
-      equals(warning, "Developer Warning: Can't animate transforms with different durations, timings or delays! Using the first options specified.", "proper warning");
+      assert.equal(warning, "Developer Warning: Can't animate transforms with different durations, timings or delays! Using the first options specified.", "proper warning");
     };
 
     SC.run(function () {
@@ -495,42 +537,45 @@ if (SC.platform.supportsCSSTransitions) {
     });
 
     setTimeout(function () {
-      expect(5);
+      assert.expect(5);
 
-      equals(transitionFor(view), SC.browser.experimentalCSSNameFor('transform') + ' 1s ease 0s', 'use duration of first');
-      equals(styleFor(view)[SC.browser.experimentalStyleNameFor('transform')], 'rotateX(45deg) scale(2)');
-      equals(45, view.get('layout').rotateX, 'rotateX is 45deg');
-      equals(2, view.get('layout').scale, 'scale is 2');
+      assert.equal(transitionFor(view), browser.experimentalCSSNameFor('transform') + ' 1s ease 0s', 'use duration of first');
+      assert.equal(styleFor(view)[browser.experimentalStyleNameFor('transform')], 'rotateX(45deg) scale(2)');
+      assert.equal(45, view.get('layout').rotateX, 'rotateX is 45deg');
+      assert.equal(2, view.get('layout').scale, 'scale is 2');
 
       console.warn = originalConsoleWarn;
 
-      start();
+      // start();
+      cb();
     }, 25);
   });
 
-  test("removes animation property when done", function () {
-    stop(4000);
-
+  test("removes animation property when done", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
     SC.RunLoop.begin();
     view.animate({ top: 100, scale: 2 }, { duration: 0.5 });
     SC.RunLoop.end();
 
     setTimeout(function () {
-      equals(view.get('layout').animateTop, undefined, "animateTop is undefined");
-      equals(view.get('layout').animateScale, undefined, "animateScale is undefined");
+      assert.equal(view.get('layout').animateTop, undefined, "animateTop is undefined");
+      assert.equal(view.get('layout').animateScale, undefined, "animateScale is undefined");
 
-      start();
+      // start();
+      cb();
     }, 1000);
   });
 
-  test("Test that cancelAnimation() removes the animation style and fires the callback with isCancelled set.", function () {
-    stop(4000);
+  test("Test that cancelAnimation() removes the animation style and fires the callback with isCancelled set.", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
-    expect(7);
+    assert.expect(7);
 
     SC.run(function () {
       view.animate({ left: 100 }, { duration: 0.5 }, function (data) {
-        ok(data.isCancelled, "The isCancelled property of the data should be true.");
+        assert.ok(data.isCancelled, "The isCancelled property of the data should be true.");
       });
     });
 
@@ -538,9 +583,9 @@ if (SC.platform.supportsCSSTransitions) {
       SC.run(function () {
         var style = styleFor(view);
 
-        equals(style.left, '100px', 'Tests the left style after animate');
-        equals(style.top, '0px', 'Tests the top style after animate');
-        equals(transitionFor(view), 'left 0.5s ease 0s', 'Tests the CSS transition property');
+        assert.equal(style.left, '100px', 'Tests the left style after animate');
+        assert.equal(style.top, '0px', 'Tests the top style after animate');
+        assert.equal(transitionFor(view), 'left 0.5s ease 0s', 'Tests the CSS transition property');
         view.cancelAnimation();
       });
     }, 5);
@@ -548,21 +593,22 @@ if (SC.platform.supportsCSSTransitions) {
     setTimeout(function () {
       var style = styleFor(view);
 
-      equals(style.left, '100px', 'Tests the left style after cancel');
-      equals(style.top, '0px', 'Tests the top style after cancel');
-      equals(transitionFor(view), '', 'Tests the CSS transition property');
-      start();
+      assert.equal(style.left, '100px', 'Tests the left style after cancel');
+      assert.equal(style.top, '0px', 'Tests the top style after cancel');
+      assert.equal(transitionFor(view), '', 'Tests the CSS transition property');
+      // start();
+      cb();
     }, 50);
   });
 
-  test("Test that cancelAnimation(SC.LayoutState.CURRENT) removes the animation style, stops at the current position and fires the callback with isCancelled set.", function () {
-    stop(4000);
-
-    expect(9);
+  test("Test that cancelAnimation(LayoutState.CURRENT) removes the animation style, stops at the current position and fires the callback with isCancelled set.", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
+    assert.expect(9);
 
     SC.run(function () {
       view.animate({ left: 100, top: 100, width: 400 }, { duration: 0.5 }, function (data) {
-        ok(data.isCancelled, "The isCancelled property of the data should be true.");
+        assert.ok(data.isCancelled, "The isCancelled property of the data should be true.");
       });
     });
 
@@ -570,33 +616,35 @@ if (SC.platform.supportsCSSTransitions) {
       SC.run(function () {
         var style = styleFor(view);
 
-        equals(style.left, '100px', 'Tests the left style after animate');
-        equals(style.top, '100px', 'Tests the top style after animate');
-        equals(style.width, '400px', 'Tests the width style after animate');
-        equals(transitionFor(view), 'left 0.5s ease 0s, top 0.5s ease 0s, width 0.5s ease 0s', 'Tests the CSS transition property');
-        view.cancelAnimation(SC.LayoutState.CURRENT);
+        assert.equal(style.left, '100px', 'Tests the left style after animate');
+        assert.equal(style.top, '100px', 'Tests the top style after animate');
+        assert.equal(style.width, '400px', 'Tests the width style after animate');
+        assert.equal(transitionFor(view), 'left 0.5s ease 0s, top 0.5s ease 0s, width 0.5s ease 0s', 'Tests the CSS transition property');
+        view.cancelAnimation(LayoutState.CURRENT);
       });
     }, 100);
 
     setTimeout(function () {
       var style = styleFor(view);
 
-      ok((parseInt(style.left, 10) > 0) && (parseInt(style.left, 10) < 100), 'Tests the left style after cancel');
-      ok((parseInt(style.top, 10) > 0) && (parseInt(style.top, 10) < 100), 'Tests the top style after cancel');
-      ok((parseInt(style.width, 10) > 100) && (parseInt(style.width, 10) < 400), 'Tests the width style after cancel');
-      equals(transitionFor(view), '', 'Tests the CSS transition property');
-      start();
+      assert.ok((parseInt(style.left, 10) > 0) && (parseInt(style.left, 10) < 100), 'Tests the left style after cancel');
+      assert.ok((parseInt(style.top, 10) > 0) && (parseInt(style.top, 10) < 100), 'Tests the top style after cancel');
+      assert.ok((parseInt(style.width, 10) > 100) && (parseInt(style.width, 10) < 400), 'Tests the width style after cancel');
+      assert.equal(transitionFor(view), '', 'Tests the CSS transition property');
+      // start();
+      cb();
     }, 200);
   });
 
-  test("Test that cancelAnimation(SC.LayoutState.START) removes the animation style, returns to the start position and fires the callback with isCancelled set.", function () {
-    stop(4000);
+  test("Test that cancelAnimation(LayoutState.START) removes the animation style, returns to the start position and fires the callback with isCancelled set.", function (assert) {
+    // stop(4000);
+    const cb = assert.async();
 
-    expect(9);
+    assert.expect(9);
 
     SC.run(function () {
       view.animate({ left: 100, top: 100, width: 400 }, { duration: 0.5 }, function (data) {
-        ok(data.isCancelled, "The isCancelled property of the data should be true.");
+        assert.ok(data.isCancelled, "The isCancelled property of the data should be true.");
       });
     });
 
@@ -604,50 +652,47 @@ if (SC.platform.supportsCSSTransitions) {
       SC.run(function () {
         var style = styleFor(view);
 
-        equals(style.left, '100px', 'Tests the left style after animate');
-        equals(style.top, '100px', 'Tests the top style after animate');
-        equals(style.width, '400px', 'Tests the width style after animate');
-        equals(transitionFor(view), 'left 0.5s ease 0s, top 0.5s ease 0s, width 0.5s ease 0s', 'Tests the CSS transition property');
-        view.cancelAnimation(SC.LayoutState.START);
+        assert.equal(style.left, '100px', 'Tests the left style after animate');
+        assert.equal(style.top, '100px', 'Tests the top style after animate');
+        assert.equal(style.width, '400px', 'Tests the width style after animate');
+        assert.equal(transitionFor(view), 'left 0.5s ease 0s, top 0.5s ease 0s, width 0.5s ease 0s', 'Tests the CSS transition property');
+        view.cancelAnimation(LayoutState.START);
       });
     }, 100);
 
     setTimeout(function () {
       var style = styleFor(view);
 
-      equals(style.left, '0px', 'Tests the left style after cancel');
-      equals(style.top, '0px', 'Tests the top style after cancel');
-      equals(style.width, '100px', 'Tests the width style after animate');
-      equals(transitionFor(view), '', 'Tests the CSS transition property');
-      start();
+      assert.equal(style.left, '0px', 'Tests the left style after cancel');
+      assert.equal(style.top, '0px', 'Tests the top style after cancel');
+      assert.equal(style.width, '100px', 'Tests the width style after animate');
+      assert.equal(transitionFor(view), '', 'Tests the CSS transition property');
+      // start();
+      cb();
     }, 200);
   });
 
-  if (SC.platform.supportsCSS3DTransforms) {
-    module("ANIMATION WITH ACCELERATED LAYER", {
-      setup: function () {
-        commonSetup.setup(YES);
-      },
+  if (platform.supportsCSS3DTransforms) {
+    module("ANIMATION WITH ACCELERATED LAYER", commonSetup(true));
 
-      teardown: commonSetup.teardown
-    });
-
-    test("handles acceleration when appropriate", function () {
-      stop(4000);
-
+    test("handles acceleration when appropriate", function (assert) {
+      // stop(4000);
+      const cb = assert.async();
       SC.RunLoop.begin();
       view.animate('top', 100, { duration: 1 });
       SC.RunLoop.end();
 
       setTimeout(function () {
-        equals(transitionFor(view), SC.browser.experimentalCSSNameFor('transform') + ' 1s ease 0s', 'transition is on transform');
+        assert.equal(transitionFor(view), browser.experimentalCSSNameFor('transform') + ' 1s ease 0s', 'transition is on transform');
 
-        start();
+        // start();
+        cb();
       }, 5);
     });
 
-    test("doesn't use acceleration when not appropriate", function () {
-      stop(4000);
+    test("doesn't use acceleration when not appropriate", function (assert) {
+      // stop(4000);
+      const cb = assert.async();
 
       SC.RunLoop.begin();
       view.adjust({ height: null, bottom: 0 });
@@ -655,33 +700,36 @@ if (SC.platform.supportsCSSTransitions) {
       SC.RunLoop.end();
 
       setTimeout(function () {
-        equals(transitionFor(view), 'top 1s ease 0s', 'transition is not on transform');
+        assert.equal(transitionFor(view), 'top 1s ease 0s', 'transition is not on transform');
 
-        start();
+        // start();
+        cb();
       }, 5);
     });
 
-    test("combines accelerated layer animation with compatible transform animations", function () {
-      stop(4000);
+    test("combines accelerated layer animation with compatible transform animations", function (assert) {
+      // stop(4000);
+      const cb = assert.async();
 
       SC.RunLoop.begin();
       view.animate('top', 100, { duration: 1 }).animate('rotateX', 45, { duration: 1 });
       SC.RunLoop.end();
 
       setTimeout(function () {
-        var transform = styleFor(view)[SC.browser.experimentalStyleNameFor('transform')];
+        var transform = styleFor(view)[browser.experimentalStyleNameFor('transform')];
 
         // We need to check these separately because in some cases we'll also have translateZ, this way we don't have to worry about it
-        ok(transform.match(/translateX\(0px\) translateY\(100px\)/), 'has translate');
-        ok(transform.match(/rotateX\(45deg\)/), 'has rotateX');
+        assert.ok(transform.match(/translateX\(0px\) translateY\(100px\)/), 'has translate');
+        assert.ok(transform.match(/rotateX\(45deg\)/), 'has rotateX');
 
-        start();
+        // start();
+        cb();
       }, 5);
     });
 
-    test("should not use accelerated layer if other transforms are being animated at different speeds", function () {
-      stop(4000);
-
+    test("should not use accelerated layer if other transforms are being animated at different speeds", function (assert) {
+      // stop(4000);
+      const cb = assert.async();
       SC.RunLoop.begin();
       view.animate('rotateX', 45, { duration: 2 }).animate('top', 100, { duration: 1 });
       SC.RunLoop.end();
@@ -689,26 +737,28 @@ if (SC.platform.supportsCSSTransitions) {
       setTimeout(function () {
         var style = styleFor(view);
 
-        equals(style[SC.browser.experimentalStyleNameFor('transform')], 'rotateX(45deg)', 'transform should only have rotateX');
-        equals(style.top, '100px', 'should not accelerate top');
+        assert.equal(style[browser.experimentalStyleNameFor('transform')], 'rotateX(45deg)', 'transform should only have rotateX');
+        assert.equal(style.top, '100px', 'should not accelerate top');
 
-        start();
+        // start();
+        cb();
       }, 5);
     });
 
-    test("callbacks should work properly with acceleration", function () {
-      stop(4000);
-
+    test("callbacks should work properly with acceleration", function (assert) {
+      // stop(4000);
+      const cb = assert.async();
       SC.run(function () {
         view.animate({ top: 100, left: 100, scale: 2 }, { duration: 0.25 }, function () {
-          ok(true);
+          assert.ok(true);
 
-          start();
+          // start();
+          cb();
         });
       });
     });
 
-    test("should not add animation for properties that have the same value as existing layout", function () {
+    test("should not add animation for properties that have the same value as existing layout", function (assert) {
       var callbacks = 0;
 
       SC.RunLoop.begin();
@@ -716,48 +766,51 @@ if (SC.platform.supportsCSSTransitions) {
       view.animate({width: 100, height: 50}, { duration: 0.5 }, function () { callbacks++; });
       SC.RunLoop.end();
 
-      ok(callbacks === 0, "precond - callback should not have been run yet");
+      assert.ok(callbacks === 0, "precond - callback should not have been run yet");
 
-      stop(4000);
+      // stop(4000);
+      const cb = assert.async();
 
       // we need to test changing the width at a later time
       setTimeout(function () {
-        start();
+        // start();
+        
 
-        equals(callbacks, 1, "callback should have been run once, for height change");
+        assert.equal(callbacks, 1, "callback should have been run once, for height change");
 
         SC.RunLoop.begin();
         view.animate('width', 50, { duration: 0.5 });
         SC.RunLoop.end();
 
-        equals(callbacks, 1, "callback should still have only been called once, even though width has now been animated");
+        assert.equal(callbacks, 1, "callback should still have only been called once, even though width has now been animated");
+        cb();
       }, 1000);
     });
 
-    test("Test that cancelAnimation() removes the animation style and fires the callback with isCancelled set.", function () {
-      stop(4000);
-
+    test("Test that cancelAnimation() removes the animation style and fires the callback with isCancelled set.", function (assert) {
+      // stop(4000);
+      const cb = assert.async();
       SC.run(function () {
         view.animate({ left: 100, top: 100, width: 400 }, { duration: 0.5 }, function (data) {
-          ok(data.isCancelled, "The isCancelled property of the data should be true.");
+          assert.ok(data.isCancelled, "The isCancelled property of the data should be true.");
         });
       });
 
       setTimeout(function () {
         SC.run(function () {
           var style = styleFor(view),
-          transform = style[SC.browser.experimentalStyleNameFor('transform')];
+          transform = style[browser.experimentalStyleNameFor('transform')];
           transform = transform.match(/\d+/g);
 
           // We need to check these separately because in some cases we'll also have translateZ, this way we don't have to worry about it
-          equals(transform[0], '100',  "Test translateX after animate.");
-          equals(transform[1], '100',  "Test translateY after animate.");
+          assert.equal(transform[0], '100',  "Test translateX after animate.");
+          assert.equal(transform[1], '100',  "Test translateY after animate.");
 
-          equals(transitionFor(view), SC.browser.experimentalCSSNameFor('transform') + ' 0.5s ease 0s, width 0.5s ease 0s', 'Tests the CSS transition property');
+          assert.equal(transitionFor(view), browser.experimentalCSSNameFor('transform') + ' 0.5s ease 0s, width 0.5s ease 0s', 'Tests the CSS transition property');
 
-          equals(style.left, '0px', 'Tests the left style after animate');
-          equals(style.top, '0px', 'Tests the top style after animate');
-          equals(style.width, '400px', 'Tests the width style after animate');
+          assert.equal(style.left, '0px', 'Tests the left style after animate');
+          assert.equal(style.top, '0px', 'Tests the top style after animate');
+          assert.equal(style.width, '400px', 'Tests the width style after animate');
 
           view.cancelAnimation();
         });
@@ -765,46 +818,48 @@ if (SC.platform.supportsCSSTransitions) {
 
       setTimeout(function () {
         var style = styleFor(view);
-        equals(style.width, '400px', 'Tests the width style after cancel');
+        assert.equal(style.width, '400px', 'Tests the width style after cancel');
 
-        var transform = style[SC.browser.experimentalStyleNameFor('transform')];
+        var transform = style[browser.experimentalStyleNameFor('transform')];
         transform = transform.match(/\d+/g);
 
-        equals(transform[0], '100',  "Test translateX after cancel.");
-        equals(transform[1], '100',  "Test translateY after cancel.");
+        assert.equal(transform[0], '100',  "Test translateX after cancel.");
+        assert.equal(transform[1], '100',  "Test translateY after cancel.");
 
-        equals(transitionFor(view), '', 'Tests that there is no CSS transition property after cancel');
+        assert.equal(transitionFor(view), '', 'Tests that there is no CSS transition property after cancel');
 
-        start();
+        // start();
+        cb();
       }, 350);
     });
 
-    test("Test that cancelAnimation(SC.LayoutState.CURRENT) removes the animation style, stops at the current position and fires the callback with isCancelled set.", function () {
-      stop(4000);
+    test("Test that cancelAnimation(LayoutState.CURRENT) removes the animation style, stops at the current position and fires the callback with isCancelled set.", function (assert) {
+      // stop(4000);
+      const cb = assert.async();
 
 
       SC.run(function () {
         view.animate({ left: 200, top: 200, width: 400 }, { duration: 1 }, function (data) {
-          ok(data.isCancelled, "The isCancelled property of the data should be true.");
+          assert.ok(data.isCancelled, "The isCancelled property of the data should be true.");
         });
       });
 
       setTimeout(function () {
         SC.run(function () {
           var style = styleFor(view),
-          transform = style[SC.browser.experimentalStyleNameFor('transform')];
+          transform = style[browser.experimentalStyleNameFor('transform')];
           transform = transform.match(/\d+/g);
 
           // We need to check these separately because in some cases we'll also have translateZ, this way we don't have to worry about it
-          equals(transform[0], '200',  "Test translateX after animate.");
-          equals(transform[1], '200',  "Test translateY after animate.");
-          equals(transitionFor(view), SC.browser.experimentalCSSNameFor('transform') + ' 1s ease 0s, width 1s ease 0s', 'Tests the CSS transition property');
+          assert.equal(transform[0], '200',  "Test translateX after animate.");
+          assert.equal(transform[1], '200',  "Test translateY after animate.");
+          assert.equal(transitionFor(view), browser.experimentalCSSNameFor('transform') + ' 1s ease 0s, width 1s ease 0s', 'Tests the CSS transition property');
 
-          equals(style.left, '0px', 'Tests the left style after animate');
-          equals(style.top, '0px', 'Tests the top style after animate');
-          equals(style.width, '400px', 'Tests the width style after animate');
+          assert.equal(style.left, '0px', 'Tests the left style after animate');
+          assert.equal(style.top, '0px', 'Tests the top style after animate');
+          assert.equal(style.width, '400px', 'Tests the width style after animate');
 
-          view.cancelAnimation(SC.LayoutState.CURRENT);
+          view.cancelAnimation(LayoutState.CURRENT);
         });
       }, 250);
 
@@ -812,108 +867,122 @@ if (SC.platform.supportsCSSTransitions) {
         var style = styleFor(view),
           layout = view.get('layout');
 
-        equals(transitionFor(view), '', 'Tests that there is no CSS transition property after cancel');
+        assert.equal(transitionFor(view), '', 'Tests that there is no CSS transition property after cancel');
 
         // We need to check these separately because in some cases we'll also have translateZ, this way we don't have to worry about it
-        ok((layout.left > 0) && (layout.left < 200), 'Tests the left style, %@, after cancel is greater than 0 and less than 200'.fmt(style.left));
-        ok((layout.top > 0) && (layout.top < 200), 'Tests the top style, %@, after cancel is greater than 0 and less than 200'.fmt(style.top));
-        ok((parseInt(style.width, 10) > 100) && (parseInt(style.width, 10) < 400), 'Tests the width style, %@, after cancel is greater than 100 and less than 400'.fmt(style.width));
-        start();
+        assert.ok((layout.left > 0) && (layout.left < 200), 'Tests the left style, %@, after cancel is greater than 0 and less than 200'.fmt(style.left));
+        assert.ok((layout.top > 0) && (layout.top < 200), 'Tests the top style, %@, after cancel is greater than 0 and less than 200'.fmt(style.top));
+        assert.ok((parseInt(style.width, 10) > 100) && (parseInt(style.width, 10) < 400), 'Tests the width style, %@, after cancel is greater than 100 and less than 400'.fmt(style.width));
+        // start();
+        cb();
       }, 750);
     });
 
-    test("Test that cancelAnimation(SC.LayoutState.START) removes the animation style, goes back to the start position and fires the callback with isCancelled set.", function () {
-      stop(4000);
-
+    test("Test that cancelAnimation(LayoutState.START) removes the animation style, goes back to the start position and fires the callback with isCancelled set.", function (assert) {
+      // stop(4000);
+      const cb = assert.async();
       // expect(12);
-
+      assert.timeout(4000);
       SC.run(function () {
         view.animate({ left: 100, top: 100, width: 400 }, { duration: 0.5 }, function (data) {
-          ok(data.isCancelled, "The isCancelled property of the data should be true.");
+          assert.ok(data.isCancelled, "The isCancelled property of the data should be true.");
         });
       });
 
       setTimeout(function () {
         SC.run(function () {
           var style = styleFor(view),
-          transform = style[SC.browser.experimentalStyleNameFor('transform')];
-          equals(style.left, '0px', 'Tests the left style after animate');
-          equals(style.top, '0px', 'Tests the top style after animate');
-          equals(style.width, '400px', 'Tests the width style after animate');
+          transform = style[browser.experimentalStyleNameFor('transform')];
+          assert.equal(style.left, '0px', 'Tests the left style after animate');
+          assert.equal(style.top, '0px', 'Tests the top style after animate');
+          assert.equal(style.width, '400px', 'Tests the width style after animate');
 
           transform = transform.match(/\d+/g);
 
           // We need to check these separately because in some cases we'll also have translateZ, this way we don't have to worry about it
-          equals(transform[0], '100',  "Test translateX after animate.");
-          equals(transform[1], '100',  "Test translateY after animate.");
+          assert.equal(transform[0], '100',  "Test translateX after animate.");
+          assert.equal(transform[1], '100',  "Test translateY after animate.");
 
-          equals(transitionFor(view), SC.browser.experimentalCSSNameFor('transform') + ' 0.5s ease 0s, width 0.5s ease 0s', 'Tests the CSS transition property');
-          view.cancelAnimation(SC.LayoutState.START);
+          assert.equal(transitionFor(view), browser.experimentalCSSNameFor('transform') + ' 0.5s ease 0s, width 0.5s ease 0s', 'Tests the CSS transition property');
+          view.cancelAnimation(LayoutState.START);
         });
       }, 250);
 
       setTimeout(function () {
         var style = styleFor(view);
 
-        var transform = style[SC.browser.experimentalStyleNameFor('transform')];
+        var transform = style[browser.experimentalStyleNameFor('transform')];
         transform = transform.match(/\d+/g);
 
-        equals(transitionFor(view), '', 'Tests that there is no CSS transition property after cancel');
+        assert.equal(transitionFor(view), '', 'Tests that there is no CSS transition property after cancel');
 
         // We need to check these separately because in some cases we'll also have translateZ, this way we don't have to worry about it
-        equals(transform[0], '0',  "Test translateX after cancel.");
-        equals(transform[1], '0',  "Test translateY after cancel.");
-        equals(style.width, '100px', 'Tests the width style after cancel');
-        start();
+        assert.equal(transform[0], '0',  "Test translateX after cancel.");
+        assert.equal(transform[1], '0',  "Test translateY after cancel.");
+        assert.equal(style.width, '100px', 'Tests the width style after cancel');
+        // start();
+        cb();
       }, 350);
     });
-  } else {
-    test("This platform appears to not support CSS 3D transforms.");
+  } 
+  else {
+    // test("This platform appears to not support CSS 3D transforms.");
+    console.log("This platform appears to not support CSS 3D transforms.");
   }
-} else {
-  test("This platform appears to not support CSS transitions.");
+} 
+else {
+  // test("This platform appears to not support CSS transitions.");
+  console.log("This platform appears to not support CSS transitions.");
 }
 
+
+/// PASSING
+
+
 module("ANIMATION WITHOUT TRANSITIONS", {
-  setup: function () {
-    commonSetup.setup();
-    SC.platform.supportsCSSTransitions = NO;
+  beforeEach: function () {
+    commonSetup().beforeEach();
+    platform.supportsCSSTransitions = false;
   },
 
-  teardown: function () {
-    commonSetup.teardown();
-    SC.platform.supportsCSSTransitions = originalSupportsTransitions;
+  afterEach: function () {
+    commonSetup().afterEach();
+    platform.supportsCSSTransitions = originalSupportsTransitions;
   }
 });
 
-test("should update layout", function () {
-  stop(4000);
+test("should update layout", function (assert) {
+  // stop(4000);
+  const cb = assert.async();
   SC.RunLoop.begin();
   view.animate('left', 100, { duration: 1 });
   SC.RunLoop.end();
 
   setTimeout(function () {
-    equals(view.get('layout').left, 100, 'left is 100');
-    start();
+    assert.equal(view.get('layout').left, 100, 'left is 100');
+    // start();
+    cb();
   }, 5);
 });
 
-test("should still run callback", function () {
-  stop(4000);
-
-  expect(1);
+test("should still run callback", function (assert) {
+  // stop(4000);
+  const cb = assert.async();
+  assert.expect(1);
 
   SC.RunLoop.begin();
   view.animate({ top: 200, left: 100 }, { duration: 1 }, function () {
-    ok(true, "callback called");
-    start();
+    assert.ok(true, "callback called");
+    // start();
+    cb();
   });
   SC.RunLoop.end();
 });
 
-module("Animating in the next run loop", commonSetup);
 
-test("Calling animate while flusing the invokeNext queue should not throw an exception", function () {
+module("Animating in the next run loop", commonSetup());
+
+test("Calling animate while flushing the invokeNext queue should not throw an exception", function (assert) {
   try {
     SC.run(function () {
       view.invokeNext(function () {
@@ -931,8 +1000,8 @@ test("Calling animate while flusing the invokeNext queue should not throw an exc
       // The second call to _animate from the function with animate in it.
     });
   } catch (ex) {
-    ok(false, "failure");
+    assert.ok(false, "failure");
   }
 
-  ok(true, "success");
+  assert.ok(true, "success");
 });

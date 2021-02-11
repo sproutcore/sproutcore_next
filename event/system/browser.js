@@ -145,17 +145,17 @@ export const browser = SC.mixin(SC.browser,
     // ex. window.indexedDB.getDatabaseNames
     if (!this._testSupportFor(target, ret, testValue)) {
       // ex. window.WebKitCSSMatrix
-      ret = SC.browser.classPrefix + standardName.capitalize();
+      ret = browser.classPrefix + standardName.capitalize();
       if (!this._testSupportFor(target, ret, testValue)) {
         // No need to check if the prefix is the same for properties and classes
-        if (SC.browser.domPrefix === SC.browser.classPrefix) {
+        if (browser.domPrefix === SC.browser.classPrefix) {
           // Always show a warning so that production usage information has a
           // better chance of filtering back to the developer(s).
           SC.warn("SC.browser.experimentalNameFor(): target, %@, does not have property `%@` or `%@`.".fmt(target, standardName, ret));
           ret = SC.UNSUPPORTED;
         } else {
           // ex. window.indexedDB.webkitGetDatabaseNames
-          ret = SC.browser.domPrefix + standardName.capitalize();
+          ret = browser.domPrefix + standardName.capitalize();
           if (!this._testSupportFor(target, ret, testValue)) {
             // Always show a warning so that production usage information has a
             // better chance of filtering back to the developer(s).

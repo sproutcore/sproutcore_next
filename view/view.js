@@ -1,6 +1,7 @@
 import { SC } from '../core/core.js';
 import { viewManager } from './views/view_manager.js';
 
+
 export { View } from './views/view.js';
 export { CoreView } from './views/core_view.js';
 export { Theme } from './theme/theme.js';
@@ -11,6 +12,7 @@ export { MainPane }  from './panes/main.js';
 export * from './views/utils/rect.js';
 export * from './views/utils/utils.js';
 export { viewManager } from './views/view_manager.js';
+export { LayoutState } from './views/view/animation.js'; 
 
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
