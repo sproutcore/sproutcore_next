@@ -17,7 +17,7 @@ import './ext/array.js';
 import { RunLoop, run } from './system/runloop.js';
 import { Binding } from './system/binding.js';
 import { IndexSet } from './system/index_set.js';
-import { Logger, warn } from './system/logger.js';
+import { Logger, warn, error } from './system/logger.js';
 import { SCError, ok, val, $throw, $error, $ok, $val } from './system/error.js';
 import { SCSet } from './system/set.js';
 import { RangeObserver } from './system/range_observer.js';
@@ -131,6 +131,7 @@ export const SC = {
   val,
   ok,
   warn,
+  error,
   json: {
     encode (root) {
       return JSON.stringify(root);
