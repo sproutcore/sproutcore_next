@@ -102,14 +102,14 @@ export const designModeSupport = /** @scope View.prototype */ {
     if (key === 'layout') {
       //@if(debug)
       if (LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
-        SC.Logger.log('  - Adjusting %@: %@ (cached as %@)'.fmt(key, inspect(value), inspect(this._originalProperties[key])));
+        SC.Logger.log('  - Adjusting %@: %@ (cached as %@)'.fmt(key, SC.inspect(value), SC.inspect(this._originalProperties[key])));
       }
       //@endif
       this.adjust(value);
     } else {
       //@if(debug)
       if (LOG_DESIGN_MODE || this.SC_LOG_DESIGN_MODE) {
-        SC.Logger.log('  - Setting %@: %@ (cached as %@)'.fmt(key, inspect(value), inspect(this._originalProperties[key])));
+        SC.Logger.log('  - Setting %@: %@ (cached as %@)'.fmt(key, SC.inspect(value), SC.inspect(this._originalProperties[key])));
       }
       //@endif
       this.set(key,value);

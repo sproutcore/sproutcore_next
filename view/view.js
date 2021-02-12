@@ -136,7 +136,7 @@ export const POSITION_BOTTOM = 3;
   /**
     Known loc strings
 
-    @type Hash
+    @type Object
   */
 export const STRINGS = {};
 
