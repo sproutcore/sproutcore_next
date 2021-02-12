@@ -471,7 +471,7 @@ export const Pane = View.extend(ResponderContext,
     Inserts the current pane into the page. The actual DOM insertion is done
     by a function passed into `insert`, which receives the layer as a
     parameter. This function is responsible for making sure a layer exists,
-    is not already attached, and for calling `paneDidAttach` when done.
+    is not already attached.
 
         pane = Pane.create();
         pane.insert(function (layer) {
