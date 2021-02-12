@@ -15,6 +15,7 @@ import { platform } from './platform.js';
 import { SCEvent, browser, MODIFIER_KEYS, FUNCTION_KEYS } from '../../event/event.js'; 
 import { rectsEqual } from '../../view/views/utils/rect.js';
 import { viewFor } from '../../view/view.js';
+import { Timer } from './timer.js';
 
 /** Set to false to leave the backspace key under the control of the browser.*/
 // CAPTURE_BACKSPACE_KEY = false ;
