@@ -22,9 +22,9 @@ export const MODE_PREPEND = 'prepend';
 export const NON_PIXEL_PROPERTIES = ['zIndex', 'opacity'];
 
 /** a list of styles that get expanded into multiple properties, add more as you discover them */
-export const COMBO_STYLES = {
+SC.setSetting('COMBO_STYLES', {
   WebkitTransition: ['WebkitTransitionProperty', 'WebkitTransitionDuration', 'WebkitTransitionDelay', 'WebkitTransitionTimingFunction']
-};
+});
 
 /**
   @namespace
@@ -786,7 +786,7 @@ export const RenderContext = SC.Builder.create(
     // Notify when this function isn't being used properly (in debug mode only).
     /*jshint eqnull:true*/
     if (SC.typeOf(nameOrStyles) === SC.T_STRING && value == null) {
-      warn("Developer Warning: RenderContext:addStyle is not meant to be used to remove attributes by setting the value to null or undefined.  It would be more correct to use setStyle(%@, %@).".fmt(nameOrStyles, value));
+      SC.warn("Developer Warning: RenderContext:addStyle is not meant to be used to remove attributes by setting the value to null or undefined.  It would be more correct to use setStyle(%@, %@).".fmt(nameOrStyles, value));
     }
     //@endif
     return this.setStyle(nameOrStyles, value);
@@ -884,6 +884,7 @@ export const RenderContext = SC.Builder.create(
 
   /** @private */
   _deleteComboStyles: function (styles, key) {
+    const COMBO_STYLES = SC.getSetting('COMBO_STYLES');
     var comboStyles = COMBO_STYLES[key],
         didChange = false, tmp;
 
