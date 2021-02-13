@@ -16,6 +16,7 @@ import { SCEvent, browser, MODIFIER_KEYS, FUNCTION_KEYS } from '../../event/even
 import { rectsEqual } from '../../view/views/utils/rect.js';
 import { viewFor } from '../../view/view.js';
 import { Timer } from './timer.js';
+import { Touch } from './touch.js';
 
 /** Set to false to leave the backspace key under the control of the browser.*/
 // CAPTURE_BACKSPACE_KEY = false ;
@@ -60,6 +61,8 @@ SC.setSetting('CAPTURE_BACKSPACE_KEY', false);
      explicit target, or allow the action to traverse the hierarchy until a
      view is found that handles it.
 */
+let touchHoldingPen;
+
 export const RootResponder = SC.Object.extend(
   /** @scope RootResponder.prototype */{
 
@@ -1123,7 +1126,7 @@ export const RootResponder = SC.Object.extend(
     if (!this._touchedViews[SC.guidFor(view)]) {
       this._touchedViews[SC.guidFor(view)] = {
         view: view,
-        touches: CoreSet.create([]),
+        touches: SC.CoreSet.create([]),
         touchCount: 0
       };
       view.set("hasTouch", true);
