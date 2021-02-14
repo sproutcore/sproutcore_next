@@ -15,7 +15,6 @@ import { platform } from './platform.js';
 import { SCEvent, browser, MODIFIER_KEYS, FUNCTION_KEYS } from '../../event/event.js'; 
 import { rectsEqual } from '../../view/views/utils/rect.js';
 import { viewFor } from '../../view/view.js';
-import { Timer } from './timer.js';
 import { Touch } from './touch.js';
 
 /** Set to false to leave the backspace key under the control of the browser.*/
@@ -2384,7 +2383,7 @@ export const RootResponder = SC.Object.extend(
       this._lastDraggedOver = nd;
       this._lastDraggedEvt = evt;
       // For browsers that don't reliably call a dragleave for every dragenter, we have a timer fallback.
-      this._dragLeaveTimer = Timer.schedule({ target: this, action: '_forceDragLeave', interval: 300 });
+      this._dragLeaveTimer = SC.Timer.schedule({ target: this, action: '_forceDragLeave', interval: 300 });
     }
   },
 

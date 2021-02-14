@@ -5,8 +5,21 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { SC } from '../../core/core.js';
-import { RootResponder } from './root_responder.js';
+// import { SC } from '../core.js';
+// import { RootResponder } from '../../responder/system/root_responder.js';
+
+import { none, objectForPropertyPath, typeOf } from './base.js';
+import { T_FUNCTION, T_STRING } from './constants.js';
+import global from './global.js';
+import { Logger } from './logger.js';
+import { SCObject } from './object.js';
+import { RunLoop } from './runloop.js';
+
+// NOTE: Timer does have a run time dependency on RootResponder, but only as a way of catching
+// events without a clear target, and send them to the RootResponder.
+// There is not a really nice way to "catch" this properly in an ES6 way.
+// The best way ATM, is to simply try to find RootResponder on the Global object
+// and go from there...
 
 /**
   @class
@@ -112,7 +125,7 @@ import { RootResponder } from './root_responder.js';
   @version 1.0
   @since version 1.0
 */
-export const Timer = SC.Object.extend(
+export const Timer = SCObject.extend(
 /** @scope Timer.prototype */ {
 
   /**
@@ -136,7 +149,7 @@ export const Timer = SC.Object.extend(
     called.  If you pass a function instead, then the function will be
     called in the context of the target object.
 
-    @type {String, Function}
+    @type {String | Function}
   */
   action: null,
 
@@ -298,14 +311,14 @@ export const Timer = SC.Object.extend(
     // if start time was not set explicitly when the timer was created,
     // get it from the run loop.  This way timer scheduling will always
     // occur in sync.
-    if (!this.startTime) this.set('startTime', SC.RunLoop.currentRunLoop.get('startTime')) ;
+    if (!this.startTime) this.set('startTime', RunLoop.currentRunLoop.get('startTime')) ;
 
     // now schedule the timer if the last fire time was < the next valid
     // fire time.  The first time lastFireTime is 0, so this will always go.
     var next = this.get('fireTime'), last = this.get('lastFireTime');
     if (next >= last) {
       this.set('isScheduled', true);
-      SC.RunLoop.currentRunLoop.scheduleTimer(this, next);
+      RunLoop.currentRunLoop.scheduleTimer(this, next);
     }
 
     this.endPropertyChanges() ;
@@ -322,7 +335,7 @@ export const Timer = SC.Object.extend(
     this.beginPropertyChanges();
     this.set('isValid', false);
 
-    var runLoop = SC.RunLoop.currentRunLoop;
+    var runLoop = RunLoop.currentRunLoop;
     if(runLoop) runLoop.cancelTimer(this);
 
     this.action = this.target = null ; // avoid memory leaks
@@ -365,22 +378,22 @@ export const Timer = SC.Object.extend(
     to change how the timer fires its action.
   */
   performAction: function() {
-    var typeOfAction = SC.typeOf(this.action);
+    var typeOfAction = typeOf(this.action);
 
     // if the action is a function, just try to call it.
-    if (typeOfAction == SC.T_FUNCTION) {
+    if (typeOfAction == T_FUNCTION) {
       this.action.call((this.target || this), this) ;
 
     // otherwise, action should be a string.  If it has a period, treat it
     // like a property path.
-    } else if (typeOfAction === SC.T_STRING) {
+    } else if (typeOfAction === T_STRING) {
       if (this.action.indexOf('.') >= 0) {
         var path = this.action.split('.') ;
         var property = path.pop() ;
 
-        var target = SC.objectForPropertyPath(path, window) ;
+        var target = objectForPropertyPath(path, window) ;
         var action = target.get ? target.get(property) : target[property];
-        if (action && SC.typeOf(action) == SC.T_FUNCTION) {
+        if (action && typeOf(action) == T_FUNCTION) {
           action.call(target, this) ;
         } else {
           throw new Error('%@: Timer could not find a function at %@'.fmt(this, this.action));
@@ -389,7 +402,13 @@ export const Timer = SC.Object.extend(
       // otherwise, try to execute action direction on target or send down
       // responder chain.
       } else {
-        RootResponder.responder.sendAction(this.action, this.target, this);
+        const RootResponder = global.RootResponder || (global.SC && global.SC.RootResponder);
+        if (RootResponder) {
+          RootResponder.responder.sendAction(this.action, this.target, this);
+        }
+        else {
+          Logger.warn("SC.Timer#performAction: cannot find a target for action %@ and there is no RootResponder or SC.RootResponder at the global object".fmt(this.action));
+        }
       }
     }
   },
@@ -435,7 +454,7 @@ export const Timer = SC.Object.extend(
     var defaults = this.RESET_DEFAULTS ;
     for (var key in defaults) {
       if (!defaults.hasOwnProperty(key)) continue ;
-      this[key] = SC.none(props[key]) ? defaults[key] : props[key];
+      this[key] = none(props[key]) ? defaults[key] : props[key];
     }
     this.propertyDidChange('fireTime');
     return this ;
@@ -520,7 +539,7 @@ export const Timer = SC.Object.extend(
 Timer.schedule = function(props) {
   // get the timer.
   var timer ;
-  if (!props || SC.none(props.isPooled) || props.isPooled) {
+  if (!props || none(props.isPooled) || props.isPooled) {
     timer = this.timerFromPool(props);
   } else timer = this.create(props);
   return timer.schedule();

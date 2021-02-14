@@ -37,6 +37,7 @@ import { detectedBrowser, OS, CLASS_PREFIX, CSS_PREFIX, BROWSER, ENGINE, DEVICE,
 import { readyMixin } from './system/ready.js';
 
 import { Locale, metricsFor, stringsFor, methodForLocale,  hashesForLocale } from './system/locale.js';
+import { Timer } from './system/timer.js';
 
 export const GLOBAL = global;
 
@@ -79,6 +80,7 @@ export const SC = {
   Array: SCArray,
   Error: SCError,
   RunLoop,
+  Timer,
   IndexSet,
   run,
   Binding,

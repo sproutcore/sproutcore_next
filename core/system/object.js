@@ -11,17 +11,20 @@ import { Observable } from '../mixins/observable.js';
 // import { ObjectMixinProtocol } from '../protocols/mixin_protocol.js';
 import { getSetting, setSetting } from './settings.js';
 import { $A, EMPTY_ARRAY, K, mixin, generateGuid, beget, clone, typeOf, guidFor } from './base.js';
-import { T_CLASS, T_OBJECT, T_HASH } from './constants.js';
+import { T_CLASS, T_OBJECT, T_HASH, T_STRING } from './constants.js';
 import { SCSet, CoreSet } from './set.js';
-// import { _getRecentStack } from './runloop.js';
 let Benchmark;
 
 let RunLoop;
+let Timer;
+
 let _getRecentStack;
 export async function __runtimeDeps () {
   // import('./benchmark.js').then(m => Benchmark = m.Benchmark);
   const r = await import('./runloop.js');
   RunLoop = r.RunLoop;
+  const t = await import('./timer.js');
+  Timer = t.Timer;
   _getRecentStack = r._getRecentStack;
 }
 
@@ -928,6 +931,149 @@ SCObject.prototype = {
     RunLoop.currentRunLoop.invokeNext(this, method);
     return this;
   },
+
+  /**
+      Invokes the named method after the specified period of time.  This
+      uses SC.Timer, which works properly with the Run Loop.
+
+      Any additional arguments given to invokeOnce will be passed to the
+      method.
+
+      For example,
+
+          var obj = SC.Object.create({
+            myMethod: function(a, b, c) {
+              alert('a: %@, b: %@, c: %@'.fmt(a, b, c));
+            }
+          });
+
+          obj.invokeLater('myMethod', 200, 'x', 'y', 'z');
+
+          // After 200 ms, alerts "a: x, b: y, c: z"
+
+      @param method {String} method name to perform.
+      @param interval {Number} period from current time to schedule.
+      @returns {Timer} scheduled timer.
+    */
+  invokeLater: function(method, interval) {
+    var f, args;
+
+    // Normalize the method and interval.
+    if (typeOf(method) === T_STRING) { method = this[method]; }
+    if (interval === undefined) { interval = 1 ; }
+
+    // If extra arguments were passed - build a function binding.
+    if (arguments.length > 2) {
+      args = $A(arguments).slice(2);
+      f = function() { return method.apply(this, args); } ;
+    } else {
+      f = method;
+    }
+
+    // schedule the timer
+    return Timer.schedule({ target: this, action: f, interval: interval });
+  },
+
+  /**
+    A convenience method which makes it easy to coalesce invocations to ensure
+    that the method is only called once after the given period of time. This is
+    useful if you need to schedule a call from multiple places, but only want
+    it to run at most once.
+
+    Any additional arguments given to invokeOnceLater will be passed to the
+    method.
+
+    For example,
+
+        var obj = SC.Object.create({
+          myMethod: function(a, b, c) {
+            alert('a: %@, b: %@, c: %@'.fmt(a, b, c));
+          }
+        });
+
+        obj.invokeOnceLater('myMethod', 200, 'x', 'y', 'z');
+
+        // After 200 ms, alerts "a: x, b: y, c: z"
+
+    @param {Function|String} method reference or method name
+    @param {Number} interval
+  */
+  invokeOnceLater: function(method, interval) {
+    var args, f,
+        methodGuid,
+        timers = this._sc_invokeOnceLaterTimers,
+        existingTimer, newTimer;
+
+    // Normalize the method, interval and timers cache.
+    if (typeOf(method) === T_STRING) { method = this[method]; }
+    if (interval === undefined) { interval = 1 ; }
+    if (!timers) { timers = this._sc_invokeOnceLaterTimers = {}; }
+
+    // If there's a timer outstanding for this method, invalidate it in favor of
+    // the new timer.
+    methodGuid = guidFor(method);
+    existingTimer = timers[methodGuid];
+    if (existingTimer) existingTimer.invalidate();
+
+    // If extra arguments were passed - apply them to the method.
+    if (arguments.length > 2) {
+      args = $A(arguments).slice(2);
+    } else {
+      args = arguments;
+    }
+
+    // Create a function binding every time, so that the timers cache is properly cleaned out.
+    f = function() {
+      // GC assistance for IE
+      delete timers[methodGuid];
+      return method.apply(this, args);
+    };
+
+    // Schedule the new timer and track it.
+    newTimer = Timer.schedule({ target: this, action: f, interval: interval });
+    timers[methodGuid] = newTimer;
+
+    return newTimer;
+  },
+
+  /**
+    Lookup the named property path and then invoke the passed function,
+    passing the resulting value to the function.
+
+    This method is a useful way to handle deferred loading of properties.
+    If you want to defer loading a property, you can override this method.
+    When the method is called, passing a deferred property, you can load the
+    property before invoking the callback method.
+
+    You can even swap out the receiver object.
+
+    The callback method should have the signature:
+
+    function callback(objectAtPath, sourceObject) { ... }
+
+    You may pass either a function itself or a target/method pair.
+
+    @param {String} pathName
+    @param {Object} target target or method
+    @param {Function|String} method
+    @returns {SCObject} receiver
+  */
+  invokeWith: function(pathName, target, method) {
+    // normalize target/method
+    if (method === undefined) {
+      method = target; target = this;
+    }
+    if (!target) { target = this ; }
+    if (typeOf(method) === T_STRING) { method = target[method]; }
+
+    // get value
+    var v = this.getPath(pathName);
+
+    // invoke method
+    method.call(target, v, this);
+    return this ;
+  },
+
 
   /**
     The properties named in this array will be concatenated in subclasses
