@@ -8,6 +8,13 @@
 import { SC } from '../../core/core.js';
 import { CoreView } from './core_view.js';
 import { View } from './view.js';
+import { containerSwapDissolveTransition } from './view/transitions/swap_dissolve_transition.js';
+import { containerSwapFadeColorTransition } from './view/transitions/swap_fade_color_transition.js';
+import { containerSwapMoveInTransition } from './view/transitions/swap_move_in_transition.js';
+import { containerSwapPushTransition } from './view/transitions/swap_push_transition.js';
+import { containerSwapRevealTransition } from './view/transitions/swap_reveal_transition.js';
+
+
 
 /** @class
 
@@ -61,8 +68,7 @@ import { View } from './view.js';
 
   @since SproutCore 1.0
 */
-export const ContainerView = View.extend(
-  /** @scope ContainerView.prototype */ {
+export const ContainerView = View.extend(/** @scope ContainerView.prototype */ {
 
   // ------------------------------------------------------------------------
   // Properties
@@ -245,7 +251,7 @@ export const ContainerView = View.extend(
     var contentView = this.get('contentView');
 
     // If it's an uninstantiated view, then attempt to instantiate it.
-    if (contentView && contentView.SC.kindOf(CoreView)) {
+    if (contentView && contentView.kindOf(CoreView)) {
       contentView = this.createChildView(contentView);
     }
 
@@ -295,7 +301,7 @@ export const ContainerView = View.extend(
     }
 
     // If it's an uninstantiated view, then attempt to instantiate it.
-    if (content && content.SC.kindOf(CoreView)) {
+    if (content && content.kindOf(CoreView)) {
       content = this.createChildView(content);
     }
 
@@ -407,6 +413,13 @@ export const ContainerView = View.extend(
   }
 
 });
+
+ContainerView.mixin(containerSwapDissolveTransition,
+  containerSwapFadeColorTransition,
+  containerSwapMoveInTransition,
+  containerSwapPushTransition,
+  containerSwapRevealTransition);
+
 
 
 // When in debug mode, core developers can log the container content states.
