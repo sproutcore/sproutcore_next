@@ -6,6 +6,8 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { canvasImageRenderDelegate } from '../views/render_delegates/canvas_image.js';
+import { containerRenderDelegate } from '../views/render_delegates/container.js';
 
 /** @class
   Represents a theme, and is also the core theme in which SC looks for
@@ -278,6 +280,9 @@ export const Theme = {
 export const BaseTheme = Theme.create({
   name: '' // it is a base class, and doesn't need a class name or such
 });
+
+BaseTheme.containerRenderDelegate = containerRenderDelegate;
+BaseTheme.canvasImageRenderDelegate = canvasImageRenderDelegate;
 
 // however, SproutCore does need a default theme, even if no
 // actual theme is loaded.

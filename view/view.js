@@ -13,6 +13,7 @@ export * from './views/utils/rect.js';
 export * from './views/utils/utils.js';
 export { viewManager } from './views/view_manager.js';
 export { LayoutState } from './views/view/animation.js'; 
+export { ContainerView } from './views/container.js';
 
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
