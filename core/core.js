@@ -38,6 +38,8 @@ import { readyMixin } from './system/ready.js';
 
 import { Locale, metricsFor, stringsFor, methodForLocale,  hashesForLocale } from './system/locale.js';
 import { Timer } from './system/timer.js';
+import { ZERO_RANGE, RANGE_NOT_FOUND, valueInRange, minRange, maxRange, unionRanges, intersectRanges, subtractRanges, rangesEqual, cloneRange } from './system/utils/range.js';
+
 
 export const GLOBAL = global;
 
@@ -163,8 +165,17 @@ export const SC = {
   methodForLocale,
   stringsFor,
   metricsFor,
-  hashesForLocale
-
+  hashesForLocale,
+  ZERO_RANGE,
+  RANGE_NOT_FOUND,
+  valueInRange,
+  minRange,
+  maxRange,
+  unionRanges,
+  intersectRanges,
+  subtractRanges,
+  cloneRange,
+  rangesEqual
 };
 
 mixin(SC, readyMixin);

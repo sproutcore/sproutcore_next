@@ -43,7 +43,7 @@ import { detectedBrowser as browser } from './browser.js';
 export const Locale = SCObject.extend({
 
   init: function init () {
-    // init.base.apply(this);
+    // init.base.apply(this); // the original doesn't call sc_super... why?
     
     // make sure we know the name of our own locale.
     if (!this.language) Locale._assignLocales();

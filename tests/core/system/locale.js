@@ -9,20 +9,21 @@ import { SC } from '../../../core/core.js';
 
 let LocaleObject;
 module("object.Locale()", {
-		before: function() {
-			LocaleObject = SC.Locale.create({
-				init: function init (){
-					init.base.apply(this, arguments);
-					//hash of new languages
-					var newLocales = { deflang: 'dl', empty: '' };
 
-					//Added the new languages to the existing list of locales
-					SC.Locale.addStrings(newLocales);
-				}
-			});
+	beforeEach: function() {
+		LocaleObject = SC.Locale.create({
+			init: function init (){
+				init.base.apply(this, arguments);
+				//hash of new languages
+				var newLocales = { deflang: 'dl', empty: '' };
 
-		}
-	});
+				//Added the new languages to the existing list of locales
+				SC.Locale.addStrings(newLocales);
+			}
+		});
+	},
+
+});
 
 test("Locale.init() : Should return a flag if the language has been set during the locale initialization", function (assert) {
 	// As the locale is added during initialization the value of hasString is true
@@ -105,19 +106,8 @@ test("SC.Locale.normalizeLanguage() : Should provide the two character language 
 	assert.equal(SC.Locale.normalizeLanguage('ab'), 'ab') ;
 });
 
-test("SC.Locale.toString() : Should return the current language set with the guid value", function (assert) {
-	// in a async running of tests, this wouldn't work. So initialize the current locale to be copied. 
-	SC.Locale.createCurrentLocale(); 
-	
-	// Creating the new locale by extending an existing SC.Locale object
-	SC.Locale.locales['mx'] = SC.Locale.extend({ _deprecatedLanguageCodes: ['mexican'] }) ;
-
-		//Result should return the chinese object
-	assert.equal(SC.Locale.locales.mx.currentLocale.isObject, true) ;
-		
-});
-
 test("SC.Locale.createCurrentLocale() : Should create the SC.Locale Object for the language selected", function (assert) {
+
 	//This will match the browser language with the SC language and create the object accordingly
 	// This test will pass only for the default languages i.e en, fr, de, ja, es, it.
 	const defaultLangs = ['en', 'fr', 'de', 'ja', 'es', 'it'];
@@ -131,9 +121,25 @@ test("SC.Locale.createCurrentLocale() : Should create the SC.Locale Object for t
 	assert.equal(false, SC.Locale.createCurrentLocale().language=== SC.browser.language) ;
 });
 
+test("SC.Locale.toString() : Should return the current language set with the guid value", function (assert) {
+
+	// Creating the new locale by extending an existing SC.Locale object
+	SC.Locale.locales['mx'] = SC.Locale.extend({ _deprecatedLanguageCodes: ['mexican'] }) ;
+  
+		//Result should return the chinese object // actually the korean from the test above...
+	assert.equal(SC.Locale.locales.mx.currentLocale.isObject, true) ;
+		
+});
+
+
 test("SC.Locale.localeClassFor() : Should find the locale class for the names language code or creates on based on its most likely parent", function (assert) {
- 		// Local Class for any language other than default languages will be 'en'. Therefore this condition is false
-	assert.equal(false, SC.Locale.localeClassFor('nl').create().language === "nl") ;
+ 	// Local Class for any language other than default languages will be 'en' and the current language. Therefore this condition is false
+	if (SC.browser.language === "nl") {
+		assert.equal(false, SC.Locale.localeClassFor('hu').create().language === "hu") ;
+	}
+	else {
+		assert.equal(false, SC.Locale.localeClassFor('nl').create().language === "nl") ;
+	}
 
 	// This adds the new language with the parent language to the default list
 	SC.Locale.locales['nl'] = SC.Locale.extend({ _deprecatedLanguageCodes: ['Dutch'] }) ;

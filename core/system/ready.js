@@ -29,6 +29,12 @@ if (!getSetting('_readyQueue')) {
   setSetting('_readyQueue', []);
 }
 
+let Locale;
+const localeRuntimeDeps = async function () {
+  const l = await import('./locale.js');
+  Locale = l.Locale;
+}
+
 const runtimeDeps = [
   scWorkerRuntimeDeps(),
   obsRuntimeDeps(),
@@ -36,6 +42,7 @@ const runtimeDeps = [
   bindingRuntimeDeps(),
   obsSetRuntimeDeps(),
   objRuntimeDeps(),
+  localeRuntimeDeps(),
 ];
 
 // if (global.jQuery) {
@@ -154,8 +161,6 @@ export const readyMixin = {
 
   onReady: {
 
-    Locale: null, // to be set by the Locale later
-
     done: function () {
       console.log("SPROUTCORE_READY_DONE_FUNCTION");
       // first wait till the promises are resolved
@@ -167,14 +172,16 @@ export const readyMixin = {
   
         RunLoop.begin();
   
-        if (this.Locale) {
-          this.Locale.createCurrentLocale();
-          var loc = this.Locale.currentLanguage.toLowerCase();
-          jQuery("body").addClass(loc);
+        if (Locale) {
+          Locale.createCurrentLocale();
+          var loc = Locale.currentLanguage.toLowerCase();
+          if (global.jQuery) {
+            jQuery("body").addClass(loc);
     
-          jQuery("html").attr("lang", loc);
-    
-          jQuery("#loading").remove();  
+            jQuery("html").attr("lang", loc);
+      
+            jQuery("#loading").remove();   
+          }
         }
         // debugger;
         var queue = getSetting('_readyQueue'), idx, len;
@@ -203,6 +210,11 @@ if (global.jQuery) {
     // global.$(document).ready(readyMixin.onReady.done.bind(readyMixin.onReady));
     jQuery(readyMixin.onReady.done);
     // jQuery(readyMixin.onReady.done.bind(readyMixin.onReady));
+  }
+}
+else if (global.onload === null) {
+  if (!getSetting('suppressOnReady')) {
+    global.onload = readyMixin.onReady.done;
   }
 }
 
