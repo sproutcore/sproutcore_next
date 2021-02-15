@@ -325,7 +325,7 @@ export const SparseArray = SCObject.extend(Observable, Enumerable, SCArray,
       ret = del.sparseArrayDidRequestIndexOf(this, obj);
     }
 
-    if (SC.none(ret)) {
+    if (none(ret)) {
       c = this._sa_content ;
       if (!c) c = this._sa_content = [] ;
       ret = c.indexOf(obj) ;
@@ -369,7 +369,7 @@ export const SparseArray = SCObject.extend(Observable, Enumerable, SCArray,
 
     this.arrayContentWillChange(idx, amt, len) ;
 
-    if (!SC.none(this._length)) {
+    if (!none(this._length)) {
       this.propertyWillChange('length');
       this._length += delta;
       this.propertyDidChange('length');

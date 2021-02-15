@@ -39,7 +39,7 @@ import { readyMixin } from './system/ready.js';
 import { Locale, metricsFor, stringsFor, methodForLocale,  hashesForLocale } from './system/locale.js';
 import { Timer } from './system/timer.js';
 import { ZERO_RANGE, RANGE_NOT_FOUND, valueInRange, minRange, maxRange, unionRanges, intersectRanges, subtractRanges, rangesEqual, cloneRange } from './system/utils/range.js';
-
+import { SparseArray } from './system/sparse_array.js';
 
 export const GLOBAL = global;
 
@@ -175,7 +175,8 @@ export const SC = {
   intersectRanges,
   subtractRanges,
   cloneRange,
-  rangesEqual
+  rangesEqual,
+  SparseArray
 };
 
 mixin(SC, readyMixin);

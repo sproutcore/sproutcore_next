@@ -134,7 +134,7 @@ test("SC.Locale.toString() : Should return the current language set with the gui
 
 test("SC.Locale.localeClassFor() : Should find the locale class for the names language code or creates on based on its most likely parent", function (assert) {
  	// Local Class for any language other than default languages will be 'en' and the current language. Therefore this condition is false
-	if (SC.browser.language === "nl") {
+	if (SC.Locale.locales.nl) { // detect whether the local browser happens to be dutch
 		assert.equal(false, SC.Locale.localeClassFor('hu').create().language === "hu") ;
 	}
 	else {

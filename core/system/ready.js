@@ -173,6 +173,7 @@ export const readyMixin = {
         RunLoop.begin();
   
         if (Locale) {
+          console.log("GENERATING LOCALE");
           Locale.createCurrentLocale();
           var loc = Locale.currentLanguage.toLowerCase();
           if (global.jQuery) {
