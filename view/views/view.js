@@ -15,6 +15,16 @@ import { touchSupport } from './view/touch.js';
 import { visibilitySupport } from './view/visibility.js';
 import { designModeSupport } from './view/design_mode.js';
 import { staticStackLayoutMixin } from './child_view_layouts/stack_layout.js';
+import { adjustSmoothTransition } from './view/transitions/adjust_smooth_transition.js';
+import { adjustSpringTransition } from './view/transitions/adjust_spring_transition.js';
+import { bounceTransition } from './view/transitions/bounce_transition.js';
+import { fadeTransition } from './view/transitions/fade_transition.js';
+import { popTransition } from './view/transitions/pop_transition.js';
+import { scaleTransition } from './view/transitions/scale_transition.js';
+import { slideTransition } from './view/transitions/slide_transition.js';
+import { springTransition } from './view/transitions/spring_transition.js';
+import { adjustBounceTransition } from './view/transitions/adjust_bounce_transition.js';
+
 
 /**
   @class
@@ -620,4 +630,4 @@ export const View = CoreView.extend(
 });
 
 
-View.mixin(staticViewLayout, staticStackLayoutMixin);
+View.mixin(staticViewLayout, staticStackLayoutMixin, adjustBounceTransition, adjustSmoothTransition, adjustSpringTransition, bounceTransition, fadeTransition, popTransition, scaleTransition, slideTransition, springTransition);

@@ -162,13 +162,15 @@ export const readyMixin = {
   onReady: {
 
     done: function () {
+      
       console.log("SPROUTCORE_READY_DONE_FUNCTION");
       // first wait till the promises are resolved
       if (getSetting('isReady')) return;
+      setSetting('isReady', true);
 
       Promise.all(runtimeDeps).then( () => {  
-      
-        setSetting('isReady', true);
+        console.log("SPROUTCORE READY_DONE AFTER promise.all");
+        
   
         RunLoop.begin();
   
@@ -200,6 +202,10 @@ export const readyMixin = {
         RunLoop.end();
       
       })
+      .catch(e => {
+        console.error("SC.onReady#done: Error in resolving runtime dependency promises", e);
+        setSetting('isReady', false);
+      });
     }
   }
 
