@@ -181,3 +181,5 @@ export const BEST_FIT_DOWN_ONLY = "best-fit-down";
 */
 export const MIXED_STATE = '__MIXED__' ;
 
+export const VALIDATE_OK = true;
+export const VALIDATE_NO_CHANGE = false;

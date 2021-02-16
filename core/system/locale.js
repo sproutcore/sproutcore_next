@@ -10,6 +10,7 @@ import { T_NUMBER, T_STRING } from './constants.js';
 import { warn } from './logger.js';
 import { SCObject } from './object.js';
 import { detectedBrowser as browser } from './browser.js';
+import { readyMixin } from './ready.js';
 
 /**
   The Locale defined information about a specific locale, including date and
@@ -502,3 +503,55 @@ export const metricsFor = function(languageCode, metrics) {
   locale.addMetrics(metrics);
   return this;
 };
+
+
+const langloaderCallbacks = new Set();
+
+export const loadLangFiles = function (cb) {
+  langloaderCallbacks.add(cb);
+
+  const code = Locale.currentLanguage;
+  const dirname = `${code}.lproj`;
+  // Locale.currentLocale
+  readyMixin.ready(function () {
+    return cb(code, dirname);
+  });
+};
+
+
+/*
+Is there a way to get localization as part of the import structure...
+Technically, of course. 
+it is more, is it possible to provide a way to do this "automagically".
+With import() most definitely...
+
+Technically, the best would be to create some register in the app, which can additionally
+be filled by some kind of build tool, which registers all the languages, and the files to load.
+Then afterwards the auto selection of the browser, or by some other ready mechanism, the language gets loaded
+/ imported automatically. 
+
+The current trick to load is to provide a specific export for runtime deps in the form of a function 
+
+a part of the trick can simply be "check for the current folder" + [lang code] + ".lproj" + "strings.js";
+
+something returning a promise?
+
+it doesn't matter what the path is, as long as the import() statement is in the correct file
+Technically we could simply require a single import per language:
+
+./en.lproj/en.js
+
+or 
+./en.lproj/index.js
+
+export const langs = function (code, dirname) {
+  const langFiles = 
+}
+
+or
+
+SC.loadLangFiles(async (code, dirname) => {
+  await import(`./${dirname}/index.js`);
+});
+*/
+

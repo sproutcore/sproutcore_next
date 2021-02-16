@@ -36,10 +36,16 @@ import { CoreSet } from './system/core_set.js';
 import { detectedBrowser, OS, CLASS_PREFIX, CSS_PREFIX, BROWSER, ENGINE, DEVICE, DOM_PREFIX } from './system/browser.js';
 import { readyMixin } from './system/ready.js';
 
-import { Locale, metricsFor, stringsFor, methodForLocale,  hashesForLocale } from './system/locale.js';
+import { Locale, metricsFor, stringsFor, methodForLocale,  hashesForLocale, loadLangFiles } from './system/locale.js';
 import { Timer } from './system/timer.js';
 import { ZERO_RANGE, RANGE_NOT_FOUND, valueInRange, minRange, maxRange, unionRanges, intersectRanges, subtractRanges, rangesEqual, cloneRange } from './system/utils/range.js';
 import { SparseArray } from './system/sparse_array.js';
+import { DateTime } from './system/datetime/datetime.js';
+import { dateTimeBinding } from './system/datetime/datetime_binding.js';
+
+// add dateTimeBinding to Binding
+Binding.dateTime = dateTimeBinding;
+
 
 export const GLOBAL = global;
 
@@ -176,7 +182,9 @@ export const SC = {
   subtractRanges,
   cloneRange,
   rangesEqual,
-  SparseArray
+  SparseArray,
+  DateTime,
+  loadLangFiles
 };
 
 mixin(SC, readyMixin);

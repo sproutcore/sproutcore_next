@@ -156,9 +156,9 @@ SCError.mixin({
 /**
   Shorthand form of the SCError.desc method.
 
-  @param description {String} human readable description of the error
-  @param label {String} human readable name of the item with the error
-  @param errorValue {Number} an errorValue to use for testing.
+  @param {String} description {String} human readable description of the error
+  @param {String} label {String} human readable name of the item with the error
+  @param {Number} [errorValue] {Number} an errorValue to use for testing.
   @returns {SCError} new error instance.
 */
 export const $error = function (description, label, errorValue) {
