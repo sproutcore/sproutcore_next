@@ -5,17 +5,19 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('validators/validator') ;
+// sc_require('validators/validator') ;
+
+import { SC } from '../../core/core.js'; 
+import { Validator } from "./validator.js";
 
 /**
   Handles parsing and validating of positive integers.
   
-  @extends SC.Validator
   @author Nirumal Thomas
   @version 1.0
   @class
-*/
-SC.Validator.PositiveInteger = SC.Validator.extend(
+  */
+export const PositiveIntegerValidator = Validator.extend(
 /** @scope SC.Validator.PositiveInteger.prototype */ {
 
   /**

@@ -5,7 +5,14 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('mixins/validatable') ;
+import { SC } from '../../core/core.js';
+import { SCEvent } from '../../event/event.js';
+import { Control } from "../mixins/control.js";
+import { Validatable } from "../mixins/validatable.js";
+import { View } from "./view.js";
+
+// sc_require('mixins/validatable') ;
+
 
 /** @class
 
@@ -18,12 +25,9 @@ sc_require('mixins/validatable') ;
   use one of the subclasses implemented by your target platform such as
   CheckboxView, RadioView, TextFieldView, and so on.
 
-  @extends View
-  @extends Control
-  @extends Validatable
   @since SproutCore 1.0
 */
-FieldView = View.extend(Control, Validatable,
+export const FieldView = View.extend(Control, Validatable,
 /** @scope FieldView.prototype */ {
 
   /**
@@ -38,7 +42,7 @@ FieldView = View.extend(Control, Validatable,
   */
   fieldValue: function() {
     var value = this.get('value');
-    if (typeOf(value) === T_ERROR) value = value.get('errorValue');
+    if (SC.typeOf(value) === SC.T_ERROR) value = value.get('errorValue');
     return this.fieldValueForObject(value);
   }.property('value', 'validator').cacheable(),
 
@@ -100,7 +104,7 @@ FieldView = View.extend(Control, Validatable,
   },
 
   _field_fieldValueDidChange: function(evt) {
-    run(function() {
+    SC.run(function() {
       this.fieldValueDidChange(false);
     }, this);
   },
@@ -185,7 +189,7 @@ FieldView = View.extend(Control, Validatable,
     Removes the change event from the input field.
   */
   willDestroyLayer: function() {
-    Event.remove(this.$input(), 'change', this, this._field_fieldValueDidChange);
+    SCEvent.remove(this.$input(), 'change', this, this._field_fieldValueDidChange);
   },
 
   // ACTIONS
@@ -288,13 +292,13 @@ FieldView = View.extend(Control, Validatable,
     Tied to the `isEnabledInPane` state.
   */
   acceptsFirstResponder: function() {
-    if (FOCUS_ALL_CONTROLS) { return this.get('isEnabledInPane'); }
+    if (SC.getSetting('FOCUS_ALL_CONTROLS')) { return this.get('isEnabledInPane'); }
     return false;
   }.property('isEnabledInPane'),
 
   /** @private */
   _addChangeEvent: function() {
-    Event.add(this.$input(), 'change', this, this._field_fieldValueDidChange);
+    SCEvent.add(this.$input(), 'change', this, this._field_fieldValueDidChange);
   },
 
   /** @private */

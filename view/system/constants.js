@@ -183,3 +183,8 @@ export const MIXED_STATE = '__MIXED__' ;
 
 export const VALIDATE_OK = true;
 export const VALIDATE_NO_CHANGE = false;
+
+export const AUTOCAPITALIZE_NONE = 'none';
+export const AUTOCAPITALIZE_SENTENCES = 'sentences';
+export const AUTOCAPITALIZE_WORDS = 'words';
+export const AUTOCAPITALIZE_CHARACTERS = 'characters';

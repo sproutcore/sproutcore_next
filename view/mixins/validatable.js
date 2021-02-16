@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { VALIDATE_NO_CHANGE, VALIDATE_OK } from '../system/constants.js';
 
 /**
   @namespace
@@ -93,7 +94,7 @@ export const Validatable = {
         // field is valid anyway.  If it is not valid, then don't update the
         // value.  This way the user can have partially constructed values
         // without the validator trying to convert it to an object.
-        if ((ret == VALIDATE_false_CHANGE) && (this._validator.validateChange(form, this) == VALIDATE_OK)) {
+        if ((ret == VALIDATE_NO_CHANGE) && (this._validator.validateChange(form, this) == VALIDATE_OK)) {
           ret = VALIDATE_OK;
         }
       } else ret = this._validator.validateChange(form, this) ;

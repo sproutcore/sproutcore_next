@@ -8,8 +8,11 @@
     @param {String} format format string
     @returns {Binding} this
   */
+
 export const dateTimeBinding = function (format) {
   return this.transform(function (value) {
     return value ? value.toFormattedString(format) : null;
   });
 };
+
+// it is added to SC.Binding in the /core/core.js

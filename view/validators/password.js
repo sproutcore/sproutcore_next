@@ -5,22 +5,27 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('validators/validator') ;
+// sc_require('validators/validator') ;
+
+import { SC } from '../../core/core.js'; 
+import { VALIDATE_NO_CHANGE, VALIDATE_OK } from '../system/constants.js';
+import { Validator } from "./validator.js";
+
 
 /**
   Ensures all fields with the Password validator attached in the same form
   contain the same value.
   
   @class
-  @extends SC.Validator
   @author Charles Jolley
   @version 1.0
 */
-SC.Validator.Password = SC.Validator.extend(
-/** @scope SC.Validator.Password.prototype */ {
+export const PasswordValidator = Validator.extend(
+/** @scope Validator.Password.prototype */ {
 
-  attachTo: function(form,field) {
-    sc_super();
+  attachTo: function attachTo (form,field) {
+    // sc_super();
+    attachTo.base.apply(this, arguments);
     if (!this.fields) this.fields = [] ;
     this.fields.push(field) ;
   },
@@ -57,7 +62,7 @@ SC.Validator.Password = SC.Validator.extend(
       var msg = (valid) ? null : ((f == topField) ? err : '') ;
       form.setErrorFor(f,msg) ;
     }) ;
-    return (valid) ? SC.VALIDATE_OK : err ;
+    return (valid) ? VALIDATE_OK : err ;
   },
   
   validateChange: function(form, field, oldValue) { 
@@ -80,7 +85,7 @@ SC.Validator.Password = SC.Validator.extend(
     var isInvalid = !this._field.get('isValid') ;
     if (isInvalid) {
       return this.updateFields(form, this.validate(false)) ;
-    } else return SC.VALIDATE_NO_CHANGE ;
+    } else return VALIDATE_NO_CHANGE ;
   }
     
 }) ;

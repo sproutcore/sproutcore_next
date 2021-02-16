@@ -15,6 +15,8 @@ export { viewManager } from './views/view_manager.js';
 export { LayoutState } from './views/view/animation.js'; 
 export { ContainerView } from './views/container.js';
 export { ImageView } from './views/image.js';
+export { Validator } from './validators/index.js';
+
 
 
   // ..........................................................

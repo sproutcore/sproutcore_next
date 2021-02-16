@@ -17,7 +17,7 @@ import { Validator } from "./validator.js";
   @version 1.0
   @class
 */
-SC.Validator.Number = SC.Validator.extend(
+export const NumberValidator = Validator.extend(
 /** @scope SC.Validator.Number.prototype */ {
 
   /**
