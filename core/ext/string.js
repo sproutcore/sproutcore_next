@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { fmt, w, capitalize, camelize, decamelize, dasherize, mult, loc, locLayout, locMetric, locWithDefault, escapeCssIdForSelector } from '../system/string.js';
+import { fmt, w, capitalize, camelize, decamelize, dasherize, mult, loc, locLayout, locMetric, locWithDefault, escapeCssIdForSelector, singularize, pluralize, trimRight, trimLeft, removeDiacritics, escapeForRegExp, humanize, classify, titleize, capitalizeEach } from '../system/string.js';
 
 /**
   @see SC.String.fmt
@@ -90,4 +90,86 @@ String.prototype.locMetric = function () {
 
 String.prototype.escapeCssIdForSelector = function () {
   return escapeCssIdForSelector(this);
+};
+
+
+  /**
+    @see SC.String.capitalizeEach
+  */
+String.prototype.capitalizeEach = function() {
+  return capitalizeEach(this, arguments);
+};
+
+/**
+  @see SC.String.titleize
+*/
+String.prototype.titleize = function(str) {
+  return titleize(this, arguments);
+};
+
+/**
+  @see SC.String.classify
+*/
+String.prototype.classify = function(str) {
+  return classify(this, arguments);
+};
+
+/**
+  @see SC.String.humanize
+*/
+String.prototype.humanize = function(str) {
+  return humanize(this, arguments);
+};
+
+/**
+  @see SC.String.escapeForRegExp
+*/
+String.prototype.escapeForRegExp = function(str) {
+  return escapeForRegExp(this, arguments);
+};
+
+/**
+  @see SC.String.removeDiacritics
+*/
+String.prototype.removeDiacritics = function(str) {
+  return removeDiacritics(this, arguments);
+};
+
+// /**
+//   @see SC.String.trim
+// */
+// trim: function(str) {
+//   return SC.String.trim(this, arguments);
+// },
+
+/**
+  @see SC.String.trimLeft
+*/
+if (!String.prototype.trimLeft) {
+  String.prototype.trimLeft = function (str) {
+    return trimLeft(this, arguments);
+  }
+}
+
+/**
+  @see SC.String.trimRight
+*/
+if (!String.prototype.trimRight) {
+  String.prototype.trimRight = function (str) {
+    return trimRight(this, arguments);
+  }
+}
+
+/**
+  @see SC.String.pluralize
+*/
+String.prototype.pluralize = function(str) {
+  return pluralize(this, arguments);
+};
+
+/**
+  @see SC.String.singularize
+*/
+String.prototype.singularize = function(str) {
+  return singularize(this, arguments);
 }
