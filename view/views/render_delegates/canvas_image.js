@@ -7,6 +7,7 @@
 
 // sc_require('render_delegates/render_delegate');
 
+import { IMAGE_TYPE_CSS_CLASS, IMAGE_TYPE_URL } from '../../system/constants.js';
 import { RenderDelegate } from './render_delegate.js';
 
 /**

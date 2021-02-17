@@ -9,65 +9,9 @@
 // sc_require('system/string');
 
 import { SC } from '../../core/core.js';
-import { MIXED_STATE } from '../system/constants.js';
+import { MIXED_STATE, REGULAR_CONTROL_SIZE } from '../system/constants.js';
 import { ContentValueSupport } from './content_value_support.js';
 
-/**
-  Option for controls to automatically calculate their size (should be default
-  on controls that use renderers).
-
-  @type String
-  @constant
-*/
-export const AUTO_CONTROL_SIZE = '__AUTO__';
-
-/**
-  Option for HUGE control size.
-
-  @type String
-  @constant
-*/
-export const JUMBO_CONTROL_SIZE = 'sc-jumbo-size';
-
-/**
-  Option for HUGE control size.
-
-  @type String
-  @constant
-*/
-export const HUGE_CONTROL_SIZE = 'sc-huge-size';
-
-/**
-  Option for large control size.
-
-  @type String
-  @constant
-*/
-export const LARGE_CONTROL_SIZE = 'sc-large-size';
-
-/**
-  Option for standard control size.
-
-  @type String
-  @constant
-*/
-export const REGULAR_CONTROL_SIZE = 'sc-regular-size';
-
-/**
-  Option for small control size.
-
-  @type String
-  @constant
-*/
-export const SMALL_CONTROL_SIZE = 'sc-small-size';
-
-/**
-  Option for tiny control size
-
-  @type String
-  @constant
-*/
-export const TINY_CONTROL_SIZE = 'sc-tiny-size';
 
 /**
   @namespace
@@ -215,9 +159,9 @@ export const Control = SC.mixin(SC.clone(ContentValueSupport),
 
     // if field label is not provided, compute something...
     fk = this.get('fieldKey') || this.constructor.toString();
-    def = fk ? String.capitalize(String.humanize(fk)) : '';
-    locFK = String.locWithDefault("FieldKey." + fk, def);
-    return String.locWithDefault("ErrorLabel." + fk, locFK);
+    def = fk ? SC.String.capitalize(SC.String.humanize(fk)) : '';
+    locFK = SC.String.locWithDefault("FieldKey." + fk, def);
+    return SC.String.locWithDefault("ErrorLabel." + fk, locFK);
   }.property('fieldLabel', 'fieldKey').cacheable(),
 
   /**

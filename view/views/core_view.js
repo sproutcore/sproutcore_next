@@ -114,7 +114,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
   /** @deprecated Version 1.11.0 Please use parentView instead. */
   owner: function () {
     //@if(debug)
-    warn("Developer Warning: The `owner` property of View has been deprecated in favor of the `parentView`, which is the same value. Please use `parentView`.");
+    SC.warn("Developer Warning: The `owner` property of View has been deprecated in favor of the `parentView`, which is the same value. Please use `parentView`.");
     //@endif
     return this.get('parentView');
   }.property('parentView').cacheable(),
@@ -880,7 +880,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
   */
   displayToolTip: function () {
     var ret = this.get('toolTip');
-    return (ret && this.get('localize')) ? String.loc(ret) : (ret || '');
+    return (ret && this.get('localize')) ? SC.String.loc(ret) : (ret || '');
   }.property('toolTip', 'localize').cacheable(),
 
   /**
@@ -1890,7 +1890,7 @@ CoreView.mixin(
     while (--idx >= 0) {
       viewClass = childViews[idx];
       loc = childLocs[idx];
-      if (loc && viewClass && typeof viewClass === SC.T_STRING) String.loc(viewClass, loc);
+      if (loc && viewClass && typeof viewClass === SC.T_STRING) SC.String.loc(viewClass, loc);
     }
 
     return this; // done!

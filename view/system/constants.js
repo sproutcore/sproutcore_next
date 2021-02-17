@@ -188,3 +188,61 @@ export const AUTOCAPITALIZE_NONE = 'none';
 export const AUTOCAPITALIZE_SENTENCES = 'sentences';
 export const AUTOCAPITALIZE_WORDS = 'words';
 export const AUTOCAPITALIZE_CHARACTERS = 'characters';
+
+
+/**
+  Option for controls to automatically calculate their size (should be default
+  on controls that use renderers).
+
+  @type String
+  @constant
+*/
+export const AUTO_CONTROL_SIZE = '__AUTO__';
+
+/**
+  Option for HUGE control size.
+
+  @type String
+  @constant
+*/
+export const JUMBO_CONTROL_SIZE = 'sc-jumbo-size';
+
+/**
+  Option for HUGE control size.
+
+  @type String
+  @constant
+*/
+export const HUGE_CONTROL_SIZE = 'sc-huge-size';
+
+/**
+  Option for large control size.
+
+  @type String
+  @constant
+*/
+export const LARGE_CONTROL_SIZE = 'sc-large-size';
+
+/**
+  Option for standard control size.
+
+  @type String
+  @constant
+*/
+export const REGULAR_CONTROL_SIZE = 'sc-regular-size';
+
+/**
+  Option for small control size.
+
+  @type String
+  @constant
+*/
+export const SMALL_CONTROL_SIZE = 'sc-small-size';
+
+/**
+  Option for tiny control size
+
+  @type String
+  @constant
+*/
+export const TINY_CONTROL_SIZE = 'sc-tiny-size';

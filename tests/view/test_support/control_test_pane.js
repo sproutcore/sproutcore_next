@@ -8,6 +8,9 @@
 
 import { SC } from '../../../core/core.js';
 import { Pane, LabelView, View } from '../../../view/view.js';
+import { CoreQuery } from '../../../event/event.js';
+
+const Q$ = CoreQuery;
 
 // TODO: IMPROVE CODE QUALITY.  This code was put together quickly in order to
 // test the SproutCore framework.  It does not match up to the project's

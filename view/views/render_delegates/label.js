@@ -5,7 +5,11 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('render_delegates/render_delegate');
+import { SC } from '../../../core/core.js';
+import { RenderContext } from "../../render_context/render_context.js";
+import { RenderDelegate } from "./render_delegate.js";
+
+// sc_require('render_delegates/render_delegate');
 
 /**
   @class
@@ -33,7 +37,7 @@ sc_require('render_delegates/render_delegate');
     if the title is too long.
 */
 
-SC.BaseTheme.labelRenderDelegate = SC.RenderDelegate.create({
+export const labelRenderDelegate = RenderDelegate.create({
   className: 'label',
 
   render: function(dataSource, context) {
@@ -54,8 +58,8 @@ SC.BaseTheme.labelRenderDelegate = SC.RenderDelegate.create({
       textAlign: dataSource.get('textAlign') || null
     });
 
-    context.setClass('ellipsis', dataSource.get('needsEllipsis') || NO);
-    context.setClass('icon', dataSource.get('icon') || NO);
+    context.setClass('ellipsis', dataSource.get('needsEllipsis') || false);
+    context.setClass('icon', dataSource.get('icon') || false);
 
     var html = this.htmlForTitleAndIcon(dataSource);
     context.push(html);
@@ -86,7 +90,7 @@ SC.BaseTheme.labelRenderDelegate = SC.RenderDelegate.create({
       jquery.removeAttr('title');
     }
 
-    jquery.setClass('ellipsis', dataSource.get('needsEllipsis') || NO);
+    jquery.setClass('ellipsis', dataSource.get('needsEllipsis') || false);
 
     var html = this.htmlForTitleAndIcon(dataSource);
     if (dataSource.get('renderState')._lastHTMLForTitleAndIcon !== html) {
@@ -111,11 +115,11 @@ SC.BaseTheme.labelRenderDelegate = SC.RenderDelegate.create({
 
     // Escape the body if needed. This prevents potential XSS attacks.
     if (title && escapeHTML) {
-      title = SC.RenderContext.escapeHTML(title) ;
+      title = RenderContext.escapeHTML(title) ;
     }
 
     // Escape the hint if needed. This prevents potential XSS attacks.
-    if (hint && escapeHTML) { hint = SC.RenderContext.escapeHTML(hint); }
+    if (hint && escapeHTML) { hint = RenderContext.escapeHTML(hint); }
     if (hint && !title) {
       title = "<span class='sc-hint'>" + hint + "</span>";
     }

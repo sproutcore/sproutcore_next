@@ -8,6 +8,7 @@
 // sc_require('system/builder');
 
 import { SC } from '../../core/core.js';
+import { CoreQuery } from '../../event/event.js';
 
 /** set update mode on context to replace content (preferred) */
 export const MODE_REPLACE = 'replace';
@@ -310,7 +311,7 @@ export const RenderContext = SC.Builder.create(
     @returns {DOMElement} the element
   */
   element: function () {
-    return this._elem ? this._elem : $(this.join())[0];
+    return this._elem ? this._elem : CoreQuery(this.join())[0];
   },
 
   /**
@@ -1126,7 +1127,7 @@ export const RenderContext = SC.Builder.create(
    */
   $: function (sel) {
     var ret, elem = this._elem;
-    ret = !elem ? $([]) : (sel === undefined) ? $(elem) : $(sel, elem);
+    ret = !elem ? CoreQuery([]) : (sel === undefined) ? CoreQuery(elem) : CoreQuery(sel, elem);
     elem = null;
     return ret;
   },
