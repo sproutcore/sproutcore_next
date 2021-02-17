@@ -5,6 +5,9 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { InlineTextFieldDelegate } from "../delegates/inline_text_field.js";
+import { InlineTextFieldView } from "../views/inline_text_field.js";
+
 /**
   @namespace
 

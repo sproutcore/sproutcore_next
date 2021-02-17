@@ -16,6 +16,11 @@ export { LayoutState } from './views/view/animation.js';
 export { ContainerView } from './views/container.js';
 export { ImageView } from './views/image.js';
 export { Validator } from './validators/index.js';
+export { FieldView } from './views/field.js';
+export { TextFieldView } from './views/text_field.js';
+export { InlineTextFieldView } from './views/inline_text_field.js';
+export { LabelView } from './views/label.js';
+
 
 
 

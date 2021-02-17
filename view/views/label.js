@@ -5,9 +5,17 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('mixins/inline_editable');
-sc_require('mixins/inline_editor_delegate');
-sc_require('delegates/inline_text_field');
+import { SC } from '../../core/core.js';
+import { InlineTextFieldDelegate } from "../delegates/inline_text_field.js";
+import { Control } from "../mixins/control.js";
+import { InlineEditable } from "../mixins/inline_editable.js";
+import { InlineTextFieldView } from "./inline_text_field.js";
+import { View } from "./view.js";
+import { propertyFromRenderDelegate } from './view/theming.js';
+
+// sc_require('mixins/inline_editable');
+// sc_require('mixins/inline_editor_delegate');
+// sc_require('delegates/inline_text_field');
 
 
 /**
@@ -18,14 +26,10 @@ sc_require('delegates/inline_text_field');
   You use a label view anytime you need to display a static string of text
   or to display text that may need to be edited using only an inline control.
 
-  @extends SC.View
-  @extends SC.Control
-  @extends SC.InlineEditable
-  @extends SC.InlineEditorDelegate
   @since SproutCore 1.0
 */
-SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
-/** @scope SC.LabelView.prototype */ {
+export const LabelView = View.extend(Control, InlineEditable,
+/** @scope LabelView.prototype */ {
 
   classNames: ['sc-label-view'],
 
@@ -36,22 +40,22 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
     this to the object you want to handles the lifecycle of the inline editor.
 
     Defaults to itself.
-    @type SC.Object
+    @type Object
   */
-  inlineEditorDelegate: SC.InlineTextFieldDelegate,
+  inlineEditorDelegate: InlineTextFieldDelegate,
 
-  isEditable: NO,
+  isEditable: false,
 
   /**
     The exampleInlineTextFieldView property is by default a
-    SC.InlineTextFieldView but it can be set to a customized inline text field
+    InlineTextFieldView but it can be set to a customized inline text field
     view.
 
     @property
-    @type {SC.View}
-    @default {SC.InlineTextFieldView}
+    @type {View}
+    @default {InlineTextFieldView}
   */
-  exampleEditor: SC.InlineTextFieldView,
+  exampleEditor: InlineTextFieldView,
 
   /**
     Whether the value, hint and toolTip will be escaped to avoid HTML injection
@@ -72,7 +76,7 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
     If true, then the value will be localized.
     This is a default that can be overidden by the settings in the owner view.
   */
-  localize: NO,
+  localize: false,
   localizeBindingDefault: SC.Binding.oneWay().bool(),
 
   /**
@@ -110,14 +114,14 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
 
   /**
     The hint to display if no value is set.  Should be used only if isEditable
-    is set to YES.
+    is set to true.
   */
   hint: null,
 
   /** @deprecated */
   hintEnabled: function() {
     //@if(debug)
-    SC.warn("Developer Warning: The hintEnabled property of SC.LabelView is deprecated.  Please simply get the isEditable property to determine if the hint will be displayed instead.");
+    SC.warn("Developer Warning: The hintEnabled property of LabelView is deprecated.  Please simply get the isEditable property to determine if the hint will be displayed instead.");
     //@endif
     return this.get('isEditable');
   }.property('isEditable').cacheable(),
@@ -134,7 +138,7 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
     Note: this is not an observed display property.  If you change it after
     rendering, you should call `displayDidChange` on the view to update the layer.
 
-    @type String SC.ALIGN_LEFT|SC.ALIGN_CENTER|SC.ALIGN_RIGHT
+    @type String ALIGN_LEFT|ALIGN_CENTER|ALIGN_RIGHT
     @default null
     @deprecated Use CSS instead.
   */
@@ -143,17 +147,17 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
   //
   // SUPPORT FOR AUTOMATIC RESIZING
   //
-  supportsAutoResize: YES,
+  supportsAutoResize: true,
   autoResizeLayer: function() { return this.get('layer'); }
   .property('layer').cacheable(),
 
   autoResizeText: function() { return this.get('displayTitle'); }
   .property('displayTitle').cacheable(),
 
-  autoResizePadding: SC.propertyFromRenderDelegate('autoResizePadding', { height: 0, width: 10 }),
+  autoResizePadding: propertyFromRenderDelegate('autoResizePadding', { height: 0, width: 10 }),
 
   /**
-    The name of the theme's SC.LabelView render delegate.
+    The name of the theme's LabelView render delegate.
 
     @type String
   */
@@ -196,7 +200,7 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
     if (!SC.none(value) && value.toString) value = value.toString() ;
 
     // 4. Localize
-    if (value && this.getDelegateProperty('localize', this.displayDelegate)) value = SC.String.loc(value) ;
+    if (value && this.getDelegateProperty('localize', this.displayDelegate)) value = String.loc(value) ;
 
     return value;
   }.property('value', 'localize', 'formatter').cacheable(),
@@ -225,7 +229,7 @@ SC.LabelView = SC.View.extend(SC.Control, SC.InlineEditable,
   /** @deprecated */
   hintValue: function() {
     //@if(debug)
-    SC.warn("Developer Warning: The hintValue property of SC.LabelView is deprecated.  Please simply get the hint or displayHint (localized) property instead.");
+    SC.warn("Developer Warning: The hintValue property of LabelView is deprecated.  Please simply get the hint or displayHint (localized) property instead.");
     //@endif
     var hintVal = this.get('hint');
     return hintVal;

@@ -510,7 +510,7 @@ const langloaderCallbacks = new Set();
 export const loadLangFiles = function (cb) {
   langloaderCallbacks.add(cb);
 
-  const code = Locale.currentLanguage;
+  const code = Locale.currentLanguage || 'en';
   const dirname = `${code}.lproj`;
   // Locale.currentLocale
   readyMixin.ready(function () {

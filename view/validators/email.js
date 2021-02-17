@@ -26,7 +26,7 @@ export const EmailValidator = Validator.extend(
   
   validateError: function(form, field) {
     var label = field.get('errorLabel') || 'Field' ;
-    return SC.$error(String.loc("Invalid.Email(%@)", label), label) ;
+    return SC.$error(SC.String.loc("Invalid.Email(%@)", label), label) ;
   }  
     
 }) ;
@@ -39,7 +39,7 @@ export const EmailValidator = Validator.extend(
   @author Charles Jolley
   @version 1.0
 */
-export const EmailOrEmptyValidator = Validator.Email.extend(
+export const EmailOrEmptyValidator = EmailValidator.extend(
 /** @scope Validator.EmailOrEmpty.prototype */ {
   validate: function(form, field) {
     var value = field.get('fieldValue') ; 

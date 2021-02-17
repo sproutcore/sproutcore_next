@@ -7,13 +7,13 @@
 
 /*global module test ok equals stop */
 import { ControlTestPane } from '../test_support/control_test_pane.js';
-import { ImageView } from '../../../view/view.js';
+import { ImageView, View } from '../../../view/view.js';
 
 // NOTE: it is a bit annoying that ImageView tests depend on LabelView...
 
 (function () {
   // var logoURL = sc_static('test-image.png');
-  var logoURL = "url('../../resources/test-image.png')";
+  var logoURL = "../../resources/test-image.png";
 
   var pane = ControlTestPane.design()
     .add("image_loaded", ImageView, {

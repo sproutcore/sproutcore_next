@@ -5,13 +5,16 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { SC } from '../../core/core.js';
 import { InlineEditor } from "../mixins/inline_editor.js";
 import { TextFieldView } from "./text_field.js";
+import { getStyle } from "./utils/misc.js";
+import { offset } from "./utils/utils.js";
 
-sc_require('views/text_field') ;
-sc_require('system/utils/misc') ;
-sc_require('delegates/inline_text_field');
-sc_require('mixins/inline_editor');
+// sc_require('views/text_field') ;
+// sc_require('system/utils/misc') ;
+// sc_require('delegates/inline_text_field');
+// sc_require('mixins/inline_editor');
 
 /**
   @class
@@ -253,7 +256,7 @@ export const InlineTextFieldView = TextFieldView.extend(InlineEditor,
       elem = _oldElem;
 
       // @if(debug)
-      warn("Developer Warning: the isCollection and pane arguments have been deprecated and can be removed.  The inline text field will now position itself within the same parent element as the target, thus removing the necessity to calculate the position of the target relative to the pane.");
+      SC.warn("Developer Warning: the isCollection and pane arguments have been deprecated and can be removed.  The inline text field will now position itself within the same parent element as the target, thus removing the necessity to calculate the position of the target relative to the pane.");
       // @endif
     }
 
@@ -266,7 +269,7 @@ export const InlineTextFieldView = TextFieldView.extend(InlineEditor,
       layout.height = exampleFrame.height;
       layout.width = exampleFrame.width;
     } else {
-      layout = copy(targetLayout);
+      layout = SC.copy(targetLayout);
     }
 
     this.set('layout', layout);
@@ -370,8 +373,8 @@ export const InlineTextFieldView = TextFieldView.extend(InlineEditor,
   // TODO: make textArea automatically resize to fit content
 
   /** @private */
-  mouseDown: function(e) {
-    arguments.callee.base.call(this, e) ;
+  mouseDown: function mouseDown (e) {
+    mouseDown.base.call(this, e) ;
     return this.get('isEditing');
   },
 
@@ -426,9 +429,10 @@ export const InlineTextFieldView = TextFieldView.extend(InlineEditor,
   // then allow the new line to proceed by calling the super class.
   // Otherwise, try to commit the edit.
   /** @private */
-  insertNewline: function(evt) {
+  insertNewline: function insertNewline (evt) {
     if (this.get('isTextArea')) {
-      return sc_super();
+      // return sc_super();
+      return insertNewline.base.apply(this, arguments);
     } else {
       this.commitEditing() ;
       return true ;

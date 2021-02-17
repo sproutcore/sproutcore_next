@@ -7,7 +7,7 @@
 /*global test Q$ */
 
 import { SC } from '../../../core/core.js';
-import { Pane } from '../../../view/view.js';
+import { Pane, LabelView, View } from '../../../view/view.js';
 
 // TODO: IMPROVE CODE QUALITY.  This code was put together quickly in order to
 // test the SproutCore framework.  It does not match up to the project's
