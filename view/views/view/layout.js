@@ -456,11 +456,13 @@ export const layoutSupport = /** @scope View.prototype */ {
     frame.x += borderLeft; // The border on the left pushes the frame to the right
     frame.y += borderTop; // The border on the top pushes the frame down
     
-    // this assumes that frame isn't already adjusted, which is the case when using staticLayou
+    // this assumes that frame isn't already adjusted, which is the case when using staticLayout
+    // v2: it turns out that sometimes layout.width and .height are undefined, which causes NaNs. 
+    // do a fallback on the frame values in that case.
 
     if (this.get('useStaticLayout')) {
-      frame.width = layout.width - (borderLeft + borderRight);
-      frame.height = layout.height - (borderTop + borderBottom);
+      frame.width = (layout.width || frame.width) - (borderLeft + borderRight);
+      frame.height = (layout.height || frame.height) - (borderTop + borderBottom);
     }
     else {
       frame.width -= (borderLeft + borderRight); // Border takes up space
