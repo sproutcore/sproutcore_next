@@ -24,7 +24,7 @@ export { imageQueue } from './system/image_queue.js';
 export { TextSelection } from './system/text_selection.js';
 
 export * from './system/constants.js';
-
+export { RenderDelegate } from './views/render_delegates/render_delegate.js';
 
   // ..........................................................
   // LOCALIZATION SUPPORT

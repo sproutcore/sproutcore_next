@@ -272,7 +272,7 @@ function _object_extend(base, ext, proto) {
 };
 
 /** @private */
-const _enhance = function (originalFunction, enhancement) {
+export const _enhance = function (originalFunction, enhancement) {
 
   return function () {
     // Accessing `arguments.length` is just a Number and doesn't materialize the `arguments` object, which is costly.

@@ -10,7 +10,7 @@ import { Copyable } from './mixins/copyable.js';
 import { Comparable } from './mixins/comparable.js';
 import { Enumerable } from './mixins/enumerable.js';
 import { Freezable } from './mixins/freezable.js';
-import { SCObject, kindOf, instanceOf, _object_className } from './system/object.js';
+import { SCObject, kindOf, instanceOf, _object_className, _enhance } from './system/object.js';
 import { Observable, get, getPath } from './mixins/observable.js';
 import { CoreArray, SCArray } from './mixins/array.js';
 import { ObserverQueue } from './private/observer_queue.js';
@@ -91,6 +91,7 @@ export const SC = {
   getPath,
   Object: SCObject,
   _object_className,
+  _enhance,
   Array: SCArray,
   Error: SCError,
   RunLoop,
