@@ -8,6 +8,7 @@
 import { SC } from '../../../core/core.js';
 // import { View, Pane } from '/view/view.js';
 import { htmlbody, clearHtmlbody } from '../../../testing/testing.js';
+import { stringFromLayout } from '../utils/rect.js';
 
 /** @private Shared stack plugin (may be horizontal or vertical). */
 function _SC_VIEW_STACK_PLUGIN (direction) {
