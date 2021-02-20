@@ -43,6 +43,10 @@ import { ZERO_RANGE, RANGE_NOT_FOUND, valueInRange, minRange, maxRange, unionRan
 import { SparseArray } from './system/sparse_array.js';
 import { DateTime } from './system/datetime/datetime.js';
 import { dateTimeBinding } from './system/datetime/datetime_binding.js';
+import { TreeController } from './controllers/tree.js';
+import { TreeItemObserver } from './private/tree_item_observer.js';
+import { TreeItemContent } from './mixins/tree_item_content.js';
+import { CollectionContent } from './mixins/collection_content.js';
 
 // add dateTimeBinding to Binding
 Binding.dateTime = dateTimeBinding;
@@ -186,7 +190,11 @@ export const SC = {
   rangesEqual,
   SparseArray,
   DateTime,
-  loadLangFiles
+  loadLangFiles,
+  TreeItemContent,
+  TreeItemObserver,
+  TreeController,
+  CollectionContent
 };
 
 mixin(SC, readyMixin);

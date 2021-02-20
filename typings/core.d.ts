@@ -6,6 +6,9 @@ import { clone } from "../core/system/base";
 import { getSetting, setSetting } from "../core/system/settings";
 import { SCString } from "../core/system/string";
 
+
+export type Fix<T> = { [K in keyof T]: T[K] };
+
 /**
  * Check that any arguments to `create()` match the type's properties.
  *
@@ -373,7 +376,6 @@ interface Observable {
 declare const Observable: Mixin<Observable, CoreObject>;
 
 export class SCObject extends CoreObject.extend(Observable) {}
-
 
 export namespace SC {
     class Object extends SCObject {};

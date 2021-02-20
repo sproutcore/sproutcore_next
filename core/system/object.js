@@ -326,6 +326,7 @@ const _enhance = function (originalFunction, enhancement) {
   @class
   @mixes Observable
   @mixes ObjectMixinProtocol
+  @type { import('../../typings/core').SCObject }
   @since SproutCore 1.0
 */
 export function SCObject (props) {
@@ -377,7 +378,7 @@ SCObject.superclass = null;
     in your init() to allow the normal setup to proceed.
 
     @param {...Object} props the methods of properties you want to add
-    @returns { SCObject } A new object class
+    @returns {typeof SCObject } A new object class
   */
 SCObject.extend = function () {
   //@if(debug)

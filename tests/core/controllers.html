@@ -29,9 +29,11 @@
     <script src="./controllers/object/multiple_case.js" type="module"></script>
     <script src="./controllers/object/single_case.js" type="module"></script>
     <script src="./controllers/object/single_enumerable_case.js" type="module"></script>
+    <script src="./controllers/tree//outline_case.js" type="module"></script>
+    <script src="./controllers/tree/selection_support.js" type="module"></script>
     <script type="module">
       import { SC } from '../../core/core.js';
-      SC.onload = function () { QUnit.start(); };
+      SC.ready(function () { QUnit.start(); });
     </script>
 </body>
 </html>
