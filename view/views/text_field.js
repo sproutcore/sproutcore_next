@@ -164,7 +164,7 @@ export const TextFieldView = FieldView.extend(Editable,
    */
   formattedHint: function () {
     var hint = this.get('hint');
-    hint = typeof(hint) === 'string' && this.get('localize') ? String.loc(hint) : hint;
+    hint = typeof(hint) === 'string' && this.get('localize') ? SC.String.loc(hint) : hint;
 
     // If the hint is appended via an overlay, ensure that the text is escaped in order to avoid XSS attacks.
     if (this.get('useHintOverlay')) {
@@ -979,7 +979,7 @@ export const TextFieldView = FieldView.extend(Editable,
   /** @private */
   _field_fieldValueDidChange: function (evt) {
     if (this.get('focused')) {
-      run(function () {
+      SC.run(function () {
         this.fieldValueDidChange(false);
       }, this);
     }

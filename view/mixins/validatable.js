@@ -7,6 +7,7 @@
 
 import { SC } from '../../core/core.js';
 import { VALIDATE_NO_CHANGE, VALIDATE_OK } from '../system/constants.js';
+import { Validator } from '../validators/index.js';
 
 /**
   @namespace

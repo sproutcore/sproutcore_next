@@ -12,7 +12,8 @@
     "./core/**/*.js",
     "./event/**/*.js",
     "./responder/**/*.js",
-    "./statechart/**/*.js"
-
+    "./statechart/**/*.js",
+    "./view/**/*.js",
+    "./responder/**/*.js"
   ]
 }

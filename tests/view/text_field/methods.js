@@ -7,28 +7,36 @@
 
 /*globals module, test, htmlbody, ok, equals, same, stop, start, Q$ */
 
+import { SC } from '../../../core/core.js';
+import { ControlTestPane } from '../test_support/control_test_pane.js';
+import { TextFieldView, AUTOCAPITALIZE_NONE, AUTOCAPITALIZE_SENTENCES, AUTOCAPITALIZE_WORDS, AUTOCAPITALIZE_CHARACTERS, MainPane } from '../../../view/view.js';
+import { SCEvent, browser } from '../../../event/event.js';
+import { Responder, platform } from '../../../responder/responder.js';
+
+import { CoreQuery } from '../../../event/event.js';
+const Q$ = CoreQuery;
 
 // note: need to test interaction with Validators here
 // possibly move Validator support to TextFieldView specifically.
 
 var pane, view, view1, view2;
 
-module("SC.TextFieldView",{
-  setup: function() {
+module("TextFieldView",{
+  beforeEach: function() {
       SC.RunLoop.begin();
-      pane = SC.MainPane.create({
+      pane = MainPane.create({
         childViews: [
-          SC.TextFieldView.extend({
+          TextFieldView.extend({
             hint:'First Name',
             value:'',
             title:'First Name'
           }),
-          SC.TextFieldView.extend({
+          TextFieldView.extend({
             hint:'Name',
             value:'SproutCore',
-            isEnabled: NO
+            isEnabled: false
           }),
-          SC.TextFieldView.extend({
+          TextFieldView.extend({
             layerId: 'fieldWithCustomId'
           })
         ]
@@ -41,301 +49,301 @@ module("SC.TextFieldView",{
     view2 = pane.childViews[2];
   },
 
-  teardown: function() {
+  afterEach: function() {
       pane.destroy();
       pane = view = null ;
     }
 });
 
-test("renders an text field input tag with appropriate attributes", function() {
-  equals(view.get('value'), '', 'value should be empty');
-  equals(view1.get('value'), 'SproutCore', 'value should not be empty ');
-  equals(view.get('isEnabled'),YES,'field enabled' );
-  equals(view1.get('isEnabled'),NO,'field not enabled' );
+test("renders an text field input tag with appropriate attributes", function (assert) {
+  assert.equal(view.get('value'), '', 'value should be empty');
+  assert.equal(view1.get('value'), 'SproutCore', 'value should not be empty ');
+  assert.equal(view.get('isEnabled'),true,'field enabled' );
+  assert.equal(view1.get('isEnabled'),false,'field not enabled' );
   var q = Q$('input', view.get('layer'));
-  equals(q.attr('type'), 'text', 'should have type as text');
-  equals(q.attr('name'), view.get('layerId'), 'should have name as view_layerid');
+  assert.equal(q.attr('type'), 'text', 'should have type as text');
+  assert.equal(q.attr('name'), view.get('layerId'), 'should have name as view_layerid');
 });
 
-test("renders an text field with a custom layerId with correct id and name html attributes", function() {
-  equals(view2.$().attr('id'), 'fieldWithCustomId', 'label html element should have the custom id');
-  equals(view2.$input().attr('name'), 'fieldWithCustomId', 'input html element should have the custom name');
+test("renders an text field with a custom layerId with correct id and name html attributes", function (assert) {
+  assert.equal(view2.$().attr('id'), 'fieldWithCustomId', 'label html element should have the custom id');
+  assert.equal(view2.$input().attr('name'), 'fieldWithCustomId', 'input html element should have the custom name');
 });
 
-test("isEnabled=NO should add disabled class", function() {
+test("isEnabled=false should add disabled class", function (assert) {
   SC.RunLoop.begin();
-  view.set('isEnabled', NO);
+  view.set('isEnabled', false);
   SC.RunLoop.end();
-  ok(view.$().hasClass('disabled'), 'should have disabled class');
+  assert.ok(view.$().hasClass('disabled'), 'should have disabled class');
 });
 
-test("isEnabled=NO isEditable=NO should add disabled attribute", function() {
+test("isEnabled=false isEditable=false should add disabled attribute", function (assert) {
   SC.RunLoop.begin();
-  view.set('isEnabled', NO);
-  view.set('isEditable', NO);
+  view.set('isEnabled', false);
+  view.set('isEditable', false);
   SC.RunLoop.end();
-  ok(view.$input().attr('disabled'), 'should have disabled attribute');
-  ok(view.$input().attr('readOnly'), 'should have readOnly attribute');
+  assert.ok(view.$input().attr('disabled'), 'should have disabled attribute');
+  assert.ok(view.$input().attr('readOnly'), 'should have readOnly attribute');
 });
 
-test("isEnabled=NO isEditable=YES should add disabled attribute", function() {
+test("isEnabled=false isEditable=true should add disabled attribute", function (assert) {
   SC.RunLoop.begin();
-  view.set('isEnabled', NO);
-  view.set('isEditable', YES);
+  view.set('isEnabled', false);
+  view.set('isEditable', true);
   SC.RunLoop.end();
-  ok(view.$input().attr('disabled'), 'should have disabled attribute');
-  ok(!view.$input().attr('readOnly'), 'should not have readOnly attribute');
+  assert.ok(view.$input().attr('disabled'), 'should have disabled attribute');
+  assert.ok(!view.$input().attr('readOnly'), 'should not have readOnly attribute');
 });
 
-test("isEnabled=YES isEditable=NO should add readOnly attribute", function() {
+test("isEnabled=true isEditable=false should add readOnly attribute", function (assert) {
   SC.RunLoop.begin();
-  view.set('isEnabled', YES);
-  view.set('isEditable', NO);
+  view.set('isEnabled', true);
+  view.set('isEditable', false);
   SC.RunLoop.end();
-  ok(!view.$input().attr('disabled'), 'should not have disabled attribute');
-  ok(view.$input().attr('readOnly'), 'should have readOnly attribute');
+  assert.ok(!view.$input().attr('disabled'), 'should not have disabled attribute');
+  assert.ok(view.$input().attr('readOnly'), 'should have readOnly attribute');
 });
 
-test("isEnabled=YES isEditable=YES should not add disable or readOnly attribute", function() {
+test("isEnabled=true isEditable=true should not add disable or readOnly attribute", function (assert) {
   SC.RunLoop.begin();
-  view.set('isEnabled', YES);
-  view.set('isEditable', YES);
+  view.set('isEnabled', true);
+  view.set('isEditable', true);
   SC.RunLoop.end();
-  ok(!view.$input().attr('disabled'), 'should not have disabled attribute');
-  ok(!view.$input().attr('readOnly'), 'should not have readOnly attribute');
+  assert.ok(!view.$input().attr('disabled'), 'should not have disabled attribute');
+  assert.ok(!view.$input().attr('readOnly'), 'should not have readOnly attribute');
 });
 
-test("isBrowserFocusable should set tab index", function() {
+test("isBrowserFocusable should set tab index", function (assert) {
   SC.RunLoop.begin();
-  view.set('isBrowserFocusable', YES);
+  view.set('isBrowserFocusable', true);
   SC.RunLoop.end();
-  ok(view.$input().attr('tabindex') !== "-1", 'focusable field should not have unfocusable tab index');
+  assert.ok(view.$input().attr('tabindex') !== "-1", 'focusable field should not have unfocusable tab index');
   SC.RunLoop.begin();
-  view.set('isBrowserFocusable', NO);
+  view.set('isBrowserFocusable', false);
   SC.RunLoop.end();
-  ok(view.$input().attr('tabindex') === "-1", 'unfocusable field should have unfocusable tab index');
+  assert.ok(view.$input().attr('tabindex') === "-1", 'unfocusable field should have unfocusable tab index');
 });
 
-test("autoCapitalize=SC.AUTOCAPITALIZE_NONE should add autocapitalize='none'", function() {
+test("autoCapitalize=AUTOCAPITALIZE_NONE should add autocapitalize='none'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoCapitalize', SC.AUTOCAPITALIZE_NONE);
+  view.set('autoCapitalize', AUTOCAPITALIZE_NONE);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocapitalize') === "none", 'should have an autocapitalize attribute set to "none"');
+  assert.ok(view.$input().attr('autocapitalize') === "none", 'should have an autocapitalize attribute set to "none"');
 });
 
-test("autoCapitalize=SC.AUTOCAPITALIZE_SENTENCES should add autocapitalize='sentences'", function() {
+test("autoCapitalize=AUTOCAPITALIZE_SENTENCES should add autocapitalize='sentences'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoCapitalize', SC.AUTOCAPITALIZE_SENTENCES);
+  view.set('autoCapitalize', AUTOCAPITALIZE_SENTENCES);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocapitalize') === "sentences", 'should have an autocapitalize attribute set to "sentences"');
+  assert.ok(view.$input().attr('autocapitalize') === "sentences", 'should have an autocapitalize attribute set to "sentences"');
 });
 
-test("autoCapitalize=SC.AUTOCAPITALIZE_WORDS should add autocapitalize='words'", function() {
+test("autoCapitalize=AUTOCAPITALIZE_WORDS should add autocapitalize='words'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoCapitalize', SC.AUTOCAPITALIZE_WORDS);
+  view.set('autoCapitalize', AUTOCAPITALIZE_WORDS);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocapitalize') === "words", 'should have an autocapitalize attribute set to "words"');
+  assert.ok(view.$input().attr('autocapitalize') === "words", 'should have an autocapitalize attribute set to "words"');
 });
 
-test("autoCapitalize=SC.AUTOCAPITALIZE_CHARACTERS should add autocapitalize='characters'", function() {
+test("autoCapitalize=AUTOCAPITALIZE_CHARACTERS should add autocapitalize='characters'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoCapitalize', SC.AUTOCAPITALIZE_CHARACTERS);
+  view.set('autoCapitalize', AUTOCAPITALIZE_CHARACTERS);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocapitalize') === "characters", 'should have an autocapitalize attribute set to "characters"');
+  assert.ok(view.$input().attr('autocapitalize') === "characters", 'should have an autocapitalize attribute set to "characters"');
 });
 
-test("autoCapitalize=YES should add autocapitalize='sentences'", function() {
+test("autoCapitalize=true should add autocapitalize='sentences'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoCapitalize', YES);
+  view.set('autoCapitalize', true);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocapitalize') === "sentences", 'should have an autocapitalize attribute set to "sentences"');
+  assert.ok(view.$input().attr('autocapitalize') === "sentences", 'should have an autocapitalize attribute set to "sentences"');
 });
 
-test("autoCapitalize=NO should add autocapitalize='none'", function() {
+test("autoCapitalize=false should add autocapitalize='none'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoCapitalize', NO);
+  view.set('autoCapitalize', false);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocapitalize') === "none", 'should have an autocapitalize attribute set to "none"');
+  assert.ok(view.$input().attr('autocapitalize') === "none", 'should have an autocapitalize attribute set to "none"');
 });
 
-test("autoCapitalize=null should not add autocapitalize", function() {
+test("autoCapitalize=null should not add autocapitalize", function (assert) {
   SC.RunLoop.begin();
   view.set('autoCapitalize', null);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(!view.$input().attr('autocapitalize'), 'should not have an autocapitalize attribute set');
+  assert.ok(!view.$input().attr('autocapitalize'), 'should not have an autocapitalize attribute set');
 });
 
-test("autoCorrect=YES should add autocorrect='on'", function() {
+test("autoCorrect=true should add autocorrect='on'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoCorrect', YES);
+  view.set('autoCorrect', true);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocorrect') === "on", 'should have an autocorrect attribute set to "on"');
+  assert.ok(view.$input().attr('autocorrect') === "on", 'should have an autocorrect attribute set to "on"');
 });
 
-test("autoCorrect=NO should add autocorrect='off'", function() {
+test("autoCorrect=false should add autocorrect='off'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoCorrect', NO);
+  view.set('autoCorrect', false);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocorrect') === "off", 'should have an autocorrect attribute set to "off"');
+  assert.ok(view.$input().attr('autocorrect') === "off", 'should have an autocorrect attribute set to "off"');
 });
 
-test("autoCorrect=null should not add autocorrect", function() {
+test("autoCorrect=null should not add autocorrect", function (assert) {
   SC.RunLoop.begin();
   view.set('autoCorrect', null);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(!view.$input().attr('autocorrect'), 'should not have an autocorrect attribute set');
+  assert.ok(!view.$input().attr('autocorrect'), 'should not have an autocorrect attribute set');
 });
 
-test("autoComplete=YES should add autocomplete='on'", function() {
+test("autoComplete=true should add autocomplete='on'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoComplete', YES);
+  view.set('autoComplete', true);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocomplete') === "on", 'should have an autocomplete attribute set to "on"');
+  assert.ok(view.$input().attr('autocomplete') === "on", 'should have an autocomplete attribute set to "on"');
 });
 
-test("autoComplete=NO should add autocomplete='off'", function() {
+test("autoComplete=false should add autocomplete='off'", function (assert) {
   SC.RunLoop.begin();
-  view.set('autoComplete', NO);
+  view.set('autoComplete', false);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(view.$input().attr('autocomplete') === "off", 'should have an autocomplete attribute set to "off"');
+  assert.ok(view.$input().attr('autocomplete') === "off", 'should have an autocomplete attribute set to "off"');
 });
 
-test("autoComplete=null should not add autocomplete", function() {
+test("autoComplete=null should not add autocomplete", function (assert) {
   SC.RunLoop.begin();
   view.set('autoComplete', null);
   view.displayDidChange();
   SC.RunLoop.end();
-  ok(!view.$input().attr('autocomplete'), 'should not have an autocomplete attribute set');
+  assert.ok(!view.$input().attr('autocomplete'), 'should not have an autocomplete attribute set');
 });
 
 /**
- SC.TextFieldView was extended to make use of interpretKeyEvents, which
+ TextFieldView was extended to make use of interpretKeyEvents, which
  allows easy actions to be implemented based off of several key "keys".  This
  test checks that the expected actions are being captured.
  */
-test("interpretKeyEvents should allow key command methods to be implemented.", function() {
+test("interpretKeyEvents should allow key command methods to be implemented.", function (assert) {
   var evt,
     layer,
-    cancelFlag = NO,
-    deleteBackwardFlag = NO,
-    deleteForwardFlag = NO,
-    insertNewlineFlag = NO,
-    insertTabFlag = NO,
-    insertBacktabFlag = NO,
-    moveLeftFlag = NO,
-    moveRightFlag = NO,
-    moveUpFlag = NO,
-    moveDownFlag = NO,
-    moveToBeginningOfDocumentFlag = NO,
-    moveToEndOfDocumentFlag = NO,
-    pageDownFlag = NO,
-    pageUpFlag = NO;
+    cancelFlag = false,
+    deleteBackwardFlag = false,
+    deleteForwardFlag = false,
+    insertNewlineFlag = false,
+    insertTabFlag = false,
+    insertBacktabFlag = false,
+    moveLeftFlag = false,
+    moveRightFlag = false,
+    moveUpFlag = false,
+    moveDownFlag = false,
+    moveToBeginningOfDocumentFlag = false,
+    moveToEndOfDocumentFlag = false,
+    pageDownFlag = false,
+    pageUpFlag = false;
 
-  view1.cancel = function() { cancelFlag = YES; return YES; };
-  view1.deleteBackward = function() { deleteBackwardFlag = YES; return YES; };
-  view1.deleteForward = function() { deleteForwardFlag = YES; return YES; };
-  view1.insertNewline = function() { insertNewlineFlag = YES; return YES; };
-  view1.insertTab = function() { insertTabFlag = YES; return YES; };
-  view1.insertBacktab = function() { insertBacktabFlag = YES; return YES; };
-  view1.moveLeft = function() { moveLeftFlag = YES; return YES; };
-  view1.moveRight = function() { moveRightFlag = YES; return YES; };
-  view1.moveUp = function() { moveUpFlag = YES; return YES; };
-  view1.moveDown = function() { moveDownFlag = YES; return YES; };
-  view1.moveToBeginningOfDocument = function() { moveToBeginningOfDocumentFlag = YES; return YES; };
-  view1.moveToEndOfDocument = function() { moveToEndOfDocumentFlag = YES; return YES; };
-  view1.pageUp = function() { pageUpFlag = YES; return YES; };
-  view1.pageDown = function() { pageDownFlag = YES; return YES; };
+  view1.cancel = function() { cancelFlag = true; return true; };
+  view1.deleteBackward = function() { deleteBackwardFlag = true; return true; };
+  view1.deleteForward = function() { deleteForwardFlag = true; return true; };
+  view1.insertNewline = function() { insertNewlineFlag = true; return true; };
+  view1.insertTab = function() { insertTabFlag = true; return true; };
+  view1.insertBacktab = function() { insertBacktabFlag = true; return true; };
+  view1.moveLeft = function() { moveLeftFlag = true; return true; };
+  view1.moveRight = function() { moveRightFlag = true; return true; };
+  view1.moveUp = function() { moveUpFlag = true; return true; };
+  view1.moveDown = function() { moveDownFlag = true; return true; };
+  view1.moveToBeginningOfDocument = function() { moveToBeginningOfDocumentFlag = true; return true; };
+  view1.moveToEndOfDocument = function() { moveToEndOfDocumentFlag = true; return true; };
+  view1.pageUp = function() { pageUpFlag = true; return true; };
+  view1.pageDown = function() { pageDownFlag = true; return true; };
 
   SC.RunLoop.begin();
   layer = view1.get('layer');
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_BACKSPACE, keyCode: SC.Event.KEY_BACKSPACE });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_BACKSPACE, keyCode: SCEvent.KEY_BACKSPACE });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_TAB, keyCode: SC.Event.KEY_TAB });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_TAB, keyCode: SCEvent.KEY_TAB });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_TAB, keyCode: SC.Event.KEY_TAB, shiftKey: YES });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_TAB, keyCode: SCEvent.KEY_TAB, shiftKey: true });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_RETURN, keyCode: SC.Event.KEY_RETURN });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_RETURN, keyCode: SCEvent.KEY_RETURN });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_ESC, keyCode: SC.Event.KEY_ESC });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_ESC, keyCode: SCEvent.KEY_ESC });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_LEFT, keyCode: SC.Event.KEY_LEFT });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_LEFT, keyCode: SCEvent.KEY_LEFT });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_UP, keyCode: SC.Event.KEY_UP });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_UP, keyCode: SCEvent.KEY_UP });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_DOWN, keyCode: SC.Event.KEY_DOWN });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_DOWN, keyCode: SCEvent.KEY_DOWN });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_RIGHT, keyCode: SC.Event.KEY_RIGHT });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_RIGHT, keyCode: SCEvent.KEY_RIGHT });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_DELETE, keyCode: SC.Event.KEY_DELETE });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_DELETE, keyCode: SCEvent.KEY_DELETE });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_HOME, keyCode: SC.Event.KEY_HOME });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_HOME, keyCode: SCEvent.KEY_HOME });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_END, keyCode: SC.Event.KEY_END });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_END, keyCode: SCEvent.KEY_END });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_PAGEUP, keyCode: SC.Event.KEY_PAGEUP });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_PAGEUP, keyCode: SCEvent.KEY_PAGEUP });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_PAGEDOWN, keyCode: SC.Event.KEY_PAGEDOWN });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_PAGEDOWN, keyCode: SCEvent.KEY_PAGEDOWN });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_INSERT, keyCode: SC.Event.KEY_INSERT });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_INSERT, keyCode: SCEvent.KEY_INSERT });
   view1.keyDown(evt);
   SC.RunLoop.end();
 
   // Test.
-  ok(deleteBackwardFlag, 'deleteBackward should have been triggered.');
-  ok(insertTabFlag, 'insertTab should have been triggered.');
-  ok(insertBacktabFlag, 'insertBacktab should have been triggered.');
-  ok(insertNewlineFlag, 'insertNewline should have been triggered.');
-  ok(cancelFlag, 'cancel should have been triggered.');
-  ok(moveLeftFlag, 'moveLeft should have been triggered.');
-  ok(moveUpFlag, 'moveUp should have been triggered.');
-  ok(moveDownFlag, 'moveDown should have been triggered.');
-  ok(moveRightFlag, 'moveRight should have been triggered.');
-  ok(deleteForwardFlag, 'deleteForward should have been triggered.');
-  ok(moveToBeginningOfDocumentFlag, 'moveToBeginningOfDocument should have been triggered.');
-  ok(moveToEndOfDocumentFlag, 'moveToEndOfDocument should have been triggered.');
-  ok(pageUpFlag, 'pageUp should have been triggered.');
-  ok(pageDownFlag, 'pageDown should have been triggered.');
+  assert.ok(deleteBackwardFlag, 'deleteBackward should have been triggered.');
+  assert.ok(insertTabFlag, 'insertTab should have been triggered.');
+  assert.ok(insertBacktabFlag, 'insertBacktab should have been triggered.');
+  assert.ok(insertNewlineFlag, 'insertNewline should have been triggered.');
+  assert.ok(cancelFlag, 'cancel should have been triggered.');
+  assert.ok(moveLeftFlag, 'moveLeft should have been triggered.');
+  assert.ok(moveUpFlag, 'moveUp should have been triggered.');
+  assert.ok(moveDownFlag, 'moveDown should have been triggered.');
+  assert.ok(moveRightFlag, 'moveRight should have been triggered.');
+  assert.ok(deleteForwardFlag, 'deleteForward should have been triggered.');
+  assert.ok(moveToBeginningOfDocumentFlag, 'moveToBeginningOfDocument should have been triggered.');
+  assert.ok(moveToEndOfDocumentFlag, 'moveToEndOfDocument should have been triggered.');
+  assert.ok(pageUpFlag, 'pageUp should have been triggered.');
+  assert.ok(pageDownFlag, 'pageDown should have been triggered.');
 });
 
-test("tab should attempt to move focus", function() {
-  var nextValidKeyViewFlag = NO,
-      previousValidKeyViewFlag = NO,
+test("tab should attempt to move focus", function (assert) {
+  var nextValidKeyViewFlag = false,
+      previousValidKeyViewFlag = false,
       evt,
       layer;
 
-  view1.nextValidKeyView = function() { nextValidKeyViewFlag = YES; return null; }.property();
-  view1.previousValidKeyView = function() { previousValidKeyViewFlag = YES; return null; }.property();
+  view1.nextValidKeyView = function() { nextValidKeyViewFlag = true; return null; }.property();
+  view1.previousValidKeyView = function() { previousValidKeyViewFlag = true; return null; }.property();
 
   SC.RunLoop.begin();
   layer = view1.get('layer');
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_TAB, keyCode: SC.Event.KEY_TAB });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_TAB, keyCode: SCEvent.KEY_TAB });
   view1.keyDown(evt);
-  evt = SC.Event.simulateEvent(layer, 'keydown', { which: SC.Event.KEY_TAB, keyCode: SC.Event.KEY_TAB, shiftKey: YES });
+  evt = SCEvent.simulateEvent(layer, 'keydown', { which: SCEvent.KEY_TAB, keyCode: SCEvent.KEY_TAB, shiftKey: true });
   view1.keyDown(evt);
   SC.RunLoop.end();
 
-  ok(nextValidKeyViewFlag, 'nextValidKeyView should have been called.');
-  ok(previousValidKeyViewFlag, 'previousValidKeyView should have been called.');
+  assert.ok(nextValidKeyViewFlag, 'nextValidKeyView should have been called.');
+  assert.ok(previousValidKeyViewFlag, 'previousValidKeyView should have been called.');
 });
 
-// test("isEnabled=NO should add disabled attr to input", function() {
+// test("isEnabled=false should add disabled attr to input", function() {
 //   SC.RunLoop.begin();
-//   view1.set('isEnabled', NO);
+//   view1.set('isEnabled', false);
 //   SC.RunLoop.end();
-//   ok(view1.$input().attr('disabled'), 'should have disabled attr');
-//   view1.set('isEditing',YES);
-//   ok(view1.get('value') === 'SproutCore', 'value cannot be changed');
+//   assert.ok(view1.$input().attr('disabled'), 'should have disabled attr');
+//   view1.set('isEditing',true);
+//   assert.ok(view1.get('value') === 'SproutCore', 'value cannot be changed');
 //   });
 

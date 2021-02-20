@@ -21,6 +21,7 @@ export { TextFieldView } from './views/text_field.js';
 export { InlineTextFieldView } from './views/inline_text_field.js';
 export { LabelView } from './views/label.js';
 export { imageQueue } from './system/image_queue.js';
+export { TextSelection } from './system/text_selection.js';
 
 export * from './system/constants.js';
 
