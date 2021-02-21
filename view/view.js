@@ -33,7 +33,10 @@ export { Gesture } from './system/gesture.js';
 export { Control } from './mixins/control.js';
 export { FlowedLayout } from './mixins/flowed_layout.js';
 export { InlineEditor } from './mixins/inline_editor.js';
-export { InlineEditable } from './mixins/inline_editable.js'
+export { InlineEditable } from './mixins/inline_editable.js';
+export { Validatable } from './mixins/validatable.js';
+
+
   // ..........................................................
   // LOCALIZATION SUPPORT
   //
