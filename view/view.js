@@ -26,6 +26,9 @@ export { TextSelection } from './system/text_selection.js';
 export * from './system/constants.js';
 export { RenderDelegate } from './views/render_delegates/render_delegate.js';
 export { AutoResize, AutoResizeManager } from './mixins/auto_resize.js';
+export { ContentDisplay } from './mixins/content_display.js';
+export { Gesturable } from './mixins/gesturable.js';
+export { Gesture } from './system/gesture.js';
 
   // ..........................................................
   // LOCALIZATION SUPPORT

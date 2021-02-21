@@ -127,7 +127,7 @@ test("Resize with transition plugin - conflict", function (assert) {
     var jqEl = view.$();
 
     assert.ok(jqEl.width() > 10, 'width is > 10: %@'.fmt(jqEl.width()));
-    assert.ok(jqEl.width() < 3000, 'width is < 3000: %@'.fmt(jqEl.width()));
+    assert.ok(jqEl.width() < 3000, 'width is < 3000: %@ (sometimes this fails, but will pass after reload or when run separately)'.fmt(jqEl.width()));
     assert.ok(view.get('layout').width > 3000, 'layout.width is > 3000: %@'.fmt(view.get('layout').width));
   }, 250);
 
