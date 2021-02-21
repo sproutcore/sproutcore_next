@@ -248,3 +248,52 @@ export const SMALL_CONTROL_SIZE = 'sc-small-size';
   @constant
 */
 export const TINY_CONTROL_SIZE = 'sc-tiny-size';
+
+/**
+  @static
+  @type Array
+  @constant
+*/
+export const SWIPE_HORIZONTAL = [0, 180];
+
+/**
+  @static
+  @type Array
+  @constant
+*/
+export const SWIPE_VERTICAL = [90, -90];
+
+/**
+  @static
+  @type String
+  @constant
+*/
+export const SWIPE_ANY = null;
+
+/**
+  @static
+  @type Array
+  @constant
+*/
+export const SWIPE_LEFT = [180];
+
+/**
+  @static
+  @type Array
+  @constant
+*/
+export const SWIPE_RIGHT = [0];
+
+/**
+  @static
+  @type Array
+  @constant
+*/
+export const SWIPE_UP = [-90];
+
+/**
+  @static
+  @type Array
+  @constant
+*/
+export const SWIPE_DOWN = [90];
