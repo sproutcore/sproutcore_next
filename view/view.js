@@ -30,6 +30,7 @@ export { ContentDisplay } from './mixins/content_display.js';
 export { ContentValueSupport } from './mixins/content_value_support.js';
 export { Gesturable } from './mixins/gesturable.js';
 export { Gesture } from './system/gesture.js';
+export { Control } from './mixins/control.js';
 
   // ..........................................................
   // LOCALIZATION SUPPORT
