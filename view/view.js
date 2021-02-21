@@ -27,6 +27,7 @@ export * from './system/constants.js';
 export { RenderDelegate } from './views/render_delegates/render_delegate.js';
 export { AutoResize, AutoResizeManager } from './mixins/auto_resize.js';
 export { ContentDisplay } from './mixins/content_display.js';
+export { ContentValueSupport } from './mixins/content_value_support.js';
 export { Gesturable } from './mixins/gesturable.js';
 export { Gesture } from './system/gesture.js';
 
