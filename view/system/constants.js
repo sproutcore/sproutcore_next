@@ -38,6 +38,8 @@ export const DROP_AFTER = 0x04 ;
 */
 export const DROP_ANY = 0x07 ;
 
+export const ALIGN_JUSTIFY = "justify";
+
 /**
   Indicates that the content should be aligned to the left.
 */

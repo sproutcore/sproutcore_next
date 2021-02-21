@@ -6,7 +6,7 @@ export { View } from './views/view.js';
 export { CoreView } from './views/core_view.js';
 export { Theme } from './theme/theme.js';
 export { RenderContext } from './render_context/render_context.js';
-export { LAYOUT_AUTO } from './views/view/layout.js'
+export { LAYOUT_AUTO, LAYOUT_HORIZONTAL, LAYOUT_VERTICAL } from './views/view/layout.js'
 export { Pane } from './panes/pane.js';
 export { MainPane }  from './panes/main.js';
 export * from './views/utils/rect.js';
@@ -31,6 +31,7 @@ export { ContentValueSupport } from './mixins/content_value_support.js';
 export { Gesturable } from './mixins/gesturable.js';
 export { Gesture } from './system/gesture.js';
 export { Control } from './mixins/control.js';
+export { FlowedLayout } from './mixins/flowed_layout.js';
 
   // ..........................................................
   // LOCALIZATION SUPPORT
