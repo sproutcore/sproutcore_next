@@ -224,10 +224,10 @@ export const ContainerView = View.extend(/** @scope ContainerView.prototype */ {
     left/top while the transition is in process so neither view thinks it
     is clipped.
    */
-  clippingFrame: function () {
+  clippingFrame: function clippingFrame () {
     var contentStatecharts = this._contentStatecharts,
       frame = this.get('frame'),
-      ret = init.base.apply(this, arguments);
+      ret = clippingFrame.base.apply(this, arguments);
 
     // Allow for a modified clippingFrame while transitioning.
     if (this.get('isTransitioning')) {

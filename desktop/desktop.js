@@ -6,6 +6,13 @@
 // ==========================================================================
 
 import { SC } from '../core/core.js';
+import './render_delegates/split.js';
+import './render_delegates/split_divider.js';
+import './render_delegates/button.js';
+import './render_delegates/checkbox.js';
+import './render_delegates/collection.js';
+import './render_delegates/disclosure.js';
+import './render_delegates/toolbar.js';
 
 /**
   If set to `NO`, then pressing backspace will NOT navigate to the previous

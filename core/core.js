@@ -24,7 +24,7 @@ import { SCSet } from './system/set.js';
 import { RangeObserver } from './system/range_observer.js';
 import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath, mixin, beget, merge } from './system/base.js';
 import { VERSION, T_ERROR, T_OBJECT, T_NULL, T_CLASS, T_HASH, T_FUNCTION, T_UNDEFINED, T_NUMBER, T_STRING, T_BOOL, T_ARRAY, T_DATE, FROZEN_ERROR, UNSUPPORTED, APP_MODE, TEST_MODE, BRANCH_OPEN, BRANCH_CLOSED, LEAF_NODE, DROP_ON, DROP_BEFORE, DROP_ANY, DROP_AFTER, CLEAN, DIRTY, EMPTY, ERROR, READY, READY_CLEAN, READY_DIRTY } from './system/constants.js';
-import * as constants from './system/constants.js';
+// import * as constants from './system/constants.js';
 import { Controller } from './controllers/controller.js';
 import { ObjectController } from './controllers/object_controller.js';
 import { ArrayController } from './controllers/array_controller.js';
@@ -36,7 +36,7 @@ import { DelegateSupport } from './mixins/delegate_support.js';
 import { CoreSet } from './system/core_set.js';
 
 import { detectedBrowser, OS, CLASS_PREFIX, CSS_PREFIX, BROWSER, ENGINE, DEVICE, DOM_PREFIX } from './system/browser.js';
-import { readyMixin } from './system/ready.js';
+import { readyMixin, registerRuntimeDep } from './system/ready.js';
 
 import { Locale, metricsFor, stringsFor, methodForLocale,  hashesForLocale, loadLangFiles } from './system/locale.js';
 import { Timer } from './system/timer.js';
@@ -61,6 +61,7 @@ console.log('COREJS, executed...');
 // /** @type {import('../typings/core').SC} */
 
 export const SC = {
+  VERSION,
   getSetting,
   setSetting,
   
@@ -208,7 +209,8 @@ export const SC = {
   TreeItemObserver,
   TreeController,
   CollectionContent,
-  SelectionSet
+  SelectionSet,
+  registerRuntimeDep
 };
 
 mixin(SC, readyMixin);

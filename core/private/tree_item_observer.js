@@ -9,6 +9,7 @@ import { SCArray } from "../mixins/array.js";
 import { CollectionContent } from "../mixins/collection_content.js";
 import { BRANCH_CLOSED, BRANCH_OPEN, DROP_AFTER, DROP_BEFORE, LEAF_NODE } from "../system/constants.js";
 import { IndexSet } from "../system/index_set.js";
+import { warn } from "../system/logger.js";
 import { SCObject } from "../system/object.js";
 
 // sc_require('mixins/tree_item_content');

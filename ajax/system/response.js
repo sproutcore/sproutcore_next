@@ -9,6 +9,11 @@
 import { SC } from '../../core/core.js';
 import { SCEvent } from '../../event/event.js';
 import { platform } from '../../responder/responder.js';
+// import { Request } from './request.js';
+let Request;
+import('./request.js').then(r => {
+  Request = r.Request;
+});
 
 /**
   @class
@@ -58,7 +63,7 @@ export const Response = SC.Object.extend(
     @default `this`
   */
   errorValue: function() {
-    return this.get('isError') ? val(this.get('errorObject')) : null;
+    return this.get('isError') ? SC.val(this.get('errorObject')) : null;
   }.property().cacheable(),
 
   /**
@@ -185,9 +190,9 @@ export const Response = SC.Object.extend(
     var ret = this.get('encodedBody');
     if (ret && this.get('isJSON')) {
       try {
-        ret = json.decode(ret);
+        ret = SC.json.decode(ret);
       } catch(e) {
-        return Error.create({
+        return SC.Error.create({
           message: e.name + ': ' + e.message,
           label: 'Response',
           errorValue: this.get('status') });
@@ -366,7 +371,7 @@ export const Response = SC.Object.extend(
 
         this.set('status', 0);
         this.set('isError', true);
-        this.set('errorObject', $error("HTTP Request timed out", "Request", 0));
+        this.set('errorObject', SC.$error("HTTP Request timed out", "Request", 0));
       }, this);
 
       return true;
@@ -399,7 +404,7 @@ export const Response = SC.Object.extend(
 
       target = notifier.target;
       action = notifier.action;
-      if (typeOf(action) === T_STRING) { action = target[action]; }
+      if (SC.typeOf(action) === SC.T_STRING) { action = target[action]; }
 
       handled = action.apply(target, args);
     }

@@ -17,6 +17,7 @@ import { __runtimeDeps as obsSetRuntimeDeps } from '../private/observer_set.js';
 import { __runtimeDeps as objRuntimeDeps } from './object.js';
 import { __runtimeDeps as bindingRuntimeDeps } from './binding.js';
 import { __runtimeDeps as scWorkerRuntimeDeps } from './scworker.js';
+import { containerSwapDissolveTransition } from '../../view/views/view/transitions/swap_dissolve_transition.js';
 
 
 setSetting('BENCHMARK_LOG_READY', true);
@@ -66,6 +67,9 @@ const runtimeDeps = [
 //   // SC.onReady.done();
 // })
 
+export function registerRuntimeDep (p) {
+  runtimeDeps.push(p);
+}
 
 
 export const readyMixin = {
@@ -169,8 +173,7 @@ export const readyMixin = {
       setSetting('isReady', true);
 
       Promise.all(runtimeDeps).then( () => {  
-        console.log("SPROUTCORE READY_DONE AFTER promise.all");
-        
+        console.log("SPROUTCORE READY_DONE AFTER promise.all");        
   
         RunLoop.begin();
   
@@ -188,18 +191,24 @@ export const readyMixin = {
         }
         // debugger;
         var queue = getSetting('_readyQueue'), idx, len;
-        
+        const promises = [loadClassicScripts()];
         if (queue) {
           for (idx = 0, len = queue.length; idx < len; idx++) {
             // console.log('calling', idx);
             // debugger;
-            queue[idx].call();
+            const ret = queue[idx].call();
+            if (ret instanceof Promise) {
+              promises.push(ret);
+            }
           }
           // _readyQueue = null;
         }
-  
-        if (global.main && !getSetting('suppressMain') && (getSetting('mode') === APP_MODE)) { global.main(); }
-        RunLoop.end();
+        
+        Promise.all(promises).then(r => {
+          console.log("About to run global main");
+          if (global.main && !getSetting('suppressMain') && (getSetting('mode') === APP_MODE)) { global.main(); }
+          RunLoop.end();  
+        });
       
       })
       .catch(e => {
@@ -230,7 +239,23 @@ else if (global.onload === null) {
 
 setSetting('mode', APP_MODE);
 
+function loadClassicScripts () {
+  console.log("LOADING classic scripts");
+  const scripts = Array.from(document.querySelectorAll("script[type=sc_classic]"));
+  return Promise.all(scripts.map(s => {
+    return new Promise( (res, rej) => {
+      const script = document.createElement('script');
+      script.async = false;
+      script.src = s.src;
+      script.onload = function () {
+        console.log('script', s.src, 'loaded');
+        res();
+      };
+      script.onerror = function (e) {
+        rej(e);
+      }
+      document.body.appendChild(script);
+    });
+  }));
 
-/** The onReady has to be revised here... it needs to be promise based somehow.
- * it also can only start running the ready calls whenever the import promises have resolved...
- */
+}
