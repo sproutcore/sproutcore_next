@@ -23,4 +23,5 @@ import { SC } from '../core/core.js';
 SC.setSetting('allowsBackspaceToPreviousPage', false);
 
 export { ScrollerView, OverlayScrollerView } from './views/scroller.js';
-
+export { ButtonView } from './views/button.js';
+export { CheckboxView} from './views/checkbox.js';
