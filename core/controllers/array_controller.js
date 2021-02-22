@@ -9,7 +9,7 @@ import { Controller } from "./controller.js";
 import { SelectionSupport } from '../mixins/selection_support.js';
 import { SCArray } from '../mixins/array.js';
 import { compare, none, typeOf } from '../system/base.js';
-import { T_ARRAY, T_FUNCTION, T_STRING } from '../system/constants.js';
+import { READY, T_ARRAY, T_FUNCTION, T_STRING } from '../system/constants.js';
 import { Logger } from '../system/logger.js';
 import { property } from "../system/function.js";
 
@@ -216,7 +216,7 @@ export const ArrayController = Controller.extend(SCArray, SelectionSupport,
   status: function () {
     var content = this.get('content'),
         ret = content ? content.get('status') : null;
-    return ret ? ret : Record.READY;
+    return ret ? ret : READY;
   }.property().cacheable(),
 
   // ..........................................................

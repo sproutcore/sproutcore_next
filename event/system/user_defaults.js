@@ -9,6 +9,9 @@ import { SC, GLOBAL } from '../../core/core.js';
 import { browser } from './browser.js';
 import { CoreQuery } from './core_query.js';
 
+/**@type UserDefaults */
+export let userDefaults;
+
 /**
   @class
 
@@ -30,6 +33,8 @@ import { CoreQuery } from './core_query.js';
   
   @since SproutCore 1.0
 */
+
+
 export const UserDefaults = SC.Object.extend(/** @scope UserDefaults.prototype */ {
 
   ready: false,
@@ -452,4 +457,4 @@ export const UserDefaults = SC.Object.extend(/** @scope UserDefaults.prototype *
 });
 
 /** global user defaults. */
-export const userDefaults = UserDefaults.create();
+userDefaults = UserDefaults.create();

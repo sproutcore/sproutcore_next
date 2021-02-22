@@ -30,6 +30,7 @@ export { ContentValueSupport } from './mixins/content_value_support.js';
 export { Gesturable } from './mixins/gesturable.js';
 export { Gesture } from './system/gesture.js';
 export { Control } from './mixins/control.js';
+export { ActionSupport } from './mixins/action_support.js';
 export { FlowedLayout } from './mixins/flowed_layout.js';
 export { InlineEditor } from './mixins/inline_editor.js';
 export { InlineEditable } from './mixins/inline_editable.js';
@@ -37,7 +38,7 @@ export { Validatable } from './mixins/validatable.js';
 export { PinchGesture } from './gestures/pinch_gesture.js';
 export { SwipeGesture } from './gestures/swipe_gesture.js';
 export { TapGesture } from './gestures/tap_gesture.js';
-
+export { Page } from './system/page.js';
 
   // ..........................................................
   // LOCALIZATION SUPPORT
