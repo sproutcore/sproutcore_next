@@ -154,7 +154,7 @@ export const RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
 
     @type Number
   */
-  status: Record.EMPTY,
+  status: SC.EMPTY,
 
   /**
     The current editable state of the query. If this record array is not backed by a
@@ -746,7 +746,7 @@ export const RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   // INTERNAL SUPPORT
   //
 
-  propertyWillChange: function(key) {
+  propertyWillChange: function propertyWillChange (key) {
     if (key === 'storeKeys') {
       var storeKeys = this.get('storeKeys');
       var len = storeKeys ? storeKeys.get('length') : 0;
@@ -754,7 +754,7 @@ export const RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
       this.arrayContentWillChange(0, len, 0);
     }
 
-    return init.base.apply(this, arguments);
+    return propertyWillChange.base.apply(this, arguments);
   },
 
   /** @private

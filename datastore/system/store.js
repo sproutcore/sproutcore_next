@@ -7,7 +7,10 @@
 
 // sc_require('models/record');
 import { SC } from '../../core/core.js';
+import { RecordArray } from './record_array.js';
 import { CascadeDataSource } from '../data_sources/cascade.js';
+import { Query } from './query.js';
+import { Record } from '../models/record.js';
 
 let NestedStore;
 
@@ -161,8 +164,8 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     }
 
     // Replicate parent records references
-    attrs.childRecords = this.childRecords ? clone(this.childRecords) : {};
-    attrs.parentRecords = this.parentRecords ? clone(this.parentRecords) : {};
+    attrs.childRecords = this.childRecords ? SC.clone(this.childRecords) : {};
+    attrs.parentRecords = this.parentRecords ? SC.clone(this.parentRecords) : {};
 
     var ret    = newStoreClass.create(attrs),
         nested = this.nestedStores;
@@ -213,7 +216,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     @returns {NestedStore} new nested store chained to receiver
   */
   chainAutonomousStore: function(attrs, newStoreClass) {
-    var newAttrs = attrs ? clone( attrs ) : {};
+    var newAttrs = attrs ? SC.clone( attrs ) : {};
     var source  = this._getDataSource();
 
     newAttrs.dataSource = source;
@@ -392,7 +395,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     if (!editables) editables = this.editables = [];
     if (!editables[storeKey]) {
       editables[storeKey] = 1 ; // use number to store as dense array
-      ret = this.dataHashes[storeKey] = clone(ret, true);
+      ret = this.dataHashes[storeKey] = SC.clone(ret, true);
     }
     return ret;
   },
@@ -631,7 +634,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     if (!rev) rev = Store.generateStoreKey();
     var isArray, len, idx, storeKey;
 
-    isArray = typeOf(storeKeys) === T_ARRAY;
+    isArray = SC.typeOf(storeKeys) === SC.T_ARRAY;
     if (isArray) {
       len = storeKeys.length;
     } else {
@@ -687,9 +690,9 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     var changes = this.recordPropertyChanges;
     if (!changes) {
       changes = this.recordPropertyChanges =
-        { storeKeys:      CoreSet.create(),
-          records:        CoreSet.create(),
-          hasDataChanges: CoreSet.create(),
+        { storeKeys:      SC.CoreSet.create(),
+          records:        SC.CoreSet.create(),
+          hasDataChanges: SC.CoreSet.create(),
           propertyForStoreKeys: {} };
     }
 
@@ -711,7 +714,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
       // need to respect that.
       if (key) {
         if (!(keys = changes.propertyForStoreKeys[storeKey])) {
-          keys = changes.propertyForStoreKeys[storeKey] = CoreSet.create();
+          keys = changes.propertyForStoreKeys[storeKey] = SC.CoreSet.create();
         }
 
         // If it's '*' instead of a set, then that means there was a previous
@@ -746,7 +749,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
         hasDataChanges       = changes.hasDataChanges,
         records              = changes.records,
         propertyForStoreKeys = changes.propertyForStoreKeys,
-        recordTypes = CoreSet.create(),
+        recordTypes = SC.CoreSet.create(),
         rec, recordType, statusOnly, keys;
 
     storeKeys.forEach(function(storeKey) {
@@ -889,7 +892,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     // add any records to the changelog for commit handling
     var myChangelog = this.changelog, chChangelog = nestedStore.changelog;
     if (chChangelog) {
-      if (!myChangelog) myChangelog = this.changelog = CoreSet.create();
+      if (!myChangelog) myChangelog = this.changelog = SC.CoreSet.create();
       myChangelog.addEach(chChangelog);
     }
     this.changelog = myChangelog;
@@ -969,8 +972,8 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   find: function(recordType, id) {
 
     // if recordType is passed as string, find object
-    if (typeOf(recordType)===T_STRING) {
-      recordType = objectForPropertyPath(recordType);
+    if (SC.typeOf(recordType)===SC.T_STRING) {
+      recordType = SC.objectForPropertyPath(recordType);
     }
 
     // handle passing a query...
@@ -992,7 +995,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
 
     // lookup the local RecordArray for this query.
     var cache = this._scst_recordArraysByQuery,
-        key   = guidFor(query),
+        key   = SC.guidFor(query),
         ret, ra ;
     if (!cache) cache = this._scst_recordArraysByQuery = {};
     ret = cache[key];
@@ -1003,7 +1006,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
       cache[key] = ret = RecordArray.create({ store: this, query: query });
 
       ra = this.get('recordArrays');
-      if (!ra) this.set('recordArrays', ra = Set.create());
+      if (!ra) this.set('recordArrays', ra = SC.Set.create());
       ra.add(ret);
 
       if (refreshIfNew) this.refreshQuery(query);
@@ -1074,7 +1077,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     if (!query) throw new Error("refreshQuery() requires a query");
 
     var cache    = this._scst_recordArraysByQuery,
-        recArray = cache ? cache[guidFor(query)] : null,
+        recArray = cache ? cache[SC.guidFor(query)] : null,
         source   = this._getDataSource();
 
     if (source && source.fetch) {
@@ -1249,7 +1252,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
       // if still no id, check if there is a defaultValue function for
       // the primaryKey attribute and assign that
       defaultVal = recordType.prototype[primaryKey] ? recordType.prototype[primaryKey].defaultValue : null;
-      if(!id && typeOf(defaultVal)===T_FUNCTION) {
+      if(!id && SC.typeOf(defaultVal)===SC.T_FUNCTION) {
         id = dataHash[primaryKey] = defaultVal();
       }
     }
@@ -1304,8 +1307,8 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
             // default value to use instead.
             defaultVal = propPrototype.defaultValue;
             if (defaultVal) {
-              if (typeOf(defaultVal)===T_FUNCTION) dataHash[ attrKey ] = copy(defaultVal(ret, attrKey), true);
-              else dataHash[ attrKey ] = copy(defaultVal, true);
+              if (SC.typeOf(defaultVal)===SC.T_FUNCTION) dataHash[ attrKey ] = SC.copy(defaultVal(ret, attrKey), true);
+              else dataHash[ attrKey ] = SC.copy(defaultVal, true);
             }
           }
         } else if (attrKey !== prop && dataHash.hasOwnProperty(prop)) {
@@ -1317,7 +1320,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
 
     // Record is now in a committable state -- add storeKey to changelog
     changelog = this.changelog;
-    if (!changelog) changelog = Set.create();
+    if (!changelog) changelog = SC.Set.create();
     changelog.add(storeKey);
     this.changelog = changelog;
 
@@ -1346,7 +1349,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   */
   createRecords: function(recordTypes, dataHashes, ids) {
     var ret = [], recordType, id, isArray, len = dataHashes.length, idx ;
-    isArray = typeOf(recordTypes) === T_ARRAY;
+    isArray = SC.typeOf(recordTypes) === SC.T_ARRAY;
     if (!isArray) recordType = recordTypes;
     for(idx=0;idx<len;idx++) {
       if (isArray) recordType = recordTypes[idx] || Record;
@@ -1427,7 +1430,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     var len, isArray, idx, id, recordType, storeKey;
 
     if (storeKeys === undefined) {
-      isArray = typeOf(recordTypes) === T_ARRAY;
+      isArray = SC.typeOf(recordTypes) === SC.T_ARRAY;
       if (!isArray) recordType = recordTypes;
       if (ids === undefined) {
         len = isArray ? recordTypes.length : 1;
@@ -1496,7 +1499,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
 
     // add/remove change log
     changelog = this.changelog;
-    if (!changelog) changelog = this.changelog = Set.create();
+    if (!changelog) changelog = this.changelog = SC.Set.create();
 
     if (status & K.DIRTY) { changelog.add(storeKey); }
     else { changelog.remove(storeKey); }
@@ -1539,7 +1542,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     var len, isArray, idx, id, recordType, storeKey;
     if(storeKeys===undefined){
       len = ids.length;
-      isArray = typeOf(recordTypes) === T_ARRAY;
+      isArray = SC.typeOf(recordTypes) === SC.T_ARRAY;
       if (!isArray) recordType = recordTypes;
       for(idx=0;idx<len;idx++) {
         if (isArray) recordType = recordTypes[idx] || Record;
@@ -1708,7 +1711,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
 
     // record in changelog
     changelog = this.changelog ;
-    if (!changelog) changelog = this.changelog = Set.create() ;
+    if (!changelog) changelog = this.changelog = SC.Set.create() ;
     changelog.add(storeKey);
     this.changelog = changelog;
 
@@ -1744,7 +1747,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
      var len, isArray, idx, id, recordType, storeKey;
       if(storeKeys===undefined){
         len = ids.length;
-        isArray = typeOf(recordTypes) === T_ARRAY;
+        isArray = SC.typeOf(recordTypes) === SC.T_ARRAY;
         if (!isArray) recordType = recordTypes;
         for(idx=0;idx<len;idx++) {
           if (isArray) recordType = recordTypes[idx] || Record;
@@ -1783,8 +1786,8 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   retrieveRecords: function(recordTypes, ids, storeKeys, isRefresh, callbacks) {
 
     var source  = this._getDataSource(),
-        isArray = typeOf(recordTypes) === T_ARRAY,
-        hasCallbackArray = typeOf(callbacks) === T_ARRAY,
+        isArray = SC.typeOf(recordTypes) === SC.T_ARRAY,
+        hasCallbackArray = SC.typeOf(callbacks) === SC.T_ARRAY,
         len     = (!storeKeys) ? ids.length : storeKeys.length,
         ret     = [],
         rev     = Store.generateStoreKey(),
@@ -1888,11 +1891,11 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
         callback = queue[storeKey],
         allFinished, keys;
     if(callback){
-      if(typeOf(callback) === T_FUNCTION){
+      if(SC.typeOf(callback) === SC.T_FUNCTION){
         callback.call(); //args?
         delete queue[storeKey]; //cleanup
       }
-      else if(typeOf(callback) === T_HASH){
+      else if(SC.typeOf(callback) === SC.T_HASH){
         callback.completed = true;
         keys = callback.storeKeys;
         keys.forEach(function(key){
@@ -2008,8 +2011,8 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   */
   commitRecords: function(recordTypes, ids, storeKeys, params, callbacks) {
     var source    = this._getDataSource(),
-        isArray   = typeOf(recordTypes) === T_ARRAY,
-        hasCallbackArray = typeOf(callbacks) === T_ARRAY,
+        isArray   = SC.typeOf(recordTypes) === SC.T_ARRAY,
+        hasCallbackArray = SC.typeOf(callbacks) === SC.T_ARRAY,
         retCreate= [], retUpdate= [], retDestroy = [],
         rev       = Store.generateStoreKey(),
         K         = Record,
@@ -2131,7 +2134,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   */
   cancelRecords: function(recordTypes, ids, storeKeys) {
     var source  = this._getDataSource(),
-        isArray = typeOf(recordTypes) === T_ARRAY,
+        isArray = SC.typeOf(recordTypes) === SC.T_ARRAY,
         K       = Record,
         ret     = [],
         status, len, idx, id, recordType, storeKey;
@@ -2265,7 +2268,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   */
   // TODO: No reason for first argument to be an array. The developer can just call loadRecords multiple times with different record type each time. Would save us the need to check if recordTypes is an Array or not.
   loadRecords: function (recordTypes, dataHashes, ids) {
-    var isArray = typeOf(recordTypes) === T_ARRAY,
+    var isArray = SC.typeOf(recordTypes) === SC.T_ARRAY,
         len     = dataHashes.get('length'),
         ret     = [],
         recordType,
@@ -2315,7 +2318,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   */
   readQueryError: function(query) {
     var errors = this.queryErrors ;
-    return errors ? errors[guidFor(query)] : undefined ;
+    return errors ? errors[SC.guidFor(query)] : undefined ;
   },
 
   // ..........................................................
@@ -2608,7 +2611,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     if (query.get('location') === Query.LOCAL) {
       throw new Error("Developer Error: You should not call loadQueryResults with a local query.  You need to use dataSourceDidFetchQuery instead.");
     } else {
-      warn("Developer Warning: loadQueryResults has been deprecated in favor of using dataSourceDidFetchQuery for both local and remote queries.  With remote queries, include the store keys when calling dataSourceDidFetchQuery.");
+      SC.warn("Developer Warning: loadQueryResults has been deprecated in favor of using dataSourceDidFetchQuery for both local and remote queries.  With remote queries, include the store keys when calling dataSourceDidFetchQuery.");
     }
     //@endif
 
@@ -2729,7 +2732,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     // Add the error to the array of query errors (for lookup later on if necessary).
     if (error && error.isError) {
       if (!errors) errors = this.queryErrors = {};
-      errors[guidFor(query)] = error;
+      errors[SC.guidFor(query)] = error;
     }
 
     return this._scstore_dataSourceDidErrorQuery(query, true);
@@ -2756,20 +2759,20 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   //
 
   /** @private */
-  init: function() {
-    sc_super();
+  init: function init () {
+    init.base.apply(this, arguments);
     this.reset();
   },
 
 
-  toString: function() {
+  toString: function toStr () {
     // Include the name if the client has specified one.
     var name = this.get('name');
     if (!name) {
-      return sc_super();
+      return toStr.base.apply(this, arguments);
     }
     else {
-      var ret = sc_super();
+      var ret = toStr.base.apply(this, arguments);
       return "%@ (%@)".fmt(name, ret);
     }
   },

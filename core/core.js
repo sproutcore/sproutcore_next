@@ -152,6 +152,7 @@ export const SC = {
   DROP_BEFORE,
   DROP_AFTER,
   DROP_ANY,
+  EMPTY,
   $error,
   $ok,
   $throw,
