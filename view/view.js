@@ -1,10 +1,9 @@
 import { SC } from '../core/core.js';
 import { viewManager } from './views/view_manager.js';
 
-export { ResponderContext } from './mixins/responder_context.js';
 export { View } from './views/view.js';
 export { CoreView } from './views/core_view.js';
-export { Theme } from './theme/theme.js';
+export { BaseTheme, Theme } from './theme/theme.js'
 export { RenderContext } from './render_context/render_context.js';
 export { LAYOUT_AUTO, LAYOUT_HORIZONTAL, LAYOUT_VERTICAL } from './views/view/layout.js'
 export { Pane } from './panes/pane.js';

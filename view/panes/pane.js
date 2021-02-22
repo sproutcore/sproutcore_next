@@ -7,17 +7,11 @@
 
 import { SC } from '../../core/core.js';
 import { View } from '../../view/view.js';
-import { ResponderContext } from '../mixins/responder_context.js';
-import { RootResponder, platform } from '../../responder/responder.js';
+import { RootResponder, platform, ResponderContext } from '../../responder/responder.js';
 import { bodyOverflowArbitrator } from './body_overflow.js';
 import { browser } from '../../event/event.js';
 
-/**
-  Indicates a value has a mixed state of both on and off.
 
-  @type String
-*/
-export const MIXED_STATE = '__MIXED__' ;
 
 /** @class
   A Pane is like a regular view except that it does not need to live within a
