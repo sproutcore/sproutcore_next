@@ -7,7 +7,8 @@
 
 import { SC } from '../../core/core.js';
 import { View } from '../../view/view.js';
-import { RootResponder, platform, ResponderContext } from '../../responder/responder.js';
+import { RootResponder, platform } from '../../responder/responder.js';
+import { ResponderContext } from '../../responder/mixins/responder_context.js';  // importing it separately prevents use before declaration errors
 import { bodyOverflowArbitrator } from './body_overflow.js';
 import { browser } from '../../event/event.js';
 

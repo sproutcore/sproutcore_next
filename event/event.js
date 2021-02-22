@@ -10,3 +10,4 @@ export const SCEvent = GLOBAL.document? BrowserEvent: NodeJSEvent;
 export { CoreQuery } from './system/core_query.js';
 export { browser } from './system/browser.js';
 export { MODIFIER_KEYS, FUNCTION_KEYS } from './system/browser_event.js';
+export { UserDefaults, userDefaults } from './system/user_defaults.js';
