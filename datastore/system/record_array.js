@@ -803,7 +803,7 @@ export const RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   */
   addArrayObservers: function() {
     this.flush();
-    return Array.addArrayObservers.apply(this, arguments);
+    return SC.Array.addArrayObservers.apply(this, arguments);
   },
 
   /** @private
