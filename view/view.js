@@ -1,8 +1,9 @@
 import { SC } from '../core/core.js';
+
 import { viewManager } from './views/view_manager.js';
 
 export { View } from './views/view.js';
-export { CoreView } from './views/core_view.js';
+export { CoreView, outlet } from './views/core_view.js';
 export { BaseTheme, Theme } from './theme/theme.js'
 export { RenderContext } from './render_context/render_context.js';
 export { LAYOUT_AUTO, LAYOUT_HORIZONTAL, LAYOUT_VERTICAL } from './views/view/layout.js'
@@ -18,9 +19,11 @@ export { Validator } from './validators/index.js';
 export { FieldView } from './views/field.js';
 export { TextFieldView } from './views/text_field.js';
 export { InlineTextFieldView } from './views/inline_text_field.js';
+export { InlineTextFieldDelegate } from './delegates/inline_text_field.js';
 export { LabelView } from './views/label.js';
 export { imageQueue } from './system/image_queue.js';
 export { TextSelection } from './system/text_selection.js';
+export { offset } from './views/utils/utils.js';
 
 export * from './system/constants.js';
 export { RenderDelegate } from './views/render_delegates/render_delegate.js';
@@ -39,8 +42,12 @@ export { PinchGesture } from './gestures/pinch_gesture.js';
 export { SwipeGesture } from './gestures/swipe_gesture.js';
 export { TapGesture } from './gestures/tap_gesture.js';
 export { Page } from './system/page.js';
+export { propertyFromRenderDelegate } from './views/view/theming.js';
+export { Cursor } from './system/cursor.js';
+export { easingCurve, CubicBezierEquation } from './system/bezier_curves.js';
 
-  // ..........................................................
+
+// ..........................................................
   // LOCALIZATION SUPPORT
   //
 

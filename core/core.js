@@ -23,7 +23,8 @@ import { SCError, ok, val, $throw, $error, $ok, $val } from './system/error.js';
 import { SCSet } from './system/set.js';
 import { RangeObserver } from './system/range_observer.js';
 import { typeOf, clone, hashFor, compare, guidFor, inspect, keys, isArray, none, isEqual, empty, makeArray, A, objectForPropertyPath, requiredObjectForPropertyPath, tupleForPropertyPath, mixin, beget, merge } from './system/base.js';
-import { T_FUNCTION, T_NULL, T_UNDEFINED, T_ARRAY, T_OBJECT, T_HASH, T_NUMBER, T_STRING, T_BOOL, T_CLASS, T_DATE, T_ERROR, FROZEN_ERROR, UNSUPPORTED } from './system/constants.js';
+import { VERSION, T_ERROR, T_OBJECT, T_NULL, T_CLASS, T_HASH, T_FUNCTION, T_UNDEFINED, T_NUMBER, T_STRING, T_BOOL, T_ARRAY, T_DATE, FROZEN_ERROR, UNSUPPORTED, APP_MODE, TEST_MODE, BRANCH_OPEN, BRANCH_CLOSED, LEAF_NODE, DROP_ON, DROP_BEFORE, DROP_ANY, DROP_AFTER, CLEAN, DIRTY, EMPTY, ERROR, READY, READY_CLEAN, READY_DIRTY } from './system/constants.js';
+import * as constants from './system/constants.js';
 import { Controller } from './controllers/controller.js';
 import { ObjectController } from './controllers/object_controller.js';
 import { ArrayController } from './controllers/array_controller.js';
@@ -47,6 +48,7 @@ import { TreeController } from './controllers/tree.js';
 import { TreeItemObserver } from './private/tree_item_observer.js';
 import { TreeItemContent } from './mixins/tree_item_content.js';
 import { CollectionContent } from './mixins/collection_content.js';
+import { SelectionSet } from './system/selection_set.js';
 
 // add dateTimeBinding to Binding
 Binding.dateTime = dateTimeBinding;
@@ -141,6 +143,15 @@ export const SC = {
   T_FUNCTION,
   FROZEN_ERROR,
   UNSUPPORTED,
+  APP_MODE,
+  TEST_MODE,
+  BRANCH_OPEN,
+  BRANCH_CLOSED,
+  LEAF_NODE,
+  DROP_ON,
+  DROP_BEFORE,
+  DROP_AFTER,
+  DROP_ANY,
   $error,
   $ok,
   $throw,
@@ -195,7 +206,8 @@ export const SC = {
   TreeItemContent,
   TreeItemObserver,
   TreeController,
-  CollectionContent
+  CollectionContent,
+  SelectionSet
 };
 
 mixin(SC, readyMixin);

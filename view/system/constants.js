@@ -297,3 +297,26 @@ export const SWIPE_UP = [-90];
   @constant
 */
 export const SWIPE_DOWN = [90];
+
+// standard browser cursor definitions
+// TODO: remove extra constants in next version
+// TODO: consider adding theme cursors for custom behaviors like drag & drop
+export const SYSTEM_CURSOR = 'default';
+export const DEFAULT_CURSOR = "default";
+export const AUTO_CURSOR = 'auto';
+export const CROSSHAIR_CURSOR = 'crosshair';
+export const HAND_CURSOR = 'pointer';
+export const POINTER_CURSOR = 'pointer';
+export const MOVE_CURSOR = 'move';
+export const E_RESIZE_CURSOR = 'e-resize';
+export const NE_RESIZE_CURSOR = 'ne-resize';
+export const NW_RESIZE_CURSOR = 'nw-resize';
+export const N_RESIZE_CURSOR = 'n-resize';
+export const SE_RESIZE_CURSOR = 'se-resize';
+export const SW_RESIZE_CURSOR = 'sw-resize';
+export const S_RESIZE_CURSOR = 's-resize';
+export const W_RESIZE_CURSOR = 'w-resize';
+export const IBEAM_CURSOR = 'text';
+export const TEXT_CURSOR = IBEAM_CURSOR;
+export const WAIT_CURSOR = 'wait';
+export const HELP_CURSOR = 'help';
