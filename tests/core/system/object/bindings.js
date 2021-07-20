@@ -41,7 +41,7 @@ module("bind() method", {
   
 });
   
-test("bind(TestNamespace.fromObject.bar) should follow absolute path", function() {
+test("bind(TestNamespace.fromObject.bar) should follow absolute path", function (assert) {
   // create binding
   testObject.bind("foo", "TestNamespace.fromObject.bar") ;
   SC.Binding.flushPendingChanges() ; // actually sets up up the binding
@@ -54,7 +54,7 @@ test("bind(TestNamespace.fromObject.bar) should follow absolute path", function(
   assert.equal("changedValue", testObject.get("foo"), "testObject.foo");
 });
   
-test("bind(.bar) should bind to relative path", function() {
+test("bind(.bar) should bind to relative path", function (assert) {
   // create binding
   testObject.bind("foo", ".bar") ;
   SC.Binding.flushPendingChanges() ; // actually sets up up the binding
@@ -66,7 +66,7 @@ test("bind(.bar) should bind to relative path", function() {
   assert.equal("changedValue", testObject.get("foo"), "testObject.foo");
 });
 
-test("SC.Binding.bool(TestNamespace.fromObject.bar)) should create binding with bool transform", function() {
+test("SC.Binding.bool(TestNamespace.fromObject.bar)) should create binding with bool transform", function (assert) {
   // create binding
   testObject.bind("foo", SC.Binding.bool("TestNamespace.fromObject.bar")) ;
   SC.Binding.flushPendingChanges() ; // actually sets up up the binding
@@ -83,7 +83,7 @@ test("SC.Binding.bool(TestNamespace.fromObject.bar)) should create binding with 
   assert.equal(false, testObject.get("foo"), "testObject.foo == false");
 });
 
-test("bind(TestNamespace.fromObject*extraObject.foo) should create chained binding", function() {
+test("bind(TestNamespace.fromObject*extraObject.foo) should create chained binding", function (assert) {
   testObject.bind("foo", "TestNamespace.fromObject*extraObject.foo");
   SC.Binding.flushPendingChanges() ; // actually sets up up the binding
   
@@ -93,7 +93,7 @@ test("bind(TestNamespace.fromObject*extraObject.foo) should create chained bindi
   assert.equal("extraObjectValue", testObject.get("foo"), "testObject.foo") ;
 });
 
-test("bind(*extraObject.foo) should create locally chained binding", function() {
+test("bind(*extraObject.foo) should create locally chained binding", function (assert) {
   testObject.bind("foo", "*extraObject.foo");
   SC.Binding.flushPendingChanges() ; // actually sets up up the binding
   
@@ -107,7 +107,7 @@ test("bind(*extraObject.foo) should create locally chained binding", function() 
 // test("bind(*extraObject.foo) should be disconnectable");
 // The following contains no test
 /*
-test("bind(*extraObject.foo) should be disconnectable", function() {
+test("bind(*extraObject.foo) should be disconnectable", function (assert) {
   var binding = testObject.bind("foo", "*extraObject.foo");
   SC.Binding.flushPendingChanges() ; // actually sets up up the binding
   
@@ -147,7 +147,7 @@ module("fooBinding method", {
   
 });
 
-test("fooBinding: TestNamespace.fromObject.bar should follow absolute path", function() {
+test("fooBinding: TestNamespace.fromObject.bar should follow absolute path", function (assert) {
   // create binding
   testObject = TestObject.create({
     fooBinding: "TestNamespace.fromObject.bar"
@@ -161,7 +161,7 @@ test("fooBinding: TestNamespace.fromObject.bar should follow absolute path", fun
   assert.equal("changedValue", testObject.get("foo"), "testObject.foo");
 });
 
-test("fooBinding: .bar should bind to relative path", function() {
+test("fooBinding: .bar should bind to relative path", function (assert) {
   
   testObject = TestObject.create({
     fooBinding: ".bar"
@@ -175,7 +175,7 @@ test("fooBinding: .bar should bind to relative path", function() {
   assert.equal("changedValue", testObject.get("foo"), "testObject.foo");
 });
 
-test("fooBinding: SC.Binding.bool(TestNamespace.fromObject.bar should create binding with bool transform", function() {
+test("fooBinding: SC.Binding.bool(TestNamespace.fromObject.bar should create binding with bool transform", function (assert) {
   
   testObject = TestObject.create({
     fooBinding: SC.Binding.bool("TestNamespace.fromObject.bar") 
@@ -194,7 +194,7 @@ test("fooBinding: SC.Binding.bool(TestNamespace.fromObject.bar should create bin
   assert.equal(false, testObject.get("foo"), "testObject.foo == false");
 });
 
-test("fooBinding: TestNamespace.fromObject*extraObject.foo should create chained binding", function() {
+test("fooBinding: TestNamespace.fromObject*extraObject.foo should create chained binding", function (assert) {
   
   testObject = TestObject.create({
     fooBinding: "TestNamespace.fromObject*extraObject.foo" 
@@ -207,7 +207,7 @@ test("fooBinding: TestNamespace.fromObject*extraObject.foo should create chained
   assert.equal("extraObjectValue", testObject.get("foo"), "testObject.foo") ;
 });
 
-test("fooBinding: *extraObject.foo should create locally chained binding", function() {
+test("fooBinding: *extraObject.foo should create locally chained binding", function (assert) {
   
   testObject = TestObject.create({
     fooBinding: "*extraObject.foo" 
@@ -220,7 +220,7 @@ test("fooBinding: *extraObject.foo should create locally chained binding", funct
   assert.equal("extraObjectValue", testObject.get("foo"), "testObject.foo") ;
 });
 
-test('fooBinding: should disconnect bindings when destroyed', function () {
+test('fooBinding: should disconnect bindings when destroyed', function (assert) {
 
   testObject = TestObject.create({
     fooBinding: "TestNamespace.fromObject.bar"
@@ -262,7 +262,7 @@ module("fooBindingDefault: SC.Binding.Bool (old style)", {
   
 });
 
-test("fooBinding: TestNamespace.fromObject.bar should have bool binding", function() {
+test("fooBinding: TestNamespace.fromObject.bar should have bool binding", function (assert) {
   // create binding
   testObject = TestObject.create({
     fooBinding: "TestNamespace.fromObject.bar"
@@ -281,7 +281,7 @@ test("fooBinding: TestNamespace.fromObject.bar should have bool binding", functi
   assert.equal(false, testObject.get("foo"), "testObject.foo == false");
 });
 
-test("fooBinding: SC.Binding.not(TestNamespace.fromObject.bar should override default", function() {
+test("fooBinding: SC.Binding.not(TestNamespace.fromObject.bar should override default", function (assert) {
   
   testObject = TestObject.create({
     fooBinding: SC.Binding.not("TestNamespace.fromObject.bar") 
@@ -328,7 +328,7 @@ module("fooBindingDefault: SC.Binding.bool() (new style)", {
   
 });
 
-test("fooBinding: TestNamespace.fromObject.bar should have bool binding", function() {
+test("fooBinding: TestNamespace.fromObject.bar should have bool binding", function (assert) {
   // create binding
   testObject = TestObject.create({
     fooBinding: "TestNamespace.fromObject.bar"
@@ -347,7 +347,7 @@ test("fooBinding: TestNamespace.fromObject.bar should have bool binding", functi
   assert.equal(false, testObject.get("foo"), "testObject.foo == false");
 });
 
-test("fooBinding: SC.Binding.not(TestNamespace.fromObject.bar should override default", function() {
+test("fooBinding: SC.Binding.not(TestNamespace.fromObject.bar should override default", function (assert) {
   
   testObject = TestObject.create({
     fooBinding: SC.Binding.not("TestNamespace.fromObject.bar") 
@@ -366,7 +366,7 @@ test("fooBinding: SC.Binding.not(TestNamespace.fromObject.bar should override de
   assert.equal(true, testObject.get("foo"), "testObject.foo == true");
 });
 
-test("Chained binding should be null if intermediate object in chain is null", function() {
+test("Chained binding should be null if intermediate object in chain is null", function (assert) {
   var a, z;
   
   a = SC.Object.create({

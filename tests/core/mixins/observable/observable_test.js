@@ -41,24 +41,24 @@ module("object.get()", {
 
 });
 
-test("should get normal properties", function() {
+test("should get normal properties", function (assert) {
   assert.equal(object.get('normal'), 'value') ;
 });
 
-test("should call computed properties and return their result", function() {
+test("should call computed properties and return their result", function (assert) {
   assert.equal(object.get("computed"), "value") ;
 });
 
-test("should return the function for a non-computed property", function() {
+test("should return the function for a non-computed property", function (assert) {
   var value = object.get("method") ;
   assert.equal(SC.typeOf(value), SC.T_FUNCTION) ;
 });
 
-test("should return null when property value is null", function() {
+test("should return null when property value is null", function (assert) {
   assert.equal(object.get("nullProperty"), null) ;
 });
 
-test("should call unknownProperty when value is undefined", function() {
+test("should call unknownProperty when value is undefined", function (assert) {
   assert.equal(object.get("unknown"), "unknown") ;
   assert.equal(object.lastUnknownProperty, "unknown") ;
 });
@@ -95,45 +95,45 @@ module("SC.get()", {
   }
 });
 
-test("should get normal properties on SC.Observable", function() {
+test("should get normal properties on SC.Observable", function (assert) {
   assert.equal(SC.get(objectA, 'normal'), 'value') ;
 });
 
-test("should call computed properties on SC.Observable and return their result", function() {
+test("should call computed properties on SC.Observable and return their result", function (assert) {
   assert.equal(SC.get(objectA, "computed"), "value") ;
 });
 
-test("should return the function for a non-computed property on SC.Observable", function() {
+test("should return the function for a non-computed property on SC.Observable", function (assert) {
   var value = SC.get(objectA, "method") ;
   assert.equal(SC.typeOf(value), SC.T_FUNCTION) ;
 });
 
-test("should return null when property value is null on SC.Observable", function() {
+test("should return null when property value is null on SC.Observable", function (assert) {
   assert.equal(SC.get(objectA, "nullProperty"), null) ;
 });
 
-test("should call unknownProperty when value is undefined on SC.Observable", function() {
+test("should call unknownProperty when value is undefined on SC.Observable", function (assert) {
   assert.equal(SC.get(objectA, "unknown"), "unknown") ;
   assert.equal(objectA.lastUnknownProperty, "unknown") ;
 });
 
-test("should get normal properties on standard objects", function() {
+test("should get normal properties on standard objects", function (assert) {
   assert.equal(SC.get(objectB, 'normal'), 'value');
 });
 
-test("should return null when property is null on standard objects", function() {
+test("should return null when property is null on standard objects", function (assert) {
   assert.equal(SC.get(objectB, 'nullProperty'), null);
 });
 
-test("should return undefined if the provided object is null", function() {
+test("should return undefined if the provided object is null", function (assert) {
   assert.equal(SC.get(null, 'key'), undefined);
 });
 
-test("should return undefined if the provided object is undefined", function() {
+test("should return undefined if the provided object is undefined", function (assert) {
   assert.equal(SC.get(undefined, 'key'), undefined);
 });
 
-test("should work when object is SC (used in SC.objectForPropertyPath)", function() {
+test("should work when object is SC (used in SC.objectForPropertyPath)", function (assert) {
   assert.equal(SC.objectForPropertyPath('RunLoop', SC), SC.RunLoop);
   assert.equal(SC.get('RunLoop'), SC.RunLoop);
   assert.equal(SC.get(SC, 'RunLoop'), SC.RunLoop);
@@ -141,7 +141,7 @@ test("should work when object is SC (used in SC.objectForPropertyPath)", functio
 
 module("SC.getPath()");
 
-test("should return a property at a given path relative to the global", function() {
+test("should return a property at a given path relative to the global", function (assert) {
   GLOBAL.Foo = SC.Object.create({
     Bar: SC.Object.create({
       Baz: function() { return "blargh"; }.property()
@@ -155,7 +155,7 @@ test("should return a property at a given path relative to the global", function
   }
 });
 
-test("should return a property at a given path relative to the passed object", function() {
+test("should return a property at a given path relative to the passed object", function (assert) {
   var foo = SC.Object.create({
     bar: SC.Object.create({
       baz: function() { return "blargh"; }.property()
@@ -165,7 +165,7 @@ test("should return a property at a given path relative to the passed object", f
   assert.equal(SC.getPath(foo, 'bar.baz'), "blargh");
 });
 
-test("should return a property at a given path relative to the global - JavaScript hash", function() {
+test("should return a property at a given path relative to the global - JavaScript hash", function (assert) {
   GLOBAL.Foo = {
     Bar: {
       Baz: "blargh"
@@ -179,7 +179,7 @@ test("should return a property at a given path relative to the global - JavaScri
   }
 });
 
-test("should return a property at a given path relative to the passed object - JavaScript hash", function() {
+test("should return a property at a given path relative to the passed object - JavaScript hash", function (assert) {
   var foo = {
     bar: {
       baz: "blargh"
@@ -236,34 +236,34 @@ module("object.set()", {
 
 });
 
-test("should change normal properties and return this", function() {
+test("should change normal properties and return this", function (assert) {
   var ret = object.set("normal", "changed") ;
   assert.equal(object.normal, "changed") ;
   assert.equal(ret, object) ;
 });
 
-test("should call computed properties passing value and return this", function() {
+test("should call computed properties passing value and return this", function (assert) {
   var ret = object.set("computed", "changed") ;
   assert.equal(object._computed, "changed") ;
   assert.equal(SC.typeOf(object.computed), SC.T_FUNCTION) ;
   assert.equal(ret, object) ;
 });
 
-test("should replace the function for a non-computed property and return this", function() {
+test("should replace the function for a non-computed property and return this", function (assert) {
   var ret = object.set("method", "changed") ;
   assert.equal(object._method, "method") ; // make sure this was NOT run
   assert.ok(SC.typeOf(object.method) !== SC.T_FUNCTION) ;
   assert.equal(ret, object) ;
 });
 
-test("should replace prover when property value is null", function() {
+test("should replace prover when property value is null", function (assert) {
   var ret = object.set("nullProperty", "changed") ;
   assert.equal(object.nullProperty, "changed") ;
   assert.equal(object._unknown, "unknown"); // verify unknownProperty not called.
   assert.equal(ret, object) ;
 });
 
-test("should call unknownProperty with value when property is undefined", function() {
+test("should call unknownProperty with value when property is undefined", function (assert) {
   var ret = object.set("unknown", "changed") ;
   assert.equal(object._unknown, "changed") ;
   assert.equal(ret, object) ;
@@ -340,7 +340,7 @@ module("Computed properties", {
   }
 });
 
-test("getting values should call function return value", function() {
+test("getting values should call function return value", function (assert) {
 
   // get each property twice. Verify return.
   var keys = 'computed computedCached dependent dependentCached'.w();
@@ -361,7 +361,7 @@ test("getting values should call function return value", function() {
 
 });
 
-test("setting values should call function return value", function() {
+test("setting values should call function return value", function (assert) {
 
   // get each property twice. Verify return.
   var keys = 'computed dependent computedCached dependentCached'.w();
@@ -388,7 +388,7 @@ test("setting values should call function return value", function() {
 
 });
 
-test("notify change should clear cache", function() {
+test("notify change should clear cache", function (assert) {
 
   // call get several times to collect call count
   object.get('computedCached'); // should run func
@@ -401,7 +401,7 @@ test("notify change should clear cache", function() {
   assert.equal(object.computedCachedCalls.length, 2, 'should have invoked method 2x');
 });
 
-test("change dependent should clear cache", function() {
+test("change dependent should clear cache", function (assert) {
 
   // call get several times to collect call count
   var ret1 = object.get('inc'); // should run func
@@ -412,7 +412,7 @@ test("change dependent should clear cache", function() {
   assert.equal(object.get('inc'), ret1+1, 'should increment after dependent key changes'); // should run again
 });
 
-test("just notifying change of dependent should clear cache", function() {
+test("just notifying change of dependent should clear cache", function (assert) {
 
   // call get several times to collect call count
   var ret1 = object.get('inc'); // should run func
@@ -423,7 +423,7 @@ test("just notifying change of dependent should clear cache", function() {
   assert.equal(object.get('inc'), ret1+1, 'should increment after dependent key changes'); // should run again
 });
 
-test("changing dependent should clear nested cache", function() {
+test("changing dependent should clear nested cache", function (assert) {
 
   // call get several times to collect call count
   var ret1 = object.get('nestedInc'); // should run func
@@ -435,7 +435,7 @@ test("changing dependent should clear nested cache", function() {
 
 });
 
-test("just notifying change of dependent should clear nested cache", function() {
+test("just notifying change of dependent should clear nested cache", function (assert) {
 
   // call get several times to collect call count
   var ret1 = object.get('nestedInc'); // should run func
@@ -450,7 +450,7 @@ test("just notifying change of dependent should clear nested cache", function() 
 
 // This verifies a specific bug encountered where observers for computed
 // properties would fire before their prop caches were cleared.
-test("change dependent should clear cache when observers of dependent are called", function() {
+test("change dependent should clear cache when observers of dependent are called", function (assert) {
 
   // call get several times to collect call count
   var ret1 = object.get('inc'); // should run func
@@ -466,7 +466,7 @@ test("change dependent should clear cache when observers of dependent are called
 
 });
 
-test("allPropertiesDidChange should clear cache", function() {
+test("allPropertiesDidChange should clear cache", function (assert) {
   // note: test this with a computed method that returns a different value
   // each time to ensure clean function.
   var ret1 = object.get('inc');
@@ -488,7 +488,7 @@ test('setting one of two computed properties that depend on a third property sho
   assert.equal(object.get('isOn'), false, 'object.isOn should be false');
 });
 
-test("dependent keys should be able to be specified as property paths", function() {
+test("dependent keys should be able to be specified as property paths", function (assert) {
   var depObj = SC.Object.create({
     menu: SC.Object.create({
       price: 5
@@ -506,7 +506,7 @@ test("dependent keys should be able to be specified as property paths", function
   assert.equal(depObj.get('menuPrice'), 6, "cache is properly invalidated after nested property changes");
 });
 
-test("nested dependent keys should propagate after they update", function() {
+test("nested dependent keys should propagate after they update", function (assert) {
   GLOBAL.DepObj = SC.Object.create({
     restaurant: SC.Object.create({
       menu: SC.Object.create({
@@ -542,7 +542,7 @@ test("nested dependent keys should propagate after they update", function() {
   assert.equal(bindObj.get('price'), 15, "binding propagates after a middle dependent keys updates");
 });
 
-test("cacheable nested dependent keys should clear after their dependencies update", function() {
+test("cacheable nested dependent keys should clear after their dependencies update", function (assert) {
   GLOBAL.DepObj = SC.Object.create({
     restaurant: SC.Object.create({
       menu: SC.Object.create({
@@ -718,13 +718,13 @@ module("object.addObserver()", {
   }
 });
 
-test("should register an observer for a property", function() {
+test("should register an observer for a property", function (assert) {
   ObjectC.addObserver('normal', ObjectC, 'action');
   ObjectC.set('normal','newValue');
   assert.equal(ObjectC.normal1, 'newZeroValue');
 });
 
-test("should register an observer for a property - Special case of chained property", function() {
+test("should register an observer for a property - Special case of chained property", function (assert) {
   ObjectC.addObserver('ObjectE.propertyVal',ObjectC,'chainedObserver');
   ObjectC.ObjectE.set('propertyVal',"chainedPropertyValue");
   assert.equal('chainedPropertyObserved',ObjectC.normal2);
@@ -733,7 +733,7 @@ test("should register an observer for a property - Special case of chained prope
   assert.equal('chainedPropertyObserved',ObjectC.normal2);
 });
 
-test("passing a context", function() {
+test("passing a context", function (assert) {
   var target = {
     callback: function(target, key, nullVariable, context, revision) {
       target.context = context;
@@ -792,7 +792,7 @@ module("object.removeObserver()", {
   }
 });
 
-test("should unregister an observer for a property", function() {
+test("should unregister an observer for a property", function (assert) {
   ObjectD.addObserver('normal', ObjectD, 'addAction');
   ObjectD.set('normal','newValue');
   assert.equal(ObjectD.normal1, 'newZeroValue');
@@ -805,7 +805,7 @@ test("should unregister an observer for a property", function() {
 });
 
 
-test("should unregister an observer for a property - special case when key has a '.' in it.", function() {
+test("should unregister an observer for a property - special case when key has a '.' in it.", function (assert) {
   ObjectD.addObserver('ObjectF.propertyVal',ObjectD,'removeChainedObserver');
   ObjectD.ObjectF.set('propertyVal',"chainedPropertyValue");
   ObjectD.removeObserver('ObjectF.propertyVal',ObjectD,'removeChainedObserver');
@@ -817,7 +817,7 @@ test("should unregister an observer for a property - special case when key has a
 });
 
 
-test("removing an observer inside of an observer shouldn’t cause any problems", function() {
+test("removing an observer inside of an observer shouldn’t cause any problems", function (assert) {
   // The observable system should be protected against clients removing
   // observers in the middle of observer notification.
   var encounteredError = false;
@@ -947,7 +947,7 @@ module("Bind function ", {
   }
 });
 
-test("should bind property with method parameter as undefined", function() {
+test("should bind property with method parameter as undefined", function (assert) {
   // creating binding
   objectA.bind("name", "Namespace.objectB.normal",undefined) ;
   SC.Binding.flushPendingChanges() ; // actually sets up up the binding
@@ -1025,7 +1025,7 @@ module("addObservesHandler and removeObservesHandler functions", {
 
 });
 
-test("add and remove observer handler1", function() {
+test("add and remove observer handler1", function (assert) {
   objectA.addObservesHandler(objectA.handler1, 'value');
   objectA.set('value', 100);
   assert.equal(objectA.handler1NotifiedCount, 1, "observes handler1 should be notified");
@@ -1035,7 +1035,7 @@ test("add and remove observer handler1", function() {
   assert.equal(objectA.handler1NotifiedCount, 1, "observes handler1 should not be notified");
 });
 
-test("add and remove observer handler2", function() {
+test("add and remove observer handler2", function (assert) {
   objectA.addObservesHandler(objectA.handler2, 'TestNS.value');
   GLOBAL.TestNS.set('value', 1000);
   assert.equal(objectA.handler2NotifiedCount, 1, "observes handler2 should be notified");
@@ -1045,7 +1045,7 @@ test("add and remove observer handler2", function() {
   assert.equal(objectA.handler2NotifiedCount, 1, "observes handler1 should not be notified");
 });
 
-test("add and remove observer array handler without chain observes", function() {
+test("add and remove observer array handler without chain observes", function (assert) {
   objectA.addObservesHandler(objectA.arrayHandler, 'arrayValue.[]');
   objectA.arrayValue.pushObject(SC.Object.create());
   assert.ok(objectA.arrayHandlerNotifiedCount > 0, "observes array handler should be notified aftering pushing object to array");
@@ -1063,7 +1063,7 @@ test("add and remove observer array handler without chain observes", function() 
   assert.equal(objectA.arrayHandlerNotifiedCount, 0, "observes array handler should not be notified after pushing object to new array");
 });
 
-test("add and remove observer array handler with chain observes", function() {
+test("add and remove observer array handler with chain observes", function (assert) {
   objectA.addObservesHandler(objectA.arrayHandler, '*arrayValue.[]');
   objectA.arrayValue.pushObject(SC.Object.create());
   assert.ok(objectA.arrayHandlerNotifiedCount > 0, "observes array handler should be notified aftering pushing object to array");
@@ -1117,7 +1117,7 @@ module("Cleaning up observables", {
   the ObserverSets of other objects, preventing them from being freed.  The
   addition of destroyObservable to SC.Observable fixes this.
 */
-test("destroying an observable should remove binding objects and clear observer queues", function() {
+test("destroying an observable should remove binding objects and clear observer queues", function (assert) {
   var observerSet1, observerSet2,
     targetGuid1, targetGuid2;
 

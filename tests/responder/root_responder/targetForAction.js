@@ -8,8 +8,8 @@
 
 import { SC } from '../../../core/core.js'; 
 import { browser } from '../../../event/event.js';
-import { RootResponder } from '../../../responder/responder.js';
-import { Pane, MainPane, View, ResponderContext } from '../../../view/view.js';
+import { RootResponder, ResponderContext } from '../../../responder/responder.js';
+import { Pane, MainPane, View } from '../../../view/view.js';
 import { CoreTest } from '../../../testing/testing.js';
 
 

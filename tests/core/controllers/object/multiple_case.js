@@ -28,16 +28,16 @@ module("SC.ObjectController - multiple_case - ALLOWSMULTIPLE = false", {
   }
 });
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), false, 'hasContent should be false');
 });
 
-test("getting any value should return undefined", function() {
+test("getting any value should return undefined", function (assert) {
   assert.equal(controller.get("foo"), undefined, 'controller.get(foo)');
   assert.equal(controller.get("bar"), undefined, 'controller.get(bar)');
 });
 
-test("setting any unknown value should have no effect", function() {
+test("setting any unknown value should have no effect", function (assert) {
   assert.equal(controller.set("foo", "FOO"), controller, 'controller.set(foo, FOO) should return self');  
   assert.equal(controller.set("bar", "BAR"), controller, 'controller.set(bar, BAR) should return self');
   assert.equal(src.get("foo"), "foo1", 'src.get(foo)');
@@ -64,12 +64,12 @@ module("SC.ObjectController - multiple_case - ALLOWSMULTIPLE = true", {
   }
 });
 
-test("getting any unknown value", function() {
+test("getting any unknown value", function (assert) {
   assert.deepEqual(controller.get("foo"), ["foo1", "foo2"], 'controller.get(foo) should return array with all items');
   assert.deepEqual(controller.get("bar"), "bar1", 'controller.get(bar) should return single property since all items match');
 });
 
-test("setting any unknown value should pass through", function() {
+test("setting any unknown value should pass through", function (assert) {
   assert.equal(controller.set("foo", "EDIT"), controller, 'controller.set(foo, EDIT) should return self');  
   assert.equal(controller.set("bar", "EDIT"), controller, 'controller.set(bar, EDIT) should return self');
   assert.equal(controller.set("baz", "EDIT"), controller, 'controller.set(baz, EDIT) should return self');
@@ -83,7 +83,7 @@ test("setting any unknown value should pass through", function() {
   assert.equal(src2.get("baz"), "EDIT", 'src2.get(bar)');
 });
 
-test("changing a property on a content object", function() {
+test("changing a property on a content object", function (assert) {
   var callCount = 0;
   controller.addObserver("bar", function() { callCount++; });
 
@@ -94,7 +94,7 @@ test("changing a property on a content object", function() {
   assert.equal(callCount, 1, 'observer on controller should have fired');
 });
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'should have content');
   
   var callCount = 0;

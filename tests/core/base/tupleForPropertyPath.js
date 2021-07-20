@@ -27,7 +27,7 @@ module("Checking the tuple for property path",{
 });
    
 
-test("should check for the tuple property", function() {
+test("should check for the tuple property", function (assert) {
      var object2 = [];
      object2 = SC.tupleForPropertyPath(object.name, '');
      assert.equal(object2[0], GLOBAL, "the global object");
@@ -37,12 +37,12 @@ test("should check for the tuple property", function() {
      assert.equal(object2[1],'chainedProperty',"a chained property");
 });
 
-test("should check for the tuple property when path is undefined",function(){     //test case where no property defined
+test("should check for the tuple property when path is undefined", function (assert) {     //test case where no property defined
      var object2;
      object2 = SC.tupleForPropertyPath(object.value, '');
      assert.equal(true,object2 === null,'returns null for undefined path');	
 });
 
-test("should check for path argument", function() {
+test("should check for path argument", function (assert) {
 	assert.equal(SC.tupleForPropertyPath(null), null, "returns null for null path");
 })

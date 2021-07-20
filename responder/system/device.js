@@ -11,7 +11,7 @@
 // sc_require('system/platform');
 
 import { SC } from '../../core/core.js';
-import { SCEvent } from '../../event/event.js';
+import { SCEvent, CoreQuery } from '../../event/event.js';
 import { RootResponder } from './root_responder.js';
 import { platform } from './platform.js';
 
@@ -157,7 +157,7 @@ export const device = SC.Object.create({
 
   /** @private */
   orientationObserver: function () {
-    var body = $(document.body),
+    var body = CoreQuery(document.body),
         orientation = this.get('orientation');
 
     if (orientation === PORTRAIT_ORIENTATION) {

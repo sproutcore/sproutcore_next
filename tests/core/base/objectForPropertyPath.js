@@ -14,7 +14,7 @@ import { SC, GLOBAL } from "../../../core/core.js";
 // An ObjectController will make a content object or an array of content objects
 module("SC.objectForPropertyPath") ;
 
-test("should be able to resolve an object on the global", function() {
+test("should be able to resolve an object on the global", function (assert) {
   var myLocal = (GLOBAL.myGlobal = { test: 'this '}) ;
 
   assert.deepEqual(myLocal, { test: 'this '}) ;
@@ -26,7 +26,7 @@ test("should be able to resolve an object on the global", function() {
   GLOBAL.myGlobal = null;
 });
 
-test("should return undefined if object can't be found", function() {
+test("should return undefined if object can't be found", function (assert) {
   var result = SC.objectForPropertyPath("notExistingObject", GLOBAL);
   assert.deepEqual(result, undefined);
 });

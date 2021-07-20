@@ -23,12 +23,12 @@ module("SC.ObjectController - single_case - OBSERVABLE OBJECT", {
   }
 });
 
-test("getting any unknown value should pass through to object", function() {
+test("getting any unknown value should pass through to object", function (assert) {
   assert.equal(controller.get("foo"), "foo1", 'controller.get(foo)');
   assert.equal(controller.get("bar"), "bar1", 'controller.get(bar)');
 });
 
-test("setting any unknown value should pass through", function() {
+test("setting any unknown value should pass through", function (assert) {
   assert.equal(controller.set("foo", "EDIT"), controller, 'controller.set(foo, EDIT) should return self');
   assert.equal(controller.set("bar", "EDIT"), controller, 'controller.set(bar, EDIT) should return self');
   assert.equal(controller.set("baz", "EDIT"), controller, 'controller.set(baz, EDIT) should return self');
@@ -38,7 +38,7 @@ test("setting any unknown value should pass through", function() {
   assert.equal(content.get("baz"), "EDIT", 'controller.get(bar)');
 });
 
-test("changing a property on the content", function() {
+test("changing a property on the content", function (assert) {
   var callCount = 0;
   controller.addObserver("foo", function() { callCount++; });
 
@@ -49,7 +49,7 @@ test("changing a property on the content", function() {
   assert.equal(callCount, 1, 'observer on controller should have fired');
 });
 
-test("changing the content from one to another", function() {
+test("changing the content from one to another", function (assert) {
   var callCount = 0 ;
   var content2 = SC.Object.create({ foo: "foo2", bar: "bar2" });
   controller.addObserver("foo", function() { callCount++; });
@@ -72,7 +72,7 @@ test("changing the content from one to another", function() {
   assert.equal(callCount, 0, 'observer on controller should NOT have fired');
 });
 
-test("changing the content from one single to null and back", function() {
+test("changing the content from one single to null and back", function (assert) {
   var callCount = 0,
     foobarCallCount = 0;
 
@@ -105,7 +105,7 @@ test("changing the content from one single to null and back", function() {
 
 });
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'should have content');
 
   var callCount = 0;
@@ -137,12 +137,12 @@ module("SC.ObjectController - single_case - NON-OBSERVABLE OBJECT", {
   }
 });
 
-test("getting any unknown value should pass through to object", function() {
+test("getting any unknown value should pass through to object", function (assert) {
   assert.equal(controller.get("foo"), "foo1", 'controller.get(foo)');
   assert.equal(controller.get("bar"), "bar1", 'controller.get(bar)');
 });
 
-test("setting any unknown value should pass through", function() {
+test("setting any unknown value should pass through", function (assert) {
   assert.equal(controller.set("foo", "EDIT"), controller, 'controller.set(foo, EDIT) should return self');
   assert.equal(controller.set("bar", "EDIT"), controller, 'controller.set(bar, EDIT) should return self');
   assert.equal(controller.set("baz", "EDIT"), controller, 'controller.set(baz, EDIT) should return self');
@@ -152,7 +152,7 @@ test("setting any unknown value should pass through", function() {
   assert.equal(content.baz, "EDIT", 'content.baz');
 });
 
-test("changing a property on the content", function() {
+test("changing a property on the content", function (assert) {
   var callCount = 0;
   controller.addObserver("foo", function() { callCount++; });
 
@@ -163,7 +163,7 @@ test("changing a property on the content", function() {
   assert.equal(callCount, 0, 'observer on controller should not fire because this is not observable');
 });
 
-test("changing the content from one to another", function() {
+test("changing the content from one to another", function (assert) {
   var callCount = 0 ;
   var content2 = { foo: "foo2", bar: "bar2" };
   controller.addObserver("foo", function() { callCount++; });
@@ -182,7 +182,7 @@ test("changing the content from one to another", function() {
   assert.equal(controller.get("foo"), "EDIT", "controller.get(foo) after edit of non-content object should not change value");
 });
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'should have content');
 
   var callCount = 0;

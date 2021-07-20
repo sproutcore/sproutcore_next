@@ -21,7 +21,7 @@ module("Make Array ", {
   }
 });
 
-test("should return an array for the object passed ",function(){
+test("should return an array for the object passed ", function (assert) {
 	var arrayA  = ['value1','value2'] ;
 	var numberA = 100;
 	var stringA = "SproutCore" ;
@@ -36,14 +36,14 @@ test("should return an array for the object passed ",function(){
 	assert.equal(SC.isArray(ret),true) ;
 });
 
-test("isArray should return true for empty arguments", function() {
+test("isArray should return true for empty arguments", function (assert) {
   var func = function(foo, bar) {
     assert.ok(SC.isArray(arguments), "arguments is an array");
   };
   func();
 });
 
-test("SC.$A should return an empty array if passed an empty arguments object", function() {
+test("SC.$A should return an empty array if passed an empty arguments object", function (assert) {
   var func = function(foo, bar) {
     assert.equal(SC.$A(arguments).length, 0, "returns an empty array");
   };

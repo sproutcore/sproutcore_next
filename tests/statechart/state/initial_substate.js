@@ -3,8 +3,8 @@
 // ==========================================================================
 /*globals SC externalState1 externalState2 */
 
-import { SC } from '../../../../core/core.js';
-import { Statechart, State, EmptyState } from '../../../../statechart/statechart.js';
+import { SC } from '../../../core/core.js';
+import { Statechart, State, EmptyState } from '../../../statechart/statechart.js';
 
 
 let statechart, root, monitor, stateA, stateB, stateC, stateD, stateE, stateF;

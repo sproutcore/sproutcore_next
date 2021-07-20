@@ -42,7 +42,7 @@ const equals = assert.equal.bind(assert);
       ArrayTests.define(function(T) {
         T.module("length");
       
-        test("verify length", function() {
+        test("verify length", function (assert) {
           var ary = T.newObject();
           equals(ary.get('length'), 0, 'should have 0 initial length');
         });

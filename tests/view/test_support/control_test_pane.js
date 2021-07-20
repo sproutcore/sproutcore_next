@@ -32,7 +32,7 @@ const Q$ = CoreQuery;
 
       module("CheckboxView UI", pane);
 
-      test("basic", function() {
+      test("basic", function (assert) {
         var view = pane.view('basic');
         ok(view.get('isEnabled'), 'should be enabled');
       });
@@ -199,7 +199,7 @@ ControlTestPane.view = function(viewKey) {
 */
 ControlTestPane.show = function() {
   var pane = this ;
-  test("show control test pane", function() {
+  test("show control test pane", function (assert) {
     SC.RunLoop.begin();
     pane._showPane = pane.create();
     SC.RunLoop.end();

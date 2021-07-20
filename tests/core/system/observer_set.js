@@ -91,7 +91,7 @@ test("Observers that remove themselves should fire at least once, and shouldn't 
   The fix is to have SC.ObserverSet remove the target hash when the number of
   methods for the target goes to zero.
 */
-test("Removing all the methods on a target should clear the internal tracking of that target", function() {
+test("Removing all the methods on a target should clear the internal tracking of that target", function (assert) {
   var methodGuid1, methodGuid2,
     target = {},
     method1 = function () { }, method2 = function () { },
@@ -124,7 +124,7 @@ test("Removing all the methods on a target should clear the internal tracking of
   assert.ok(!observerSet._members[targetGuid], "The ObserverSet should not be tracking methods for the target: %@".fmt(targetGuid));
 });
 
-test("Observers should pass the context along to their method", function () {
+test("Observers should pass the context along to their method", function (assert) {
   var target = {},
     method = function (passedContext) {
       assert.equal(passedContext, originalContext, "The observer function should receive the context");

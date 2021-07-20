@@ -21,50 +21,50 @@ module("TreeController - tree_case", {
     
     // setup a basic tree 
     content = [
-      TestSC.Object.create({
+      TestObject.create({
         title: "A",
         isExpanded: true,
         outline: 0,
         
         children: [
-          TestSC.Object.create({ title: "A.i", outline: 1 }),
+          TestObject.create({ title: "A.i", outline: 1 }),
 
-          TestSC.Object.create({ title: "A.ii",
+          TestObject.create({ title: "A.ii",
             outline: 1,
             isExpanded: false,
             children: [
-              TestSC.Object.create({ title: "A.ii.1", outline: 2 }),
-              TestSC.Object.create({ title: "A.ii.2", outline: 2 }),
-              TestSC.Object.create({ title: "A.ii.3", outline: 2 })]
+              TestObject.create({ title: "A.ii.1", outline: 2 }),
+              TestObject.create({ title: "A.ii.2", outline: 2 }),
+              TestObject.create({ title: "A.ii.3", outline: 2 })]
           }),
 
-          TestSC.Object.create({ title: "A.iii", outline: 1 })]
+          TestObject.create({ title: "A.iii", outline: 1 })]
       }),
 
-      TestSC.Object.create({
+      TestObject.create({
         title: "B",
         isExpanded: true,
         outline: 0,
         children: [
-          TestSC.Object.create({ title: "B.i",
+          TestObject.create({ title: "B.i",
             isExpanded: true,
             outline: 1,
             children: [
-              TestSC.Object.create({ title: "B.i.1", outline: 2 }),
-              TestSC.Object.create({ title: "B.i.2", outline: 2 }),
-              TestSC.Object.create({ title: "B.i.3", outline: 2 })]
+              TestObject.create({ title: "B.i.1", outline: 2 }),
+              TestObject.create({ title: "B.i.2", outline: 2 }),
+              TestObject.create({ title: "B.i.3", outline: 2 })]
           }),
 
-          TestSC.Object.create({ title: "B.ii", outline: 1 }),
-          TestSC.Object.create({ title: "B.iii", outline: 1 })]
+          TestObject.create({ title: "B.ii", outline: 1 }),
+          TestObject.create({ title: "B.iii", outline: 1 })]
       }),
 
-      TestSC.Object.create({
+      TestObject.create({
         outline: 0,
         title: "C"
       })];
 
-    root = TestSC.Object.create({
+    root = TestObject.create({
       title: "ROOT",
       children: content,
       isExpanded: true

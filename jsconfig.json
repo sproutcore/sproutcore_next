@@ -14,6 +14,9 @@
     "./responder/**/*.js",
     "./statechart/**/*.js",
     "./view/**/*.js",
-    "./responder/**/*.js"
+    "./responder/**/*.js",
+    "./datastore/**/*.js",
+    "./desktop/**/*.js",
+    "./ajax/**/*.js"
   ]
 }

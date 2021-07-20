@@ -3,8 +3,8 @@
 // ==========================================================================
 /*globals SC obj1 obj2 obj3 */
 
-import { SC, GLOBAL } from '../../../../core/core.js';
-import { Statechart, State } from '../../../../statechart/statechart.js';
+import { SC, GLOBAL } from '../../../core/core.js';
+import { Statechart, State } from '../../../statechart/statechart.js';
 
 
 GLOBAL.obj1 = null;

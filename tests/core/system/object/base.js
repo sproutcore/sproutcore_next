@@ -41,24 +41,24 @@ module("A new SC.Object instance", {
   
 });
 
-test("Should identify it's methods using the 'respondsTo' method", function() {
+test("Should identify it's methods using the 'respondsTo' method", function (assert) {
   assert.equal(obj.respondsTo('aMethodThatExists'), true) ;
   assert.equal(obj.respondsTo('aMethodThatDoesNotExist'), false) ;
   assert.equal(obj.respondsTo('es6styleComputedProperty'), false); // it is not a method, so false
 });
 
-test("Should return false when asked to perform a method it does not have", function() {
+test("Should return false when asked to perform a method it does not have", function (assert) {
   assert.equal(obj.tryToPerform('aMethodThatDoesNotExist'), false) ;
 });
 
-test("Should pass back the return true if method returned true, false if method not implemented or returned false", function() {
+test("Should pass back the return true if method returned true, false if method not implemented or returned false", function (assert) {
   assert.equal(obj.tryToPerform('aMethodThatReturnsTrue'), true, 'method that returns true') ;
   assert.equal(obj.tryToPerform('aMethodThatReturnsFoobar'), true, 'method that returns non-false') ;
   assert.equal(obj.tryToPerform('aMethodThatReturnsFalse'), false, 'method that returns false') ;
   assert.equal(obj.tryToPerform('imaginaryMethod'), false, 'method that is not implemented') ;
 });
 
-test("Should return it's properties when requested using SC.Object#get", function() {
+test("Should return it's properties when requested using SC.Object#get", function (assert) {
   assert.equal(obj.get('foo'), 'bar') ;
   assert.equal(obj.get('total'), 12345) ;
   const prop = Object.getOwnPropertyDescriptor(obj, 'es6styleComputedProperty');
@@ -66,7 +66,7 @@ test("Should return it's properties when requested using SC.Object#get", functio
   assert.equal(obj.get('es6styleComputedProperty'), 'ES6');
 });
 
-test("Should allow changing of those properties by calling SC.Object#set", function() {
+test("Should allow changing of those properties by calling SC.Object#set", function (assert) {
   assert.equal(obj.get('foo'), 'bar') ;
   assert.equal(obj.get('total'), 12345) ;
   
@@ -78,19 +78,19 @@ test("Should allow changing of those properties by calling SC.Object#set", funct
   // at this moment set does not support native computed properties yet
 });
 
-test("Should only advertise changes once per request to SC.Object#didChangeFor", function() {
+test("Should only advertise changes once per request to SC.Object#didChangeFor", function (assert) {
   obj.set( 'foo', 'Chunky Bacon' );
   assert.equal(obj.didChangeFor( this, 'foo' ), true) ;
   assert.equal(obj.didChangeFor( this, 'foo' ), false) ;
 });
 
-test("Should advertise changes once per request to SC.Object#didChangeFor when setting property to NULL", function() {
+test("Should advertise changes once per request to SC.Object#didChangeFor when setting property to NULL", function (assert) {
   obj.set( 'foo', null );
   assert.equal(obj.didChangeFor( this, 'foo' ), true) ;
   assert.equal(obj.didChangeFor( this, 'foo' ), false) ;
 });
 
-test("When the object is destroyed the 'isDestroyed' status should change accordingly", function() {
+test("When the object is destroyed the 'isDestroyed' status should change accordingly", function (assert) {
 	assert.equal(obj.get('isDestroyed'), false);
 	obj.destroy();
 	assert.equal(obj.get('isDestroyed'), true);
@@ -126,19 +126,19 @@ module("SC.Object observers", {
   }
 });
 
-test("Local observers work", function() {
+test("Local observers work", function (assert) {
   obj._normal = false;
   obj.set("prop1", false);
   assert.equal(obj._normal, true, "Normal observer did change.");
 });
 
-test("Global observers work", function() {
+test("Global observers work", function (assert) {
   obj._global = false;
   TestNamespace.obj.set("value", "test2");
   assert.equal(obj._global, true, "Global observer did change.");
 });
 
-test("Global+Local observer works", function() {
+test("Global+Local observer works", function (assert) {
   obj._both = false;
   obj.set("prop1", false);
   assert.equal(obj._both, true, "Both observer did change.");
@@ -176,12 +176,12 @@ module("SC.Object instance extended", {
   
 });
 
-test("Checking the instance of method for an object", function() {
+test("Checking the instance of method for an object", function (assert) {
 	assert.equal(obj1.instanceOf(obj), true);
 	assert.equal(obj1.instanceOf(don), false);
 });
 
-test("Checking the kind of method for an object", function() {
+test("Checking the kind of method for an object", function (assert) {
 	assert.equal(obj1.kindOf(obj), true);
 	assert.equal(obj1.kindOf(don), false);
 	
@@ -190,7 +190,7 @@ test("Checking the kind of method for an object", function() {
 	assert.equal(SC.kindOf(null, obj1), false);
 });
 
-test("Defining es6 getters", function () {
+test("Defining es6 getters", function (assert) {
   // installing through extend means it is on the prototype
   const extObjPropDesc = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(extObj), 'nativeES6Getter');
   assert.ok(extObjPropDesc.get, 'getter on the extend hash should be installed on the prototype');
@@ -226,12 +226,12 @@ module("SC.Object superclass and subclasses", {
 // 	assert.equal(don.method2().method1(), "hello");
 // });
 
-test("Checking the subclassOf function on an object and its subclass", function(){
+test("Checking the subclassOf function on an object and its subclass", function (assert) {
 	assert.equal(obj1.subclassOf(obj), true);
 	assert.equal(obj.subclassOf(obj1), false);
 });
 
-test("subclasses should contain defined subclasses", function() {
+test("subclasses should contain defined subclasses", function (assert) {
   assert.ok(obj.subclasses.contains(obj1), 'obj.subclasses should contain obj1');
   
   assert.equal(obj1.subclasses.get('length'),0,'obj1.subclasses should be empty');

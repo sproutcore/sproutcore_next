@@ -34,29 +34,29 @@ module("basic object binding", {
   }
 });
 
-test("binding is connected", function () {
+test("binding is connected", function (assert) {
   assert.equal(binding1.isConnected, true, "binding1.isConnected");
   assert.equal(binding2.isConnected, true, "binding2.isConnected");
 });
 
-test("binding has actually been setup", function () {
+test("binding has actually been setup", function (assert) {
   assert.equal(binding1._connectionPending, false, "binding1._connectionPending");
   assert.equal(binding2._connectionPending, false, "binding2._connectionPending");
 });
 
-test("binding should have synced on connect", function () {
+test("binding should have synced on connect", function (assert) {
   assert.equal(toObject.get("value"), "start", "toObject.value should match fromObject.value");
   assert.equal(midObject.get("value"), "start", "midObject.value should match fromObject.value");
 });
 
-test("changing fromObject should mark binding as dirty", function () {
+test("changing fromObject should mark binding as dirty", function (assert) {
   fromObject.set("value", "change");
   assert.ok(SC.Binding._changeQueue.contains(binding1), "the binding should be in the _changeQueue");
   SC.Binding.flushPendingChanges();
   assert.ok(SC.Binding._changeQueue.contains(binding2), "the binding should be in the _changeQueue");
 });
 
-test("fromObject change should propogate to toObject only after flush", function () {
+test("fromObject change should propogate to toObject only after flush", function (assert) {
   fromObject.set("value", "change");
   assert.equal(midObject.get("value"), "start");
   assert.equal(toObject.get("value"), "start");
@@ -66,14 +66,14 @@ test("fromObject change should propogate to toObject only after flush", function
   assert.equal(toObject.get("value"), "change");
 });
 
-test("changing toObject should mark binding as dirty", function () {
+test("changing toObject should mark binding as dirty", function (assert) {
   toObject.set("value", "change");
   assert.ok(SC.Binding._changeQueue.contains(binding2), "the binding should be in the _changeQueue");
   SC.Binding.flushPendingChanges();
   assert.ok(SC.Binding._changeQueue.contains(binding1), "the binding should be in the _changeQueue");
 });
 
-test("toObject change should propogate to fromObject only after flush", function () {
+test("toObject change should propogate to fromObject only after flush", function (assert) {
   toObject.set("value", "change");
   assert.equal(midObject.get("value"), "start");
   assert.equal(fromObject.get("value"), "start");
@@ -83,7 +83,7 @@ test("toObject change should propogate to fromObject only after flush", function
   assert.equal(fromObject.get("value"), "change");
 });
 
-test("suspended observing during bindings", function () {
+test("suspended observing during bindings", function (assert) {
 
   // setup special binding
   fromObject = SC.Object.create({
@@ -115,12 +115,12 @@ test("suspended observing during bindings", function () {
   assert.equal(toObject.callCount, 2, 'should call observer twice');
 });
 
-test("binding will disconnect", function () {
+test("binding will disconnect", function (assert) {
   binding1.disconnect();
   assert.equal(binding1.isConnected, false, "binding1.isConnected");
 });
 
-test("binding disconnection actually works", function () {
+test("binding disconnection actually works", function (assert) {
   binding1.disconnect();
   fromObject.set('value', 'change');
   SC.Binding.flushPendingChanges();
@@ -135,7 +135,7 @@ test("binding disconnection actually works", function () {
   assert.equal(toObject.get('value'), 'change');
 });
 
-test("binding destruction actually works", function () {
+test("binding destruction actually works", function (assert) {
   binding1.destroy();
   assert.ok(binding1.isDestroyed, "binding marks itself as destroyed.");
   assert.ok(!binding1._fromTarget && !binding1._toTarget, "binding destruction removes binding targets.");
@@ -143,7 +143,7 @@ test("binding destruction actually works", function () {
 
 module("bindings on classes");
 
-test("should connect when multiple instances of class are created", function () {
+test("should connect when multiple instances of class are created", function (assert) {
   GLOBAL.TestNamespace = {};
   GLOBAL.TestNamespace.stubController = SC.Object.create({
     name: 'How to Be Happy'
@@ -181,24 +181,24 @@ module("one way binding", {
 
 });
 
-test("changing fromObject should mark binding as dirty", function () {
+test("changing fromObject should mark binding as dirty", function (assert) {
   fromObject.set("value", "change");
   assert.ok(SC.Binding._changeQueue.contains(binding), "the binding should be in the _changeQueue");
 });
 
-test("fromObject change should propogate after flush", function () {
+test("fromObject change should propogate after flush", function (assert) {
   fromObject.set("value", "change");
   assert.equal(toObject.get("value"), "start");
   SC.Binding.flushPendingChanges();
   assert.equal(toObject.get("value"), "change");
 });
 
-test("changing toObject should not make binding dirty", function () {
+test("changing toObject should not make binding dirty", function (assert) {
   toObject.set("value", "change");
   assert.ok(!SC.Binding._changeQueue.contains(binding), "the binding should not be in the _changeQueue");
 });
 
-test("toObject change should NOT propogate", function () {
+test("toObject change should NOT propogate", function (assert) {
   toObject.set("value", "change");
   assert.equal(fromObject.get("value"), "start");
   SC.Binding.flushPendingChanges();
@@ -228,7 +228,7 @@ module("chained binding", {
 
 });
 
-test("changing first output should propagate to third after flush", function () {
+test("changing first output should propagate to third after flush", function (assert) {
   first.set("output", "change");
   assert.equal("change", first.get("output"), "first.output");
   assert.ok("change" !== third.get("input"), "third.input");
@@ -272,7 +272,7 @@ module("Custom Binding", {
   }
 });
 
-test("Binding value1 such that it will receive only single values", function () {
+test("Binding value1 such that it will receive only single values", function (assert) {
   var bon1 = Bon1.create({
     value1Binding: SC.Binding.single("TestNamespace.bon2.val1"),
     array1Binding: SC.Binding.single("TestNamespace.bon2.arr")
@@ -287,7 +287,7 @@ test("Binding value1 such that it will receive only single values", function () 
   bon1.destroy();
 });
 
-test("Single binding using notEmpty function.", function () {
+test("Single binding using notEmpty function.", function (assert) {
   var bond = Bon1.create({
     array1Binding: SC.Binding.single("TestNamespace.bon2.arr").notEmpty(null, '(EMPTY)')
   });
@@ -297,7 +297,7 @@ test("Single binding using notEmpty function.", function () {
   assert.equal("(EMPTY)", bond.get("array1"));
 });
 
-test("Binding with transforms, function to check the type of value", function () {
+test("Binding with transforms, function to check the type of value", function (assert) {
   var jon = Bon1.create({
     value1Binding: SC.Binding.transform(function (val1) {
       return (SC.typeOf(val1) == SC.T_STRING) ? val1 : "";
@@ -309,7 +309,7 @@ test("Binding with transforms, function to check the type of value", function ()
   assert.equal(jon.get("value1"), bon2.get("val1"));
 });
 
-test("Adding transform does not affect parent binding", function () {
+test("Adding transform does not affect parent binding", function (assert) {
   var A,
       a,
       b;
@@ -328,7 +328,7 @@ test("Adding transform does not affect parent binding", function () {
   assert.ok(A.prototype.isEnabledBindingDefault._transforms !== a.bindings[0]._transforms, "transforms array not shared with parent binding");
 });
 
-test("two bindings to the same value should sync in the order they are initialized", function () {
+test("two bindings to the same value should sync in the order they are initialized", function (assert) {
 
   SC.LOG_BINDINGS = true;
 
@@ -399,7 +399,7 @@ module("Binding transforms", {
   }
 });
 
-test('Binding sync when only transformed value has changed', function () {
+test('Binding sync when only transformed value has changed', function (assert) {
   var toObject;
   SC.run(function () {
     toObject = SC.Object.create({
@@ -418,7 +418,7 @@ test('Binding sync when only transformed value has changed', function () {
   assert.equal(toObject.get('transformedValue'), 'VALUE IS UNDEFINED', 'value is undefined, so bound value should be');
 });
 
-test("the integer transform", function() {
+test("the integer transform", function (assert) {
   var toObject;
 
   SC.run(function () {
@@ -480,7 +480,7 @@ test("the integer transform", function() {
 });
 
 
-test("the string transform", function() {
+test("the string transform", function (assert) {
   var toObject;
 
   SC.run(function () {
@@ -523,7 +523,7 @@ test("the string transform", function() {
   assert.equal(toObject.get('aString'), 'An SC.Object', "Value is SC.Object instance, so bound value should be");
 });
 
-test("the equalTo transform", function() {
+test("the equalTo transform", function (assert) {
   SC.RunLoop.begin();
   var toObject = SC.Object.create({
     isFortyTwo: null,
@@ -570,7 +570,7 @@ module("Binding transform: `and`", {
   }
 });
 
-test("bound value should be true if all sources are true", function () {
+test("bound value should be true if all sources are true", function (assert) {
   SC.RunLoop.begin();
   GLOBAL.SC.testControllerA.set('value', true);
   GLOBAL.SC.testControllerB.set('value', true);
@@ -590,7 +590,7 @@ test("bound value should be true if all sources are true", function () {
   assert.equal(toObject.get('boundLocalValue'), true, 'Local bound value');
 });
 
-test("toObject.value should be false if either source is false", function () {
+test("toObject.value should be false if either source is false", function (assert) {
   SC.RunLoop.begin();
   GLOBAL.SC.testControllerA.set('value', true);
   GLOBAL.SC.testControllerB.set('value', false);
@@ -646,7 +646,7 @@ test("toObject.value should be false if either source is false", function () {
   assert.equal(toObject.get('boundLocalValue'), false, 'Local bound value on false/true/false');
 });
 
-test("remote paths work when binding is defined on a class", function() {
+test("remote paths work when binding is defined on a class", function (assert) {
   // This tests the solution to a bug which was hooking all instances of a class's `and` binding
   // up through the same internal object, which would be destroyed the first time any instance
   // was destroyed.
@@ -683,7 +683,7 @@ test("remote paths work when binding is defined on a class", function() {
 
 });
 
-test("local paths work when binding is defined on a class", function() {
+test("local paths work when binding is defined on a class", function (assert) {
   // This tests the solution to a bug which was hooking all instances of a class's `and` binding
   // up through the same internal object, which would cause multiple instances to cross-polinate.
 
@@ -739,7 +739,7 @@ module("OR binding", {
 
 });
 
-test("toObject.value should be first value if first value is truthy", function () {
+test("toObject.value should be first value if first value is truthy", function (assert) {
   SC.RunLoop.begin();
   GLOBAL.SC.testControllerA.set('value', 'first value');
   GLOBAL.SC.testControllerB.set('value', 'second value');
@@ -758,7 +758,7 @@ test("toObject.value should be first value if first value is truthy", function (
 
 });
 
-test("toObject.value should be second value if first is falsy", function () {
+test("toObject.value should be second value if first is falsy", function (assert) {
   SC.RunLoop.begin();
   GLOBAL.SC.testControllerA.set('value', false);
   GLOBAL.SC.testControllerB.set('value', 'second value');
@@ -777,7 +777,7 @@ test("toObject.value should be second value if first is falsy", function () {
 
 });
 
-test("remote paths work when binding is defined on a class", function() {
+test("remote paths work when binding is defined on a class", function (assert) {
   // This tests the solution to a bug which was hooking all instances of a class's `or` binding
   // up through the same internal object, which would be destroyed the first time any instance
   // was destroyed.
@@ -813,7 +813,7 @@ test("remote paths work when binding is defined on a class", function() {
 
 });
 
-test("local paths work when binding is defined on a class", function() {
+test("local paths work when binding is defined on a class", function (assert) {
   // This tests the solution to a bug which was hooking all instances of a class's `or` binding
   // up through the same internal object, which would cause multiple instances to cross-polinate.
 
@@ -880,7 +880,7 @@ module("Binding transform: `mix`", {
   }
 });
 
-test("bound value should be calculated correctly", function () {
+test("bound value should be calculated correctly", function (assert) {
   SC.RunLoop.begin();
   GLOBAL.SC.testControllerA.set('value', 0);
   GLOBAL.SC.testControllerB.set('value', 10);
@@ -910,7 +910,7 @@ module("Binding with '[]'", {
   }
 });
 
-test("Binding refreshes after a couple of items have been pushed in the array", function () {
+test("Binding refreshes after a couple of items have been pushed in the array", function (assert) {
   fromObject.get('value').pushObjects(['foo', 'bar']);
   SC.Binding.flushPendingChanges();
   assert.equal(toObject.get('value'), 'foo,bar');
@@ -937,7 +937,7 @@ module("propertyNameBinding with longhand", {
   }
 });
 
-test("works with full path", function () {
+test("works with full path", function (assert) {
   SC.RunLoop.begin();
   GLOBAL.TestNamespace.fromObject.set('value', "updatedValue");
   SC.RunLoop.end();
@@ -951,7 +951,7 @@ test("works with full path", function () {
   assert.equal(GLOBAL.TestNamespace.toObject.get('value'), "newerValue");
 });
 
-test("works with local path", function () {
+test("works with local path", function (assert) {
   SC.RunLoop.begin();
   GLOBAL.TestNamespace.toObject.set('localValue', "updatedValue");
   SC.RunLoop.end();
@@ -979,7 +979,7 @@ module("Overriding binding in subclass", {
   }
 });
 
-test("Bindings override in subclasses.", function() {
+test("Bindings override in subclasses.", function (assert) {
   SC.LOG_DUPLICATE_BINDINGS = false; // clean consoles
 
   SC.RunLoop.begin();

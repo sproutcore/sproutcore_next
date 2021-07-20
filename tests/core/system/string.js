@@ -12,15 +12,15 @@ import { SC, GLOBAL } from '../../../core/core.js';
 // signature than String.prototype.fmt does.
 
 module("String Formatting");
-test("Passing ordered arguments", function() {
+test("Passing ordered arguments", function (assert) {
   assert.equal(SC.String.fmt("%@, %@%@", ["Hello", "World", "!"]), "Hello, World!");
 });
 
-test("Passing indexed arguments", function() {
+test("Passing indexed arguments", function (assert) {
   assert.equal(SC.String.fmt("%@2, %@3%@1", ["!", "Hello", "World"]), "Hello, World!");
 });
 
-test("Passing named arguments", function() {
+test("Passing named arguments", function (assert) {
   // NOTE: usually, "str".fmt() would be called. Because we are calling String.fmt,
   // which takes an array of arguments, we have to pass the arguments as an array.
   assert.equal(SC.String.fmt("%{first}, %{last}%{punctuation}", [
@@ -28,7 +28,7 @@ test("Passing named arguments", function() {
   ]), "Hello, World!");
 });
 
-test("Passing named arguments with a SC.Object instance", function() {
+test("Passing named arguments with a SC.Object instance", function (assert) {
   var t = SC.Object.create({
     prop: 'Hello',
     computedProp: function () {
@@ -41,11 +41,11 @@ test("Passing named arguments with a SC.Object instance", function() {
   assert.equal(SC.String.fmt("%{prop}, %{computedProp}%{unknownProp}", [t]), "Hello, World!");
 });
 
-test("Passing incomplete named arguments", function() {
+test("Passing incomplete named arguments", function (assert) {
   assert.equal( SC.String.fmt("%{first}, %{last}%{punctuation}", [{first: 'Hello', punctuation: '!'}]), "Hello, %{last}!", "Formatting a string with an incomplete set of named arguments should leave unspecified named arguments in place." );
 })
 
-test("Passing arguments with formatters", function() {
+test("Passing arguments with formatters", function (assert) {
   var F = function(value) {
     return "$" + value;
   };
@@ -53,7 +53,7 @@ test("Passing arguments with formatters", function() {
   assert.equal(SC.String.fmt("%{number}", [{ number: 12, numberFormatter: F }]), "$12", "Formatter was applied");
 });
 
-test("Passing formatting strings with formatters", function() {
+test("Passing formatting strings with formatters", function (assert) {
   var F = function(value, arg) {
     return "$" + value + ";" + arg;
   };
@@ -72,7 +72,7 @@ var LocaleObject;
 
 var defaultLocale;
 module('SC.Object', {
-  before: function() {
+  beforeEach: function() {
     // Cache the current locale.
     defaultLocale = SC.Locale.currentLocale;
 
@@ -105,7 +105,7 @@ module('SC.Object', {
     });
   },
 
-  after: function () {
+  afterEach: function () {
     // Return the current locale.
     SC.Locale.currentLocale = defaultLocale;
   }

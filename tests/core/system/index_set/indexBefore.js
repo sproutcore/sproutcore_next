@@ -15,24 +15,24 @@ module("SC.IndexSet.indexBefore", {
   }
 });
 
-test("no earlier index in set", function(){ 
+test("no earlier index in set", function (assert) { 
   assert.equal(set.indexBefore(4), -1, 'set.indexBefore(4) in %@ should not have index before it'.fmt(set));
 });
 
-test("with index after end of set", function() {
+test("with index after end of set", function (assert) {
   assert.equal(set.indexBefore(1000), 100, 'set.indexBefore(1000) in %@ should return last index in set'.fmt(set));
 });
 
-test("inside of multi-index range", function() {
+test("inside of multi-index range", function (assert) {
   assert.equal(set.indexBefore(12), 11, 'set.indexBefore(12) in %@ should return previous index'.fmt(set));
 });
 
-test("beginning of multi-index range", function() {
+test("beginning of multi-index range", function (assert) {
   assert.equal(set.indexBefore(10), 5, 'set.indexBefore(10) in %@ should end of previous range'.fmt(set));
 });
 
 
-test("single index range", function() {
+test("single index range", function (assert) {
   assert.equal(set.indexBefore(100), 14, 'set.indexBefore(100) in %@ should end of previous range multi-index range'.fmt(set));
 });
 

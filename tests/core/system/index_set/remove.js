@@ -22,7 +22,7 @@ function iter(s) {
 // BASIC REMOVES
 // 
 
-test("remove a range after end of set", function() {
+test("remove a range after end of set", function(assert) {
   assert.equal(set.get('length'), 0, 'precond - should be empty');  
 
   set.remove(1000, 5);
@@ -31,7 +31,7 @@ test("remove a range after end of set", function() {
   assert.deepEqual(iter(set), [], 'should be empty');
 });
 
-test("remove range in middle of an existing range", function() {
+test("remove range in middle of an existing range", function(assert) {
   set.add(100,4);
   assert.deepEqual(iter(set), [100, 101, 102, 103], 'precond - should have range');
   
@@ -41,7 +41,7 @@ test("remove range in middle of an existing range", function() {
   assert.deepEqual(iter(set), [100,103], 'should remove range in the middle'); 
 });
 
-test("remove range overlapping front edge of range", function() {
+test("remove range overlapping front edge of range", function(assert) {
   set.add(100,2); // add initial set.
   assert.equal(iter(set)[0], 100, 'precond - first index is 100');
   
@@ -52,7 +52,7 @@ test("remove range overlapping front edge of range", function() {
   assert.deepEqual(iter(set), [101]);
 });
 
-test("remove range overlapping last edge of range", function() {
+test("remove range overlapping last edge of range", function(assert) {
   set.add(100,2).add(200,2); // make sure not last range
   assert.deepEqual(iter(set), [100,101,200,201], 'should have two sets');
   
@@ -63,7 +63,7 @@ test("remove range overlapping last edge of range", function() {
   assert.deepEqual(iter(set), [100,200,201], 'should remove 101-102');
 });
 
-test("remove range overlapping two ranges, remove parts of both", function() {
+test("remove range overlapping two ranges, remove parts of both", function(assert) {
   set.add(100,2).add(110,2);
   assert.deepEqual(iter(set), [100,101,110,111], 'should have two sets');
   
@@ -74,7 +74,7 @@ test("remove range overlapping two ranges, remove parts of both", function() {
   assert.deepEqual(iter(set), [100,111], 'should remove range 101-110');
 });
 
-test("remove range overlapping three ranges, removing one and parts of the others", function() {
+test("remove range overlapping three ranges, removing one and parts of the others", function(assert) {
   set.add(100,2).add(105,2).add(110,2);
   assert.deepEqual(iter(set), [100,101,105,106,110,111], 'should have two sets');
   
@@ -85,7 +85,7 @@ test("remove range overlapping three ranges, removing one and parts of the other
   assert.deepEqual(iter(set), [100,111], 'should remove range 101-110');
 });
 
-test("remove range partially overlapping one range and replacing another range", function() {
+test("remove range partially overlapping one range and replacing another range", function(assert) {
   set.add(100,2).add(105,2);
   assert.deepEqual(iter(set), [100,101,105,106], 'should have two sets');
   
@@ -97,7 +97,7 @@ test("remove range partially overlapping one range and replacing another range",
   assert.deepEqual(iter(set), [100], 'should include one range 100-110');
 });
 
-test("remove range overlapping last index", function() {
+test("remove range overlapping last index", function(assert) {
   set.add(100,2); // add initial set.
   assert.equal(iter(set)[0], 100, 'precond - first index is 100');
   
@@ -108,7 +108,7 @@ test("remove range overlapping last index", function() {
   assert.deepEqual(iter(set), [100]);
 });
 
-test("remove range matching existing range", function() {
+test("remove range matching existing range", function(assert) {
   set.add(100,5); // add initial set.
   assert.deepEqual(iter(set), [100, 101, 102, 103, 104]);
   
@@ -123,22 +123,22 @@ test("remove range matching existing range", function() {
 // NORMALIZED PARAMETER CASES
 // 
 
-test("remove with no params should do nothing", function() {
+test("remove with no params should do nothing", function(assert) {
   set.add(10,2).remove();
   assert.deepEqual(iter(set), [10,11]);
 });
 
-test("remove with single number should add index only", function() {
+test("remove with single number should add index only", function(assert) {
   set.add(10,2).remove(10);
   assert.deepEqual(iter(set), [11]);
 });
 
-test("remove with range object should add range only", function() {
+test("remove with range object should add range only", function(assert) {
   set.add(10,5).remove({ start: 10, length: 2 });
   assert.deepEqual(iter(set), [12,13,14]);
 });
 
-test("remove with index set should add indexes in set", function() {
+test("remove with index set should add indexes in set", function(assert) {
   set.add(0,14).remove(SC.IndexSet.create().add(2,2).add(10,2));
   assert.deepEqual(iter(set), [0,1,4,5,6,7,8,9,12,13]);
 });
@@ -147,7 +147,7 @@ test("remove with index set should add indexes in set", function() {
 // ..........................................................
 // OTHER BEHAVIORS
 // 
-test("remove a range should trigger an observer notification", function() {
+test("remove a range should trigger an observer notification", function(assert) {
   var callCnt = 0;
   set.add(10, 20);
   
@@ -156,7 +156,7 @@ test("remove a range should trigger an observer notification", function() {
   assert.equal(callCnt, 1, 'should have called observer once');
 });
 
-test("removing a non-existent range should not trigger observer notification", function() {
+test("removing a non-existent range should not trigger observer notification", function(assert) {
   var callCnt = 0;
   
   set.addObserver('[]', function() { callCnt++; });
@@ -164,14 +164,14 @@ test("removing a non-existent range should not trigger observer notification", f
   assert.equal(callCnt, 0, 'should NOT have called observer');
 });
 
-test("removing a clone of the assert.deepEqual index set should leave an empty set", function() {
+test("removing a clone of the assert.deepEqual index set should leave an empty set", function(assert) {
   var set = SC.IndexSet.create(0,2), set2 = set.clone();
   assert.ok(set.isEqual(set2), 'precond - clone is equal to receiver');
   set.remove(set2);
   assert.equal(set.get('length'), 0, 'set should now be empty');
 });
 
-test("removing an index range outside of target range (specific bug)", function() {
+test("removing an index range outside of target range (specific bug)", function(assert) {
 
   var set = SC.IndexSet.create(10,3);
   var set2 = SC.IndexSet.create(0,3);
@@ -182,7 +182,7 @@ test("removing an index range outside of target range (specific bug)", function(
   assert.equal(set.get('length'), 3, 'length should not change');
 });
 
-test("remove() raises exception when frozen", function() {
+test("remove() raises exception when frozen", function(assert) {
   assert.throws(function() {
     set.freeze().remove(0,2);    
   }, SC.FROZEN_ERROR);  

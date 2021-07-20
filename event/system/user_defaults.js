@@ -350,7 +350,8 @@ export const UserDefaults = SC.Object.extend(/** @scope UserDefaults.prototype *
 
     // Increment the jQuery ready counter, so that SproutCore will
     // defer loading the app until the user defaults are available.
-    jQuery.readyWait++;
+    // jQuery.readyWait++;
+    CoreQuery.readyWait++;
 
     if(userDefaults && userDefaults.get('dataHash')){
       var dh = userDefaults.get('dataHash');
@@ -425,7 +426,8 @@ export const UserDefaults = SC.Object.extend(/** @scope UserDefaults.prototype *
         this._safari3DB=myDB;
       }
     }else{
-      jQuery.ready(true);
+      // jQuery.ready(true);
+      CoreQuery.ready(true);
     }
   },
 

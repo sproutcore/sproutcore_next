@@ -23,19 +23,19 @@ module("SC.ObjectController - empty_case - NULL", {
   }
 });
 
-test("getting any value should return undefined", function() {
+test("getting any value should return undefined", function (assert) {
   assert.equal(controller.get("foo"), undefined, 'controller.get(foo)');
   assert.equal(controller.get("bar"), undefined, 'controller.get(bar)');
 });
 
-test("setting any unknown value should have no effect", function() {
+test("setting any unknown value should have no effect", function (assert) {
   assert.equal(controller.set("foo", "FOO"), controller, 'controller.set(foo, FOO) should return self');  
   assert.equal(controller.set("bar", "BAR"), controller, 'controller.set(bar, BAR) should return self');
   assert.equal(controller.get("foo"), undefined, 'controller.get(foo)');
   assert.equal(controller.get("bar"), undefined, 'controller.get(bar)');
 });
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), false, 'hasContent should be false');
 });
 
@@ -55,12 +55,12 @@ module("SC.ObjectController - empty_case - EMPTY ARRAY", {
   }
 });
 
-test("getting any value should return undefined", function() {
+test("getting any value should return undefined", function (assert) {
   assert.equal(controller.get("foo"), undefined, 'controller.get(foo)');
   assert.equal(controller.get("bar"), undefined, 'controller.get(bar)');
 });
 
-test("setting any unknown value should have no effect", function() {
+test("setting any unknown value should have no effect", function (assert) {
   assert.equal(controller.set("foo", "FOO"), controller, 'controller.set(foo, FOO) should return self');  
   assert.equal(controller.set("bar", "BAR"), controller, 'controller.set(bar, BAR) should return self');
   assert.equal(controller.get("foo"), undefined, 'controller.get(foo)');
@@ -68,11 +68,11 @@ test("setting any unknown value should have no effect", function() {
 });
 
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), false, 'hasContent should be false');
 });
 
-test("allowsMultipleContent should have no effect", function() {
+test("allowsMultipleContent should have no effect", function (assert) {
   controller = SC.ObjectController.create({ 
     content: content,
     allowsMultipleContent: true

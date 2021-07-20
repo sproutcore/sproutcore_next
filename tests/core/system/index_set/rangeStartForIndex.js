@@ -16,26 +16,26 @@ module("SC.IndexSet#rangeStartForIndex", {
   }
 });
 
-test("index is start of range", function() {
+test("index is start of range", function (assert) {
   assert.equal(set.rangeStartForIndex(start), start, 'should return start');
   assert.equal(set.rangeStartForIndex(0), 0, 'should return first range');
 });
 
-test("index is middle of range", function() {
+test("index is middle of range", function (assert) {
   assert.equal(set.rangeStartForIndex(start+20), start, 'should return start');
   assert.equal(set.rangeStartForIndex(start+SC.IndexSet.HINT_SIZE), start, 'should return start');
   assert.equal(set.rangeStartForIndex(20), 0, 'should return first range');
 });
 
-test("index last index", function() {
+test("index last index", function (assert) {
   assert.equal(set.rangeStartForIndex(start+len), start+len, 'should return end of range');
 });
 
-test("index past last index", function() {
+test("index past last index", function (assert) {
   assert.equal(set.rangeStartForIndex(start+len+20), start+len, 'should return end of range');
 });
 
-test("creating holes by appending to an existing range should not affect the range start", function () {
+test("creating holes by appending to an existing range should not affect the range start", function (assert) {
   var hintSize = SC.IndexSet.HINT_SIZE,
       start, set;
 

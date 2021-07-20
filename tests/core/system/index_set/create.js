@@ -10,26 +10,26 @@ import { SC, GLOBAL } from '../../../../core/core.js';
 
 module("SC.IndexSet#create");
 
-test("create with no params", function() {
+test("create with no params", function (assert) {
   var set = SC.IndexSet.create();
   assert.equal(set.get('length'), 0, 'should have no indexes');
 });
 
-test("create with just index", function() {
+test("create with just index", function (assert) {
   var set = SC.IndexSet.create(4);
   assert.equal(set.get('length'),1, 'should have 1 index');
   assert.equal(set.contains(4), true, 'should contain index');
   assert.equal(set.contains(5), false, 'should not contain 5');
 });
 
-test("create with index and length", function() {
+test("create with index and length", function (assert) {
   var set = SC.IndexSet.create(4, 2);
   assert.equal(set.get('length'),2, 'should have 2 indexes');
   assert.equal(set.contains(4), true, 'should contain 4');
   assert.equal(set.contains(5), true, 'should contain 5');
 });
 
-test("create with other set", function() {
+test("create with other set", function (assert) {
   var first = SC.IndexSet.create(4,2);
 
   var set = SC.IndexSet.create(first);

@@ -32,7 +32,7 @@ module("SC.RangeObserver#destroy", {
   }
 });
 
-test("returns receiver", function() {
+test("returns receiver", function (assert) {
   // for some reason doing assert.equal() causes a stack exception (probably due
   // to a bug in jsDump)
   assert.ok(obj.destroy() === obj, 'should return receiver');
@@ -46,7 +46,7 @@ test("returns receiver", function() {
 // happens if you destroy the observer before any changes have happend and 
 // after changes have happened.
 
-test("never observes changes if no changes happend", function() {
+test("never observes changes if no changes happend", function (assert) {
   obj.destroy();
 
   // change property on each object
@@ -57,7 +57,7 @@ test("never observes changes if no changes happend", function() {
   assert.equal(observer.callCount, 0, 'range observer should not fire');
 });
 
-test("stops observes changes if changes happend before destroy", function() {
+test("stops observes changes if changes happend before destroy", function (assert) {
   var len = source.length, idx;
 
   // change property on each object

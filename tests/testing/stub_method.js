@@ -1,7 +1,7 @@
 import { CoreTest } from '../../testing/testing.js';
 module('CoreQuery.stubMethod');
 
-test('returns a set value when the stubbed method is called', function() {
+test('returns a set value when the stubbed method is called', function(assert) {
   var object = {method: function() {}};
   var value = 'something';
   CoreTest.stubMethod(object, 'method').andReturn(value);

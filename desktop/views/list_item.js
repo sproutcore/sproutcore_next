@@ -337,7 +337,7 @@ export const ListItemView = View.extend(InlineEditable, Control,
     occurred inside of it.
   */
   _isInsideDisclosure: function (evt) {
-    if (this.get('disclosureState') === LEAF_NODE) return false;
+    if (this.get('disclosureState') === SC.LEAF_NODE) return false;
     return this._isInsideElementWithClassName('sc-disclosure-view', evt);
   },
 
@@ -785,7 +785,7 @@ export const ListItemView = View.extend(InlineEditable, Control,
 
     // handle disclosure triangle
     value = this.get('disclosureState');
-    if (value !== LEAF_NODE) {
+    if (value !== SC.LEAF_NODE) {
       this.renderDisclosure(working, value);
       classArray.push('has-disclosure');
     } else if (this._disclosureRenderSource) {

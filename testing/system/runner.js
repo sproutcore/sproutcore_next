@@ -22,6 +22,7 @@ import { SCEvent } from '../../event/event.js';
 import { RootResponder } from '../../responder/responder.js';
 import { CoreTest } from './core_test.js';
 import { Plan } from './plan.js';
+import '../../node_modules/jquery/dist/jquery.slim.js';
 
 const Q$ = jQuery;
 

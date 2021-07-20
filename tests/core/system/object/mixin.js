@@ -23,7 +23,7 @@ module("Using mixin with an SC.Object instance", {
   There was a bug that using mixin on an object, would not properly set up any
   computed properties, bindings and observers declared in the mixin.
   */
-test("Mixins applied to an object should include Mixin properties, bindings and observers", function() {
+test("Mixins applied to an object should include Mixin properties, bindings and observers", function (assert) {
   var mixin, obj,
     propertyChanged = 0,
     observerCalled = 0;

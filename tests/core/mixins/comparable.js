@@ -37,7 +37,7 @@ module("Comparable", {
   
 });
 
-test("should be comparable and return the correct result", function() {
+test("should be comparable and return the correct result", function (assert) {
   assert.equal(r1.constructor.isComparable, true);
   assert.equal(SC.compare(r1, r1), 0);
   assert.equal(SC.compare(r1, r2), -1);

@@ -318,7 +318,7 @@ function() {
   assert.ok(indexSet === null, 'selection set should not still have an indexSet');
 });
 
-test("replacing content in an ArrayController propagates changes to bound arrangedObjects", function() {
+test("replacing content in an ArrayController propagates changes to bound arrangedObjects", function (assert) {
   assert.equal(controller.getPath('arrangedObjects.length'), 5, "precond - controller has 5 items");
 
   var obj, listChanged = 0;

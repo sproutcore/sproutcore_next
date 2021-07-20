@@ -7,7 +7,7 @@ import { SC, GLOBAL } from '../../../../core/core.js';
 
 module("Function#enhance");
 
-test("reopening and enhancing", function() {
+test("reopening and enhancing", function (assert) {
   var Klass = SC.Object.extend({
     loudly: function(string) {
       return string + this.get('exclaim');
@@ -25,7 +25,7 @@ test("reopening and enhancing", function() {
   assert.equal(obj.loudly("foo"), "FOO!");
 });
 
-test("subclassing and then enhancing the parent", function() {
+test("subclassing and then enhancing the parent", function (assert) {
   var Klass = SC.Object.extend({
     loudly: function(string) {
       return string + this.get('exclaim'); // foo!
@@ -66,7 +66,7 @@ test("subclassing and then enhancing the parent", function() {
   assert.equal(obj.loudly("foo"), "ZOMG OHAI: FOO!");
 });
 
-test("calling sc_super inside a reopened class", function() {
+test("calling sc_super inside a reopened class", function (assert) {
   var Klass = SC.Object.extend({
     loudly: function(string) {
       return string + this.get('exclaim');
@@ -104,7 +104,7 @@ test("calling sc_super inside a reopened class", function() {
   assert.equal(obj.loudly("foo"), "OHAI: ZOMG HAHA FOO!");
 });
 
-test("calling sc_super inside a reopened class, reverse", function() {
+test("calling sc_super inside a reopened class, reverse", function (assert) {
   var Klass = SC.Object.extend();
 
   var object = Klass.create({
@@ -122,7 +122,7 @@ test("calling sc_super inside a reopened class, reverse", function() {
   assert.equal(object.loudly("foo"), "FOO!");
 });
 
-test("sc_super to a non-method", function() {
+test("sc_super to a non-method", function (assert) {
   var Klass = SC.Object.extend({
     wot: function wot () {
       return wot.base.apply(this);
@@ -140,7 +140,7 @@ test("sc_super to a non-method", function() {
   assert.ok(error, "sc_super throws an error if there is no superclass method");
 });
 
-test("sc_super works in enhanced methods", function() {
+test("sc_super works in enhanced methods", function (assert) {
   var Klass = SC.Object.extend({
     loudly: function(string) {
       return string.toUpperCase();
@@ -170,7 +170,7 @@ test("sc_super works in enhanced methods", function() {
 // superclass of an object at runtime, and sc_super will correctly pick up
 // those changes. This is especially important for calls to reopen and
 // enhance.
-test("__sc_super__ semantics", function() {
+test("__sc_super__ semantics", function (assert) {
   var rootObject = SC.Object.create({});
   assert.ok(rootObject.__sc_super__ === SC.Object.prototype, "SproutCore remembers that new SC.Objects should super to SC.Object.prototype");
 
@@ -193,7 +193,7 @@ test("__sc_super__ semantics", function() {
   assert.ok(SubKlass.__sc_super__ === Klass.prototype, "Reopen doesn't break prototype recordkeeping");
 });
 
-test("enhance still works if there is no base method to enhance", function() {
+test("enhance still works if there is no base method to enhance", function (assert) {
   var enhancer = {
     weirdName: function(original) {
       original();
@@ -212,7 +212,7 @@ test("enhance still works if there is no base method to enhance", function() {
   and adding a computed property, binding or observer to the parent, caused the
   subclass not to register the property, binding or observer correctly.
 */
-test("reopening a class that has been subclassed, updates the subclasses properties, bindings and observers", function() {
+test("reopening a class that has been subclassed, updates the subclasses properties, bindings and observers", function (assert) {
   var propertyChanged = 0, observerCalled = 0;
   GLOBAL.MyBindable = SC.Object.create({ a: 1, b: 2 });
   var MyClass = SC.Object.extend({ property: function() { }.property() });

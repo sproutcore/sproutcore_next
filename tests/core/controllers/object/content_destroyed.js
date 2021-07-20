@@ -41,20 +41,20 @@ module("SC.ObjectController - content destroyed", {
   }
 });
 
-test("Setting content should call 'destroy' on old content if destroyContentOnReplace has been set", function() {
+test("Setting content should call 'destroy' on old content if destroyContentOnReplace has been set", function (assert) {
   controller.set('content', newContent);
   assert.equal(destroyCount, 1, 'destroyCount');
   assert.equal(controller.getPath('content.foo'), 'foo2');
 });
 
-test("Setting content should NOT call 'destroy' on old content if destroyContentOnReplace has not been set", function() {
+test("Setting content should NOT call 'destroy' on old content if destroyContentOnReplace has not been set", function (assert) {
   controller.set('destroyContentOnReplace', false);
   controller.set('content', newContent);
   assert.equal(destroyCount, 0, 'destroyCount');
   assert.equal(controller.getPath('content.foo'), 'foo2');
 });
 
-test("Setting content should NOT call 'destroy' if set to the same object", function() {
+test("Setting content should NOT call 'destroy' if set to the same object", function (assert) {
   controller.set('content', content);
   assert.equal(destroyCount, 0, 'destroyCount');
 });

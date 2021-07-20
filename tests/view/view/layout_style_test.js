@@ -143,7 +143,7 @@ import { browser } from '../../../event/event.js';
 
   module("falseTIFICATIONS", commonSetup);
 
-  test("Setting layout will notify frame observers", function () {
+  test("Setting layout will notify frame observers", function (assert) {
     var didNotify = false, didNotifyStyle = false;
     child.addObserver('frame', this, function () { didNotify = true; });
     child.addObserver('layoutStyle', this, function () { didNotifyStyle = true; });
@@ -164,7 +164,7 @@ import { browser } from '../../../event/event.js';
 
   module('BASIC LAYOUT VARIATIONS', commonSetup);
 
-  test("layout {top, left, width, height}", function () {
+  test("layout {top, left, width, height}", function (assert) {
 
     var layout = { top: 10, left: 10, width: 50, height: 50 };
     var s = { top: 10, left: 10, width: 50, height: 50 };
@@ -174,7 +174,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
-  test("layout {top, left, bottom, right}", function () {
+  test("layout {top, left, bottom, right}", function (assert) {
 
     var layout = { top: 10, left: 10, bottom: 10, right: 10 };
     var no_f = { x: 10, y: 10, width: 0, height: 0 };
@@ -184,7 +184,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {bottom, right, width, height}", function () {
+  test("layout {bottom, right, width, height}", function (assert) {
 
     var layout = { bottom: 10, right: 10, width: 50, height: 50 };
     var no_f = { x: 0, y: 0, width: 50, height: 50 };
@@ -194,7 +194,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {centerX, centerY, width, height}", function () {
+  test("layout {centerX, centerY, width, height}", function (assert) {
 
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60 };
     var no_f = { x: 10, y: 10, width: 60, height: 60 };
@@ -204,7 +204,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, width: auto, height: auto}", function () {
+  test("layout {top, left, width: auto, height: auto}", function (assert) {
     // Reset.
     child.destroy();
 
@@ -246,7 +246,7 @@ import { browser } from '../../../event/event.js';
 
   module('BASIC LAYOUT VARIATIONS PERCENTAGE', commonSetup);
 
-  test("layout {top, left, width, height}", function () {
+  test("layout {top, left, width, height}", function (assert) {
 
     var layout = { top: 0.1, left: 0.1, width: 0.5, height: 0.5 };
     var s = { top: '10%', left: '10%', width: '50%', height: '50%' };
@@ -256,7 +256,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, bottom, right}", function () {
+  test("layout {top, left, bottom, right}", function (assert) {
 
     var layout = { top: 0.1, left: 0.1, bottom: 0.1, right: 0.1 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -266,7 +266,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {bottom, right, width, height}", function () {
+  test("layout {bottom, right, width, height}", function (assert) {
 
     var layout = { bottom: 0.1, right: 0.1, width: 0.5, height: 0.5 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -276,7 +276,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {centerX, centerY, width, height}", function () {
+  test("layout {centerX, centerY, width, height}", function (assert) {
 
     var layout = { centerX: 0.1, centerY: 0.1, width: 0.6, height: 0.6 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -289,7 +289,7 @@ import { browser } from '../../../event/event.js';
   // Previously, you couldn't set a % width or height with a centerX/centerY of 0.
   // But there's no reason that a % sized view can't be centered at 0 and this
   // test shows that.
-  test("layout {centerX 0, centerY 0, width %, height %}", function () {
+  test("layout {centerX 0, centerY 0, width %, height %}", function (assert) {
     var layout = { centerX: 0, centerY: 0, width: 0.6, height: 0.6 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
 
@@ -302,7 +302,7 @@ import { browser } from '../../../event/event.js';
   });
 
   // Edge case: although rare, centered views should be able to have metrics of zero.
-  test("layout {centerX 0, centerY 0, width 0, height 0}", function () {
+  test("layout {centerX 0, centerY 0, width 0, height 0}", function (assert) {
     var layout = { centerX: 0, centerY: 0, width: 0, height: 0 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
 
@@ -314,7 +314,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, width: auto, height: auto}", function () {
+  test("layout {top, left, width: auto, height: auto}", function (assert) {
     // Reset.
     child.destroy();
 
@@ -360,7 +360,7 @@ import { browser } from '../../../event/event.js';
   //
   // top, left, width, height
   //
-  test("layout {top, left, width, height, scale up}", function () {
+  test("layout {top, left, width, height, scale up}", function (assert) {
 
     var layout = { top: 10, left: 10, width: 50, height: 50, scale: 2 };
     var s = { top: 10, left: 10, width: 50, height: 50, transform: "scale(2)" };
@@ -370,7 +370,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
-  test("layout {top, left, width, height, scale down}", function () {
+  test("layout {top, left, width, height, scale down}", function (assert) {
 
     var layout = { top: 10, left: 10, width: 50, height: 50, scale: 0.6 };
     var s = { top: 10, left: 10, width: 50, height: 50, transform: "scale(0.6)" };
@@ -380,7 +380,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
-  test("layout {top, left, width, height, scale up, origin top left}", function () {
+  test("layout {top, left, width, height, scale up, origin top left}", function (assert) {
 
     var layout = { top: 10, left: 10, width: 50, height: 50, scale: 2, transformOriginX: 0, transformOriginY: 0 };
     var s = { top: 10, left: 10, width: 50, height: 50, transform: "scale(2)", transformOrigin: "0% 0%" };
@@ -390,7 +390,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
-  test("layout {top, left, width, height, scale down, origin top left}", function () {
+  test("layout {top, left, width, height, scale down, origin top left}", function (assert) {
 
     var layout = { top: 10, left: 10, width: 50, height: 50, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
     var s = { top: 10, left: 10, width: 50, height: 50, transform: "scale(0.6)", transformOrigin: "0% 0%" };
@@ -400,7 +400,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
-  test("layout {top, left, width, height, scale up, origin bottom right}", function () {
+  test("layout {top, left, width, height, scale up, origin bottom right}", function (assert) {
 
     var layout = { top: 10, left: 10, width: 50, height: 50, scale: 2, transformOriginX: 1, transformOriginY: 1 };
     var s = { top: 10, left: 10, width: 50, height: 50, transform: "scale(2)", transformOrigin: "100% 100%" };
@@ -410,7 +410,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
-  test("layout {top, left, width, height, scale down, origin bottom right}", function () {
+  test("layout {top, left, width, height, scale down, origin bottom right}", function (assert) {
 
     var layout = { top: 10, left: 10, width: 50, height: 50, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
     var s = { top: 10, left: 10, width: 50, height: 50, transform: "scale(0.6)", transformOrigin: "100% 100%" };
@@ -423,7 +423,7 @@ import { browser } from '../../../event/event.js';
   //
   // top, left, bottom, right
   //
-  test("layout {top, left, bottom, right, scale up}", function () {
+  test("layout {top, left, bottom, right, scale up}", function (assert) {
 
     var layout = { top: 10, left: 10, bottom: 10, right: 10, scale: 2 };
     var no_f = { x: 10, y: 10, width: 0, height: 0, scale: 2 };
@@ -433,7 +433,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, bottom, right, scale down}", function () {
+  test("layout {top, left, bottom, right, scale down}", function (assert) {
 
     var layout = { top: 10, left: 10, bottom: 10, right: 10, scale: 0.5 };
     var no_f = { x: 10, y: 10, width: 0, height: 0, scale: 0.5 };
@@ -443,7 +443,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, bottom, right, scale up, origin top left}", function () {
+  test("layout {top, left, bottom, right, scale up, origin top left}", function (assert) {
 
     var layout = { top: 10, left: 10, bottom: 10, right: 10, scale: 2, transformOriginX: 0, transformOriginY: 0 };
     var no_f = { x: 10, y: 10, width: 0, height: 0, scale: 2, transformOriginX: 0, transformOriginY: 0 };
@@ -453,7 +453,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, bottom, right, scale down, origin top left}", function () {
+  test("layout {top, left, bottom, right, scale down, origin top left}", function (assert) {
 
     var layout = { top: 10, left: 10, bottom: 10, right: 10, scale: 0.5, transformOriginX: 0, transformOriginY: 0 };
     var no_f = { x: 10, y: 10, width: 0, height: 0, scale: 0.5, transformOriginX: 0, transformOriginY: 0 };
@@ -463,7 +463,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, bottom, right, scale up, origin bottom right}", function () {
+  test("layout {top, left, bottom, right, scale up, origin bottom right}", function (assert) {
 
     var layout = { top: 10, left: 10, bottom: 10, right: 10, scale: 2, transformOriginX: 1, transformOriginY: 1 };
     var no_f = { x: 10, y: 10, width: 0, height: 0, scale: 2, transformOriginX: 1, transformOriginY: 1 };
@@ -473,7 +473,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, bottom, right, scale down, origin bottom right}", function () {
+  test("layout {top, left, bottom, right, scale down, origin bottom right}", function (assert) {
 
     var layout = { top: 10, left: 10, bottom: 10, right: 10, scale: 0.5, transformOriginX: 1, transformOriginY: 1 };
     var no_f = { x: 10, y: 10, width: 0, height: 0, scale: 0.5, transformOriginX: 1, transformOriginY: 1 };
@@ -486,7 +486,7 @@ import { browser } from '../../../event/event.js';
   //
   // bottom, right, width, height
   //
-  test("layout {bottom, right, width, height, scaled up}", function () {
+  test("layout {bottom, right, width, height, scaled up}", function (assert) {
 
     var layout = { bottom: 10, right: 10, width: 50, height: 50, scale: 2 };
     var no_f = { x: -25, y: -25, width: 100, height: 100, scale: 2 };
@@ -496,7 +496,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {bottom, right, width, height, scaled down}", function () {
+  test("layout {bottom, right, width, height, scaled down}", function (assert) {
 
     var layout = { bottom: 10, right: 10, width: 50, height: 50, scale: 0.6 };
     var no_f = { x: 10, y: 10, width: 30, height: 30, scale: 0.6 };
@@ -506,7 +506,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {bottom, right, width, height, scaled up, origin top left}", function () {
+  test("layout {bottom, right, width, height, scaled up, origin top left}", function (assert) {
 
     var layout = { bottom: 10, right: 10, width: 50, height: 50, scale: 2, transformOriginX: 0, transformOriginY: 0 };
     var no_f = { x: 0, y: 0, width: 100, height: 100, scale: 2, transformOriginX: 0, transformOriginY: 0 };
@@ -516,7 +516,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {bottom, right, width, height, scaled down, origin top left}", function () {
+  test("layout {bottom, right, width, height, scaled down, origin top left}", function (assert) {
 
     var layout = { bottom: 10, right: 10, width: 50, height: 50, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
     var no_f = { x: 0, y: 0, width: 30, height: 30, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
@@ -526,7 +526,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {bottom, right, width, height, scaled up, origin bottom right}", function () {
+  test("layout {bottom, right, width, height, scaled up, origin bottom right}", function (assert) {
 
     var layout = { bottom: 10, right: 10, width: 50, height: 50, scale: 2, transformOriginX: 1, transformOriginY: 1 };
     var no_f = { x: -50, y: -50, width: 100, height: 100, scale: 2, transformOriginX: 1, transformOriginY: 1 };
@@ -536,7 +536,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {bottom, right, width, height, scaled down, origin bottom right}", function () {
+  test("layout {bottom, right, width, height, scaled down, origin bottom right}", function (assert) {
 
     var layout = { bottom: 10, right: 10, width: 50, height: 50, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
     var no_f = { x: 20, y: 20, width: 30, height: 30, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
@@ -549,7 +549,7 @@ import { browser } from '../../../event/event.js';
   //
   // bottom, right, width, height
   //
-  test("layout {centerX, centerY, width, height, scale up}", function () {
+  test("layout {centerX, centerY, width, height, scale up}", function (assert) {
 
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60, scale: 2 };
     var no_f = { x: -20, y: -20, width: 120, height: 120, scale: 2 };
@@ -559,7 +559,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {centerX, centerY, width, height, scale down}", function () {
+  test("layout {centerX, centerY, width, height, scale down}", function (assert) {
 
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60, scale: 0.6 };
     var no_f = { x: 22, y: 22, width: 36, height: 36, scale: 0.6 };
@@ -569,7 +569,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {centerX, centerY, width, height, scale up, origin top left}", function () {
+  test("layout {centerX, centerY, width, height, scale up, origin top left}", function (assert) {
 
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60, scale: 2, transformOriginX: 0, transformOriginY: 0 };
     var no_f = { x: 10, y: 10, width: 120, height: 120, scale: 2, transformOriginX: 0, transformOriginY: 0 };
@@ -579,7 +579,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {centerX, centerY, width, height, scale down, origin top left}", function () {
+  test("layout {centerX, centerY, width, height, scale down, origin top left}", function (assert) {
 
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
     var no_f = { x: 10, y: 10, width: 36, height: 36, scale: 0.6, transformOriginX: 0, transformOriginY: 0 };
@@ -589,7 +589,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {centerX, centerY, width, height, scale up, origin bottom right}", function () {
+  test("layout {centerX, centerY, width, height, scale up, origin bottom right}", function (assert) {
 
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60, scale: 2, transformOriginX: 1, transformOriginY: 1 };
     var no_f = { x: -50, y: -50, width: 120, height: 120, scale: 2, transformOriginX: 1, transformOriginY: 1 };
@@ -599,7 +599,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {centerX, centerY, width, height, scale down, origin bottom right}", function () {
+  test("layout {centerX, centerY, width, height, scale down, origin bottom right}", function (assert) {
 
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
     var no_f = { x: 34, y: 34, width: 36, height: 36, scale: 0.6, transformOriginX: 1, transformOriginY: 1 };
@@ -609,7 +609,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, width: auto, height: auto, scale}", function () {
+  test("layout {top, left, width: auto, height: auto, scale}", function (assert) {
     // Reset.
     child.destroy();
 
@@ -666,7 +666,7 @@ import { browser } from '../../../event/event.js';
     return view.get('layer').style[browser.experimentalStyleNameFor('transform')];
   }
 
-  test("layout {rotateX}", function () {
+  test("layout {rotateX}", function (assert) {
     SC.run(function () {
       child.adjust('rotateX', 45).updateLayout(true);
     });
@@ -674,14 +674,14 @@ import { browser } from '../../../event/event.js';
     assert.equal(transformFor(child), 'rotateX(45deg)', 'transform attribute should be "rotateX(45deg)"');
   });
 
-  test("layout {rotateY}", function () {
+  test("layout {rotateY}", function (assert) {
     SC.run(function () {
       child.adjust('rotateY', 45).updateLayout(true);
     });
     assert.equal(transformFor(child), 'rotateY(45deg)', 'transform attribute should be "rotateY(45deg)"');
   });
 
-  test("layout {rotateZ}", function () {
+  test("layout {rotateZ}", function (assert) {
     SC.run(function () {
       child.adjust('rotateZ', 45).updateLayout(true);
     });
@@ -689,7 +689,7 @@ import { browser } from '../../../event/event.js';
     assert.equal(transformFor(child), 'rotateZ(45deg)', 'transform attribute should be "rotateZ(45deg)"');
   });
 
-  test("layout {rotate}", function () {
+  test("layout {rotate}", function (assert) {
     SC.run(function () {
       child.adjust('rotate', 45).updateLayout(true);
     });
@@ -697,7 +697,7 @@ import { browser } from '../../../event/event.js';
     assert.equal(transformFor(child), 'rotateZ(45deg)', 'transform attribute should be "rotateZ(45deg)"');
   });
 
-  test("layout {rotateX} with units", function () {
+  test("layout {rotateX} with units", function (assert) {
     SC.run(function () {
       child.adjust('rotateX', '1rad').updateLayout(true);
     });
@@ -707,7 +707,7 @@ import { browser } from '../../../event/event.js';
 
   // Scale is now a first-class layout property re: frame. The following are simple integration tests with
   // rotate.
-  test("layout {scale}", function () {
+  test("layout {scale}", function (assert) {
     SC.run(function () {
       child.adjust('scale', 2).updateLayout(true);
     });
@@ -715,7 +715,7 @@ import { browser } from '../../../event/event.js';
     assert.equal(transformFor(child), 'scale(2)', 'transform attribute should be "scale(2)"');
   });
 
-  test("layout {scale} with multiple", function () {
+  test("layout {scale} with multiple", function (assert) {
     SC.run(function () {
       child.adjust('scale', [2, 3]).updateLayout(true);
     });
@@ -723,7 +723,7 @@ import { browser } from '../../../event/event.js';
     assert.equal(transformFor(child), 'scale(2, 3)', 'transform attribute should be "scale(2, 3)"');
   });
 
-  test("layout {rotateX, scale}", function () {
+  test("layout {rotateX, scale}", function (assert) {
     SC.run(function () {
       child.adjust({ rotateX: 45, scale: 2 }).updateLayout(true);
     });
@@ -731,7 +731,7 @@ import { browser } from '../../../event/event.js';
     assert.equal(transformFor(child), 'rotateX(45deg) scale(2)', 'transform attribute should be "rotateX(45deg) scale(2)"');
   });
 
-  test("layout {rotateX} update", function () {
+  test("layout {rotateX} update", function (assert) {
     SC.run(function () {
       child.adjust('rotateX', 45).updateLayout(true);
       child.adjust('rotateX', 90).updateLayout(true);
@@ -758,7 +758,7 @@ import { browser } from '../../../event/event.js';
       afterEach: commonSetup.afterEach
     });
 
-    test("layout {top, left, width, height}", function () {
+    test("layout {top, left, width, height}", function (assert) {
       var layout = { top: 10, left: 10, width: 50, height: 50 };
       var expectedTransform = 'translateX(10px) translateY(10px)';
       if (platform.supportsCSS3DTransforms) expectedTransform += ' translateZ(0px)';
@@ -769,7 +769,7 @@ import { browser } from '../../../event/event.js';
       performLayoutTest(layout, no_f, s, with_f, s, true);
     });
 
-    test("layout {top, left, bottom, right}", function () {
+    test("layout {top, left, bottom, right}", function (assert) {
 
       var layout = { top: 10, left: 10, bottom: 10, right: 10 };
       var no_f = { x: 10, y: 10, width: 0, height: 0 };
@@ -779,7 +779,7 @@ import { browser } from '../../../event/event.js';
       performLayoutTest(layout, no_f, s, with_f, s, false);
     });
 
-    test("layout {top, left, width: auto, height: auto}", function () {
+    test("layout {top, left, width: auto, height: auto}", function (assert) {
       // Reset.
       child.destroy();
 
@@ -813,7 +813,7 @@ import { browser } from '../../../event/event.js';
     // See commented lines in test above
     // test("layout {top, left, width: auto, height: auto} - frame");
 
-    test("layout w/ percentage {top, left, width, height}", function () {
+    test("layout w/ percentage {top, left, width, height}", function (assert) {
 
       var layout = { top: 0.1, left: 0.1, width: 0.5, height: 0.5 };
       var s = { top: '10%', left: '10%', width: '50%', height: '50%', transform: null };
@@ -835,7 +835,7 @@ import { browser } from '../../../event/event.js';
 
   module('INVALID LAYOUT VARIATIONS', commonSetup);
 
-  test("layout {top, left} - assume right/bottom=0", function () {
+  test("layout {top, left} - assume right/bottom=0", function (assert) {
 
     var layout = { top: 0.1, left: 0.1 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -845,7 +845,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {height, width} - assume top/left=0", function () {
+  test("layout {height, width} - assume top/left=0", function (assert) {
 
     var layout = { height: 0.6, width: 0.6 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -856,7 +856,7 @@ import { browser } from '../../../event/event.js';
 
   });
 
-  test("layout {right, bottom} - assume top/left=0", function () {
+  test("layout {right, bottom} - assume top/left=0", function (assert) {
 
     var layout = { right: 0.1, bottom: 0.1 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -867,7 +867,7 @@ import { browser } from '../../../event/event.js';
 
   });
 
-  test("layout {right, bottom, maxWidth, maxHeight} - assume top/left=null", function () {
+  test("layout {right, bottom, maxWidth, maxHeight} - assume top/left=null", function (assert) {
 
     var layout = { right: 0.1, bottom: 0.1, maxWidth: 10, maxHeight: 10 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -878,7 +878,7 @@ import { browser } from '../../../event/event.js';
 
   });
 
-  test("layout {centerX, centerY} - assume width/height=0", function () {
+  test("layout {centerX, centerY} - assume width/height=0", function (assert) {
 
     var layout = { centerX: 0.1, centerY: 0.1 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -888,7 +888,7 @@ import { browser } from '../../../event/event.js';
 
   });
 
-  test("layout {top, left, centerX, centerY, height, width} - top/left take presidence", function () {
+  test("layout {top, left, centerX, centerY, height, width} - top/left take presidence", function (assert) {
 
     var layout = { top: 0.1, left: 0.1, centerX: 0.1, centerY: 0.1, height: 0.6, width: 0.6 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -899,7 +899,7 @@ import { browser } from '../../../event/event.js';
 
   });
 
-  test("layout {bottom, right, centerX, centerY, height, width} - bottom/right take presidence", function () {
+  test("layout {bottom, right, centerX, centerY, height, width} - bottom/right take presidence", function (assert) {
 
     var layout = { bottom: 0.1, right: 0.1, centerX: 0.1, centerY: 0.1, height: 0.6, width: 0.6 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -910,7 +910,7 @@ import { browser } from '../../../event/event.js';
 
   });
 
-  test("layout {top, left, bottom, right, centerX, centerY, height, width} - top/left take presidence", function () {
+  test("layout {top, left, bottom, right, centerX, centerY, height, width} - top/left take presidence", function (assert) {
 
     var layout = { top: 0.1, left: 0.1, bottom: 0.1, right: 0.1, centerX: 0.1, centerY: 0.1, height: 0.6, width: 0.6 };
     var no_f = { x: 0, y: 0, width: 0, height: 0 };
@@ -922,7 +922,7 @@ import { browser } from '../../../event/event.js';
   });
 
 
-  test("layout {centerX, centerY, width:auto, height:auto}", function () {
+  test("layout {centerX, centerY, width:auto, height:auto}", function (assert) {
     var error = null;
     var layout = { centerX: 0.1, centerY: 0.1, width: 'auto', height: 'auto' };
 
@@ -946,7 +946,7 @@ import { browser } from '../../../event/event.js';
 
   module('BORDER LAYOUT VARIATIONS', commonSetup);
 
-  test("layout {top, left, width, height, border}", function () {
+  test("layout {top, left, width, height, border}", function (assert) {
     var layout = { top: 10, left: 10, width: 50, height: 50, border: 2 };
     var s = { top: 10, left: 10, width: 46, height: 46,
               borderTopWidth: 2, borderRightWidth: 2, borderBottomWidth: 2, borderLeftWidth: 2 };
@@ -956,7 +956,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, true);
   });
 
-  test("layout {top, left, bottom, right, border}", function () {
+  test("layout {top, left, bottom, right, border}", function (assert) {
     var layout = { top: 10, left: 10, bottom: 10, right: 10, border: 2 };
     var no_f = { x: 12, y: 12, width: 0, height: 0 };
     var with_f = { x: 12, y: 12, width: 176, height: 176 };
@@ -966,7 +966,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, bottom, right, borderTop, borderLeft, borderRight, borderBottom}", function () {
+  test("layout {top, left, bottom, right, borderTop, borderLeft, borderRight, borderBottom}", function (assert) {
     var layout = { top: 10, left: 10, bottom: 10, right: 10, borderTop: 1, borderRight: 2, borderBottom: 3, borderLeft: 4 };
     var no_f = { x: 14, y: 11, width: 0, height: 0 };
     var with_f = { x: 14, y: 11, width: 174, height: 176 };
@@ -976,7 +976,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, bottom, right, border, borderTop, borderLeft}", function () {
+  test("layout {top, left, bottom, right, border, borderTop, borderLeft}", function (assert) {
     var layout = { top: 10, left: 10, bottom: 10, right: 10, border: 5, borderTop: 1, borderRight: 2 };
     var no_f = { x: 15, y: 11, width: 0, height: 0 };
     var with_f = { x: 15, y: 11, width: 173, height: 174 };
@@ -986,7 +986,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {bottom, right, width, height, border}", function () {
+  test("layout {bottom, right, width, height, border}", function (assert) {
 
     var layout = { bottom: 10, right: 10, width: 50, height: 50, border: 2 };
     var no_f = { x: 2, y: 2, width: 46, height: 46 };
@@ -997,7 +997,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {centerX, centerY, width, height, border}", function () {
+  test("layout {centerX, centerY, width, height, border}", function (assert) {
 
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60, border: 2 };
     var no_f = { x: 12, y: 12, width: 56, height: 56 };
@@ -1008,7 +1008,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(layout, no_f, s, with_f, s, false);
   });
 
-  test("layout {top, left, width: auto, height: auto}", function () {
+  test("layout {top, left, width: auto, height: auto}", function (assert) {
     // Reset.
     child.destroy();
 
@@ -1056,28 +1056,28 @@ import { browser } from '../../../event/event.js';
 
   }
 
-  test("frame does not change with top/left/w/h", function () {
+  test("frame does not change with top/left/w/h", function (assert) {
     var layout = { top: 10, left: 10, width: 60, height: 60 };
     var before = { x: 10, y: 10, width: 60, height: 60 };
     var after =  { x: 10, y: 10, width: 60, height: 60 };
     verifyFrameResize(layout, before, after);
   });
 
-  test("frame shifts down with bottom/right/w/h", function () {
+  test("frame shifts down with bottom/right/w/h", function (assert) {
     var layout = { bottom: 10, right: 10, width: 60, height: 60 };
     var before = { x: 130, y: 130, width: 60, height: 60 };
     var after =  { x: 230, y: 230, width: 60, height: 60 };
     verifyFrameResize(layout, before, after);
   });
 
-  test("frame size shifts with top/left/bottom/right", function () {
+  test("frame size shifts with top/left/bottom/right", function (assert) {
     var layout = { top: 10, left: 10, bottom: 10, right: 10 };
     var before = { x: 10, y: 10, width: 180, height: 180 };
     var after =  { x: 10, y: 10, width: 280, height: 280 };
     verifyFrameResize(layout, before, after);
   });
 
-  test("frame loc shifts with centerX/centerY", function () {
+  test("frame loc shifts with centerX/centerY", function (assert) {
     var layout = { centerX: 10, centerY: 10, width: 60, height: 60 };
     var before = { x: 80, y: 80, width: 60, height: 60 };
     var after =  { x: 130, y: 130, width: 60, height: 60 };
@@ -1086,28 +1086,28 @@ import { browser } from '../../../event/event.js';
 
   //with percentage
 
-  test("frame does not change with top/left/w/h - percentage", function () {
+  test("frame does not change with top/left/w/h - percentage", function (assert) {
     var layout = { top: 0.1, left: 0.1, width: 0.6, height: 0.6 };
     var before = { x: 20, width: 120, y: 20, height: 120 };
     var after =  { x: 30, y: 30, width: 180, height: 180 };
     verifyFrameResize(layout, before, after);
   });
 
-  test("frame shifts down with bottom/right/w/h - percentage", function () {
+  test("frame shifts down with bottom/right/w/h - percentage", function (assert) {
     var layout = { bottom: 0.1, right: 0.1, width: 0.6, height: 0.6 };
     var before = { x: 60, y: 60, width: 120, height: 120 };
     var after =  { x: 90, y: 90, width: 180, height: 180 };
     verifyFrameResize(layout, before, after);
   });
 
-  test("frame size shifts with top/left/bottom/right - percentage", function () {
+  test("frame size shifts with top/left/bottom/right - percentage", function (assert) {
     var layout = { top: 0.1, left: 0.1, bottom: 0.1, right: 0.1 };
     var before = { x: 20, y: 20, width: 160, height: 160 };
     var after =  { x: 30, y: 30, width: 240, height: 240 };
     verifyFrameResize(layout, before, after);
   });
 
-  test("frame loc shifts with centerX/centerY - percentage", function () {
+  test("frame loc shifts with centerX/centerY - percentage", function (assert) {
     var layout = { centerX: 0, centerY: 0, width: 0.6, height: 0.6 };
     var before = { x: 40, y: 40, width: 120, height: 120 };
     var after =  { x: 60, y: 60, width: 180, height: 180 };
@@ -1119,7 +1119,7 @@ import { browser } from '../../../event/event.js';
 
   module('STATIC LAYOUT VARIATIONS', commonSetup);
 
-  test("no layout", function () {
+  test("no layout", function (assert) {
 
     var no_f = null,
         no_s = {},
@@ -1131,7 +1131,7 @@ import { browser } from '../../../event/event.js';
     performLayoutTest(View.prototype.layout, no_f, no_s, with_f, with_s, false);
   });
 
-  test("with layout", function () {
+  test("with layout", function (assert) {
 
     var layout = { top: 10, left: 10, width: 50, height: 50 },
         no_f = null,
@@ -1198,7 +1198,7 @@ import { browser } from '../../../event/event.js';
     unuseful buffered jQuery code, where updating the style failed to clear the
     old style from the view's style attribute.
   */
-  test("with computed layout", function () {
+  test("with computed layout", function (assert) {
     var expectedLayoutStyle,
       expectedStyleAttr,
       layoutStyle,
@@ -1263,7 +1263,7 @@ import { browser } from '../../../event/event.js';
     There was a regression where switching from a centered layout to a non-centered
     layout failed to remove the margin style.
   */
-  test("Switching from centered to non-centered layouts.", function () {
+  test("Switching from centered to non-centered layouts.", function (assert) {
     var styleAttr;
 
     SC.run(function () {

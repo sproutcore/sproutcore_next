@@ -8,6 +8,7 @@
 import { SC } from '../../../core/core.js';
 import { View } from '../../../view/view.js';
 import { CoreTest } from '../../../testing/testing.js';
+
 // ..........................................................
 // viewDidResize()
 //

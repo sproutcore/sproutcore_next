@@ -32,11 +32,11 @@ module("SC.RangeObserver#create", {
   }
 });
 
-test("returns new instance", function() {
+test("returns new instance", function (assert) {
   assert.ok(obj && obj.isRangeObserver, 'returns range observer');
 });
 
-test("sets up observing on properties for each object in range in index if isDeep", function() {
+test("sets up observing on properties for each object in range in index if isDeep", function (assert) {
   var len = source.length, idx;
   for(idx=0;idx<len;idx++) {
     source[idx].set('foo', 'baz');
@@ -44,7 +44,7 @@ test("sets up observing on properties for each object in range in index if isDee
   assert.equal(observer.callCount, 2, 'range observer should fire twice');
 });
 
-test("does not observe object properties if isDeep is false", function() {
+test("does not observe object properties if isDeep is false", function (assert) {
   // remove unneeded observer
   obj.destroy();
 
@@ -58,7 +58,7 @@ test("does not observe object properties if isDeep is false", function() {
   assert.equal(observer.callCount, 0, 'range observer should not fire');
 });
 
-test("SC.RangeObserver.create should accept methods specified as strings", function() {
+test("SC.RangeObserver.create should accept methods specified as strings", function (assert) {
   var myArray = [ SC.Object.create({ prop: 0 })],
       rangeObserverCount = 0,
       observer = SC.Object.create({

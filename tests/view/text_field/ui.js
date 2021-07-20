@@ -8,9 +8,9 @@
 
 import { SC } from '../../../core/core.js';
 import { ControlTestPane } from '../test_support/control_test_pane.js';
-import { TextFieldView, TextSelection, View, ResponderContext } from '../../../view/view.js';
+import { TextFieldView, TextSelection, View } from '../../../view/view.js';
 import { SCEvent, browser } from '../../../event/event.js';
-import { Responder, platform } from '../../../responder/responder.js';
+import { Responder, platform, ResponderContext } from '../../../responder/responder.js';
 
 (function () {
   var pane = ControlTestPane.design()

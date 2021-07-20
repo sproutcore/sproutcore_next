@@ -49,7 +49,7 @@ module("SC.RangeObserver#rangeDidChange", {
   }
 });
 
-test("returns receiver", function() {
+test("returns receiver", function (assert) {
   assert.ok(obj.rangeDidChange() === obj, 'should return receiver');
 });
 
@@ -57,21 +57,21 @@ test("returns receiver", function() {
 // CALLBACK
 // 
 
-test("invokes callback if no changes set is passed", function() {
+test("invokes callback if no changes set is passed", function (assert) {
   observer.verify = true ;
   observer.indexes = null ;
   obj.rangeDidChange();
   assert.equal(observer.callCount, 1, 'should invoke callback');
 });
 
-test("invokes callback if changes set is passed and it intersects with observed range", function() {
+test("invokes callback if changes set is passed and it intersects with observed range", function (assert) {
   observer.verify = true ;
   observer.indexes = SC.IndexSet.create(1,2) ;
   obj.rangeDidChange(observer.indexes);
   assert.equal(observer.callCount, 1, 'should invoke callback');
 });
 
-test("does NOT invoke callback if changes set is passed and it intersects with observed range", function() {
+test("does NOT invoke callback if changes set is passed and it intersects with observed range", function (assert) {
   obj.rangeDidChange(SC.IndexSet.create(4));
   assert.equal(observer.callCount, 0, 'should NOT invoke callback');
 });
@@ -80,7 +80,7 @@ test("does NOT invoke callback if changes set is passed and it intersects with o
 // OBSERVER UPDATES
 // 
 
-test("if object in observed range changes, should stop observing old objects and start observing new objects - no previous changes", function() {
+test("if object in observed range changes, should stop observing old objects and start observing new objects - no previous changes", function (assert) {
   
   var newObject = SC.Object.create({ item: 10, foo: "baz" });
   source[2] = newObject; // bypass KVO since we are testing it
@@ -92,7 +92,7 @@ test("if object in observed range changes, should stop observing old objects and
     
 });
 
-test("if object in observed range changes, should stop observing old objects and start observing new objects - previous changes", function() {
+test("if object in observed range changes, should stop observing old objects and start observing new objects - previous changes", function (assert) {
   
   source[2].set('foo', 'FOO2');
   assert.equal(observer.callCount, 1, 'precond - should invoke observer on original object');

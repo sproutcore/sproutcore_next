@@ -80,52 +80,52 @@ var outputAll = function() {
     
 
 
-test("exists", function() {
+test("exists", function (assert) {
   assert.equal(SC.Logger.get('exists'), true, "Reporter does exist check");
   
   SC.Logger.set('reporter', null);
   assert.equal(SC.Logger.get('exists'), false, "Reporter does not exist check");
 });
 
-test("profile", function() {
+test("profile", function (assert) {
   assert.equal(SC.Logger.profile(), true, "profile() function is defined");
   
   SC.Logger.get('reporter').profile = null;
   assert.equal(SC.Logger.profile(), false, "profile() function is null");
 });
 
-test("profileEnd", function() {
+test("profileEnd", function (assert) {
   assert.equal(SC.Logger.profileEnd(), true, "profileEnd() function is defined");
   
   SC.Logger.get('reporter').profileEnd = null;
   assert.equal(SC.Logger.profileEnd(), false, "profileEnd() function is null");
 });
 
-test("time", function() {
+test("time", function (assert) {
   assert.equal(SC.Logger.time('mytime'), true, "time() function is defined");
   
   SC.Logger.get('reporter').time = null;
   assert.equal(SC.Logger.time('mytime'), false, "time() function is null");
 });
 
-test("timeEnd", function() {
+test("timeEnd", function (assert) {
   assert.equal(SC.Logger.timeEnd('mytime'), true, "timeEnd() function is defined");
   
   SC.Logger.get('reporter').timeEnd = null;
   assert.equal(SC.Logger.timeEnd('mytime'), false, "timeEnd() function is null");
 });
 
-test("trace", function() {
+test("trace", function (assert) {
   assert.equal(SC.Logger.trace(), true, "trace() function is defined");
   
   SC.Logger.get('reporter').trace = null;
   assert.equal(SC.Logger.trace(), false, "trace() function is null");
 });
 
-test("_argumentsToString", function() {
-  assert.equal(SC.Logger._argumentsToString.apply(SC.Logger, ["test", "test2"]), "test" + SC.LOGGER_LOG_DELIMITER + "test2", "Formatting using default delimiter");
+test("_argumentsToString", function (assert) {
+  assert.equal(SC.Logger._argumentsToString.apply(SC.Logger, ["test", "test2"]), "test" + SC.getSetting('LOGGER_LOG_DELIMITER') + "test2", "Formatting using default delimiter");
   
-  SC.LOGGER_LOG_DELIMITER = "|";
+  SC.setSetting('LOGGER_LOG_DELIMITER', "|");
   assert.equal(SC.Logger._argumentsToString.apply(SC.Logger, ["test", "test2"]), "test|test2", "Formatting using custom delimiter");
 });
 
@@ -139,10 +139,10 @@ test("_argumentsToString", function() {
 // In case anybody else has recorded a log message, all of these tests will
 // start out by clearing the recorded log messages array.
 
-test("Ensure that log levels function properly:  none", function() {
+test("Ensure that log levels function properly:  none", function (assert) {
   SC.Logger.set('recordedLogMessages', null);
 
-  SC.Logger.set('logRecordingLevel', SC.LOGGER_LEVEL_NONE);
+  SC.Logger.set('logRecordingLevel', SC.getSetting('LOGGER_LEVEL_NONE'));
   outputAll();
 
   // If it was null before, it should be still be null, since no messages
@@ -155,10 +155,10 @@ test("Ensure that log levels function properly:  none", function() {
   assert.equal(SC.Logger.getPath('recordedLogMessages.length'), 0, "recordedLogMessages remains an empty array");
 });
 
-test("Ensure that log levels function properly:  debug", function() {
+test("Ensure that log levels function properly:  debug", function (assert) {
   SC.Logger.set('recordedLogMessages', null);
 
-  SC.Logger.set('logRecordingLevel', SC.LOGGER_LEVEL_DEBUG);
+  SC.Logger.set('logRecordingLevel', SC.getSetting('LOGGER_LEVEL_DEBUG'));
   outputAll();
 
   // All four messages (plus group begin / end directives) should have been
@@ -171,10 +171,10 @@ test("Ensure that log levels function properly:  debug", function() {
   assert.equal(SC.Logger.getPath('recordedLogMessages.10').message, errorMessage, "recordedLogMessages[10] should be the error message");  
 });
 
-test("Ensure that log levels function properly:  info", function() {
+test("Ensure that log levels function properly:  info", function (assert) {
   SC.Logger.set('recordedLogMessages', null);
 
-  SC.Logger.set('logRecordingLevel', SC.LOGGER_LEVEL_INFO);
+  SC.Logger.set('logRecordingLevel', SC.getSetting('LOGGER_LEVEL_INFO'));
   outputAll();
 
   // Three messages (plus group begin / end directives) should have been
@@ -186,10 +186,10 @@ test("Ensure that log levels function properly:  info", function() {
   assert.equal(SC.Logger.getPath('recordedLogMessages.7').message, errorMessage, "recordedLogMessages[7] should be the error message");
 });
 
-test("Ensure that log levels function properly:  warn", function() {
+test("Ensure that log levels function properly:  warn", function (assert) {
   SC.Logger.set('recordedLogMessages', null);
 
-  SC.Logger.set('logRecordingLevel', SC.LOGGER_LEVEL_WARN);
+  SC.Logger.set('logRecordingLevel', SC.getSetting('LOGGER_LEVEL_WARN'));
   outputAll();
 
   // Two messages (plus group begin / end directives) should have been logged.
@@ -199,10 +199,10 @@ test("Ensure that log levels function properly:  warn", function() {
   assert.equal(SC.Logger.getPath('recordedLogMessages.4').message, errorMessage, "recordedLogMessages[4] should be the error message");
 });
 
-test("Ensure that log levels function properly:  error", function() {
+test("Ensure that log levels function properly:  error", function (assert) {
   SC.Logger.set('recordedLogMessages', null);
 
-  SC.Logger.set('logRecordingLevel', SC.LOGGER_LEVEL_ERROR);
+  SC.Logger.set('logRecordingLevel', SC.getSetting('LOGGER_LEVEL_ERROR'));
   outputAll();
 
   // Only the error message (plus group begin / end directives) should have
@@ -214,9 +214,9 @@ test("Ensure that log levels function properly:  error", function() {
 });
 
 
-test("Ensure that log messages via the “will format” methods actually format", function() {
+test("Ensure that log messages via the “will format” methods actually format", function (assert) {
   SC.Logger.set('recordedLogMessages', null);
-  SC.Logger.set('logRecordingLevel', SC.LOGGER_LEVEL_DEBUG);
+  SC.Logger.set('logRecordingLevel', SC.getSetting('LOGGER_LEVEL_DEBUG'));
 
   var format   = "This message should be formatted:  %@:%@",
       expected = format.fmt(null, 1);
@@ -232,9 +232,9 @@ test("Ensure that log messages via the “will format” methods actually format
   assert.equal(SC.Logger.getPath('recordedLogMessages.3').message, expected, "error() should call String.fmt");
 });
 
-test("Ensure that log messages via the “will not format” methods don’t format, but are still recorded", function() {
+test("Ensure that log messages via the “will not format” methods don’t format, but are still recorded", function (assert) {
   SC.Logger.set('recordedLogMessages', null);
-  SC.Logger.set('logRecordingLevel', SC.LOGGER_LEVEL_DEBUG);
+  SC.Logger.set('logRecordingLevel', SC.getSetting('LOGGER_LEVEL_DEBUG'));
 
   var message = "This message should not be formatted:  %@:%@";
   SC.Logger.debugWithoutFmt(message, null, 1);
@@ -270,10 +270,10 @@ test("Ensure that log messages via the “will not format” methods don’t for
 // ..........................................................
 // LOG MESSAGE PREFIX
 //
-test("Ensure that the log message prefix is respected", function() {
+test("Ensure that the log message prefix is respected", function (assert) {
   SC.Logger.set('recordedLogMessages', null);
 
-  SC.Logger.set('logRecordingLevel', SC.LOGGER_LEVEL_DEBUG);
+  SC.Logger.set('logRecordingLevel', SC.getSetting('LOGGER_LEVEL_DEBUG'));
 
   SC.Logger.set('messagePrefix', "prefix: ");
   SC.Logger.debug("message");

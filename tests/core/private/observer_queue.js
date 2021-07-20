@@ -23,7 +23,7 @@ module("SC.ObserverQueue.isObservingSuspended", {
   }
 });
 
-test("suspending observers stops notification", function() {
+test("suspending observers stops notification", function (assert) {
   SC.ObserverQueue.suspendPropertyObserving();
   SC.ObserverQueue.suspendPropertyObserving();
   obj.set("foo");
@@ -42,7 +42,7 @@ test("suspending observers stops notification", function() {
 //
 
 // this test verifies a specific bug in the SC.Observing.propertyDidChange method.
-test("suspended notifications should work when nesting property change groups", function() {
+test("suspended notifications should work when nesting property change groups", function (assert) {
 
   SC.ObserverQueue.suspendPropertyObserving();
   obj.beginPropertyChanges();
@@ -59,7 +59,7 @@ test("suspended notifications should work when nesting property change groups", 
 
 module("SC.ObserverQueue.addObserver");
 
-test("Object not yet instantiated", function() {
+test("Object not yet instantiated", function (assert) {
   var garage, car, observer;
 
   garage = SC.Object.create({

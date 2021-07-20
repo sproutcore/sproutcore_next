@@ -75,13 +75,13 @@ module("SC.RangeObserver#objectPropertyDidChange", {
   }
 });
 
-test("changing property on object that does not appear in range", function() {
+test("changing property on object that does not appear in range", function (assert) {
   obj = SC.RangeObserver.create(source, indexes, observer, observer.changeObserver, null, true);
   source[4].set('foo', 'baz');
   assert.equal(observer.callCount, 0, 'should not invoke observer callback') ;
 });
 
-test("changing property on object that appears one time in range", function() {
+test("changing property on object that appears one time in range", function (assert) {
   observer.setupVerify(source[2], 'foo', SC.IndexSet.create(2));
   
   obj = SC.RangeObserver.create(source, indexes, observer, observer.changeObserver, null, true);
@@ -89,7 +89,7 @@ test("changing property on object that appears one time in range", function() {
   assert.equal(observer.callCount, 1, 'should not invoke observer callback') ;
 }) ;
 
-test("changing property on object that appears more than one time in range", function() {
+test("changing property on object that appears more than one time in range", function (assert) {
   source[3] = source[2]; // copy item.  don't use KVO because we're testing it
   observer.setupVerify(source[2], 'foo', SC.IndexSet.create(2,2));
   
@@ -98,7 +98,7 @@ test("changing property on object that appears more than one time in range", fun
   assert.equal(observer.callCount, 1, 'should not invoke observer callback') ;
 });
 
-test("changing all properties on object that apepars one time in range", function() {
+test("changing all properties on object that apepars one time in range", function (assert) {
   observer.setupVerify(source[2], '*', SC.IndexSet.create(2));
   
   obj = SC.RangeObserver.create(source, indexes, observer, observer.changeObserver, null, true);
@@ -106,7 +106,7 @@ test("changing all properties on object that apepars one time in range", functio
   assert.equal(observer.callCount, 1, 'should not invoke observer callback') ;
 });
 
-test("notifications with context", function() {
+test("notifications with context", function (assert) {
   observer.setupVerify(source[2], 'foo', SC.IndexSet.create(2), 'context');
   
   obj = SC.RangeObserver.create(source, indexes, observer, observer.changeObserver, 'context', true);

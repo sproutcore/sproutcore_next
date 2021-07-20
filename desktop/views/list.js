@@ -430,7 +430,7 @@ export const ListView = CollectionView.extend(CollectionRowDelegate,
 
     // find the smallest index changed; invalidate everything past it
     if (indexes && indexes.isIndexSet) indexes = indexes.get('min');
-    this.reload(IndexSet.create(indexes, len - indexes));
+    this.reload(SC.IndexSet.create(indexes, len - indexes));
 
     // If the row height changes, our entire layout needs to change.
     this.invokeOnce('adjustLayout');
@@ -581,7 +581,7 @@ export const ListView = CollectionView.extend(CollectionRowDelegate,
     if (end > len) end = len;
 
     // convert to IndexSet and return
-    return IndexSet.create(start, end - start);
+    return SC.IndexSet.create(start, end - start);
   },
 
 

@@ -13,7 +13,7 @@ module("Number#ordinal");
 /**
  * Admitedly not exhaustive, but tests the numbers from 1-100
  */
-test("Properly Computes the Ordinal in english", function () {
+test("Properly Computes the Ordinal in english", function (assert) {
   var sts = [1, 21, 31, 41, 51, 61, 71, 81, 91, 101],
     nds = [2, 22, 32, 42, 52, 62, 72, 82, 92, 102],
     rds = [3, 23, 33, 43, 53, 63, 73, 83, 93, 103];

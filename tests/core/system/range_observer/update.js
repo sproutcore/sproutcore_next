@@ -32,11 +32,11 @@ module("SC.RangeObserver#update", {
   }
 });
 
-test("returns receiver", function() {
+test("returns receiver", function (assert) {
   assert.ok(obj === obj.update(source, SC.IndexSet.create()), 'should return receiver');
 });
 
-test("switches to observing new range - no previous updated", function() {
+test("switches to observing new range - no previous updated", function (assert) {
   obj.update(source, SC.IndexSet.create(0));
   observer.callCount = 0 ;
   
@@ -48,7 +48,7 @@ test("switches to observing new range - no previous updated", function() {
   assert.equal(observer.callCount, 1, 'range observer should fire on new range');
 });
 
-test("switches to observing new range - previously updated", function() {
+test("switches to observing new range - previously updated", function (assert) {
   var len = source.length, idx;
   for(idx=0;idx<len;idx++) source[idx].set('foo', 'baz');
   observer.callCount = 0 ;

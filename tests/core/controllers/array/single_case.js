@@ -33,7 +33,7 @@ module("SC.ArrayController - single_case - SINGLE", {
   }
 });
 
-test("state properties", function() {
+test("state properties", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'c.hasContent');
   assert.equal(controller.get("canRemoveContent"), true, "c.canRemoveContent");
   assert.equal(controller.get("canReorderContent"), false, "c.canReorderContent");
@@ -41,13 +41,13 @@ test("state properties", function() {
 });
 
 // addObject should append to end of array + notify observers on Array itself
-test("addObject", function() {
+test("addObject", function (assert) {
   assert.throws(function() {
     controller.addObject(extra);
   }, Error, "controller.addObject should throw exception");
 });
 
-test("removeObject - no destroyOnRemoval", function() {
+test("removeObject - no destroyOnRemoval", function (assert) {
   var callCount = 0;
   controller.set('destroyOnRemoval', false);
   controller.addObserver('[]', function() { callCount++; });
@@ -60,25 +60,25 @@ test("removeObject - no destroyOnRemoval", function() {
   assert.equal(content.isDestroyed, false, 'content.isDestroyed should be destroyed');
 });
 
-test("removeObject - destroyOnRemoval", function() {
+test("removeObject - destroyOnRemoval", function (assert) {
   controller.set('destroyOnRemoval', true);
   SC.run(function() { controller.removeObject(content); });
   assert.equal(content.isDestroyed, true, 'content.isDestroyed should be destroyed');
 });
 
 
-test("basic array READ operations", function() {
+test("basic array READ operations", function (assert) {
   assert.equal(controller.get("length"), 1, 'length should be 1');
   assert.equal(controller.objectAt(0), content, "objectAt(0) should return content");
 });
 
-test("basic array WRITE operations", function() {
+test("basic array WRITE operations", function (assert) {
   assert.throws(function() {
     controller.replace(0,1,[extra]);
   }, Error, "calling replace on an enumerable should throw");
 });
 
-test("arrangedObjects", function() {
+test("arrangedObjects", function (assert) {
   assert.equal(controller.get("arrangedObjects"), controller, 'c.arrangedObjects should return receiver');
 });
 
@@ -100,7 +100,7 @@ module("SC.ArrayController - single_case - allowsSingleContent=false", {
   }
 });
 
-test("state properties", function() {
+test("state properties", function (assert) {
   assert.equal(controller.get("hasContent"), false, 'c.hasContent');
   assert.equal(controller.get("canRemoveContent"), false, "c.canRemoveContent");
   assert.equal(controller.get("canReorderContent"), false, "c.canReorderContent");
@@ -108,30 +108,30 @@ test("state properties", function() {
 });
 
 // addObject should append to end of array + notify observers on Array itself
-test("addObject", function() {
+test("addObject", function (assert) {
   assert.throws(function() {
     controller.addObject(extra);
   }, Error, "controller.addObject should throw exception");
 });
 
-test("removeObject", function() {
+test("removeObject", function (assert) {
   assert.throws(function() {
     controller.removeObject(extra);
   }, Error, "controller.removeObject should throw exception");
 });
 
-test("basic array READ operations", function() {
+test("basic array READ operations", function (assert) {
   assert.equal(controller.get("length"), 0, 'length should be empty');
   assert.equal(controller.objectAt(0), undefined, "objectAt() should return undefined");
 });
 
-test("basic array WRITE operations", function() {
+test("basic array WRITE operations", function (assert) {
   assert.throws(function() {
     controller.replace(0,1,[extra]);
   }, Error, "calling replace on an enumerable should throw");
 });
 
-test("arrangedObjects", function() {
+test("arrangedObjects", function (assert) {
   assert.equal(controller.get("arrangedObjects"), controller, 'c.arrangedObjects should return receiver');
 });
 

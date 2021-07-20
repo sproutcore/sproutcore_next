@@ -52,11 +52,11 @@ module("object.propertyChanges()", {
   -- observers fire here!
 */
 //
-test("should increment the indicator before begining the changes to the object", function() {
+test("should increment the indicator before begining the changes to the object", function (assert) {
     assert.equal(ObjectA.beginPropertyChanges()._kvo_changeLevel, 1) ;
 });
 
-test("should decrement the indicator after ending the changes to the object", function() {
+test("should decrement the indicator after ending the changes to the object", function (assert) {
     assert.equal(ObjectA.endPropertyChanges()._kvo_changeLevel, 0) ;
 });
 
@@ -66,7 +66,7 @@ test("should decrement the indicator after ending the changes to the object", fu
 // what you expect to have happen.  You should always comment in the test 
 // anytime you expect something to happen in the background (such as expecting
 // an observer to fire.) 
-test("should indicate that the property of an object has just changed", function() {
+test("should indicate that the property of an object has just changed", function (assert) {
 	assert.equal(ObjectA.propertyWillChange('normal'),ObjectA) ;
 	ObjectA.normal = 'newValue';
 	assert.equal(ObjectA.propertyDidChange('normal', null),ObjectA) ;
@@ -76,13 +76,13 @@ test("should indicate that the property of an object has just changed", function
 // CAJ:  See my comment from above.  It's not clear how this test works.  
 // Consider using different property names and add a comment inline to 
 // explain that you expect an observer to fire.
-test("should notify that the property of an object has changed", function() {
+test("should notify that the property of an object has changed", function (assert) {
 	ObjectA.notifyPropertyChange('normal2','value');
 	assert.equal(ObjectA.normal3,'newDependentValue') ;
 });
 
 // CAJ:  Same comment here as the previous two tests.
-test("should notify all observers that their property might have changed", function() {
+test("should notify all observers that their property might have changed", function (assert) {
 	ObjectA.allPropertiesDidChange();
 	assert.equal(ObjectA.normal2,'newZeroValue') ;
 });

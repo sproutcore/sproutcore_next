@@ -19,7 +19,7 @@ import { SC, GLOBAL } from '../../../../core/core.js';
     }
   });
 
-  test("concatenates instances", function() {
+  test("concatenates instances", function (assert) {
     var obj = klass.create({
       values: ['d', 'e', 'f']
     });
@@ -29,7 +29,7 @@ import { SC, GLOBAL } from '../../../../core/core.js';
     assert.deepEqual(values, expected, "should concatenate values property (expected: %@, got: %@)".fmt(expected, values));
   });
 
-  test("concatenates subclasses", function() {
+  test("concatenates subclasses", function (assert) {
     var subKlass = klass.extend({
       values: ['d', 'e', 'f']
     });
@@ -40,7 +40,7 @@ import { SC, GLOBAL } from '../../../../core/core.js';
     assert.deepEqual(values, expected, "should concatenate values property (expected: %@, got: %@)".fmt(expected, values));
   });
 
-  test("concatenates reopen", function() {
+  test("concatenates reopen", function (assert) {
     klass.reopen({
       values: ['d', 'e', 'f']
     });
@@ -51,7 +51,7 @@ import { SC, GLOBAL } from '../../../../core/core.js';
     assert.deepEqual(values, expected, "should concatenate values property (expected: %@, got: %@)".fmt(expected, values));
   });
 
-  test("concatenates mixin", function() {
+  test("concatenates mixin", function (assert) {
     var mixin = {
       values: ['d', 'e']
     };
@@ -65,7 +65,7 @@ import { SC, GLOBAL } from '../../../../core/core.js';
     assert.deepEqual(values, expected, "should concatenate values property (expected: %@, got: %@)".fmt(expected, values));
   });
 
-  test("concatenates reopen, subclass, and instance", function() {
+  test("concatenates reopen, subclass, and instance", function (assert) {
     klass.reopen({ values: ['d'] });
     var subKlass = klass.extend({ values: ['e'] });
     var obj = subKlass.create({ values: ['f'] });

@@ -6,7 +6,7 @@
 
 import { SC } from '../../../core/core.js';
 import { Gesture, Gesturable, View, Pane } from '../../../view/view.js';
-import { CoreTest } from '../../testing/testing.js';
+import { CoreTest } from '../../../testing/testing.js';
 
 
 var view;

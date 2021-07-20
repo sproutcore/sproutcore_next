@@ -7,6 +7,7 @@
 
 import { SC } from '../../core/core.js';
 import { CoreTest } from './core_test.js';
+import '../../node_modules/jquery/dist/jquery.slim.js';
 
 /*globals CoreTest Q$ */
 

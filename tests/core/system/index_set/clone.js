@@ -16,7 +16,7 @@ module("SC.IndexSet#clone", {
   }
 });
 
-test("clone should return new object with assert.deepEqual key properties", function() {
+test("clone should return new object with assert.deepEqual key properties", function (assert) {
   set.add(100,100).add(200,100);
   set.source = "foo";
   
@@ -32,12 +32,12 @@ test("clone should return new object with assert.deepEqual key properties", func
 
 });
 
-test("cloning frozen object returns unfrozen", function() {
+test("cloning frozen object returns unfrozen", function (assert) {
   var set2 = set.freeze().clone();
   assert.equal(set2.get('isFrozen'), false, 'set2.isFrozen should be false');
 });
 
-test("copy works like clone", function() {
+test("copy works like clone", function (assert) {
   assert.deepEqual(set.copy(), set, 'should return copy');
   assert.ok(set.copy() !== set, 'should not return assert.deepEqual instance');
   

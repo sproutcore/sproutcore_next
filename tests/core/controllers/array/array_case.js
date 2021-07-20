@@ -37,7 +37,7 @@ module("SC.ArrayController - array_case - EMPTY", {
   }
 });
 
-test("state properties", function() {
+test("state properties", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'c.hasContent');
   assert.equal(controller.get("canRemoveContent"), true, "c.canRemoveContent");
   assert.equal(controller.get("canReorderContent"), true, "c.canReorderContent");
@@ -45,7 +45,7 @@ test("state properties", function() {
 });
 
 // addObject should append to end of array + notify observers on Array itself
-test("addObject", function() {
+test("addObject", function (assert) {
   var callCount = 0;
   controller.addObserver('[]', function() { callCount++; });
 
@@ -56,7 +56,7 @@ test("addObject", function() {
   assert.equal(content.get('length'), 1, 'should update length of controller');
 });
 
-test("removeObject", function() {
+test("removeObject", function (assert) {
   var callCount = 0;
   controller.addObserver('[]', function() { callCount++; });
 
@@ -66,12 +66,12 @@ test("removeObject", function() {
   assert.equal(callCount, 0, 'should not notify observer since content did not change');
 });
 
-test("basic array READ operations", function() {
+test("basic array READ operations", function (assert) {
   assert.equal(controller.get("length"), 0, 'length should be empty');
   assert.equal(controller.objectAt(0), undefined, "objectAt() should return undefined");
 });
 
-test("basic array WRITE operations", function() {
+test("basic array WRITE operations", function (assert) {
   var callCount = 0;
   controller.addObserver('[]', function() { callCount++; });
 
@@ -82,7 +82,7 @@ test("basic array WRITE operations", function() {
   assert.equal(content.get('length'), 1, 'should update length of controller');
 });
 
-test("arrangedObjects", function() {
+test("arrangedObjects", function (assert) {
   assert.equal(controller.get("arrangedObjects"), controller, 'c.arrangedObjects should return receiver');
 });
 
@@ -106,7 +106,7 @@ module("SC.ArrayController - array_case - NON-EMPTY", {
   }
 });
 
-test("state properties", function() {
+test("state properties", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'c.hasContent');
   assert.equal(controller.get("canRemoveContent"), true, "c.canRemoveContent");
   assert.equal(controller.get("canReorderContent"), true, "c.canReorderContent");
@@ -114,7 +114,7 @@ test("state properties", function() {
 });
 
 // addObject should append to end of array + notify observers on Array itself
-test("addObject", function() {
+test("addObject", function (assert) {
   var expected = content.slice();
   expected.push(extra);
 
@@ -128,7 +128,7 @@ test("addObject", function() {
   assert.equal(content.get('length'), expected.length, 'should update length of controller');
 });
 
-test("removeObject", function() {
+test("removeObject", function (assert) {
   var expected = content.slice(), obj = expected[3];
   expected.removeObject(obj);
 
@@ -142,7 +142,7 @@ test("removeObject", function() {
   assert.equal(content.get('length'), expected.length, 'should update length of controller');
 });
 
-test("basic array READ operations", function() {
+test("basic array READ operations", function (assert) {
   assert.equal(controller.get("length"), content.length, 'length should be empty');
 
   var loc = content.length+1; // verify 1 past end as well
@@ -151,7 +151,7 @@ test("basic array READ operations", function() {
   }
 });
 
-test("basic array WRITE operations", function() {
+test("basic array WRITE operations", function (assert) {
   var expected = content.slice();
   expected.replace(3,1,[extra]);
 
@@ -165,12 +165,12 @@ test("basic array WRITE operations", function() {
   assert.equal(content.get('length'), expected.length, 'should update length of controller');
 });
 
-test("arrangedObjects", function() {
+test("arrangedObjects", function (assert) {
   assert.equal(controller.get("arrangedObjects"), controller, 'c.arrangedObjects should return receiver');
 });
 
 
-test("The computed properties firstObject, firstSelectableObject & lastObject should update when content changes.", function(){
+test("The computed properties firstObject, firstSelectableObject & lastObject should update when content changes.", function (assert) {
   assert.equal(controller.get('firstObject'), content[0], 'first object should be the first object in content');
   assert.equal(controller.get('firstSelectableObject'), content[0], 'first selectable object should be the first object in content');
   assert.equal(controller.get('lastObject'), content[4], 'lastObject should be the last object in content');
@@ -184,7 +184,7 @@ test("The computed properties firstObject, firstSelectableObject & lastObject sh
   assert.equal(controller.get('lastObject'), newObject, 'lastObject should be the new last object in content');
 });
 
-test("The computed properties firstObject, firstSelectableObject & lastObject should update when content items change.", function(){
+test("The computed properties firstObject, firstSelectableObject & lastObject should update when content items change.", function (assert) {
   assert.equal(controller.get('firstObject'), content[0], 'first object should be the first object in content');
   assert.equal(controller.get('firstSelectableObject'), content[0], 'first selectable object should be the first object in content');
   assert.equal(controller.get('lastObject'), content[4], 'lastObject should be the last object in content');
@@ -202,7 +202,7 @@ test("The computed properties firstObject, firstSelectableObject & lastObject sh
 // orderBy
 //
 
-test("array orderBy using String", function(){
+test("array orderBy using String", function (assert) {
   var testController = SC.ArrayController.create({
     content: content,
     orderBy: 'title ASC'
@@ -218,7 +218,7 @@ test("array orderBy using String", function(){
   assert.equal(testController.get('lastObject'), content[0], 'lastObject should be the first object in content (changed order)');
 });
 
-test("array orderBy using String with property path", function(){
+test("array orderBy using String with property path", function (assert) {
   var c = "1 2 3 4 5".w().map(function(x) {
     return TestObject.create({ title: { title: x }});
   });
@@ -239,7 +239,7 @@ test("array orderBy using String with property path", function(){
 });
 
 
-test("array orderBy using Array", function(){
+test("array orderBy using Array", function (assert) {
   var complexContent,
       familyNames = "Keating Zane Alberts Keating Keating".w(),
       givenNames = "Travis Harold Brian Alvin Peter".w(),
@@ -266,7 +266,7 @@ test("array orderBy using Array", function(){
 
 });
 
-test("array orderBy using function", function(){
+test("array orderBy using function", function (assert) {
   var testFunc = function(a,b){
     if(a.get('title') > b.get('title')) return -1;
     else if (a.get('title') == b.get('title')) return 0;
@@ -305,7 +305,7 @@ test("verify length is correct in arrayObserver didChange method when orderBy is
 
 // orderBy impacts arrayContentDidChange calls.
 
-test("verify range observers fire correctly when object added at different sorted index than absolute index", function() {
+test("verify range observers fire correctly when object added at different sorted index than absolute index", function (assert) {
   content = [ TestObject.create({ value: 1 }), TestObject.create({ value: 2 }) ];
   controller = SC.ArrayController.create({
     content: content,
@@ -319,7 +319,7 @@ test("verify range observers fire correctly when object added at different sorte
 
 // Tests bug introduced in e33416fdd28363479b598bdbab081d5abd9737f7 (see https://github.com/sproutcore/sproutcore/issues/1214). Verified
 // more generally in test below.
-test("verify enumerable propety chains invalidate without error on ArrayController with orderBy.", function() {
+test("verify enumerable propety chains invalidate without error on ArrayController with orderBy.", function (assert) {
   controller = SC.ArrayController.create({
     content: [],
     orderBy: 'value ASC',
@@ -338,7 +338,7 @@ test("verify enumerable propety chains invalidate without error on ArrayControll
 
 });
 
-test("verify arrayContentWillChange and arrayContentDidChange are called with correct values when orderBy is present.", function() {
+test("verify arrayContentWillChange and arrayContentDidChange are called with correct values when orderBy is present.", function (assert) {
   // Set up test values.
   var expectedStart = 0,
       expectedRemoved = 0,
@@ -398,7 +398,7 @@ test("verify arrayContentWillChange and arrayContentDidChange are called with co
 // ADD SPECIAL CASES HERE
 //
 
-test("verify rangeObserver fires when content is deleted", function() {
+test("verify rangeObserver fires when content is deleted", function (assert) {
 
   content = "1 2 3 4 5".w().map(function(x) {
     return TestObject.create({ title: x });
@@ -418,7 +418,7 @@ test("verify rangeObserver fires when content is deleted", function() {
   assert.equal(cnt, 1, 'range observer should have fired once');
 });
 
-test("should invalidate computed property once per changed key", function() {
+test("should invalidate computed property once per changed key", function (assert) {
   var setCalls = 0;
   var getCalls = 0;
 
@@ -462,7 +462,7 @@ test("should invalidate computed property once per changed key", function() {
 
 module("SC.ArrayController - dependent keys with @each");
 
-test("should invalidate property when property on any enumerable changes", function() {
+test("should invalidate property when property on any enumerable changes", function (assert) {
   var inventory = [];
   var recomputed = 0;
 
@@ -502,7 +502,7 @@ test("should invalidate property when property on any enumerable changes", funct
   assert.equal(recomputed, 0, "does not recalculate after changing key on removed item");
 });
 
-test("should invalidate property when property of array item changes after content has changed", function() {
+test("should invalidate property when property of array item changes after content has changed", function (assert) {
   var inventory = [];
   var recomputed = 0;
 

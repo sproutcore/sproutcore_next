@@ -8,35 +8,35 @@ module('CoreTest.spyOn', {
   }
 });
 
-test('when the spied upon method was called spy#wasCalled is true', function() {
+test('when the spied upon method was called spy#wasCalled is true', function (assert) {
   object.method();
 
   assert.ok(methodSpy.wasCalled, 'spy should know that it was called');
 });
 
-test('when the spied upon method was not called spy#wasCalled is false', function() {
+test('when the spied upon method was not called spy#wasCalled is false', function (assert) {
   assert.ok(!methodSpy.wasCalled, 'spy should know that it was not called');
 });
 
-test('when the spied upon method is called with a single argument the spy should know when it was called with the proper arguments', function() {
+test('when the spied upon method is called with a single argument the spy should know when it was called with the proper arguments', function (assert) {
   object.method('something');
 
   assert.ok(methodSpy.wasCalledWith('something'), 'spy should know it was called with the proper arguments');
 });
 
-test('when the spied upon method is called with multiple arguments the spy should know when it was called with the proper arguments', function() {
+test('when the spied upon method is called with multiple arguments the spy should know when it was called with the proper arguments', function (assert) {
   object.method('something', 'else');
 
   assert.ok(methodSpy.wasCalledWith('something', 'else'), 'spy should know it was called with the proper arguments');
 });
 
-test('when the spied upon method is called with a single argument the spy should know when it was called with the wrong arguments', function() {
+test('when the spied upon method is called with a single argument the spy should know when it was called with the wrong arguments', function (assert) {
   object.method('something');
 
   assert.ok(!methodSpy.wasCalledWith('else'), 'spy should know it was called with the wrong arguments');
 });
 
-test('when the spied upon method is called with multiple arguments the spy should know when it was called with the wrong arguments', function() {
+test('when the spied upon method is called with multiple arguments the spy should know when it was called with the wrong arguments', function (assert) {
   object.method('something', 'else');
 
   assert.ok(!methodSpy.wasCalledWith('else', 'something'), 'spy should know it was called with the wrong arguments');

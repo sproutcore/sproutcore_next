@@ -4,7 +4,7 @@ import { SC } from '../../../core/core.js';
 module("SC.Array mixin - Array observers");
 
 (function(root) {
-  test("notifies entire array has changed when arrayContentDidChange() is called with no arguments", function() {
+  test("notifies entire array has changed when arrayContentDidChange() is called with no arguments", function (assert) {
     var content = [1, 2, 3, 4, 5];
     var start, added, removed;
 

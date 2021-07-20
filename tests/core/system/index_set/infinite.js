@@ -17,14 +17,14 @@ module("SC.IndexSet Infinite Ranges", {
 });
 
 
-test("Able to add an infinite range.", function () {
+test("Able to add an infinite range.", function (assert) {
   set.add(100, Infinity);
 
   assert.equal(set.get('length'), Infinity, 'The length should be');
   assert.equal(set.get('max'), Infinity, 'The max index should be');
 });
 
-test("The infinite range contains all indexes.", function () {
+test("The infinite range contains all indexes.", function (assert) {
   set.add(100, 2000);
   set.add(5000, Infinity);
 
@@ -38,7 +38,7 @@ test("The infinite range contains all indexes.", function () {
   assert.ok(set.contains(Infinity), "The set does contain Infinity.");
 });
 
-test("Able to remove an infinite range.", function () {
+test("Able to remove an infinite range.", function (assert) {
   set.add(100, Infinity);
   set.remove(1000, Infinity);
 
@@ -47,7 +47,7 @@ test("Able to remove an infinite range.", function () {
   assert.ok(!set.contains(Infinity), "The set does not contain Infinity.");
 });
 
-test("Attempting to iterate over an infinite range throws an exception.", function () {
+test("Attempting to iterate over an infinite range throws an exception.", function (assert) {
   set.add(0, Infinity);
 
   try {
@@ -57,7 +57,7 @@ test("Attempting to iterate over an infinite range throws an exception.", functi
   }
 });
 
-test("Able to add an infinite range over an existing range.", function () {
+test("Able to add an infinite range over an existing range.", function (assert) {
   set.add(100, 2); // add initial set.
   assert.equal(set.firstObject(), 100, 'The first index is');
   assert.equal(set.get('length'), 2, 'The length should be');
@@ -69,7 +69,7 @@ test("Able to add an infinite range over an existing range.", function () {
   assert.equal(set.get('max'), Infinity, 'The max index should now be');
 });
 
-test("Infinite ranges may be equal.", function () {
+test("Infinite ranges may be equal.", function (assert) {
   var secondSet = SC.IndexSet.create();
 
   set.add(50, Infinity);
@@ -80,7 +80,7 @@ test("Infinite ranges may be equal.", function () {
   assert.ok(!set.isEqual(secondSet), 'The two infinite sets are no longer equal.');
 });
 
-test("The range start for the infinite range is correct.", function () {
+test("The range start for the infinite range is correct.", function (assert) {
   set.add(100, 2000);
 
   assert.equal(set.rangeStartForIndex(1234), 100, "The range for 1234 starts at");
@@ -98,7 +98,7 @@ test("The range start for the infinite range is correct.", function () {
   assert.equal(set.rangeStartForIndex(Infinity), Infinity, "The range for Infinity starts at");
 });
 
-test("The indexBefore for the infinite range is correct.", function () {
+test("The indexBefore for the infinite range is correct.", function (assert) {
   set.add(10, 10);
 
   assert.equal(set.indexBefore(100), 19, "The indexBefore 100 is");
@@ -110,7 +110,7 @@ test("The indexBefore for the infinite range is correct.", function () {
   assert.equal(set.indexBefore(Infinity), Infinity, "The indexBefore Infinity is");
 });
 
-test("The indexAfter for the infinite range is correct.", function () {
+test("The indexAfter for the infinite range is correct.", function (assert) {
   set.add(10, 1000);
 
   assert.equal(set.indexAfter(100), 101, "The indexAfter 100 is");
@@ -124,7 +124,7 @@ test("The indexAfter for the infinite range is correct.", function () {
   assert.equal(set.indexAfter(Infinity), -1, "The indexAfter Infinity is");
 });
 
-test("The infinite range intersects all indexes.", function () {
+test("The infinite range intersects all indexes.", function (assert) {
   set.add(100, 2000);
   set.add(5000, Infinity);
 
@@ -137,7 +137,7 @@ test("The infinite range intersects all indexes.", function () {
   assert.ok(set.intersects(0, Infinity), "The set does intersect 0 - Infinity.");
 });
 
-test("The infinite range works with without().", function () {
+test("The infinite range works with without().", function (assert) {
   set.add(100, 2000);
   set.add(5000, Infinity);
 
@@ -165,7 +165,7 @@ test("The infinite range works with without().", function () {
   assert.ok(!set.contains(Infinity), "The set does not contain Infinity.");
 });
 
-test("The infinite range works with replace().", function () {
+test("The infinite range works with replace().", function (assert) {
   set.add(100, 2000);
   set.add(5000, Infinity);
 

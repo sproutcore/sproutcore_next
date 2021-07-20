@@ -35,7 +35,7 @@ module("System:run_loop() - chained binding", {
   }
 });
 
-test("Should propagate bindings after the RunLoop completes (using SC.RunLoop)", function() {
+test("Should propagate bindings after the RunLoop completes (using SC.RunLoop)", function(assert) {
 	SC.RunLoop.begin();
 		//Binding of output of first object to input of second object
   	let	binding1 = SC.Binding.from("output", first).to("input", second).connect() ;
@@ -63,7 +63,7 @@ test("Should propagate bindings after the RunLoop completes (using SC.RunLoop)",
 	assert.equal(second.get("output"), "change") ;
 });
 
-test("Should propagate bindings after the RunLoop completes (using SC.beginRunLoop)", function() {
+test("Should propagate bindings after the RunLoop completes (using SC.beginRunLoop)", function(assert) {
 	SC.beginRunLoop;
 		//Binding of output of first object to input of second object
   	let binding1 = SC.Binding.from("output", first).to("input", second).connect() ;
@@ -92,7 +92,7 @@ test("Should propagate bindings after the RunLoop completes (using SC.beginRunLo
 	assert.equal(second.get("output"), "change") ;
 });
 
-test("Should propagate bindings after the RunLoop completes (checking invokeOnce() function)", function() {
+test("Should propagate bindings after the RunLoop completes (checking invokeOnce() function)", function(assert) {
 	SC.RunLoop.begin();
 		//Binding of output of first object to input of second object
   	let	binding1 = SC.Binding.from("output", first).to("input", second).connect() ;
@@ -134,7 +134,7 @@ test("Should propagate bindings after the RunLoop completes (checking invokeOnce
 
 });
 
-test("Should flush the invoke last queue at the end of the current run loop", function () {
+test("Should flush the invoke last queue at the end of the current run loop", function (assert) {
   var iCalled = 0;
   SC.RunLoop.begin();
 
@@ -151,7 +151,7 @@ test("Should flush the invoke last queue at the end of the current run loop", fu
   assert.equal(iCalled, 1, "should have flushed the invokeLast queue only once");
 });
 
-test("Should repeatedly flush the invoke last queue until there are no more items", function () {
+test("Should repeatedly flush the invoke last queue until there are no more items", function (assert) {
   var iCalled = 0;
   SC.RunLoop.begin();
 
@@ -168,7 +168,7 @@ test("Should repeatedly flush the invoke last queue until there are no more item
   assert.equal(iCalled, 5, "should have flushed the invokeLast queue 5 times");
 });
 
-test("Should flush the invoke next queue at the beginning of the next run loop", function () {
+test("Should flush the invoke next queue at the beginning of the next run loop", function (assert) {
   var iCalled = 0;
   SC.RunLoop.begin();
 
@@ -186,7 +186,7 @@ test("Should flush the invoke next queue at the beginning of the next run loop",
   assert.equal(iCalled, 1, "should have flushed the invokeNext queue only once");
 });
 
-test("Calling invokeNext inside an invokeNext invocation will schedule for the function to run in the next run loop", function () {
+test("Calling invokeNext inside an invokeNext invocation will schedule for the function to run in the next run loop", function (assert) {
   var iCalled = 0;
   SC.RunLoop.begin();
 
@@ -229,7 +229,7 @@ test("Using invokeNext should result in an additional run of the run loop immedi
   There was a regression where unscheduling a run loop failed to clear out the
   internal state and therefore further scheduling of the run loop failed.
 */
-test("Using unscheduleRunLoop should not prevent scheduleRunLoop from working.", function () {
+test("Using unscheduleRunLoop should not prevent scheduleRunLoop from working.", function (assert) {
   SC.run(function () {
     var now = new Date(),
       newTimeoutID,

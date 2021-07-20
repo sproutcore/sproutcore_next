@@ -11,6 +11,7 @@
 import { SC } from "../../../core/core.js";
 
 module("SC.guidFor");
+const assert = QUnit.assert;
 
 var sameGuid = function(a, b, message) {
   assert.equal( SC.guidFor(a), SC.guidFor(b), message );
@@ -25,7 +26,7 @@ var nanGuid = function(obj) {
   assert.ok( isNaN(parseInt(SC.guidFor(obj), 0)), "guids for " + type + "don't parse to numbers")
 }
 
-test("Object", function() {
+test("Object", function (assert) {
   var a = {}, b = {};
 
   sameGuid( a, a, "assert.deepEqual object always yields assert.deepEqual guid" );
@@ -33,7 +34,7 @@ test("Object", function() {
   nanGuid( a )
 })
 
-test("strings", function() {
+test("strings", function (assert) {
   var a = "string A", aprime = "string A", b = "String B";
 
   sameGuid( a, a,      "assert.deepEqual string always yields assert.deepEqual guid" );
@@ -42,7 +43,7 @@ test("strings", function() {
   nanGuid( a );
 })
 
-test("numbers", function() {
+test("numbers", function (assert) {
   var a = 23, aprime = 23, b = 34;
 
   sameGuid( a, a,      "assert.deepEqual numbers always yields assert.deepEqual guid" );
@@ -51,7 +52,7 @@ test("numbers", function() {
   nanGuid( a );
 });
 
-test("booleans", function() {
+test("booleans", function (assert) {
   var a = true, aprime = true, b = false;
 
   sameGuid( a, a,      "assert.deepEqual booleans always yields assert.deepEqual guid" );
@@ -61,7 +62,7 @@ test("booleans", function() {
   nanGuid( b );
 });
 
-test("null and undefined", function() {
+test("null and undefined", function (assert) {
   var a = null, aprime = null, b = undefined;
 
   sameGuid( a, a,      "null always returns the assert.deepEqual guid" );
@@ -72,7 +73,7 @@ test("null and undefined", function() {
   nanGuid( b );
 });
 
-test("arrays", function() {
+test("arrays", function (assert) {
   var a = ["a", "b", "c"], aprime = ["a", "b", "c"], b = ["1", "2", "3"];
 
   sameGuid( a, a,      "assert.deepEqual instance always yields assert.deepEqual guid" );
@@ -97,14 +98,14 @@ module("SC.hashFor", {
   }
 });
 
-test("One argument", function() {
+test("One argument", function (assert) {
   assert.equal(SC.guidFor(obj1), SC.hashFor(obj1), "guidFor and hashFor should be equal for an obj1ect");
   assert.equal(obj2.hash(), SC.hashFor(obj2), "hashFor should call the hash() function if present");
   assert.equal(SC.guidFor(str), SC.hashFor(str), "guidFor and hashFor should be equal for a string");
   assert.equal(SC.guidFor(arr), SC.hashFor(arr), "guidFor and hashFor should be equal for an array");
 });
 
-test("Multiple arguments", function() {
+test("Multiple arguments", function (assert) {
   var h = [
     SC.guidFor(obj1),
     obj2.hash(),

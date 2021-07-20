@@ -37,13 +37,13 @@ module("creating SC.Set instances", {
 
 });
 
-test("SC.Set.create() should create empty set", function() {
+test("SC.Set.create() should create empty set", function (assert) {
   var set = SC.Set.create() ;
   assert.equal(set.length, 0) ;
 });
 
 
-test("SC.Set.getEach() should work", function () {
+test("SC.Set.getEach() should work", function (assert) {
   var set = SC.Set.create([a,b,c]),
     names = set.getEach('name');
 
@@ -52,7 +52,7 @@ test("SC.Set.getEach() should work", function () {
   assert.ok(names.contains("c"), "Set.getEach array should contain 'c'");
 });
 
-test("SC.Set.create([1,2,3]) should create set with three items in them", function() {
+test("SC.Set.create([1,2,3]) should create set with three items in them", function (assert) {
   var set = SC.Set.create([a,b,c]) ;
   assert.equal(set.length, 3) ;
   assert.equal(set.contains(a), true) ;
@@ -60,7 +60,7 @@ test("SC.Set.create([1,2,3]) should create set with three items in them", functi
   assert.equal(set.contains(c), true) ;
 });
 
-test("SC.Set.create() should accept anything that implements SC.Array", function() {
+test("SC.Set.create() should accept anything that implements SC.Array", function (assert) {
   var arrayLikeObject = SC.Object.create(SC.Array, {
     _content: [a,b,c],
     length: 3,
@@ -89,7 +89,7 @@ module("SC.Set.add + SC.Set.contains", {
 
 });
 
-test("should add an SC.Object", function() {
+test("should add an SC.Object", function (assert) {
   var obj = SC.Object.create() ;
 
   var oldLength = set.length ;
@@ -98,7 +98,7 @@ test("should add an SC.Object", function() {
   assert.equal(set.length, oldLength+1, "new set length") ;
 });
 
-test("should add a regular hash", function() {
+test("should add a regular hash", function (assert) {
   var obj = {} ;
 
   var oldLength = set.length ;
@@ -107,7 +107,7 @@ test("should add a regular hash", function() {
   assert.equal(set.length, oldLength+1, "new set length") ;
 });
 
-test("should add a string", function() {
+test("should add a string", function (assert) {
   var obj = "String!" ;
 
   var oldLength = set.length ;
@@ -116,7 +116,7 @@ test("should add a string", function() {
   assert.equal(set.length, oldLength+1, "new set length") ;
 });
 
-test("should add a number", function() {
+test("should add a number", function (assert) {
   var obj = 23 ;
 
   var oldLength = set.length ;
@@ -125,7 +125,7 @@ test("should add a number", function() {
   assert.equal(set.length, oldLength+1, "new set length") ;
 });
 
-test("should add bools", function() {
+test("should add bools", function (assert) {
   var oldLength = set.length ;
 
   set.add(true) ;
@@ -137,7 +137,7 @@ test("should add bools", function() {
   assert.equal(set.length, oldLength+2, "new set length");
 });
 
-test("should add 0", function() {
+test("should add 0", function (assert) {
   var oldLength = set.length ;
 
   set.add(0) ;
@@ -145,7 +145,7 @@ test("should add 0", function() {
   assert.equal(set.length, oldLength+1, "new set length");
 });
 
-test("should add a function", function() {
+test("should add a function", function (assert) {
   var obj = function() { return "Test function"; } ;
 
   var oldLength = set.length ;
@@ -154,19 +154,19 @@ test("should add a function", function() {
   assert.equal(set.length, oldLength+1, "new set length") ;
 });
 
-test("should NOT add a null", function() {
+test("should NOT add a null", function (assert) {
   set.add(null) ;
   assert.equal(set.length, 0) ;
   assert.equal(set.contains(null), false) ;
 });
 
-test("should NOT add an undefined", function() {
+test("should NOT add an undefined", function (assert) {
   set.add(undefined) ;
   assert.equal(set.length, 0) ;
   assert.equal(set.contains(undefined), false) ;
 });
 
-test("adding an item, removing it, adding another item", function() {
+test("adding an item, removing it, adding another item", function (assert) {
   var item1 = "item1" ;
   var item2 = "item2" ;
 
@@ -188,7 +188,7 @@ test("adding an item, removing it, adding another item", function() {
   even after remove is called, until the same number of new objects are added
   later.
 */
-test("adding and removing items should not retain references to removed objects", function() {
+test("adding and removing items should not retain references to removed objects", function (assert) {
   var guid1, guid2,
     idx1, idx2,
     item1 = "item1",
@@ -263,7 +263,7 @@ module("SC.Set.remove + SC.Set.contains", {
 
 });
 
-test("should remove an SC.Object and reduce length", function() {
+test("should remove an SC.Object and reduce length", function (assert) {
   var obj = SC.Object.create() ;
   set.add(obj) ;
   assert.equal(set.contains(obj), true) ;
@@ -274,7 +274,7 @@ test("should remove an SC.Object and reduce length", function() {
   assert.equal(set.length, oldLength-1, "should be 1 shorter") ;
 });
 
-test("should remove a regular hash and reduce length", function() {
+test("should remove a regular hash and reduce length", function (assert) {
   var obj = {} ;
   set.add(obj) ;
   assert.equal(set.contains(obj), true) ;
@@ -285,7 +285,7 @@ test("should remove a regular hash and reduce length", function() {
   assert.equal(set.length, oldLength-1, "should be 1 shorter") ;
 });
 
-test("should remove a string and reduce length", function() {
+test("should remove a string and reduce length", function (assert) {
   var obj = "String!" ;
   set.add(obj) ;
   assert.equal(set.contains(obj), true) ;
@@ -296,7 +296,7 @@ test("should remove a string and reduce length", function() {
   assert.equal(set.length, oldLength-1, "should be 1 shorter") ;
 });
 
-test("should remove a number and reduce length", function() {
+test("should remove a number and reduce length", function (assert) {
   var obj = 23 ;
   set.add(obj) ;
   assert.equal(set.contains(obj), true) ;
@@ -307,7 +307,7 @@ test("should remove a number and reduce length", function() {
   assert.equal(set.length, oldLength-1, "should be 1 shorter") ;
 });
 
-test("should remove a bools and reduce length", function() {
+test("should remove a bools and reduce length", function (assert) {
   var oldLength = set.length ;
   set.remove(true) ;
   assert.equal(set.contains(true), false, "should be removed") ;
@@ -318,14 +318,14 @@ test("should remove a bools and reduce length", function() {
   assert.equal(set.length, oldLength-2, "should be 2 shorter") ;
 });
 
-test("should remove 0 and reduce length", function(){
+test("should remove 0 and reduce length", function (assert) {
   var oldLength = set.length;
   set.remove(0) ;
   assert.equal(set.contains(0), false, "should be removed") ;
   assert.equal(set.length, oldLength-1, "should be 1 shorter") ;
 });
 
-test("should remove a function and reduce length", function() {
+test("should remove a function and reduce length", function (assert) {
   var obj = function() { return "Test function"; } ;
   set.add(obj) ;
   assert.equal(set.contains(obj), true) ;
@@ -336,19 +336,19 @@ test("should remove a function and reduce length", function() {
   assert.equal(set.length, oldLength-1, "should be 1 shorter") ;
 });
 
-test("should NOT remove a null", function() {
+test("should NOT remove a null", function (assert) {
   var oldLength = set.length ;
   set.remove(null) ;
   assert.equal(set.length, oldLength) ;
 });
 
-test("should NOT remove an undefined", function() {
+test("should NOT remove an undefined", function (assert) {
   var oldLength = set.length ;
   set.remove(undefined) ;
   assert.equal(set.length, oldLength) ;
 });
 
-test("should ignore removing an object not in the set", function() {
+test("should ignore removing an object not in the set", function (assert) {
   var obj = SC.Object.create() ;
   var oldLength = set.length ;
   set.remove(obj) ;
@@ -380,14 +380,14 @@ module("SC.Set.pop + SC.Set.clone", {
 		}
 });
 
-test("the pop() should remove an arbitrary object from the set", function() {
+test("the pop() should remove an arbitrary object from the set", function (assert) {
 	var oldLength = set.length ;
 	var obj = set.pop();
 	assert.ok(!SC.none(obj), 'pops up an item');
 	assert.equal(set.length, oldLength-1, 'length shorter by 1');
 });
 
-test("should pop false and 0", function(){
+test("should pop false and 0", function (assert) {
   set = SC.Set.create([false]);
   assert.ok(set.pop() === false, "should pop false");
 
@@ -395,7 +395,7 @@ test("should pop false and 0", function(){
   assert.ok(set.pop() === 0, "should pop 0");
 });
 
-test("the clone() should return an indentical set", function() {
+test("the clone() should return an indentical set", function (assert) {
 	var oldLength = set.length ;
 	var obj = set.clone();
 	assert.equal(oldLength,obj.length,'length of the clone should be same');

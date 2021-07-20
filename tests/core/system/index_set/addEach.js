@@ -24,14 +24,14 @@ function iter(s) {
 // BASIC ADDS
 // 
 
-test("adding should iterate over an array", function() {
+test("adding should iterate over an array", function (assert) {
   set.addEach([1000, 1010, 1020, 1030]);
   assert.equal(set.get('length'), 4, 'should have correct index count');  
   assert.equal(set.get('max'), 1031, 'max should return 1 past last index');
   assert.deepEqual(iter(set), [1000, 1010, 1020, 1030]);
 });
 
-test("adding should iterate over a set", function() {
+test("adding should iterate over a set", function (assert) {
   // add out of order...
   var input = SC.Set.create().add(1030).add(1010).add(1020).add(1000);
   set.addEach(input);
@@ -41,7 +41,7 @@ test("adding should iterate over a set", function() {
 });
 
 
-test("adding should iterate over a indexset", function() {
+test("adding should iterate over a indexset", function (assert) {
   // add out of order...
   var input = SC.IndexSet.create().add(1000,2).add(1010).add(1020).add(1030);
   set.addEach(input);

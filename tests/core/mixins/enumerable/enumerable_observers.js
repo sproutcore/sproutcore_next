@@ -42,7 +42,7 @@ import { SC } from '../../../../core/core.js';
     }
   });
 
-  test("should be called when an object is added to an enumerable", function() {
+  test("should be called when an object is added to an enumerable", function (assert) {
     array.pushObject(4);
 
     assert.equal(willChangeCallCount, 1, "calls arrayContentWillChange once");
@@ -53,7 +53,7 @@ import { SC } from '../../../../core/core.js';
     assert.equal(didChangeRemoved, 0, "specifies no objects removed");
   });
 
-  test("should not be called when the observer is removed", function() {
+  test("should not be called when the observer is removed", function (assert) {
     array.pushObject(4);
     assert.equal(didChangeCallCount, 1, "precond - observer fires when added");
     didChangeCallCount = 0;
@@ -67,7 +67,7 @@ import { SC } from '../../../../core/core.js';
     assert.equal(didChangeCallCount, 0, "observer does not fire after being removed");
   });
 
-  test("should include both added and removed objects", function() {
+  test("should include both added and removed objects", function (assert) {
     array.replace(1, 1, [6, 7, 8]);
 
     assert.equal(willChangeStart, 1);

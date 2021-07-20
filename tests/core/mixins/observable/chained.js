@@ -49,7 +49,7 @@ module("SC.Observable - Observing with @each", {
   }
 });
 
-test("chained observers on enumerable properties are triggered when the observed property of any item changes", function () {
+test("chained observers on enumerable properties are triggered when the observed property of any item changes", function (assert) {
   family.addObserver('grandma.momma.children.@each.name', family, family.eachCallback);
   family.addObserver('grandma.momma.children', family, family.childrenCallback);
 
@@ -121,7 +121,7 @@ test("chained observers on enumerable properties are triggered when the observed
 });
 
 
-test("observer cleanup", function () {
+test("observer cleanup", function (assert) {
   family.addObserver('grandma.momma.children.@each.name', family, family.eachCallback);
   family.removeObserver('grandma.momma.children.@each.name', family, family.eachCallback);
 
@@ -133,7 +133,7 @@ test("observer cleanup", function () {
   assert.equal(child1._kvo_observed_keys.length, 0, "child1 has no observed keys");
 });
 
-test("content observers are removed correctly", function () {
+test("content observers are removed correctly", function (assert) {
   var child1 = SC.Object.create({ name: "Bartholomew", age: 15 });
   var child2 = SC.Object.create({ name: "Agnes", age: 12 });
   var children = [child1, child2];

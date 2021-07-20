@@ -43,7 +43,7 @@ module("object.propertyChanges", {
 });
 
 
-test("should observe the changes within the nested begin / end property changes", function() {
+test("should observe the changes within the nested begin / end property changes", function (assert) {
     
   //start the outer nest
   ObjectA.beginPropertyChanges();
@@ -64,15 +64,15 @@ test("should observe the changes within the nested begin / end property changes"
   
 });
 
-test("should increment the indicator before begining the changes to the object", function() {
+test("should increment the indicator before begining the changes to the object", function (assert) {
     assert.equal(ObjectA.beginPropertyChanges()._kvo_changeLevel, 1) ;
 });
 
-test("should decrement the indicator after ending the changes to the object", function() {
+test("should decrement the indicator after ending the changes to the object", function (assert) {
     assert.equal(ObjectA.endPropertyChanges()._kvo_changeLevel, 0) ;
 });
 
-test("should observe the changes within the begin and end property changes", function() {
+test("should observe the changes within the begin and end property changes", function (assert) {
     
   ObjectA.beginPropertyChanges();
     ObjectA.set('foo', 'changeFooValue');
@@ -83,7 +83,7 @@ test("should observe the changes within the begin and end property changes", fun
   assert.equal(ObjectA.prop, "changedPropValue") ;
 });
 
-test("should indicate that the property of an object has just changed", function() {
+test("should indicate that the property of an object has just changed", function (assert) {
   // inidicate that proprty of foo will change to its subscribers
   ObjectA.propertyWillChange('foo') ;
   
@@ -100,7 +100,7 @@ test("should indicate that the property of an object has just changed", function
   assert.equal(ObjectA.prop,'changedPropValue') ;
 });
 
-test("should notify that the property of an object has changed", function() {
+test("should notify that the property of an object has changed", function (assert) {
   // Notify to its subscriber that the values of 'newFoo' will be changed. In this
   // case the observer is "newProp". Therefore this will call the notifyAction function
   // and value of "newProp" will be changed.
@@ -110,7 +110,7 @@ test("should notify that the property of an object has changed", function() {
   assert.equal(ObjectA.newProp,'changedNewPropValue') ;
 });
 
-test("should notify all observers that their property might have changed", function() {
+test("should notify all observers that their property might have changed", function (assert) {
   //When this function is called, all the subscribers are notified that something has
   //Changed. So when allPropertiesDidChange() is called, all the subscribers get invoked. 
   ObjectA.allPropertiesDidChange();
@@ -121,7 +121,7 @@ test("should notify all observers that their property might have changed", funct
   assert.equal(ObjectA.newFoo,'changedNewFooValue') ;
 });
 
-test("star observers", function() {
+test("star observers", function (assert) {
   // setup observer
   ObjectA.addObserver('*', ObjectA, ObjectA.starObserver);
   ObjectA.set('foo', 'bar');
@@ -131,13 +131,13 @@ test("star observers", function() {
   assert.equal(ObjectA.starProp, 'bar', 'should have fired star observer for bar');
 });
 
-test("revision passed to observers should match .propertyRevision", function() {
+test("revision passed to observers should match .propertyRevision", function (assert) {
     
   assert.equal(revMatches, true) ;
   
 });
 
-test("should invalidate function property cache when notifyPropertyChange is called", function() {
+test("should invalidate function property cache when notifyPropertyChange is called", function (assert) {
   
   var a = SC.Object.create({
     _b: null,

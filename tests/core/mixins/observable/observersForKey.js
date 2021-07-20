@@ -17,7 +17,7 @@ module("object.observesForKey()", {
 
 });
 
-test("should get observers", function() {
+test("should get observers", function (assert) {
   var o1 = SC.Object.create({ foo: 100 }),
       o2 = SC.Object.create({ func: function() {} }),
       o3 = SC.Object.create({ func: function() {} }),

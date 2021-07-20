@@ -1,6 +1,8 @@
 
 import { equiv } from './equiv.js';
 import { jsDump} from './dump.js';
+import '../../node_modules/jquery/dist/jquery.slim.js';
+
 
 // map used to exist, this is here for backwards compatibility
 const Q$ = jQuery;

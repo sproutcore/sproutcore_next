@@ -127,7 +127,7 @@ module("Real Array & DummyEnumerable", {
 
 });
 
-test("should get enumerator that iterates through objects", function () {
+test("should get enumerator that iterates through objects", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -145,7 +145,7 @@ test("should get enumerator that iterates through objects", function () {
   }
 });
 
-test("should return firstObject for item with content", function () {
+test("should return firstObject for item with content", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -155,7 +155,7 @@ test("should return firstObject for item with content", function () {
   assert.equal([].firstObject(), undefined, 'firstObject() on empty enumerable should return undefined');
 });
 
-test("should run forEach() to go through objects", function () {
+test("should run forEach() to go through objects", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -187,7 +187,7 @@ test("should run forEach() to go through objects", function () {
   }
 });
 
-test("should map to values while passing proper params", function () {
+test("should map to values while passing proper params", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -220,7 +220,7 @@ test("should map to values while passing proper params", function () {
   }
 });
 
-test("should filter to items that return for callback", function () {
+test("should filter to items that return for callback", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -254,7 +254,7 @@ test("should filter to items that return for callback", function () {
   }
 });
 
-test("should return true if function for every() returns true", function () {
+test("should return true if function for every() returns true", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -287,7 +287,7 @@ test("should return true if function for every() returns true", function () {
   }
 });
 
-test("should return false if one function for every() returns false", function () {
+test("should return false if one function for every() returns false", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -298,7 +298,7 @@ test("should return false if one function for every() returns false", function (
   }
 });
 
-test("should return false if all functions for some() returns false", function () {
+test("should return false if all functions for some() returns false", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -331,7 +331,7 @@ test("should return false if all functions for some() returns false", function (
   }
 });
 
-test("should return true if one function for some() returns true", function () {
+test("should return true if one function for some() returns true", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -342,7 +342,7 @@ test("should return true if one function for some() returns true", function () {
   }
 });
 
-test("should mapProperty for all items", function () {
+test("should mapProperty for all items", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -355,7 +355,7 @@ test("should mapProperty for all items", function () {
   }
 });
 
-test("should filterProperty with match", function () {
+test("should filterProperty with match", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -365,7 +365,7 @@ test("should filterProperty with match", function () {
   }
 });
 
-test("should filterProperty with default bool", function () {
+test("should filterProperty with default bool", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -375,7 +375,7 @@ test("should filterProperty with default bool", function () {
   }
 });
 
-test("should groupBy a given property", function () {
+test("should groupBy a given property", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -386,7 +386,7 @@ test("should groupBy a given property", function () {
 });
 
 
-test("everyProperty should return true if all properties macth", function () {
+test("everyProperty should return true if all properties macth", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -395,7 +395,7 @@ test("everyProperty should return true if all properties macth", function () {
   }
 });
 
-test("everyProperty should return true if all properties true", function () {
+test("everyProperty should return true if all properties true", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -404,7 +404,7 @@ test("everyProperty should return true if all properties true", function () {
   }
 });
 
-test("everyProperty should return false if any properties false", function () {
+test("everyProperty should return false if any properties false", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -413,7 +413,7 @@ test("everyProperty should return false if any properties false", function () {
   }
 });
 
-test("someProperty should return false if all properties not match", function () {
+test("someProperty should return false if all properties not match", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -422,7 +422,7 @@ test("someProperty should return false if all properties not match", function ()
   }
 });
 
-test("someProperty should return false if all properties false", function () {
+test("someProperty should return false if all properties false", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -431,7 +431,7 @@ test("someProperty should return false if all properties false", function () {
   }
 });
 
-test("someProperty should return true if any properties true", function () {
+test("someProperty should return true if any properties true", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -440,7 +440,7 @@ test("someProperty should return true if any properties true", function () {
   }
 });
 
-test("invokeWhile should call method on member objects until return does not match", function () {
+test("invokeWhile should call method on member objects until return does not match", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -449,7 +449,7 @@ test("invokeWhile should call method on member objects until return does not mat
   }
 });
 
-test("get @min(balance) should return the minimum balance", function () {
+test("get @min(balance) should return the minimum balance", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -457,7 +457,7 @@ test("get @min(balance) should return the minimum balance", function () {
   }
 });
 
-test("get @max(balance) should return the maximum balance", function () {
+test("get @max(balance) should return the maximum balance", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -465,7 +465,7 @@ test("get @max(balance) should return the maximum balance", function () {
   }
 });
 
-test("get @minObject(balance) should return the record with min balance", function () {
+test("get @minObject(balance) should return the record with min balance", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -473,7 +473,7 @@ test("get @minObject(balance) should return the record with min balance", functi
   }
 });
 
-test("get @maxObject(balance) should return the record with the max balance", function () {
+test("get @maxObject(balance) should return the record with the max balance", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -481,7 +481,7 @@ test("get @maxObject(balance) should return the record with the max balance", fu
   }
 });
 
-test("get @sum(balance) should return the sum of the balances.", function () {
+test("get @sum(balance) should return the sum of the balances.", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -489,7 +489,7 @@ test("get @sum(balance) should return the sum of the balances.", function () {
   }
 });
 
-test("get @average(balance) should return the average of balances", function () {
+test("get @average(balance) should return the average of balances", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -497,7 +497,7 @@ test("get @average(balance) should return the average of balances", function () 
   }
 });
 
-test("should invoke custom reducer", function () {
+test("should invoke custom reducer", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -508,7 +508,7 @@ test("should invoke custom reducer", function () {
   }
 });
 
-test("Should trigger observer on lastObject property when it changes", function () {
+test("Should trigger observer on lastObject property when it changes", function (assert) {
 
   // Perform tests on each sample enumerable in enumerables.
   for (var i = 0, len = enumerables.length; i < len; i++) {
@@ -570,7 +570,7 @@ test("Should trigger observer on lastObject property when it changes", function 
   }
 });
 
-test("should trigger observer on property when firstObject changes", function () {
+test("should trigger observer on property when firstObject changes", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -586,7 +586,7 @@ test("should trigger observer on property when firstObject changes", function ()
   }
 });
 
-test("should trigger observer of reduced prop when array changes once property retrieved once", function () {
+test("should trigger observer of reduced prop when array changes once property retrieved once", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -621,7 +621,7 @@ test("should trigger observer of reduced prop when array changes once property r
 });
 
 
-test("should trigger observer of reduced prop when array changes - even if you never retrieved the property before", function () {
+test("should trigger observer of reduced prop when array changes - even if you never retrieved the property before", function (assert) {
   var src, ary2 = enumerables;
   for (var idx2=0, len2=ary2.length; idx2<len2; idx2++) {
     src = ary2[idx2];
@@ -649,7 +649,7 @@ test("should trigger observer of reduced prop when array changes - even if you n
   }
 });
 
-test("should find the first element matching the criteria", function () {
+test("should find the first element matching the criteria", function (assert) {
   var people = enumerables[1];
   var jenna = people.find(function (person) { return person.gender == 'female'; });
   assert.equal(jenna.first, 'Jenna');
@@ -686,7 +686,7 @@ module("Real Array", {
   keys so that now they will be registered on the Array before any
   property change notifications are sent.
 */
-test("should notify observers even if reduced property is cached on prototype", function () {
+test("should notify observers even if reduced property is cached on prototype", function (assert) {
   // make sure reduced property is cached
   source.get("@max(balance)");
 

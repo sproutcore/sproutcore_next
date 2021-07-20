@@ -39,7 +39,7 @@ module("object.registerDependentKeys()", {
 });
 
 
-test("should indicate the registered property changes if the dependent key value changes", function() {
+test("should indicate the registered property changes if the dependent key value changes", function (assert) {
   // now, change the firstName...
   object.set('firstName', 'Jane');
 
@@ -56,7 +56,7 @@ test("should indicate the registered property changes if the dependent key value
 });
 
 
-test("should indicate the registered property changes if the dependent key value changes and change is within begin property loop ", function() {
+test("should indicate the registered property changes if the dependent key value changes and change is within begin property loop ", function (assert) {
   // Wrap the changes with begin property changes call
   object.beginPropertyChanges();
   
@@ -81,7 +81,7 @@ test("should indicate the registered property changes if the dependent key value
 
 module("object.registerDependentKeys() - @each");
 
-test("should invalidate computed property once per changed key", function() {
+test("should invalidate computed property once per changed key", function (assert) {
   var setCalls = 0;
   var getCalls = 0;
   
@@ -111,7 +111,7 @@ test("should invalidate computed property once per changed key", function() {
   assert.equal(getCalls, 3, "calls get three times");
 });
 
-test("should invalidate key when properties higher up in the chain change", function() {
+test("should invalidate key when properties higher up in the chain change", function (assert) {
   var notified = 0;
   
   var obj = SC.Object.create({

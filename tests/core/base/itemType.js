@@ -8,7 +8,7 @@ import { SC, GLOBAL } from "../../../core/core.js";
 
 module("SproutCore Type Checking");
 
-test("SC.typeOf", function() {
+test("SC.typeOf", function (assert) {
 	var a = null,
 	    arr = [1,2,3],
 	    obj = {},
@@ -28,7 +28,7 @@ test("SC.typeOf", function() {
   assert.equal(SC.T_HASH,       SC.typeOf({ isObject: true }),  "hash object with isObject property should be of type hash");
 });
 
-test("SC.none", function() {
+test("SC.none", function (assert) {
   var string = "string", fn = function() {};
 
 	assert.equal(true,  SC.none(null),      "for null");
@@ -43,7 +43,7 @@ test("SC.none", function() {
   assert.equal(false, SC.none({}),        "for an empty Object");
 });
 
-test("SC.empty", function() {
+test("SC.empty", function (assert) {
   var string = "string", fn = function() {};
 
 	assert.equal(true,  SC.empty(null),      "for null");

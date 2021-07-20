@@ -27,12 +27,12 @@ module("SC.ObjectController - single_enumerable_case - OBSERVABLE OBJECT", {
   }
 });
 
-test("getting any unknown value should pass through to object", function() {
+test("getting any unknown value should pass through to object", function (assert) {
   assert.equal(controller.get("foo"), "foo1", 'controller.get(foo)');
   assert.equal(controller.get("bar"), "bar1", 'controller.get(bar)');
 });
 
-test("setting any unknown value should pass through", function() {
+test("setting any unknown value should pass through", function (assert) {
   assert.equal(controller.set("foo", "EDIT"), controller, 'controller.set(foo, EDIT) should return self');  
   assert.equal(controller.set("bar", "EDIT"), controller, 'controller.set(bar, EDIT) should return self');
   assert.equal(controller.set("baz", "EDIT"), controller, 'controller.set(baz, EDIT) should return self');
@@ -42,7 +42,7 @@ test("setting any unknown value should pass through", function() {
   assert.equal(src.get("baz"), "EDIT", 'src.get(bar)');
 });
 
-test("changing a property on the content", function() {
+test("changing a property on the content", function (assert) {
   var callCount = 0;
   controller.addObserver("foo", function() { callCount++; });
 
@@ -53,7 +53,7 @@ test("changing a property on the content", function() {
   assert.equal(callCount, 1, 'observer on controller should have fired');
 });
 
-test("changing the content from one to another", function() {
+test("changing the content from one to another", function (assert) {
   var callCount = 0 ;
   var src2 = SC.Object.create({ foo: "foo2", bar: "bar2" });
   var content2 = [src2]; // use another type of enumerable
@@ -77,7 +77,7 @@ test("changing the content from one to another", function() {
   assert.equal(callCount, 0, 'observer on controller should NOT have fired');
 });
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'should have content');
   
   var callCount = 0;
@@ -112,12 +112,12 @@ module("SC.ObjectController - single_enumerable_case - ALLOWS MULTIPLE", {
   }
 });
 
-test("getting any unknown value should pass through to object", function() {
+test("getting any unknown value should pass through to object", function (assert) {
   assert.equal(controller.get("foo"), "foo1", 'controller.get(foo)');
   assert.equal(controller.get("bar"), "bar1", 'controller.get(bar)');
 });
 
-test("setting any unknown value should pass through", function() {
+test("setting any unknown value should pass through", function (assert) {
   assert.equal(controller.set("foo", "EDIT"), controller, 'controller.set(foo, EDIT) should return self');  
   assert.equal(controller.set("bar", "EDIT"), controller, 'controller.set(bar, EDIT) should return self');
   assert.equal(controller.set("baz", "EDIT"), controller, 'controller.set(baz, EDIT) should return self');
@@ -127,7 +127,7 @@ test("setting any unknown value should pass through", function() {
   assert.equal(src.get("baz"), "EDIT", 'src.get(bar)');
 });
 
-test("changing a property on the content", function() {
+test("changing a property on the content", function (assert) {
   var callCount = 0;
   controller.addObserver("foo", function() { callCount++; });
 
@@ -138,7 +138,7 @@ test("changing a property on the content", function() {
   assert.equal(callCount, 1, 'observer on controller should have fired');
 });
 
-test("changing the content from one to another", function() {
+test("changing the content from one to another", function (assert) {
   var callCount = 0 ;
   var src2 = SC.Object.create({ foo: "foo2", bar: "bar2" });
   var content2 = [src2]; // use another type of enumerable
@@ -162,7 +162,7 @@ test("changing the content from one to another", function() {
   assert.equal(callCount, 0, 'observer on controller should NOT have fired');
 });
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'should have content');
   
   var callCount = 0;
@@ -198,12 +198,12 @@ module("SC.ObjectController - single_enumerable_case after content set - ALLOWS 
   }
 });
 
-test("getting any unknown value should pass through to object", function() {
+test("getting any unknown value should pass through to object", function (assert) {
   assert.equal(controller.get("foo"), "foo1", 'controller.get(foo)');
   assert.equal(controller.get("bar"), "bar1", 'controller.get(bar)');
 });
 
-test("setting any unknown value should pass through", function() {
+test("setting any unknown value should pass through", function (assert) {
   assert.equal(controller.set("foo", "EDIT"), controller, 'controller.set(foo, EDIT) should return self');  
   assert.equal(controller.set("bar", "EDIT"), controller, 'controller.set(bar, EDIT) should return self');
   assert.equal(controller.set("baz", "EDIT"), controller, 'controller.set(baz, EDIT) should return self');
@@ -213,7 +213,7 @@ test("setting any unknown value should pass through", function() {
   assert.equal(src.get("baz"), "EDIT", 'src.get(bar)');
 });
 
-test("changing a property on the content", function() {
+test("changing a property on the content", function (assert) {
   var callCount = 0;
   controller.addObserver("foo", function() { callCount++; });
 
@@ -224,7 +224,7 @@ test("changing a property on the content", function() {
   assert.equal(callCount, 1, 'observer on controller should have fired');
 });
 
-test("changing the content from one to another", function() {
+test("changing the content from one to another", function (assert) {
   var callCount = 0 ;
   var src2 = SC.Object.create({ foo: "foo2", bar: "bar2" });
   var content2 = [src2]; // use another type of enumerable
@@ -248,7 +248,7 @@ test("changing the content from one to another", function() {
   assert.equal(callCount, 0, 'observer on controller should NOT have fired');
 });
 
-test("hasContent", function() {
+test("hasContent", function (assert) {
   assert.equal(controller.get("hasContent"), true, 'should have content');
   
   var callCount = 0;

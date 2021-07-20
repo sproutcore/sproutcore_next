@@ -12,7 +12,7 @@ import { SC, GLOBAL } from "../../../core/core.js";
 
 module("SC.requiredObjectForPropertyPath") ;
 
-test("should be able to resolve an object on the global", function() {
+test("should be able to resolve an object on the global", function (assert) {
   var myLocal = (GLOBAL.myGlobal = { test: 'this '}) ;
 
   assert.deepEqual(myLocal, { test: 'this '}) ;
@@ -24,7 +24,7 @@ test("should be able to resolve an object on the global", function() {
   GLOBAL.myGlobal = null;
 });
 
-test("should throw error when object can't be found", function() {
+test("should throw error when object can't be found", function (assert) {
   QUnit.assert.throws(function(){ SC.requiredObjectForPropertyPath('notExistingObject'); },
                   Error, "notExistingObject could not be found");
 });

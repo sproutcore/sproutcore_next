@@ -12,7 +12,7 @@ import { SC } from "../../../core/core.js";
 
 module("Fetch Keys ");
 
-test("should get a key array for a specified object ",function(){
+test("should get a key array for a specified object ", function (assert) {
 	var object1 = {};
 
 	object1.names = "Rahul";

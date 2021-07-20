@@ -25,14 +25,14 @@ function iter(s) {
 // BASIC ADDS
 //
 
-test("add range to end of set", function() {
+test("add range to end of set", function (assert) {
   set.add(1000,5);
   assert.equal(set.get('length'), 5, 'should have correct index count');
   assert.equal(set.get('max'), 1005, 'max should return 1 past last index');
   assert.deepEqual(iter(set), [1000,1001,1002,1003,1004]);
 });
 
-test("add range into middle of empty range", function() {
+test("add range into middle of empty range", function (assert) {
   set.add(100,2); // add initial set.
   assert.equal(iter(set)[0], 100, 'precond - first index is 100');
 
@@ -43,7 +43,7 @@ test("add range into middle of empty range", function() {
   assert.deepEqual(iter(set), [10, 100, 101]);
 });
 
-test("add range overlapping front edge of range", function() {
+test("add range overlapping front edge of range", function (assert) {
   set.add(100,2); // add initial set.
   assert.equal(iter(set)[0], 100, 'precond - first index is 100');
 
@@ -54,7 +54,7 @@ test("add range overlapping front edge of range", function() {
   assert.deepEqual(iter(set), [99, 100, 101]);
 });
 
-test("add range overlapping last edge of range", function() {
+test("add range overlapping last edge of range", function (assert) {
   set.add(100,2).add(200,2);
   assert.deepEqual(iter(set), [100,101,200,201], 'should have two sets');
 
@@ -65,7 +65,7 @@ test("add range overlapping last edge of range", function() {
   assert.deepEqual(iter(set), [100,101,102,200,201], 'should include 101-102');
 });
 
-test("add range overlapping two ranges, merging into one", function() {
+test("add range overlapping two ranges, merging into one", function (assert) {
   set.add(100,2).add(110,2);
   assert.deepEqual(iter(set), [100,101,110,111], 'should have two sets');
 
@@ -76,7 +76,7 @@ test("add range overlapping two ranges, merging into one", function() {
   assert.deepEqual(iter(set), [100,101,102,103,104,105,106,107,108,109,110,111], 'should include one range 100-111');
 });
 
-test("add range overlapping three ranges, merging into one", function() {
+test("add range overlapping three ranges, merging into one", function (assert) {
   set.add(100,2).add(105,2).add(110,2);
   assert.deepEqual(iter(set), [100,101,105,106,110,111], 'should have two sets');
 
@@ -87,7 +87,7 @@ test("add range overlapping three ranges, merging into one", function() {
   assert.deepEqual(iter(set), [100,101,102,103,104,105,106,107,108,109,110,111], 'should include one range 100-111');
 });
 
-test("add range partially overlapping one range and replacing another range, merging into one", function() {
+test("add range partially overlapping one range and replacing another range, merging into one", function (assert) {
   set.add(100,2).add(105,2);
   assert.deepEqual(iter(set), [100,101,105,106], 'should have two sets');
 
@@ -99,7 +99,7 @@ test("add range partially overlapping one range and replacing another range, mer
   assert.deepEqual(iter(set), [100,101,102,103,104,105,106,107,108,109,110], 'should include one range 100-110');
 });
 
-test("add range overlapping last index", function() {
+test("add range overlapping last index", function (assert) {
   set.add(100,2); // add initial set.
   assert.equal(iter(set)[0], 100, 'precond - first index is 100');
 
@@ -110,7 +110,7 @@ test("add range overlapping last index", function() {
   assert.deepEqual(iter(set), [100, 101, 102]);
 });
 
-test("add range matching existing range", function() {
+test("add range matching existing range", function (assert) {
   set.add(100,5); // add initial set.
   assert.equal(iter(set)[0], 100, 'precond - first index is 100');
 
@@ -125,22 +125,22 @@ test("add range matching existing range", function() {
 // NORMALIZED PARAMETER CASES
 //
 
-test("add with no params should do nothing", function() {
+test("add with no params should do nothing", function (assert) {
   set.add();
   assert.deepEqual(iter(set), []);
 });
 
-test("add with single number should add index only", function() {
+test("add with single number should add index only", function (assert) {
   set.add(2);
   assert.deepEqual(iter(set), [2]);
 });
 
-test("add with range object should add range only", function() {
+test("add with range object should add range only", function (assert) {
   set.add({ start: 2, length: 2 });
   assert.deepEqual(iter(set), [2,3]);
 });
 
-test("add with index set should add indexes in set", function() {
+test("add with index set should add indexes in set", function (assert) {
   set.add(SC.IndexSet.create().add(2,2).add(10,2));
   assert.deepEqual(iter(set), [2,3,10,11]);
 });
@@ -149,14 +149,14 @@ test("add with index set should add indexes in set", function() {
 // OTHER BEHAVIORS
 //
 
-test("adding a range should trigger an observer notification", function() {
+test("adding a range should trigger an observer notification", function (assert) {
   var callCnt = 0;
   set.addObserver('[]', function() { callCnt++; });
   set.add(10,10);
   assert.equal(callCnt, 1, 'should have called observer once');
 });
 
-test("adding a range over an existing range should not trigger an observer notification", function() {
+test("adding a range over an existing range should not trigger an observer notification", function (assert) {
   var callCnt = 0;
   set.add(10,10);
   set.addObserver('[]', function() { callCnt++; });
@@ -164,7 +164,7 @@ test("adding a range over an existing range should not trigger an observer notif
   assert.equal(callCnt, 0, 'should not have called observer');
 });
 
-test("appending a range to end should merge into last range", function() {
+test("appending a range to end should merge into last range", function (assert) {
   set = SC.IndexSet.create(2).add(3);
   assert.equal(set.rangeStartForIndex(3), 2, 'last two range should merge together (%@)'.fmt(set.inspect()));
   assert.equal(set.get('max'), 4, 'should have max');
@@ -177,7 +177,7 @@ test("appending a range to end should merge into last range", function() {
 
 });
 
-test("appending range to start of empty set should create a single range", function() {
+test("appending range to start of empty set should create a single range", function (assert) {
   set = SC.IndexSet.create().add(0,2);
   assert.equal(set.rangeStartForIndex(1), 0, 'should have single range (%@)'.fmt(set.inspect()));
   assert.equal(set.get('length'), 2, 'should have length');
@@ -190,7 +190,7 @@ test("appending range to start of empty set should create a single range", funct
 
 });
 
-test("add raises exception when frozen", function() {
+test("add raises exception when frozen", function (assert) {
   assert.throws(function() {
     set.freeze().add(0,2);
   }, SC.FROZEN_ERROR);
@@ -201,7 +201,7 @@ test("add raises exception when frozen", function() {
 //
 // demonstrate fixes for specific bugs here.
 
-test("adding in the assert.deepEqual range should keep length consistent", function() {
+test("adding in the assert.deepEqual range should keep length consistent", function (assert) {
   set = SC.IndexSet.create();
   set.add(1,4);
   assert.equal(set.length, 4, 'set length should be 4');

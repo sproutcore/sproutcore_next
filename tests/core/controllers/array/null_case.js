@@ -32,26 +32,26 @@ module("SC.ArrayController - null_case", {
   }
 });
 
-test("state properties", function() {
+test("state properties", function (assert) {
   assert.equal(controller.get("hasContent"), false, 'c.hasContent');
   assert.equal(controller.get("canRemoveContent"), false, "c.canRemoveContent");
   assert.equal(controller.get("canReorderContent"), false, "c.canReorderContent");
   assert.equal(controller.get("canAddContent"), false, "c.canAddContent");
 });
 
-test("addObject", function() {
+test("addObject", function (assert) {
   assert.throws(function() {
     controller.addObject(extra);
   }, Error, "controller.addObject should throw exception");
 });
 
-test("removeObject", function() {
+test("removeObject", function (assert) {
   assert.throws(function() {
     controller.removeObject(extra);
   }, Error, "controller.addObject should throw exception");
 });
 
-test("basic array operations", function() {
+test("basic array operations", function (assert) {
   assert.equal(controller.get("length"), 0, 'length should be empty');
   assert.equal(controller.objectAt(0), undefined, "objectAt() should return undefined");
   
@@ -60,6 +60,6 @@ test("basic array operations", function() {
   }, Error, 'replace() should throw an error since it is not editable');
 });
 
-test("arrangedObjects", function() {
+test("arrangedObjects", function (assert) {
   assert.equal(controller.get("arrangedObjects"), controller, 'c.arrangedObjects should return receiver');
 });

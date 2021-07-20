@@ -253,7 +253,7 @@ test("Test attached_shown state.", function (assert) {
 });
 
 
-test("Calling destroy layer, clears the layer from all child views.",  function () {
+test("Calling destroy layer, clears the layer from all child views.", function (assert) {
   var child = View.create(),
     view = View.create({ childViews: [child] });
 
