@@ -12,7 +12,7 @@
 import { SC } from '../../core/core.js';
 import { device, PORTRAIT_ORIENTATION } from './device.js';
 import { platform } from './platform.js';
-import { SCEvent, browser, MODIFIER_KEYS, FUNCTION_KEYS } from '../../event/event.js'; 
+import { SCEvent, browser, MODIFIER_KEYS, FUNCTION_KEYS, CoreQuery } from '../../event/event.js'; 
 import { rectsEqual } from '../../view/views/utils/rect.js';
 import { viewFor } from '../../view/view.js';
 import { Touch } from './touch.js';
@@ -383,7 +383,7 @@ export const RootResponder = SC.Object.extend(
   */
   focus: function(evt) {
     if (!this.get('hasFocus')) {
-      $('body').addClass('sc-focus').removeClass('sc-blur');
+      CoreQuery('body').addClass('sc-focus').removeClass('sc-blur');
 
       SC.run(function () {
       // If the app is getting focus again set the first responder to the first
@@ -430,7 +430,7 @@ export const RootResponder = SC.Object.extend(
   */
   blur: function(evt) {
     if (this.get('hasFocus')) {
-      $('body').addClass('sc-blur').removeClass('sc-focus');
+      CoreQuery('body').addClass('sc-blur').removeClass('sc-focus');
 
       SC.run(function() {
         this.set('hasFocus', false);

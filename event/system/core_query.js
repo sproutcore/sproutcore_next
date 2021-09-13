@@ -5,9 +5,10 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import '../../node_modules/jquery/dist/jquery.slim.js';
+import jQuery from '../../node_modules/jquery/dist/jquery.slim.js';
 import { SC } from '../../core/core.js';
 
+// @ts-ignore
 export const CoreQuery = jQuery;
 // Alias jQuery as SC.$ and SC.CoreQuery for compatibility
 // SC.$ = SC.CoreQuery = jQuery;
