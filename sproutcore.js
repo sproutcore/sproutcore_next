@@ -18,8 +18,3 @@ export const SproutCore = core;
 });
 
 export const SC = SproutCore;
-
-GLOBAL.SC = GLOBAL.Sproutcore = SC.mixin(GLOBAL.SC, SproutCore);
-// backwards compat
-GLOBAL.YES = true;
-GLOBAL.NO = false;
