@@ -2,9 +2,22 @@
   "name": "sproutcore_next",
   "version": "0.0.5",
   "description": "Attempt at next generation sc",
-  "main": "test.js",
   "directories": {
     "test": "tests"
+  },
+  "main": "./sproutcore.js",
+  "type": "module",
+  "exports": {
+    ".": "./sproutcore.js",
+    "GLOBAL": "./sproutcore_global.js",
+    "core": "./core/core.js",
+    "datastore": "./datastore/datastore.js",
+    "desktop": "./desktop/desktop.js",
+    "event": "./event/event.js",
+    "responder": "./responder/responder.js",
+    "statechart": "./statechart/statechart.js",
+    "view": "./view/view.js",
+    "testing": "./testing/testing.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,11 +30,11 @@
   "license": "MIT",
   "types": "./typings/core.d.ts",
   "dependencies": {
-    "httpserver": "^0.3.0",
     "jquery": "^3.5.1",
     "less": "^4.1.1"
   },
   "devDependencies": {
+    "httpserver": "^0.3.0",
     "karma": "^6.3.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^2.1.0",
