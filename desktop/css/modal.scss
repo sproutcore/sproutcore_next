@@ -1,0 +1,15 @@
+/** SC.ModalPane Support */
+
+.sc-pane.sc-modal {
+  position: fixed;
+  z-index: 100;
+
+
+  &.for-sc-panel {
+    background: black;
+    opacity: 0.3;
+    -moz-opacity: 0.3;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
+  }
+}
