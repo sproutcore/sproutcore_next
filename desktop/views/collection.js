@@ -9,6 +9,7 @@
 import { SC } from '../../core/core.js';
 import { CollectionContent } from '../../core/mixins/collection_content.js';
 import { BRANCH_CLOSED, BRANCH_OPEN } from '../../core/system/constants.js';
+import { CoreQuery } from '../../event/event.js';
 import { ActionSupport, DROP_AFTER, DROP_BEFORE, DROP_ON, View } from '../../view/view.js';
 import { CollectionViewDelegate } from '../mixins/collection_view_delegate.js';
 import { DRAG_REORDER } from '../system/constants.js';
@@ -1250,7 +1251,7 @@ export const CollectionView = View.extend(ActionSupport, CollectionViewDelegate,
     // walk up the element hierarchy until we find this or an element with an
     // id matching the base guid (i.e. a collection item)
     while (element && element !== document && element !== layer) {
-      id = element ? $(element).attr('id') : null ;
+      id = element ? CoreQuery(element).attr('id') : null ;
       if (id && (contentIndex = this.contentIndexForLayerId(id)) !== null) {
           break;
       }
@@ -2676,7 +2677,7 @@ export const CollectionView = View.extend(ActionSupport, CollectionViewDelegate,
     indexes = this.get('nowShowing').without(indexes);
 
     // cleanup weird stuff that might make the drag look out of place
-    $(dragLayer).css('backgroundColor', 'transparent')
+    CoreQuery(dragLayer).css('backgroundColor', 'transparent')
       .css('border', 'none')
       .css('top', 0).css('left', 0);
 
@@ -2697,7 +2698,7 @@ export const CollectionView = View.extend(ActionSupport, CollectionViewDelegate,
           // photocopy any canvas elements
           var itemViewCanvasses = itemView.$().find('canvas');
           if (itemViewCanvasses) {
-            var layerCanvasses = $(layer).find('canvas'),
+            var layerCanvasses = CoreQuery(layer).find('canvas'),
                 len = itemViewCanvasses.length,
                 itemViewCanvas, layerCanvas;
             for (i = 0; i < len; i++) {

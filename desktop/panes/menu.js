@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { bodyOverflowArbitrator, propertyFromRenderDelegate, REGULAR_CONTROL_SIZE } from "../../view/view.js";
+import { bodyOverflowArbitrator, propertyFromRenderDelegate, REGULAR_CONTROL_SIZE, View } from "../../view/view.js";
 import { MenuItemView } from "../views/menu_item.js";
 import { MenuScrollView } from "../views/menu_scroll.js";
 import { PickerPane, PICKER_MENU } from "./picker.js";

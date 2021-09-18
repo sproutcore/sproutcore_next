@@ -6,7 +6,7 @@
 // ==========================================================================
 
 import { RootResponder } from "../../responder/responder.js";
-import { Pane } from "../../view/view.js";
+import { Pane, View } from "../../view/view.js";
 
 
 /** @class

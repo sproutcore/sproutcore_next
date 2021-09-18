@@ -91,7 +91,7 @@ export const MenuItemView = View.extend(ContentDisplay,
     var ret = this.getContentProperty('itemTitleKey'),
         localize = this.getPath('parentMenu.localize');
 
-    if (localize && ret) ret = String.loc(ret);
+    if (localize && ret) ret = SC.String.loc(ret);
 
     return ret || '';
   }.property().cacheable(),
@@ -114,7 +114,7 @@ export const MenuItemView = View.extend(ContentDisplay,
     var ret = this.getContentProperty('itemToolTipKey'),
         localize = this.getPath('parentMenu.localize');
 
-    if (localize && ret) ret = String.loc(ret);
+    if (localize && ret) ret = SC.String.loc(ret);
 
     return ret || '';
   }.property().cacheable(),
@@ -742,7 +742,7 @@ export const MenuItemView = View.extend(ContentDisplay,
     if (!menu) return;
 
     var mapping           = MenuItemView._contentPropertyToMenuItemPropertyMapping,
-        contentProperties = keys(mapping),
+        contentProperties = SC.keys(mapping),
         i, len, contentProperty, menuItemProperty;
 
 

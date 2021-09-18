@@ -6,7 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
-import { browser } from '../../event/event.js';
+import { browser, CoreQuery } from '../../event/event.js';
 import { RenderContext } from "../render_context/render_context.js";
 
 export const _copy_computed_props = [
@@ -44,7 +44,7 @@ export const heightForString = function(str, width, style, classNames, ignoreEsc
   }
 
   style = style+'; width: '+width+'px; left: '+(-1*width)+'px; position: absolute';
-  var cqElem = $(elem);
+  var cqElem = CoreQuery(elem);
   cqElem.attr('style', style);
 
   if (classes !== '') {
@@ -96,7 +96,7 @@ export const prepareStringMeasurement = function(exampleElement, classNames) {
     document.body.insertBefore(parentElement, null);
   }
 
-  cqElem = $(element);
+  cqElem = CoreQuery(element);
   // two possibilities: example element or type string
   if (SC.typeOf(exampleElement) != SC.T_STRING) {
     var computed = null;

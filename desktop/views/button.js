@@ -250,7 +250,7 @@ export const ButtonView = View.extend(ActionSupport, Control,
   */
   displayTitle: function() {
     var ret = this.get('title');
-    return (ret && this.get('localize')) ? String.loc(ret) : (ret || '');
+    return (ret && this.get('localize')) ? SC.String.loc(ret) : (ret || '');
   }.property('title','localize').cacheable(),
 
   /**
