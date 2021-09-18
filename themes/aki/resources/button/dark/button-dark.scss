@@ -1,7 +1,7 @@
 @import '../../variables-dark';
 
-@theme(dark) {
-  #{$theme}.button {
+
+  #{$theme}.dark.button {
 
     background-color: $button-dark-bg;
     border: 1px solid $button-dark-border-color;
@@ -45,4 +45,3 @@
       text-shadow: $sel-active-button-dark-text-shadow;
     }
   }
-}

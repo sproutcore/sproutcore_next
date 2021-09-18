@@ -1,7 +1,6 @@
 @import '../../variables-info';
 
-@theme(info) {
-  #{$theme}.button {
+  #{$theme}.info.button {
 
     background-color: $button-info-bg;
     border: 1px solid $button-info-border-color;
@@ -45,4 +44,3 @@
       text-shadow: $sel-active-button-info-text-shadow;
     }
   }
-}

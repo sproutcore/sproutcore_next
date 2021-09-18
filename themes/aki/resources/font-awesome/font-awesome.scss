@@ -6,10 +6,11 @@
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: sc_static('fontawesome-webfont.woff2') format('woff2'),
-    sc_static('fontawesome-webfont.woff') format('woff'),
-    sc_static('fontawesome-webfont.ttf') format('truetype'),
-    sc_static('fontawesome-webfont.svg') format('svg');
+  src: 
+    url("./fontawesome-webfont.woff2") format('woff2'),
+    url("./fontawesome-webfont.woff") format('woff'),
+    url("./fontawesome-webfont.ttf") format('truetype'),
+    url("./fontawesome-webfont.svg") format('svg');
   font-weight: normal;
   font-style: normal;
 }

@@ -1,8 +1,7 @@
 @import '../variables';
 
-@theme(sc-small-size) {
   
-#{$theme}.checkbox {
+#{$theme}.sc-small-size.checkbox {
   
   .button {
     width: 12px;
@@ -14,6 +13,4 @@
     }
   }
   
-}
-
 }

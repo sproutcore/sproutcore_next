@@ -1,8 +1,7 @@
 @import '../variables';
 
-@theme(sc-jumbo-size) {
 
-  #{$theme}.button {
+  #{$theme}.sc-jumbo-size.button {
     height: 42px;
     font-size: 16px;
     font-weight: bold;
@@ -21,15 +20,13 @@
     }
   }
 
-}
 
 
-@theme(capsule) {
-  #{$theme}.button {
+  #{$theme}.capsule.button {
     &.sc-static-layout .sc-button-label {
       margin-left: 20px;
       margin-right: 20px;
     }
   }
-}
+
 

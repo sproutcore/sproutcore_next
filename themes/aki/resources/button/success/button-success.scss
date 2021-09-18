@@ -1,7 +1,6 @@
 @import '../../variables-success';
 
-@theme(success) {
-  #{$theme}.button {
+  #{$theme}.succes.button {
 
     background-color: $button-success-bg;
     border: 1px solid $button-success-border-color;
@@ -45,4 +44,3 @@
       text-shadow: $sel-active-button-success-text-shadow;
     }
   }
-}

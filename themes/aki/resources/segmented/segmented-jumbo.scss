@@ -1,8 +1,7 @@
 
 @import '../variables';
-@theme(sc-jumbo-size) {
 
-#{$theme}.sc-segment-view {
+#{$theme}.sc-jumbo.size.sc-segment-view {
   font-size: 19px;
   padding: 8px 12px;
 
@@ -31,4 +30,4 @@
   }
 }
 
-}
+

@@ -67,21 +67,17 @@
 }
 
 
-@theme(capsule) {
-  #{$theme}.button {
+  #{$theme}.capsule.button {
     border-radius: 30px;
   }
-}
 
 
-@theme(point-left) {
-  #{$theme}.button {
+  #{$theme}.point-left.button {
     clip-path: polygon(14px 0%, 100% 0%, 100% 100%, 14px 100%, 0% 50%);
   }
-}
 
-@theme(point-right) {
-  #{$theme}.button {
+
+  #{$theme}.point-right.button {
     clip-path: polygon(0% 0%, calc(100% - 14px) 0%, 100% 50%, calc(100% - 14px) 100%, 0% 100%);
   }
-}
+

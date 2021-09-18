@@ -3,9 +3,7 @@
 @import '../../variables-dark';
 
 
-@theme(dark) {
-
-#{$theme}.slider {
+#{$theme}.dark.slider {
   .sc-slider-step-mark {
     background-color: $slider-step-mark-dark-color;
   }
@@ -26,5 +24,4 @@
       box-shadow: $active-slider-handle-dark-box-shadow;
     }
   }
-}
 }

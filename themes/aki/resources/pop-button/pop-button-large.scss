@@ -1,8 +1,8 @@
 
 @import '../variables';
-@theme(sc-large-size) {
 
-  #{$theme}.sc-popup-button-view {
+
+  #{$theme}.sc-large-size.sc-popup-button-view {
     &.sc-static-layout .sc-button-label {
       margin-left: 5px;
       margin-right: 22px;
@@ -13,4 +13,4 @@
       top: 6px;
     }
   }
-}
+

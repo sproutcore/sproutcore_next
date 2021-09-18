@@ -1,7 +1,6 @@
 @import '../../variables-warning';
 
-@theme(warning) {
-  #{$theme}.button {
+  #{$theme}.warning.button {
 
     background-color: $button-warning-bg;
     border: 1px solid $button-warning-border-color;
@@ -45,4 +44,3 @@
       text-shadow: $sel-active-button-warning-text-shadow;
     }
   }
-}

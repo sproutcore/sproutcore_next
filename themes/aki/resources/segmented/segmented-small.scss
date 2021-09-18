@@ -1,8 +1,7 @@
 
 @import '../variables';
-@theme(sc-small-size) {
 
-#{$theme}.sc-segment-view {
+#{$theme}.sc-small-size.sc-segment-view {
   font-size: 11px;
   padding: 0px 5px 1px;
 
@@ -28,4 +27,4 @@
   }
 }
 
-}
+

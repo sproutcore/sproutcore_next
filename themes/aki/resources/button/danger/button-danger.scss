@@ -1,6 +1,5 @@
 @import '../../variables-danger';
-@theme(danger) {
-  #{$theme}.button {
+  #{$theme}.danger.button {
 
     background-color: $button-danger-bg;
     border: 1px solid $button-danger-border-color;
@@ -44,4 +43,3 @@
       text-shadow: $sel-active-button-danger-text-shadow;
     }
   }
-}
