@@ -4,18 +4,21 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
 
 
 /**
  * Renders and updates the HTML representation of a popup button.
  */
-SC.BaseTheme.popupButtonRenderDelegate = SC.BaseTheme.buttonRenderDelegate.create({
-  render: function(dataSource, context) {
+BaseTheme.popupButtonRenderDelegate = BaseTheme.buttonRenderDelegate.create({
+  render: function render (dataSource, context) {
     context.setAttr('aria-haspopup', 'true');
-    sc_super();
+    render.base.apply(this, arguments);
   },
 
-  update: function(dataSource, jQuery) {
-    sc_super();
+  update: function update(dataSource, jQuery) {
+    // sc_super();
+    update.base.apply(this, arguments);
   }
 });

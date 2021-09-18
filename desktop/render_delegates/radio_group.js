@@ -5,6 +5,8 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme, RenderContext } from "../../view/view.js";
 
 /**
   @class
@@ -26,7 +28,7 @@
   Also, as it would be low-performance to update any but the changed radio
   button, there is a method to update a specific index.
 */
-SC.BaseTheme.radioGroupRenderDelegate = SC.RenderDelegate.create({
+BaseTheme.radioGroupRenderDelegate = RenderDelegate.create({
   className: 'radio-group',
 
   render: function(dataSource, context) {
@@ -75,7 +77,7 @@ SC.BaseTheme.radioGroupRenderDelegate = SC.RenderDelegate.create({
       // just regenerate if the count has changed. It would be better
       // to be intelligent, but that would also be rather complex
       // for such a rare case.
-      var context = SC.RenderContext(jquery[0]);
+      var context = RenderContext(jquery[0]);
       this.render(dataSource, context);
       context.update();
       return;
@@ -105,7 +107,7 @@ SC.BaseTheme.radioGroupRenderDelegate = SC.RenderDelegate.create({
 
     @param {Object} dataSource The RenderDelegate data source.
     @param {jQuery} jquery A jQuery instance with the DOM for this radio group.
-    @param {SC.Event SC.Touch} event The event or SC.Touch object.
+    @param {Event Touch} event The event or Touch object.
   */
 
   indexForEvent: function(dataSource, jquery, evt) {

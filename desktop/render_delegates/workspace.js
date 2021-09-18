@@ -5,7 +5,10 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-SC.BaseTheme.workspaceRenderDelegate = SC.RenderDelegate.create({
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
+
+BaseTheme.workspaceRenderDelegate = RenderDelegate.create({
   className: 'workspace',
   
   render: function() {

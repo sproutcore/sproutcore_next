@@ -5,7 +5,11 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-SC.BaseTheme.wellRenderDelegate = SC.RenderDelegate.create({
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
+
+
+BaseTheme.wellRenderDelegate = RenderDelegate.create({
   className: 'well',
   render: function(dataSource, context) {
 

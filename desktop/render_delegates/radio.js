@@ -4,6 +4,8 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
 
 /**
   Renders and updates the DOM representation of a radio button (a single button,
@@ -24,7 +26,7 @@
    - `labelRenderDelegate` properties
 
 */
-SC.BaseTheme.radioRenderDelegate = SC.RenderDelegate.create({
+BaseTheme.radioRenderDelegate = RenderDelegate.create({
   className: 'radio',
 
   render: function(dataSource, context) {

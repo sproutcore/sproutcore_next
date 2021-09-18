@@ -5,8 +5,12 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-SC.BaseTheme.PROGRESS_OFFSET = 0.5;
-SC.BaseTheme.PROGRESS_OFFSET_RANGE = 42;
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
+import { platform } from '../../responder/responder.js';
+
+BaseTheme.PROGRESS_OFFSET = 0.5;
+BaseTheme.PROGRESS_OFFSET_RANGE = 42;
 
 /**
  Renders and updates DOM representations of progress bars.
@@ -25,7 +29,7 @@ SC.BaseTheme.PROGRESS_OFFSET_RANGE = 42;
  Ace's `progressRenderDelegate`'s rendering process is not affected by
  any theme constants.
  */
-SC.BaseTheme.progressRenderDelegate = SC.RenderDelegate.create({
+BaseTheme.progressRenderDelegate = RenderDelegate.create({
   className:'progress',
 
   render:function (dataSource, context) {
@@ -98,11 +102,11 @@ SC.BaseTheme.progressRenderDelegate = SC.RenderDelegate.create({
     jQuery.find('.content').css('width', (value * 100) + "%");
 
     // fallback for browsers that don't support css transitions
-    if(!SC.platform.supportsCSSTransitions) {
+    if(!platform.supportsCSSTransitions) {
       if (!this._queue[jQuery[0].id]) {
         this._queue[jQuery[0].id] = {
           offset:0,
-          element:SC.$(jQuery).find('.content .middle'),
+          element:$(jQuery).find('.content .middle'),
           shouldAnimate:false
         };
       }
@@ -155,7 +159,7 @@ SC.BaseTheme.progressRenderDelegate = SC.RenderDelegate.create({
             self._animating = true;
             animations++;
             lastOffset = params.offset || 0;
-            offset = (lastOffset + SC.BaseTheme.PROGRESS_OFFSET) % SC.BaseTheme.PROGRESS_OFFSET_RANGE;
+            offset = (lastOffset + BaseTheme.PROGRESS_OFFSET) % BaseTheme.PROGRESS_OFFSET_RANGE;
 
             // Only update the style when the offset changes (this avoids making
             // the browser recalculate style in each frame).

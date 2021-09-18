@@ -4,6 +4,8 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
 
 /**
   Renders and updates the DOM representation of a slider.
@@ -16,7 +18,7 @@
    - `frame` -- containing the frame in which the slider is being drawn.
 */
 
-SC.BaseTheme.sliderRenderDelegate = SC.RenderDelegate.create({
+BaseTheme.sliderRenderDelegate = RenderDelegate.create({
 
   className: 'slider',
 

@@ -5,10 +5,14 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
+
+
 /**
-  Renders and updates the HTML representation of SC.SegmentedView.
+  Renders and updates the HTML representation of SegmentedView.
 */
-SC.BaseTheme.segmentedRenderDelegate = SC.RenderDelegate.create({
+BaseTheme.segmentedRenderDelegate = RenderDelegate.create({
   className: 'segmented',
 
   /*

@@ -5,4 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-SC.BaseTheme.SourceList = SC.BaseTheme.subtheme('source-list');
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
+
+BaseTheme.SourceList = BaseTheme.subtheme('source-list');

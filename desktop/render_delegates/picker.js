@@ -5,9 +5,13 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('render_delegates/panel');
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
+import { PICKER_MENU_POINTER, PICKER_POINTER } from '../panes/picker.js';
 
-SC.BaseTheme.pickerRenderDelegate = SC.RenderDelegate.create({
+import './panel.js';
+
+BaseTheme.pickerRenderDelegate = RenderDelegate.create({
   className: 'picker',
 
   render: function (dataSource, context) {
@@ -18,7 +22,7 @@ SC.BaseTheme.pickerRenderDelegate = SC.RenderDelegate.create({
     var preferType = dataSource.get('preferType'),
       pointerPosition = dataSource.get('pointerPos');
 
-    if (preferType == SC.PICKER_POINTER || preferType == SC.PICKER_MENU_POINTER) {
+    if (preferType == PICKER_POINTER || preferType == PICKER_MENU_POINTER) {
       context.push('<div class="sc-pointer ' + pointerPosition + '"></div>');
       context.addClass(pointerPosition);
 
@@ -35,7 +39,7 @@ SC.BaseTheme.pickerRenderDelegate = SC.RenderDelegate.create({
     var preferType = dataSource.get('preferType'),
       pointerPosition = dataSource.get('pointerPos');
 
-    if (preferType == SC.PICKER_POINTER || preferType == SC.PICKER_MENU_POINTER) {
+    if (preferType == PICKER_POINTER || preferType == PICKER_MENU_POINTER) {
       var lastPointerPosition = dataSource.renderState._lastPointerPosition;
 
       if (lastPointerPosition !== pointerPosition) {

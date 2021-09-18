@@ -13,6 +13,22 @@ import './render_delegates/checkbox.js';
 import './render_delegates/collection.js';
 import './render_delegates/disclosure.js';
 import './render_delegates/toolbar.js';
+import './render_delegates/image_button.js';
+import './render_delegates/master_detail.js';
+import './render_delegates/menu.js';
+import './render_delegates/panel.js';
+import './render_delegates/picker.js';
+import './render_delegates/popup_button.js';
+import './render_delegates/progress.js';
+import './render_delegates/radio_group.js';
+import './render_delegates/radio.js';
+import './render_delegates/segment.js';
+import './render_delegates/segmented.js';
+import './render_delegates/select_button.js';
+import './render_delegates/slider.js';
+import './render_delegates/source_list.js';
+import './render_delegates/well.js';
+import './render_delegates/workspace.js';
 
 /**
   If set to `NO`, then pressing backspace will NOT navigate to the previous

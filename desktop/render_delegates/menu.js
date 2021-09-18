@@ -4,11 +4,14 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
+import './picker.js'; // make sure this is done first
 
-sc_require('render_delegates/picker');
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
+
 
 // This is the same as a pickerRenderDelegate, but is named 'menu' instead.
-SC.BaseTheme.menuRenderDelegate = SC.BaseTheme.pickerRenderDelegate.create({
+BaseTheme.menuRenderDelegate = BaseTheme.pickerRenderDelegate.create({
   className: 'menu',
 
   render: function(orig, dataSource, context) {

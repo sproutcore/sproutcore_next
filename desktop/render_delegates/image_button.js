@@ -4,9 +4,11 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
 
 
-SC.BaseTheme.imageButtonRenderDelegate = SC.RenderDelegate.create({
+BaseTheme.imageButtonRenderDelegate = RenderDelegate.create({
   className: 'image-button',
 
   render: function (dataSource, context) {

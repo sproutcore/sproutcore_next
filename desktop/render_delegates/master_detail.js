@@ -5,6 +5,9 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { SC } from '../../core/core.js';
+import { RenderDelegate, BaseTheme } from "../../view/view.js";
+import { platform } from '../../responder/responder.js'
 
 /**
   Border between the two panes of the MasterDetail.
@@ -13,18 +16,18 @@
   on left or right sides of MasterDetail, if any, should be handled by
   its layout.
  */
-SC.BaseTheme.MASTER_DETAIL_DIVIDER_WIDTH = 1;
+BaseTheme.MASTER_DETAIL_DIVIDER_WIDTH = 1;
 
-SC.BaseTheme.masterDetailRenderDelegate = SC.RenderDelegate.create({
+BaseTheme.masterDetailRenderDelegate = RenderDelegate.create({
   className: 'master-detail',
   dividerWidth: 1,
   
   render: function(dataSource, context) {
-    context.setClass('round-toolbars', SC.platform.touch);
+    context.setClass('round-toolbars', platform.touch);
   },
   
   update: function(dataSource, jquery) {
-    jquery.setClass('round-toolbars', SC.platform.touch);    
+    jquery.setClass('round-toolbars', platform.touch);    
   }
   
 });
