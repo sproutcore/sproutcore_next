@@ -4,23 +4,27 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-sc_require('views/scroll_view');
+
+import { REGULAR_CONTROL_SIZE } from "../../view/view.js";
+import { MenuScrollerView } from "./menu_scroller_view.js";
+import { ScrollView } from "./scroll_view.js";
+
 
 
 /** @class
 
-  Implements a scroll view for menus.  This class extends SC.ScrollView for
+  Implements a scroll view for menus.  This class extends ScrollView for
   menus.
 
-  The main difference with SC.ScrollView is that there is only vertical
-  scrolling. Value Syncing between SC.MenuScrollView and SC.MenuScrollerView
+  The main difference with ScrollView is that there is only vertical
+  scrolling. Value Syncing between MenuScrollView and MenuScrollerView
   is done using valueBinding.
 
-  @extends SC.ScrollView
+  
   @since SproutCore 1.0
 */
-SC.MenuScrollView = SC.ScrollView.extend(
-/** @scope SC.MenuScrollView.prototype */{
+export const MenuScrollView = ScrollView.extend(
+/** @scope MenuScrollView.prototype */{
 
   // ---------------------------------------------------------------------------------------------
   // Properties
@@ -30,10 +34,10 @@ SC.MenuScrollView = SC.ScrollView.extend(
     The bottom scroller view class. This will be replaced with a view instance when the
     MenuScrollView is created unless hasVerticalScroller is false.
 
-    @type SC.View
-    @default SC.MenuScrollerView
+    @type View
+    @default MenuScrollerView
   */
-  bottomScrollerView: SC.MenuScrollerView,
+  bottomScrollerView: MenuScrollerView,
 
   /**
     Returns true if the view has both a vertical scroller and the scroller is visible.
@@ -41,7 +45,7 @@ SC.MenuScrollView = SC.ScrollView.extend(
     @field
     @type Boolean
     @readonly
-    @see SC.ScrollView
+    @see ScrollView
   */
   canScrollVertical: function () {
     return !!(this.get('hasVerticalScroller') && // This property isn't bindable.
@@ -50,10 +54,10 @@ SC.MenuScrollView = SC.ScrollView.extend(
       this.get('isVerticalScrollerVisible'));
   }.property('isVerticalScrollerVisible').cacheable(),
 
-  /** SC.View.prototype
+  /** View.prototype
     @type Array
     @default ['sc-menu-scroll-view']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-menu-scroll-view'],
 
@@ -61,18 +65,18 @@ SC.MenuScrollView = SC.ScrollView.extend(
     Control Size for Menu content: change verticalLineScroll
 
     @type String
-    @default SC.REGULAR_CONTROL_SIZE
-    @see SC.Control
+    @default REGULAR_CONTROL_SIZE
+    @see Control
   */
-  controlSize: SC.REGULAR_CONTROL_SIZE,
+  controlSize: REGULAR_CONTROL_SIZE,
 
   /**
-    YES if the view should maintain a horizontal scroller. This property must be set when the view
+    true if the view should maintain a horizontal scroller. This property must be set when the view
     is created.
 
     @type Boolean
     @default false
-    @see SC.ScrollView
+    @see ScrollView
   */
   hasHorizontalScroller: false,
 
@@ -80,27 +84,27 @@ SC.MenuScrollView = SC.ScrollView.extend(
     The top scroller view class. This will be replaced with a view instance when the MenuScrollView
     is created unless hasVerticalScroller is false.
 
-    @type SC.View
-    @default SC.MenuScrollerView
+    @type View
+    @default MenuScrollerView
   */
-  topScrollerView: SC.MenuScrollerView,
+  topScrollerView: MenuScrollerView,
 
   // ---------------------------------------------------------------------------------------------
   // Methods
   //
 
-  /** @private @see SC.ScrollView. Check frame changes for size changes. */
-  _sc_contentViewFrameDidChange: function () {
-    sc_super();
+  /** @private @see ScrollView. Check frame changes for size changes. */
+  _sc_contentViewFrameDidChange: function fdc () {
+    fdc.base.apply(this, arguments);
 
-    // Unlike a normal SC.ScrollView, the visibility of the top & bottom scrollers changes as the
+    // Unlike a normal ScrollView, the visibility of the top & bottom scrollers changes as the
     // scrolling commences. For example, once the user scrolls a tiny bit, we need to show the
     // top scroller.
     this._sc_repositionScrollers();
   },
 
-  /** @private @see SC.ScrollView. When the content view's size changes, we need to update our scroll offset properties. */
-  _sc_repositionContentViewUnfiltered: function () {
+  /** @private @see ScrollView. When the content view's size changes, we need to update our scroll offset properties. */
+  _sc_repositionContentViewUnfiltered: function cvu () {
     var hasVerticalScroller = this.get('hasVerticalScroller'),
         // UNUSED. minimumVerticalScrollOffset = this.get('minimumVerticalScrollOffset'),
         maximumVerticalScrollOffset = this.get('maximumVerticalScrollOffset');
@@ -121,10 +125,10 @@ SC.MenuScrollView = SC.ScrollView.extend(
       }
     }
 
-    sc_super();
+    cvu.base.apply(this, arguments);
   },
 
-  /** @private @see SC.ScrollView. Re-position the scrollers and content depending on the need to scroll or not. */
+  /** @private @see ScrollView. Re-position the scrollers and content depending on the need to scroll or not. */
   _sc_repositionScrollersUnfiltered: function () {
     var hasScroller = this.get('hasVerticalScroller'),
         containerView = this.get('containerView');
@@ -183,7 +187,7 @@ SC.MenuScrollView = SC.ScrollView.extend(
     //@if(debug)
     // Provide some debug-mode only developer support to prevent problems.
     if (!containerView) {
-      throw new Error("Developer Error: SC.ScrollView must have a containerView class set before it is instantiated.");
+      throw new Error("Developer Error: ScrollView must have a containerView class set before it is instantiated.");
     }
     //@endif
 
@@ -205,7 +209,7 @@ SC.MenuScrollView = SC.ScrollView.extend(
       // Use a default scroller view.
       /* jshint eqnull:true */
       if (topScrollerView == null) {
-        topScrollerView = SC.MenuScrollerView;
+        topScrollerView = MenuScrollerView;
       }
 
       // Replace the class property with an instance.
@@ -233,7 +237,7 @@ SC.MenuScrollView = SC.ScrollView.extend(
       // Use a default scroller view.
       /* jshint eqnull:true */
       if (bottomScrollerView == null) {
-        bottomScrollerView = SC.MenuScrollerView;
+        bottomScrollerView = MenuScrollerView;
       }
 
       // Replace the class property with an instance.

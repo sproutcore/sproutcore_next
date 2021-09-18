@@ -4,7 +4,6 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*global jQuery*/
 
 import { SC } from '../../core/core.js';
 import { CoreQuery } from '../../event/event.js';
@@ -282,7 +281,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
   */
   findLayerInParentLayer: function (parentLayer) {
     var id = "#" + this.get('layerId').escapeCssIdForSelector();
-    return jQuery(id, parentLayer)[0] || jQuery(id)[0];
+    return CoreQuery(id, parentLayer)[0] || CoreQuery(id)[0];
   },
 
   /**

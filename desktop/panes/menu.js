@@ -5,18 +5,21 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('panes/picker');
-sc_require('views/menu_item');
+import { bodyOverflowArbitrator, propertyFromRenderDelegate, REGULAR_CONTROL_SIZE } from "../../view/view.js";
+import { MenuItemView } from "../views/menu_item.js";
+import { MenuScrollView } from "../views/menu_scroll.js";
+import { PickerPane, PICKER_MENU } from "./picker.js";
+
 
 /**
   @class
 
-  `SC.MenuPane` allows you to display a standard menu. Menus appear over other
+  `MenuPane` allows you to display a standard menu. Menus appear over other
   panes, and block input to other views until a selection is made or the pane
   is dismissed by clicking outside of its bounds.
 
   You can create a menu pane and manage it yourself, or you can use the
-  `SC.SelectButtonView` and `SC.PopupButtonView` controls to manage the menu for
+  `SelectButtonView` and `PopupButtonView` controls to manage the menu for
   you.
 
   ## Specifying Menu Items
@@ -39,14 +42,14 @@ sc_require('views/menu_item');
 
       var menuItems = [
         { title: 'Menu Item', keyEquivalent: 'ctrl_shift_n' },
-        { title: 'Checked Menu Item', checkbox: YES, keyEquivalent: 'ctrl_a' },
+        { title: 'Checked Menu Item', checkbox: true, keyEquivalent: 'ctrl_a' },
         { title: 'Selected Menu Item', keyEquivalent: ['backspace', 'delete'] },
-        { isSeparator: YES },
+        { isSeparator: true },
         { title: 'Menu Item with Icon', icon: 'inbox', keyEquivalent: 'ctrl_m' },
         { title: 'Menu Item with Icon', icon: 'folder', keyEquivalent: 'ctrl_p' }
       ];
 
-      var menu = SC.MenuPane.create({
+      var menu = MenuPane.create({
         items: menuItems
       });
 
@@ -55,11 +58,12 @@ sc_require('views/menu_item');
   To determine when a user clicks on a menu item, you can observe the
   `selectedItem` property for changes.
 
-  @extends SC.PickerPane
+  
   @since SproutCore 1.0
 */
-SC.MenuPane = SC.PickerPane.extend(
-/** @scope SC.MenuPane.prototype */ {
+
+export const MenuPane = PickerPane.extend(
+/** @scope MenuPane.prototype */ {
 
   /** @private Cache of the items array, used for clean up of observers. */
   _sc_menu_items: null,
@@ -67,7 +71,7 @@ SC.MenuPane = SC.PickerPane.extend(
   /**
     @type Array
     @default ['sc-menu']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-menu'],
 
@@ -106,7 +110,7 @@ SC.MenuPane = SC.PickerPane.extend(
     Your theme can override the default values for each control size by specifying
     them in the `menuRenderDelegate`. For example:
 
-        MyTheme.menuRenderDelegate = SC.BaseTheme.menuRenderDelegate.create({
+        MyTheme.menuRenderDelegate = BaseTheme.menuRenderDelegate.create({
           'sc-tiny-size': {
             itemHeight: 20,
             itemSeparatorHeight: 9,
@@ -118,9 +122,9 @@ SC.MenuPane = SC.PickerPane.extend(
     Changing the controlSize once the menu is instantiated has no effect.
 
     @type String
-    @default SC.REGULAR_CONTROL_SIZE
+    @default REGULAR_CONTROL_SIZE
   */
-  controlSize: SC.REGULAR_CONTROL_SIZE,
+  controlSize: REGULAR_CONTROL_SIZE,
 
   /**
     The height of each menu item, in pixels.
@@ -134,7 +138,7 @@ SC.MenuPane = SC.PickerPane.extend(
     @type Number
     @default itemHeight from theme if present, or 20.
   */
-  itemHeight: SC.propertyFromRenderDelegate('itemHeight', 20),
+  itemHeight: propertyFromRenderDelegate('itemHeight', 20),
 
   /**
     The height of separator menu items.
@@ -148,7 +152,7 @@ SC.MenuPane = SC.PickerPane.extend(
     @type Number
     @default itemSeparatorHeight from theme, or 9.
   */
-  itemSeparatorHeight: SC.propertyFromRenderDelegate('itemSeparatorHeight', 9),
+  itemSeparatorHeight: propertyFromRenderDelegate('itemSeparatorHeight', 9),
 
   /**
     The height of the menu pane. This is updated every time menuItemViews
@@ -173,7 +177,7 @@ SC.MenuPane = SC.PickerPane.extend(
     @type Number
     @default menuHeightPadding from theme, or 6
   */
-  menuHeightPadding: SC.propertyFromRenderDelegate('menuHeightPadding', 6),
+  menuHeightPadding: propertyFromRenderDelegate('menuHeightPadding', 6),
 
   /**
     The amount of offset x while positioning submenu.
@@ -184,7 +188,7 @@ SC.MenuPane = SC.PickerPane.extend(
     @type Number
     @default submenuOffsetX from theme, or 2
   */
-  submenuOffsetX: SC.propertyFromRenderDelegate('submenuOffsetX', 2),
+  submenuOffsetX: propertyFromRenderDelegate('submenuOffsetX', 2),
 
   /**
     The last menu item to be selected by the user.
@@ -192,7 +196,7 @@ SC.MenuPane = SC.PickerPane.extend(
     You can place an observer on this property to be notified when the user
     makes a selection.
 
-    @type SC.Object
+    @type Object
     @default null
     @isReadOnly
   */
@@ -205,10 +209,10 @@ SC.MenuPane = SC.PickerPane.extend(
     set here for each item in the `items` array. You may provide your own
     subclass for this property to display the customized content.
 
-    @type SC.View
-    @default SC.MenuItemView
+    @type View
+    @default MenuItemView
   */
-  exampleView: SC.MenuItemView,
+  exampleView: MenuItemView,
 
   /**
     The view or element to which the menu will anchor itself.
@@ -217,54 +221,54 @@ SC.MenuPane = SC.PickerPane.extend(
     specify, even if the window is resized. You should specify the anchor as a
     parameter when calling `popup()`, rather than setting it directly.
 
-    @type SC.View
+    @type View
     @isReadOnly
   */
   anchor: null,
 
   /**
-    `YES` if this menu pane was generated by a parent `SC.MenuPane`.
+    `true` if this menu pane was generated by a parent `MenuPane`.
 
     @type Boolean
-    @default NO
+    @default false
     @isReadOnly
   */
-  isSubMenu: NO,
+  isSubMenu: false,
 
   /**
     If true, title of menu items will be escaped to avoid scripting attacks.
 
     @type Boolean
-    @default YES
+    @default true
   */
-  escapeHTML: YES,
+  escapeHTML: true,
 
   /**
     Whether the title of menu items should be localized before display.
 
     @type Boolean
-    @default YES
+    @default true
   */
-  localize: YES,
+  localize: true,
 
   /**
     Whether or not this menu pane should accept the “current menu pane”
     designation when visible, which is the highest-priority pane when routing
-    events.  Generally you want this set to `YES` so that your menu pane can
+    events.  Generally you want this set to `true` so that your menu pane can
     intercept keyboard events.
 
     @type Boolean
-    @default YES
+    @default true
   */
-  acceptsMenuPane: YES,
+  acceptsMenuPane: true,
 
   /**
     Disable context menu.
 
     @type Boolean
-    @default NO
+    @default false
   */
-  isContextMenuEnabled: NO,
+  isContextMenuEnabled: false,
 
 
   // ..........................................................
@@ -278,7 +282,7 @@ SC.MenuPane = SC.PickerPane.extend(
     anchor itself to the view, and intelligently reposition itself if the
     contents of the menu exceed the available space.
 
-    @param {SC.View} anchorViewOrElement the view or element to which the menu
+    @param {View} anchorViewOrElement the view or element to which the menu
     should anchor.
     @param {Array} (preferMatrix) The prefer matrix used to position the pane.
   */
@@ -296,7 +300,7 @@ SC.MenuPane = SC.PickerPane.extend(
     if (preferMatrix) this.set('preferMatrix', preferMatrix);
 
     // Resize the pane's initial height to fit the height of the menu.
-    // Note: SC.PickerPane's positioning code may adjust the height to fit within the window.
+    // Note: PickerPane's positioning code may adjust the height to fit within the window.
     this.adjust('height', this.get('menuHeight'));
     this.positionPane();
 
@@ -307,10 +311,10 @@ SC.MenuPane = SC.PickerPane.extend(
     this.endPropertyChanges();
 
     // Prevent body overflow (we don't want to overflow because of shadows).
-    SC.bodyOverflowArbitrator.requestHidden(this, true);
+    bodyOverflowArbitrator.requestHidden(this, true);
 
     //@if(debug)
-    // A debug-mode only flag to indicate that the popup method was called (see override of append in SC.PickerPane).
+    // A debug-mode only flag to indicate that the popup method was called (see override of append in PickerPane).
     this._sc_didUsePopup = true;
     //@endif
 
@@ -488,7 +492,7 @@ SC.MenuPane = SC.PickerPane.extend(
   itemExampleViewKey: 'exampleView',
 
   /**
-    The array of keys used by SC.MenuItemView when inspecting your menu items
+    The array of keys used by MenuItemView when inspecting your menu items
     for display properties.
 
     @private
@@ -522,14 +526,14 @@ SC.MenuPane = SC.PickerPane.extend(
   //
 
   /** @private */
-  preferType: SC.PICKER_MENU,
+  preferType: PICKER_MENU,
 
   // ..........................................................
   // INTERNAL METHODS
   //
 
   /** @private */
-  init: function () {
+  init: function init () {
     // Initialize the items array.
     if (!this.items) { this.items = []; }
 
@@ -538,7 +542,7 @@ SC.MenuPane = SC.PickerPane.extend(
     this._keyEquivalents = {};
 
     // Continue initializing now that default values exist.
-    sc_super();
+    init.base.apply(this, arguments);
 
     // Initialize the observer function once.
     this._sc_menu_itemsDidChange();
@@ -550,22 +554,22 @@ SC.MenuPane = SC.PickerPane.extend(
 
   /**
     Creates the child scroll view, and sets its `contentView` to a new
-    view.  This new view is saved and managed by the `SC.MenuPane`,
+    view.  This new view is saved and managed by the `MenuPane`,
     and contains the visible menu items.
 
     @private
-    @returns {SC.View} receiver
+    @returns {View} receiver
   */
   createChildViews: function () {
     var scroll, menuView;
 
     // Create the menu items collection view.
-    // TODO: Should this not be an SC.ListView?
-    menuView = this._menuView = SC.View.create({
+    // TODO: Should this not be an ListView?
+    menuView = this._menuView = View.create({
       layout: { height: 0 }
     });
 
-    scroll = this._menuScrollView = this.createChildView(SC.MenuScrollView, {
+    scroll = this._menuScrollView = this.createChildView(MenuScrollView, {
       controlSize: this.get('controlSize'),
       contentView: menuView
     });
@@ -609,7 +613,7 @@ SC.MenuPane = SC.PickerPane.extend(
     temporarily be routed to this pane. Make sure that you call
     resignMenuPane; otherwise all key events will be blocked to other panes.
 
-    @returns {SC.Pane} receiver
+    @returns {Pane} receiver
   */
   becomeMenuPane: function () {
     if (this.rootResponder) this.rootResponder.makeMenuPane(this);
@@ -621,7 +625,7 @@ SC.MenuPane = SC.PickerPane.extend(
     Remove the menu pane status from the pane.  This will simply set the
     `menuPane` on the `rootResponder` to `null.
 
-    @returns {SC.Pane} receiver
+    @returns {Pane} receiver
   */
   resignMenuPane: function () {
     if (this.rootResponder) this.rootResponder.makeMenuPane(null);
@@ -633,7 +637,7 @@ SC.MenuPane = SC.PickerPane.extend(
     The array of child menu item views that compose the menu.
 
     This computed property parses `displayItems` and constructs an
-    `SC.MenuItemView` (or whatever class you have set as the `exampleView`) for every item.
+    `MenuItemView` (or whatever class you have set as the `exampleView`) for every item.
 
     This calls createMenuItemViews. If you want to override this property, override
     that method.
@@ -675,7 +679,7 @@ SC.MenuPane = SC.PickerPane.extend(
     menuHeightPadding = Math.floor(this.get('menuHeightPadding') / 2);
     menuHeight = menuHeightPadding;
 
-    keyArray = this.menuItemKeys.map(SC._menu_fetchKeys, this);
+    keyArray = this.menuItemKeys.map(_menu_fetchKeys, this);
 
     len = items.get('length');
     for (idx = 0; idx < len; idx++) {
@@ -729,7 +733,7 @@ SC.MenuPane = SC.PickerPane.extend(
     Returns the menu item view for the content object at the specified index.
 
     @param Number idx the item index
-    @returns {SC.MenuItemView} instantiated view
+    @returns {MenuItemView} instantiated view
   */
   menuItemViewForContentIndex: function (idx) {
     var menuItemViews = this.get('menuItemViews');
@@ -743,7 +747,7 @@ SC.MenuPane = SC.PickerPane.extend(
     top-most parent menu. If this is the root menu, it returns
     itself.
 
-    @type SC.MenuPane
+    @type MenuPane
     @isReadOnly
     @type
   */
@@ -752,9 +756,9 @@ SC.MenuPane = SC.PickerPane.extend(
     return this;
   }.property('isSubMenu').cacheable(),
 
-  /** @private @see SC.Object */
-  destroy: function () {
-    var ret = sc_super();
+  /** @private @see Object */
+  destroy: function destroy () {
+    var ret = destroy.base.apply(this, arguments);
 
     // Clean up previous enumerable observer.
     if (this._sc_menu_items) {
@@ -777,9 +781,9 @@ SC.MenuPane = SC.PickerPane.extend(
 
     @private
   */
-  windowSizeDidChange: function () {
+  windowSizeDidChange: function wsdc () {
     this.remove();
-    return sc_super();
+    return wsdc.base.apply(this, arguments);
   },
 
   /**
@@ -826,7 +830,7 @@ SC.MenuPane = SC.PickerPane.extend(
       if (itemType === SC.T_STRING) {
         item = SC.Object.create({ title: item,
                                   value: item,
-                                  isEnabled: YES
+                                  isEnabled: true
                                });
       } else if (itemType === SC.T_HASH) {
         item = SC.Object.create(item);
@@ -934,7 +938,7 @@ SC.MenuPane = SC.PickerPane.extend(
   /** @private */
   mouseDown: function (evt) {
     this.modalPaneDidClick(evt);
-    return YES;
+    return true;
   },
 
   /** @private
@@ -945,12 +949,12 @@ SC.MenuPane = SC.PickerPane.extend(
     @param {Event} evt
   */
   mouseEntered: function () {
-    this.set('mouseHasEntered', YES);
+    this.set('mouseHasEntered', true);
   },
 
   keyUp: function (evt) {
     var ret = this.interpretKeyEvents(evt);
-    return !ret ? NO : ret;
+    return !ret ? false : ret;
   },
 
   /**
@@ -968,7 +972,7 @@ SC.MenuPane = SC.PickerPane.extend(
       idx = items.get('length') - 1;
     } else {
       currentIndex = currentMenuItem.getPath('content.contentIndex');
-      if (currentIndex === 0) return YES;
+      if (currentIndex === 0) return true;
       idx = currentIndex - 1;
     }
 
@@ -981,7 +985,7 @@ SC.MenuPane = SC.PickerPane.extend(
       idx--;
     }
 
-    return YES;
+    return true;
   },
 
   /**
@@ -1000,7 +1004,7 @@ SC.MenuPane = SC.PickerPane.extend(
       idx = 0;
     } else {
       currentIndex = currentMenuItem.getPath('content.contentIndex');
-      if (currentIndex === len) return YES;
+      if (currentIndex === len) return true;
       idx = currentIndex + 1;
     }
 
@@ -1013,7 +1017,7 @@ SC.MenuPane = SC.PickerPane.extend(
       idx++;
     }
 
-    return YES;
+    return true;
   },
 
   /**
@@ -1035,7 +1039,7 @@ SC.MenuPane = SC.PickerPane.extend(
       ++idx;
     }
 
-    return YES;
+    return true;
   },
 
   /**
@@ -1057,7 +1061,7 @@ SC.MenuPane = SC.PickerPane.extend(
       --idx;
     }
 
-    return YES;
+    return true;
   },
 
   /**
@@ -1103,7 +1107,7 @@ SC.MenuPane = SC.PickerPane.extend(
       this.moveToEndOfDocument();
     }
 
-    return YES;
+    return true;
   },
 
   /**
@@ -1149,7 +1153,7 @@ SC.MenuPane = SC.PickerPane.extend(
       this.moveToBeginningOfDocument();
     }
 
-    return YES;
+    return true;
   },
 
   insertText: function (chr) {
@@ -1162,7 +1166,7 @@ SC.MenuPane = SC.PickerPane.extend(
       target: this,
       action: 'clearKeyBuffer',
       interval: 500,
-      isPooled: NO
+      isPooled: false
     });
 
     keyBuffer = keyBuffer || '';
@@ -1171,7 +1175,7 @@ SC.MenuPane = SC.PickerPane.extend(
     this.selectMenuItemForString(keyBuffer);
     this._keyBuffer = keyBuffer;
 
-    return YES;
+    return true;
   },
 
   /** @private
@@ -1180,9 +1184,9 @@ SC.MenuPane = SC.PickerPane.extend(
 
     Normally, the menu will only respond to key presses when it is visible.
     However, when the menu is part of another control, such as an
-    SC.PopupButtonView, the menu should still respond if it is hidden but its
+    PopupButtonView, the menu should still respond if it is hidden but its
     parent control is visible. In those cases, the parameter
-    fromVisibleControl will be set to `YES`.
+    fromVisibleControl will be set to `true`.
 
     @param keyEquivalent {String} the shortcut key sequence that was pressed
     @param fromVisibleControl Boolean if the shortcut key press was proxied
@@ -1191,25 +1195,25 @@ SC.MenuPane = SC.PickerPane.extend(
   */
   performKeyEquivalent: function (keyEquivalent, evt, fromVisibleControl) {
     //If menu is not visible
-    if (!fromVisibleControl && !this.get('isVisibleInWindow')) return NO;
+    if (!fromVisibleControl && !this.get('isVisibleInWindow')) return false;
 
     // Look for menu item that has this key equivalent
     var menuItem = this._keyEquivalents[keyEquivalent];
 
     // If found, have it perform its action
     if (menuItem) {
-      menuItem.performAction(YES);
-      return YES;
+      menuItem.performAction(true);
+      return true;
     }
 
     // If escape key or the enter key was pressed and no menu item handled it,
-    // close the menu pane and return YES that the event was handled
+    // close the menu pane and return true that the event was handled
     if (keyEquivalent === 'escape' || keyEquivalent === 'return') {
       this.remove();
-      return YES;
+      return true;
     }
 
-    return NO;
+    return false;
 
   },
 
@@ -1258,18 +1262,18 @@ SC.MenuPane = SC.PickerPane.extend(
   modalPaneDidClick: function () {
     this.remove();
 
-    return YES;
+    return true;
   }
 });
 
 
 /** @private */
-SC._menu_fetchKeys = function (k) {
+export const _menu_fetchKeys = function (k) {
   return this.get(k);
 };
 
 /** @private */
-SC._menu_fetchItem = function (k) {
+export const _menu_fetchItem = function (k) {
   if (!k) return null;
   return this.get ? this.get(k) : this[k];
 };
@@ -1278,27 +1282,27 @@ SC._menu_fetchItem = function (k) {
 /**
   Default metrics for the different control sizes.
 */
-SC.MenuPane.TINY_MENU_ITEM_HEIGHT = 10;
-// SC.MenuPane.TINY_MENU_ITEM_SEPARATOR_HEIGHT = 2;
-// SC.MenuPane.TINY_MENU_HEIGHT_PADDING = 2;
-// SC.MenuPane.TINY_SUBMENU_OFFSET_X = 0;
+MenuPane.TINY_MENU_ITEM_HEIGHT = 10;
+// MenuPane.TINY_MENU_ITEM_SEPARATOR_HEIGHT = 2;
+// MenuPane.TINY_MENU_HEIGHT_PADDING = 2;
+// MenuPane.TINY_SUBMENU_OFFSET_X = 0;
 
-SC.MenuPane.SMALL_MENU_ITEM_HEIGHT = 16;
-// SC.MenuPane.SMALL_MENU_ITEM_SEPARATOR_HEIGHT = 7;
-// SC.MenuPane.SMALL_MENU_HEIGHT_PADDING = 4;
-// SC.MenuPane.SMALL_SUBMENU_OFFSET_X = 2;
+MenuPane.SMALL_MENU_ITEM_HEIGHT = 16;
+// MenuPane.SMALL_MENU_ITEM_SEPARATOR_HEIGHT = 7;
+// MenuPane.SMALL_MENU_HEIGHT_PADDING = 4;
+// MenuPane.SMALL_SUBMENU_OFFSET_X = 2;
 
-SC.MenuPane.REGULAR_MENU_ITEM_HEIGHT = 22;
-// SC.MenuPane.REGULAR_MENU_ITEM_SEPARATOR_HEIGHT = 9;
-// SC.MenuPane.REGULAR_MENU_HEIGHT_PADDING = 6;
-// SC.MenuPane.REGULAR_SUBMENU_OFFSET_X = 2;
+MenuPane.REGULAR_MENU_ITEM_HEIGHT = 22;
+// MenuPane.REGULAR_MENU_ITEM_SEPARATOR_HEIGHT = 9;
+// MenuPane.REGULAR_MENU_HEIGHT_PADDING = 6;
+// MenuPane.REGULAR_SUBMENU_OFFSET_X = 2;
 
-SC.MenuPane.LARGE_MENU_ITEM_HEIGHT = 31;
-// SC.MenuPane.LARGE_MENU_ITEM_SEPARATOR_HEIGHT = 20;
-// SC.MenuPane.LARGE_MENU_HEIGHT_PADDING = 0;
-// SC.MenuPane.LARGE_SUBMENU_OFFSET_X = 4;
+MenuPane.LARGE_MENU_ITEM_HEIGHT = 31;
+// MenuPane.LARGE_MENU_ITEM_SEPARATOR_HEIGHT = 20;
+// MenuPane.LARGE_MENU_HEIGHT_PADDING = 0;
+// MenuPane.LARGE_SUBMENU_OFFSET_X = 4;
 
-SC.MenuPane.HUGE_MENU_ITEM_HEIGHT = 20;
-// SC.MenuPane.HUGE_MENU_ITEM_SEPARATOR_HEIGHT = 9;
-// SC.MenuPane.HUGE_MENU_HEIGHT_PADDING = 0;
-// SC.MenuPane.HUGE_SUBMENU_OFFSET_X = 0;
+MenuPane.HUGE_MENU_ITEM_HEIGHT = 20;
+// MenuPane.HUGE_MENU_ITEM_SEPARATOR_HEIGHT = 9;
+// MenuPane.HUGE_MENU_HEIGHT_PADDING = 0;
+// MenuPane.HUGE_SUBMENU_OFFSET_X = 0;

@@ -8,7 +8,7 @@
 // These are helpful utility functions for calculating range and rect values
 
 import { SC, GLOBAL } from '../../../core/core.js';
-import { browser } from '../../../event/event.js';
+import { browser, CoreQuery } from '../../../event/event.js';
 
   /**
     Takes a URL of any type and normalizes it into a fully qualified URL with
@@ -88,8 +88,8 @@ export const centerY = function(innerFrame, outerFrame) {
   For a useful discussion on the concepts of offsets and coordinates, see:
   http://www.quirksmode.org/mobile/viewports.html.
 
-  @param {DOMElement|jQuery|String} elem the element to find the offset of.
-    This is passed to `jQuery()`, so any value supported by `jQuery()` will work.
+  @param {DOMElement|CoreQuery|String} elem the element to find the offset of.
+    This is passed to `CoreQuery()`, so any value supported by `CoreQuery()` will work.
   @param {String} [relativeToFlag] flag to determine which relative element to determine offset by.
     One of either: 'document', 'viewport' or 'parent' (default: 'document').
   @returns {Object} the offset of the element as an Object (ie. Hash) in the form { x: value, y: value }.
@@ -98,16 +98,16 @@ export const offset = function (elem, relativeToFlag) {
   var userAgent,
       index,
       mobileBuildNumber,
-      result = jQuery(elem).offset();
+      result = CoreQuery(elem).offset();
 
   relativeToFlag = relativeToFlag || 'document';
 
   if (relativeToFlag === 'parent') {
-    var parentOffset = jQuery(elem).offsetParent().offset();
+    var parentOffset = CoreQuery(elem).offsetParent().offset();
     result.left -= parentOffset.left;
     result.top -= parentOffset.top;
   } else {
-    // jQuery does not workaround a problem with Mobile Safari versions prior to 4.1 that add the scroll
+    // CoreQuery does not workaround a problem with Mobile Safari versions prior to 4.1 that add the scroll
     // offset to the results of getBoundingClientRect.
     //
     // See http://dev.jquery.it/ticket/6446

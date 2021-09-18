@@ -1,9 +1,7 @@
 
 @import '../variables';
-@import "compass/css3";
-@import '../variables';
 
-@theme(sc-small-size) {
+#{$theme}.sc-small-size {
 
   #{$theme}.slider {
     .track {

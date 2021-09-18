@@ -4,22 +4,24 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-sc_require('views/scroller');
+
+import { HUGE_CONTROL_SIZE, LARGE_CONTROL_SIZE, REGULAR_CONTROL_SIZE, SMALL_CONTROL_SIZE, TINY_CONTROL_SIZE } from "../../view/view.js";
+import { ScrollerView } from "./scroller.js";
+
 
 /** @class
 
   Implements a complete scroller view for menus.  This class implements the
   arrows displayed in a menu to scroll.
 
-  The main difference with SC.ScrollerView is that there is only vertical
-  scrollers. Value Syncing between SC.MenuScrollView and SC.MenuScrollerView
+  The main difference with ScrollerView is that there is only vertical
+  scrollers. Value Syncing between MenuScrollView and MenuScrollerView
   is done using valueBinding.
 
-  @extends SC.ScrollerView
   @since SproutCore 1.0
 */
-SC.MenuScrollerView = SC.ScrollerView.extend(
-/** @scope SC.MenuScrollerView.prototype */ {
+export const MenuScrollerView = ScrollerView.extend(
+/** @scope MenuScrollerView.prototype */ {
 
   // ---------------------------------------------------------------------------------------------
   // Properties
@@ -28,7 +30,7 @@ SC.MenuScrollerView = SC.ScrollerView.extend(
   /**
     @type Array
     @default ['sc-menu-scroller-view']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-menu-scroller-view'],
 
@@ -54,27 +56,27 @@ SC.MenuScrollerView = SC.ScrollerView.extend(
   //
 
   /** @private */
-  init: function () {
+  init: function init () {
     // Set the scrollerThickness based on controlSize
     switch (this.get('controlSize')) {
-    case SC.TINY_CONTROL_SIZE:
-      this.set('scrollerThickness', SC.MenuScrollerView.TINY_SCROLLER_THICKNESS);
+    case TINY_CONTROL_SIZE:
+      this.set('scrollerThickness', MenuScrollerView.TINY_SCROLLER_THICKNESS);
       break;
-    case SC.SMALL_CONTROL_SIZE:
-      this.set('scrollerThickness', SC.MenuScrollerView.SMALL_SCROLLER_THICKNESS);
+    case SMALL_CONTROL_SIZE:
+      this.set('scrollerThickness', MenuScrollerView.SMALL_SCROLLER_THICKNESS);
       break;
-    case SC.REGULAR_CONTROL_SIZE:
-      this.set('scrollerThickness', SC.MenuScrollerView.REGULAR_SCROLLER_THICKNESS);
+    case REGULAR_CONTROL_SIZE:
+      this.set('scrollerThickness', MenuScrollerView.REGULAR_SCROLLER_THICKNESS);
       break;
-    case SC.LARGE_CONTROL_SIZE:
-      this.set('scrollerThickness', SC.MenuScrollerView.LARGE_SCROLLER_THICKNESS);
+    case LARGE_CONTROL_SIZE:
+      this.set('scrollerThickness', MenuScrollerView.LARGE_SCROLLER_THICKNESS);
       break;
-    case SC.HUGE_CONTROL_SIZE:
-      this.set('scrollerThickness', SC.MenuScrollerView.HUGE_SCROLLER_THICKNESS);
+    case HUGE_CONTROL_SIZE:
+      this.set('scrollerThickness', MenuScrollerView.HUGE_SCROLLER_THICKNESS);
       break;
     }
 
-    return sc_super();
+    return init.base.apply(this, arguments);
   },
 
   /** @private */
@@ -89,13 +91,13 @@ SC.MenuScrollerView = SC.ScrollerView.extend(
 
   /** @private */
   mouseEntered: function (evt) {
-    this.set('isMouseOver', YES);
+    this.set('isMouseOver', true);
     this._invokeScrollOnMouseOver();
   },
 
   /** @private */
   mouseExited: function (evt) {
-    this.set('isMouseOver', NO);
+    this.set('isMouseOver', false);
   },
 
   /** @private
@@ -115,7 +117,7 @@ SC.MenuScrollerView = SC.ScrollerView.extend(
 
     this.set('value', value);
 
-    return YES;
+    return true;
   },
 
   /** @private
@@ -139,32 +141,32 @@ SC.MenuScrollerView = SC.ScrollerView.extend(
   @type Number
   @default 18
 */
-SC.MenuScrollerView.REGULAR_SCROLLER_THICKNESS = 18;
+MenuScrollerView.REGULAR_SCROLLER_THICKNESS = 18;
 
 /**
   @static
   @type Number
   @default 10
 */
-SC.MenuScrollerView.TINY_SCROLLER_THICKNESS    = 10;
+MenuScrollerView.TINY_SCROLLER_THICKNESS    = 10;
 
 /**
   @static
   @type Number
   @default 14
 */
-SC.MenuScrollerView.SMALL_SCROLLER_THICKNESS   = 14;
+MenuScrollerView.SMALL_SCROLLER_THICKNESS   = 14;
 
 /**
   @static
   @type Number
   @default 23
 */
-SC.MenuScrollerView.LARGE_SCROLLER_THICKNESS   = 23;
+MenuScrollerView.LARGE_SCROLLER_THICKNESS   = 23;
 
 /**
   @static
   @type Number
   @default 26
 */
-SC.MenuScrollerView.HUGE_SCROLLER_THICKNESS    = 26;
+MenuScrollerView.HUGE_SCROLLER_THICKNESS    = 26;

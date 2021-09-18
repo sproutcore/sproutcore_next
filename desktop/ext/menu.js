@@ -5,33 +5,36 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('ext/menu_item');
-sc_require('panes/menu');
+import { propertyFromRenderDelegate } from "../../view/view.js";
+import { MenuPane } from "../panes/menu.js";
+import { AutoResizingMenuItemView } from "./menu_item.js";
+
+
 
 /**
   @class
-  Extends SC.MenuPane to add support for automatic resizing.
+  Extends MenuPane to add support for automatic resizing.
 */
 
-SC.AutoResizingMenuPane = SC.MenuPane.extend(
-/** @scope SC.AutoResizingMenuPane.prototype */ {
+export const AutoResizingMenuPane = MenuPane.extend(
+/** @scope AutoResizingMenuPane.prototype */ {
 
   /**
-    If YES, the menu should automatically resize its width to fit its items.
+    If true, the menu should automatically resize its width to fit its items.
 
-    This will swap out the default SC.MenuItemView. If you are using a custom
-    exampleView, you will need to mix SC.AutoResize into your exampleView
-    and set shouldAutoResize to NO (the actual resizing will be handled
-    by SC.MenuPane).
+    This will swap out the default MenuItemView. If you are using a custom
+    exampleView, you will need to mix AutoResize into your exampleView
+    and set shouldAutoResize to false (the actual resizing will be handled
+    by MenuPane).
 
     This property must be set before instantiation; any changes after instantiation
     will not function properly.
 
     @property
     @type {Boolean}
-    @default YES
+    @default true
   */
-  shouldAutoResize: YES,
+  shouldAutoResize: true,
 
   /**
     The minimum width for this menu if it is to be automatically resized.
@@ -41,7 +44,7 @@ SC.AutoResizingMenuPane = SC.MenuPane.extend(
     @type Number
     @default minimumMenuWidth from render delegate, or 0.
   */
-  minimumMenuWidth: SC.propertyFromRenderDelegate('minimumMenuWidth', 0),
+  minimumMenuWidth: propertyFromRenderDelegate('minimumMenuWidth', 0),
 
   /**
     The amount to add to any calculated width.
@@ -51,7 +54,7 @@ SC.AutoResizingMenuPane = SC.MenuPane.extend(
     @type Number
     @default menuWidthPadding from render delegate, or 0
   */
-  menuWidthPadding: SC.propertyFromRenderDelegate('menuWidthPadding', 0),
+  menuWidthPadding: propertyFromRenderDelegate('menuWidthPadding', 0),
 
   /**
     The view class to use when creating new menu item views.
@@ -60,17 +63,17 @@ SC.AutoResizingMenuPane = SC.MenuPane.extend(
     set here for each item in the `items` array. You may provide your own
     subclass for this property to display the customized content.
 
-    @type SC.View
-    @default SC.AutoResizingMenuItemView
+    @type View
+    @default AutoResizingMenuItemView
   */
-  exampleView: SC.AutoResizingMenuItemView,
+  exampleView: AutoResizingMenuItemView,
 
   /**
     @private
     In addition to the normal init, we need to schedule an automatic resize.
   */
-  init: function() {
-    sc_super();
+  init: function init () {
+    init.base.apply(this, arguments);
 
     if (this.get('shouldAutoResize')) {
       this.invokeOnce('_updateMenuWidth');
@@ -80,17 +83,17 @@ SC.AutoResizingMenuPane = SC.MenuPane.extend(
   /**
     The array of child menu item views that compose the menu.
 
-    This computed property parses @displayItems@ and constructs an SC.MenuItemView (or whatever class you have set as the @exampleView@) for every item.
+    This computed property parses @displayItems@ and constructs an MenuItemView (or whatever class you have set as the @exampleView@) for every item.
 
     @property
-    @type Array
+    
     @readOnly
     @private
   */
-  createMenuItemViews: function() {
+  createMenuItemViews: function cmiv () {
     // EXTENDED to set shouldMeasureSize to its initial value and to
     // observe the measured size.
-    var views = sc_super();
+    var views = cmiv.base.apply(this,arguments);
 
     var idx, len = views.length, view;
     if (this.get('shouldAutoResize')) {
@@ -98,7 +101,7 @@ SC.AutoResizingMenuPane = SC.MenuPane.extend(
         view = views[idx];
 
         // set up resizing if we want
-        view.set('shouldMeasureSize', YES);
+        view.set('shouldMeasureSize', true);
         view.addObserver('measuredSize', this, this._menuItemMeasuredSizeDidChange);
       }
     }

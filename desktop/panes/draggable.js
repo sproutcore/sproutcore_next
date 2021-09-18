@@ -4,29 +4,31 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
+import { SC } from '../../core/core.js';
+import { RootResponder } from '../../responder/responder.js';
 
 /**
   @namespace
 
   Provides drag functionality to a pane. If you need to disable dragging at certain times set the
-  property isAnchored to YES and the pane will no longer move.
+  property isAnchored to true and the pane will no longer move.
 
-  See SC.PalettePane, a simple panel pane with SC.DraggablePaneSupport mixed in.
+  See PalettePane, a simple panel pane with DraggablePaneSupport mixed in.
 */
-SC.DraggablePaneSupport = /** @scope SC.DraggablePaneSupport.prototype */{
+export const DraggablePaneSupport = /** @scope DraggablePaneSupport.prototype */{
 
   /**
     Walk like a duck.
 
     @type Boolean
   */
-  isDraggablePane: YES,
+  isDraggablePane: true,
 
   /**
    @type Boolean
-   @default NO
+   @default false
   */
-  isAnchored: NO,
+  isAnchored: false,
 
   /** @private */
   _drag_cachedMouseX: null,
@@ -82,7 +84,7 @@ SC.DraggablePaneSupport = /** @scope SC.DraggablePaneSupport.prototype */{
     @return {Boolean}
   */
   _drag_targetHasSelectableText: function(evt) {
-    var targetView = SC.RootResponder.responder.targetViewForEvent(evt);
+    var targetView = RootResponder.responder.targetViewForEvent(evt);
 
     return !!(targetView && targetView.isTextSelectable);
   },
@@ -102,7 +104,7 @@ SC.DraggablePaneSupport = /** @scope SC.DraggablePaneSupport.prototype */{
     the original mouse down position.
 
     @param evt The mouseDown event
-    @return {Boolean} YES
+    @return {Boolean} true
   */
   _drag_mouseDown: function(evt) {
     this._drag_cachedMouseX = evt.pageX;
@@ -114,15 +116,15 @@ SC.DraggablePaneSupport = /** @scope SC.DraggablePaneSupport.prototype */{
     Modify the current layout by the movement since the last drag event.
 
     @param evt The mouseDrag event
-    @return {Boolean} YES if we moved the view, NO if we didn't due to isAnchored being YES
+    @return {Boolean} true if we moved the view, false if we didn't due to isAnchored being true
   */
   _drag_mouseDragged: function(evt) {
     var xOffset = this._drag_cachedMouseX - evt.pageX,
         yOffset = this._drag_cachedMouseY - evt.pageY,
         frame = this.get('frame'),
         // NOTE: wFrame will be incorrect if this pane is not attached to document.body (e.g. via appendTo).
-        wFrame = SC.RootResponder.responder.computeWindowSize(),
-        oldLayout = SC.clone(this.get('layout')),
+        wFrame = RootResponder.responder.computeWindowSize(),
+        oldLayout = clone(this.get('layout')),
         layout = {},
         isPercent = function(num) {
           return (num < 1 && num > 0);
@@ -133,7 +135,7 @@ SC.DraggablePaneSupport = /** @scope SC.DraggablePaneSupport.prototype */{
     this._drag_cachedMouseY = evt.pageY;
 
     if (!this._drag_shouldHandleDrag(evt)) {
-      return NO;
+      return false;
     }
 
     // If a layout property is in the layout no matter what other layout properties are used we need to modify it the
@@ -183,7 +185,7 @@ SC.DraggablePaneSupport = /** @scope SC.DraggablePaneSupport.prototype */{
 
     this.adjust(layout);
 
-    return YES;
+    return true;
   },
 
   /**

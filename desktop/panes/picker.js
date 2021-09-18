@@ -5,7 +5,11 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('panes/palette');
+import { PalettePane } from "./palette.js";
+import { SC } from '../../core/core.js';
+import { bodyOverflowArbitrator, cloneRect, HUGE_CONTROL_SIZE, LARGE_CONTROL_SIZE, maxX, maxY, minX, minY, offset, REGULAR_CONTROL_SIZE, SMALL_CONTROL_SIZE, TINY_CONTROL_SIZE } from "../../view/view.js";
+import { RootResponder } from "../../responder/responder.js";
+import { browser } from "../../event/event.js";
 
 /**
   Popular customized picker position rules:
@@ -28,28 +32,28 @@ sc_require('panes/palette');
   @constant
   @static
 */
-SC.PICKER_MENU = 'menu';
+export const PICKER_MENU = 'menu';
 
 /**
   @type String
   @constant
   @static
 */
-SC.PICKER_FIXED = 'fixed';
+export const PICKER_FIXED = 'fixed';
 
 /**
   @type String
   @constant
   @static
 */
-SC.PICKER_POINTER = 'pointer';
+export const PICKER_POINTER = 'pointer';
 
 /**
   @type String
   @constant
   @static
 */
-SC.PICKER_MENU_POINTER = 'menu-pointer';
+export const PICKER_MENU_POINTER = 'menu-pointer';
 
 /**
   @class
@@ -57,25 +61,25 @@ SC.PICKER_MENU_POINTER = 'menu-pointer';
   Display a non-modal pane that automatically repositions around a view so as
   to remain visible.
 
-  An `SC.PickerPane` repositions around the view to which it is anchored as the
+  An `PickerPane` repositions around the view to which it is anchored as the
   browser window is resized so as to ensure the pane's content remains visible.
   A picker pane is useful for displaying supplementary information and does not
   block the user's interaction with other UI elements. Picker panes typically
   provide a better user experience than modal panels.
 
-  An `SC.PickerPane` repositions itself according to the optional `preferMatrix`
+  An `PickerPane` repositions itself according to the optional `preferMatrix`
   argument passed in the `.popup()` method call. The `preferMatrix` either
   specifies an offset-based arrangement behavior or a position-based arrangement
   behavior depending on the `preferType` argument in the `.popup()` call.
 
   The simplest way to create and display a picker pane:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
+        contentView: View.extend({})
       }).popup(someView);
 
-  This displays the `SC.PickerPane` anchored to `someView`.
+  This displays the `PickerPane` anchored to `someView`.
 
   ## Positioning
 
@@ -84,39 +88,39 @@ SC.PICKER_MENU_POINTER = 'menu-pointer';
 
   ### Offset-based
 
-  When `preferType` is unspecified, `SC.PICKER_MENU` or `SC.PICKER_FIXED`, then
+  When `preferType` is unspecified, `PICKER_MENU` or `PICKER_FIXED`, then
   the `preferMatrix` array describes the offset that is used to position the
   pane below the anchor. The offset is described by an array of three values,
-  defaulting to `[1, 4, SC.POSITION_BOTTOM]`. The first value controls the x offset and the second
-  value the y offset. The third value can be `SC.POSITION_RIGHT` (0) or `SC.POSITION_BOTTOM` (3),
+  defaulting to `[1, 4, POSITION_BOTTOM]`. The first value controls the x offset and the second
+  value the y offset. The third value can be `POSITION_RIGHT` (0) or `POSITION_BOTTOM` (3),
   controlling whether the origin of the pane is further offset by the width
-  (in the case of SC.POSITION_RIGHT) or the height (in the case of SC.POSITION_BOTTOM) of the anchor.
+  (in the case of POSITION_RIGHT) or the height (in the case of POSITION_BOTTOM) of the anchor.
 
   ### Position-based
 
-  When `preferType` is `SC.PICKER_POINTER` or `SC.PICKER_MENU_POINTER`, then
+  When `preferType` is `PICKER_POINTER` or `PICKER_MENU_POINTER`, then
   the `preferMatrix` specifies the sides in the order in which you want the
-  `SC.PickerPane` to try to arrange itself around the view to which it is
+  `PickerPane` to try to arrange itself around the view to which it is
   anchored. The fifth element in the `preferMatrix` specifies which side the
-  `SC.PickerPane` should display on when there isn't enough space around any
+  `PickerPane` should display on when there isn't enough space around any
   of the preferred sides.
 
   The sides may be one of:
 
-  * SC.POSITION_RIGHT (i.e. 0) - to the right of the anchor
-  * SC.POSITION_LEFT (i.e. 1)- to the left of the anchor
-  * SC.POSITION_TOP (i.e. 2) - above the anchor
-  * SC.POSITION_BOTTOM (i.e. 3) - below the anchor
+  * POSITION_RIGHT (i.e. 0) - to the right of the anchor
+  * POSITION_LEFT (i.e. 1)- to the left of the anchor
+  * POSITION_TOP (i.e. 2) - above the anchor
+  * POSITION_BOTTOM (i.e. 3) - below the anchor
 
   For example, the `preferMatrix` of,
 
-      [SC.POSITION_BOTTOM, SC.POSITION_RIGHT, SC.POSITION_LEFT, SC.POSITION_TOP, SC.POSITION_TOP],
+      [POSITION_BOTTOM, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_TOP],
 
-  indicates: Display below the anchor (SC.POSITION_BOTTOM); if there isn't enough
-  space then display to the right of the anchor (SC.POSITION_RIGHT).
+  indicates: Display below the anchor (POSITION_BOTTOM); if there isn't enough
+  space then display to the right of the anchor (POSITION_RIGHT).
   If there isn't enough space either below or to the right of the anchor, then appear
-  to the left (SC.POSITION_LEFT), unless there is also no space on the left, in which case display
-  above the anchor (SC.POSITION_TOP).
+  to the left (POSITION_LEFT), unless there is also no space on the left, in which case display
+  above the anchor (POSITION_TOP).
 
   Note: The position constants are simply the integers 0 to 3, so a short form
   of the example above would read,
@@ -134,28 +138,28 @@ SC.PICKER_MENU_POINTER = 'menu-pointer';
 
   These position rules have the following behaviors:
 
-  ### `SC.PICKER_MENU`
+  ### `PICKER_MENU`
 
-  Positioning is offset-based, with `preferMatrix` defaulting to `[1, 4, SC.POSITION_BOTTOM]`.
+  Positioning is offset-based, with `preferMatrix` defaulting to `[1, 4, POSITION_BOTTOM]`.
   Furthermore, a minimum left and right padding to window, of 7px and 8px, respectively,
   is enforced.
 
 
-  ### `SC.PICKER_FIXED`
+  ### `PICKER_FIXED`
 
-  Positioning is offset-based, with `preferMatrix` defaulting to `[1, 4, SC.POSITION_BOTTOM]` and
+  Positioning is offset-based, with `preferMatrix` defaulting to `[1, 4, POSITION_BOTTOM]` and
   skipping `fitPositionToScreen`.
 
 
-  ### `SC.PICKER_POINTER`
+  ### `PICKER_POINTER`
 
-  Positioning is position-based, with `preferMatrix` defaulting to `[SC.POSITION_RIGHT, SC.POSITION_LEFT, SC.POSITION_TOP, SC.POSITION_BOTTOM, SC.POSITION_TOP]` or `[0, 1, 2, 3, 2]` for short,
+  Positioning is position-based, with `preferMatrix` defaulting to `[POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM, POSITION_TOP]` or `[0, 1, 2, 3, 2]` for short,
   i.e. right > left > top > bottom; fallback to top.
 
 
-  ### `SC.PICKER_MENU_POINTER`
+  ### `PICKER_MENU_POINTER`
 
-  Positioning is position-based, with `preferMatrix` defaulting to `[SC.POSITION_BOTTOM, SC.POSITION_RIGHT, SC.POSITION_LEFT, SC.POSITION_TOP, SC.POSITION_BOTTOM]` or `[3, 0, 1, 2, 3]` for short,
+  Positioning is position-based, with `preferMatrix` defaulting to `[POSITION_BOTTOM, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM]` or `[3, 0, 1, 2, 3]` for short,
   i.e. bottom, right, left, top; fallback to bottom.
 
 
@@ -165,79 +169,79 @@ SC.PICKER_MENU_POINTER = 'menu-pointer';
 
   ### default:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
+        contentView: View.extend({})
       }).popup(anchor);
 
-  ### menu below the anchor with default `preferMatrix` of `[1, 4, SC.POSITION_BOTTOM]`:
+  ### menu below the anchor with default `preferMatrix` of `[1, 4, POSITION_BOTTOM]`:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
-      }).popup(anchor, SC.PICKER_MENU);
+        contentView: View.extend({})
+      }).popup(anchor, PICKER_MENU);
 
-  ### menu on the right side of anchor with custom `preferMatrix` of `[2, 6, SC.POSITION_RIGHT]`:
+  ### menu on the right side of anchor with custom `preferMatrix` of `[2, 6, POSITION_RIGHT]`:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
-      }).popup(anchor, SC.PICKER_MENU, [2, 6, SC.POSITION_RIGHT]);
+        contentView: View.extend({})
+      }).popup(anchor, PICKER_MENU, [2, 6, POSITION_RIGHT]);
 
-  ### fixed below the anchor with default `preferMatrix` of `[1, 4, SC.POSITION_BOTTOM]`:
+  ### fixed below the anchor with default `preferMatrix` of `[1, 4, POSITION_BOTTOM]`:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
-      }).popup(anchor, SC.PICKER_FIXED);
+        contentView: View.extend({})
+      }).popup(anchor, PICKER_FIXED);
 
-  ### fixed on the right side of anchor with `preferMatrix` of `[-22,-17, SC.POSITION_RIGHT]`:
+  ### fixed on the right side of anchor with `preferMatrix` of `[-22,-17, POSITION_RIGHT]`:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
-      }).popup(anchor, SC.PICKER_FIXED, [-22,-17, SC.POSITION_RIGHT]);
+        contentView: View.extend({})
+      }).popup(anchor, PICKER_FIXED, [-22,-17, POSITION_RIGHT]);
 
-  ### pointer with default `preferMatrix` of `[SC.POSITION_RIGHT, SC.POSITION_LEFT, SC.POSITION_TOP, SC.POSITION_BOTTOM, SC.POSITION_TOP]` or `[0, 1, 2, 3, 2]`:
+  ### pointer with default `preferMatrix` of `[POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM, POSITION_TOP]` or `[0, 1, 2, 3, 2]`:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
-      }).popup(anchor, SC.PICKER_POINTER);
+        contentView: View.extend({})
+      }).popup(anchor, PICKER_POINTER);
 
-  Positioning: SC.POSITION_RIGHT (0) > SC.POSITION_LEFT (1) > SC.POSITION_TOP (2) > SC.POSITION_BOTTOM (3). Fallback to SC.POSITION_TOP (2).
+  Positioning: POSITION_RIGHT (0) > POSITION_LEFT (1) > POSITION_TOP (2) > POSITION_BOTTOM (3). Fallback to POSITION_TOP (2).
 
-  ### pointer with custom `preferMatrix` of `[SC.POSITION_BOTTOM, SC.POSITION_RIGHT, SC.POSITION_LEFT, SC.POSITION_TOP, SC.POSITION_TOP]` or `[3, 0, 1, 2, 2]`:
+  ### pointer with custom `preferMatrix` of `[POSITION_BOTTOM, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_TOP]` or `[3, 0, 1, 2, 2]`:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
-      }).popup(anchor, SC.PICKER_POINTER, [3, 0, 1, 2, 2]);
+        contentView: View.extend({})
+      }).popup(anchor, PICKER_POINTER, [3, 0, 1, 2, 2]);
 
-  Positioning: SC.POSITION_BOTTOM (3) > SC.POSITION_RIGHT (0) > SC.POSITION_LEFT (1) > SC.POSITION_TOP (2). Fallback to SC.POSITION_TOP (2).
+  Positioning: POSITION_BOTTOM (3) > POSITION_RIGHT (0) > POSITION_LEFT (1) > POSITION_TOP (2). Fallback to POSITION_TOP (2).
 
-  ### menu-pointer with default `preferMatrix` of `[SC.POSITION_BOTTOM, SC.POSITION_RIGHT, SC.POSITION_LEFT, SC.POSITION_TOP, SC.POSITION_BOTTOM]` or `[3, 0, 1, 2, 3]`:
+  ### menu-pointer with default `preferMatrix` of `[POSITION_BOTTOM, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM]` or `[3, 0, 1, 2, 3]`:
 
-      SC.PickerPane.create({
+      PickerPane.create({
         layout: { width: 400, height: 200 },
-        contentView: SC.View.extend({})
-      }).popup(anchor, SC.PICKER_MENU_POINTER);
+        contentView: View.extend({})
+      }).popup(anchor, PICKER_MENU_POINTER);
 
-  Positioning: SC.POSITION_BOTTOM (3) > SC.POSITION_RIGHT (0) > SC.POSITION_LEFT (1) > SC.POSITION_TOP (2). Fallback to SC.POSITION_BOTTOM (3).
+  Positioning: POSITION_BOTTOM (3) > POSITION_RIGHT (0) > POSITION_LEFT (1) > POSITION_TOP (2). Fallback to POSITION_BOTTOM (3).
 
   ### Transition-In Special Handling
 
-  This view has special behavior when used with SC.View's `transitionIn` plugin support. If the
+  This view has special behavior when used with View's `transitionIn` plugin support. If the
   plugin defines `layoutProperties` of either `scale` or `rotate`, then the picker will adjust its
   transform origin X & Y position to appear to scale or rotate out of the anchor. The result is a
   very nice effect that picker panes appear to pop out of their anchors. To see it in effect,
-  simply set the `transitionIn` property of the pane to one of `SC.View.SCALE_IN` or `SC.View.POP_IN`.
+  simply set the `transitionIn` property of the pane to one of `View.SCALE_IN` or `View.POP_IN`.
 
-  @extends SC.PalettePane
+
   @since SproutCore 1.0
 */
-SC.PickerPane = SC.PalettePane.extend(
-/** @scope SC.PickerPane.prototype */ {
+export const PickerPane = PalettePane.extend(
+/** @scope PickerPane.prototype */ {
 
   //@if(debug)
   /** @private Debug-mode only flag for ensuring that the pane is appended via `popup`. */
@@ -247,27 +251,27 @@ SC.PickerPane = SC.PalettePane.extend(
   /**
     @type Array
     @default ['sc-picker']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-picker'],
 
   /**
     @type Boolean
-    @default YES
+    @default true
   */
-  isAnchored: YES,
+  isAnchored: true,
 
   /**
     @type Boolean
-    @default YES
+    @default true
   */
-  isModal: YES,
+  isModal: true,
 
   /**
     @private
-    TODO: Remove SC.POINTER_LAYOUT backward compatibility.
+    TODO: Remove POINTER_LAYOUT backward compatibility.
   */
-  _sc_pointerLayout: SC.POINTER_LAYOUT || ['perfectRight', 'perfectLeft', 'perfectTop', 'perfectBottom'],
+  _sc_pointerLayout: SC.getSetting('POINTER_LAYOUT') || ['perfectRight', 'perfectLeft', 'perfectTop', 'perfectBottom'],
 
   /** @private
     @type String
@@ -309,7 +313,7 @@ SC.PickerPane = SC.PalettePane.extend(
       // Throw an error if a null or empty value is set. You're not allowed to go anchorless.
       // (TODO: why can't we go anchorless? positionPane happily centers an unmoored pane.)
       if (!value) {
-        SC.throw("You must set 'anchorElement' to either a view or a DOM element");
+        throw("You must set 'anchorElement' to either a view or a DOM element");
       }
 
       // Clean up any previous anchor elements.
@@ -349,23 +353,23 @@ SC.PickerPane = SC.PalettePane.extend(
 
     However, if you wish to position the pane by a specified offset to the
     right or below the anchor using the values of `preferMatrix` as an offset
-    configuration, you can set `preferType` to one of `SC.PICKER_MENU` or
-    `SC.PICKER_FIXED`. These two picker types both use the `preferMatrix` to
+    configuration, you can set `preferType` to one of `PICKER_MENU` or
+    `PICKER_FIXED`. These two picker types both use the `preferMatrix` to
     adjust the position of the pane below or to the right of the anchor.
 
-    The difference is that `SC.PICKER_MENU` also uses the `windowPadding`
+    The difference is that `PICKER_MENU` also uses the `windowPadding`
     value to ensure that the pane doesn't go outside the bounds of the visible
     window.
 
     If you wish to position the pane on whichever side it will best fit and include
-    a pointer, then you can use one of `SC.PICKER_POINTER` or `SC.PICKER_MENU_POINTER`
+    a pointer, then you can use one of `PICKER_POINTER` or `PICKER_MENU_POINTER`
     for `preferType`. With this setting the pane will use the values of
     `preferMatrix` to indicate the preferred side of the anchor for the picker
     to appear.
 
-    The difference between these two is that `SC.PICKER_MENU_POINTER` prefers
-    to position below the anchor by default and `SC.PICKER_POINTER` prefers to
-    position to the right of the anchor by default. As well, the `SC.PICKER_MENU_POINTER`
+    The difference between these two is that `PICKER_MENU_POINTER` prefers
+    to position below the anchor by default and `PICKER_POINTER` prefers to
+    position to the right of the anchor by default. As well, the `PICKER_MENU_POINTER`
     type will resize itself if its height extends outside the visible window
     (which is useful for long menus that can scroll).
 
@@ -382,7 +386,7 @@ SC.PickerPane = SC.PalettePane.extend(
 
     ## Offset based use of `preferMatrix`
 
-    For `preferType` of `SC.PICKER_MENU` or `SC.PICKER_FIXED`, `preferMatrix`
+    For `preferType` of `PICKER_MENU` or `PICKER_FIXED`, `preferMatrix`
     determines the x and y offset of the pane from either the right or bottom
     side of the anchor. In this case, the `preferMatrix` should be an array of,
 
@@ -391,16 +395,16 @@ SC.PickerPane = SC.PalettePane.extend(
     For example, to position the pane 10px directly below the anchor, we would
     use,
 
-        preferMatrix: [0, 10, SC.POSITION_BOTTOM]
+        preferMatrix: [0, 10, POSITION_BOTTOM]
 
     To position the pane 10px down and 5px right of the anchor's right side,
     we would use,
 
-        preferMatrix: [5, 10, SC.POSITION_RIGHT]
+        preferMatrix: [5, 10, POSITION_RIGHT]
 
     ## Position based use of `preferMatrix`
 
-    For `preferType` of `SC.PICKER_POINTER` or `SC.PICKER_MENU_POINTER`, `preferMatrix`
+    For `preferType` of `PICKER_POINTER` or `PICKER_MENU_POINTER`, `preferMatrix`
     determines the side of the anchor to appear on in order of preference.
     In this case, the `preferMatrix` should be an array of,
 
@@ -410,18 +414,18 @@ SC.PickerPane = SC.PalettePane.extend(
     on any of the sides, then the last side is used as a fallback.
 
     @type Array
-    @default preferType == SC.PICKER_MENU || preferType == SC.PICKER_FIXED ? [1, 4, SC.POSITION_BOTTOM] (i.e. [1, 4, 3])
-    @default preferType == SC.PICKER_POINTER ? [SC.POSITION_RIGHT, SC.POSITION_LEFT, SC.POSITION_TOP, SC.POSITION_BOTTOM, SC.POSITION_TOP] (i.e. [0, 1, 2, 3, 2])
-    @default preferType == SC.PICKER_MENU_POINTER ? [SC.POSITION_BOTTOM, SC.POSITION_RIGHT, SC.POSITION_LEFT, SC.POSITION_TOP, SC.POSITION_BOTTOM] (i.e. [3, 0, 1, 2, 3])
+    @default preferType == PICKER_MENU || preferType == PICKER_FIXED ? [1, 4, POSITION_BOTTOM] (i.e. [1, 4, 3])
+    @default preferType == PICKER_POINTER ? [POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM, POSITION_TOP] (i.e. [0, 1, 2, 3, 2])
+    @default preferType == PICKER_MENU_POINTER ? [POSITION_BOTTOM, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM] (i.e. [3, 0, 1, 2, 3])
     @default null
   */
   preferMatrix: null,
 
   /**
     The offset of the pane from its target when positioned with `preferType` of
-    `SC.PICKER_POINTER` or `SC.PICKER_MENU_POINTER`.
+    `PICKER_POINTER` or `PICKER_MENU_POINTER`.
 
-    When using `SC.PICKER_POINTER` or `SC.PICKER_MENU_POINTER` as the `preferType`,
+    When using `PICKER_POINTER` or `PICKER_MENU_POINTER` as the `preferType`,
     the pane will include a pointer element (ex. a small triangle on the side of
     the pane). This also means that the pane will be offset by an additional
     distance in order to make space for the pointer. The offset distance of each
@@ -442,29 +446,15 @@ SC.PickerPane = SC.PalettePane.extend(
         pointerOffset: [15, -15, -30, 20]
 
     @type Array
-    @default preferType == SC.PICKER_POINTER ? SC.PickerPane.PICKER_POINTER_OFFSET (i.e. [9, -9, -18, 18])
-    @default preferType == SC.PICKER_MENU_POINTER && controlSize == SC.TINY_CONTROL_SIZE ? SC.PickerPane.TINY_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -18, 18])
-    @default preferType == SC.PICKER_MENU_POINTER && controlSize == SC.SMALL_CONTROL_SIZE ? SC.PickerPane.SMALL_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -8, 8])
-    @default preferType == SC.PICKER_MENU_POINTER && controlSize == SC.REGULAR_CONTROL_SIZE ? SC.PickerPane.REGULAR_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -12, 12])
-    @default preferType == SC.PICKER_MENU_POINTER && controlSize == SC.LARGE_CONTROL_SIZE ? SC.PickerPane.LARGE_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -16, 16])
-    @default preferType == SC.PICKER_MENU_POINTER && controlSize == SC.HUGE_CONTROL_SIZE ? SC.PickerPane.HUGE_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -18, 18])
-    @default preferType == SC.PICKER_MENU_POINTER ? SC.PickerPane.REGULAR_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -12, 12])
+    @default preferType == PICKER_POINTER ? PickerPane.PICKER_POINTER_OFFSET (i.e. [9, -9, -18, 18])
+    @default preferType == PICKER_MENU_POINTER && controlSize == TINY_CONTROL_SIZE ? PickerPane.TINY_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -18, 18])
+    @default preferType == PICKER_MENU_POINTER && controlSize == SMALL_CONTROL_SIZE ? PickerPane.SMALL_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -8, 8])
+    @default preferType == PICKER_MENU_POINTER && controlSize == REGULAR_CONTROL_SIZE ? PickerPane.REGULAR_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -12, 12])
+    @default preferType == PICKER_MENU_POINTER && controlSize == LARGE_CONTROL_SIZE ? PickerPane.LARGE_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -16, 16])
+    @default preferType == PICKER_MENU_POINTER && controlSize == HUGE_CONTROL_SIZE ? PickerPane.HUGE_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -18, 18])
+    @default preferType == PICKER_MENU_POINTER ? PickerPane.REGULAR_PICKER_MENU_POINTER_OFFSET (i.e [9, -9, -12, 12])
   */
   pointerOffset: null,
-
-  /** @deprecated Version 1.10.  Use windowPadding instead.
-    default offset of extra-right pointer for picker-pointer or pointer-menu
-
-    @type Number
-    @default 0
-  */
-  extraRightOffset: function () {
-    //@if (debug)
-    SC.warn('SC.PickerPane#extraRightOffset is deprecated.  The pointer will position itself automatically.');
-    //@endif
-
-    return this.get('windowPadding');
-  }.property('windowPadding').cacheable(),
 
   /**
     The target object to invoke the remove action on when the user clicks off the
@@ -505,26 +495,26 @@ SC.PickerPane = SC.PalettePane.extend(
     popup position.
 
     @type Boolean
-    @default NO
+    @default false
   */
-  repositionOnWindowResize: YES,
+  repositionOnWindowResize: true,
 
 
   /** @private
     Default padding around the window's edge that the pane will not overlap.
 
-    This value is set to the value of SC.PickerPane.WINDOW_PADDING, except when
-    using preferType of SC.PICKER_MENU_POINTER, where it will be set according
+    This value is set to the value of PickerPane.WINDOW_PADDING, except when
+    using preferType of PICKER_MENU_POINTER, where it will be set according
     to the `controlSize` value of the pane to one of:
 
-      SC.PickerPane.TINY_MENU_WINDOW_PADDING
-      SC.PickerPane.SMALL_MENU_WINDOW_PADDING
-      SC.PickerPane.REGULAR_MENU_WINDOW_PADDING
-      SC.PickerPane.LARGE_MENU_WINDOW_PADDING
-      SC.PickerPane.HUGE_MENU_WINDOW_PADDING
+      PickerPane.TINY_MENU_WINDOW_PADDING
+      PickerPane.SMALL_MENU_WINDOW_PADDING
+      PickerPane.REGULAR_MENU_WINDOW_PADDING
+      PickerPane.LARGE_MENU_WINDOW_PADDING
+      PickerPane.HUGE_MENU_WINDOW_PADDING
 
     @type Number
-    @default SC.PickerPane.WINDOW_PADDING
+    @default PickerPane.WINDOW_PADDING
   */
   windowPadding: null,
 
@@ -532,22 +522,22 @@ SC.PickerPane = SC.PalettePane.extend(
   // Provide some developer support. People have occasionally been misled by calling `append`
   // on PickerPanes, which fails to position the pane properly. Hopefully, we can give
   // them a clue to speed up finding the problem.
-  /** @private SC.Pane */
-  append: function () {
+  /** @private Pane */
+  append: function append () {
     if (!this._sc_didUsePopup) {
-      SC.warn("Developer Warning: You should not use .append() with SC.PickerPane. Instead use .popup() and pass in an anchor view or element.");
+      SC.warn("Developer Warning: You should not use .append() with PickerPane. Instead use .popup() and pass in an anchor view or element.");
     }
 
     this._sc_didUsePopup = false;
 
-    return sc_super();
+    return append.base.apply(this, arguments);
   },
   //@endif
 
   /* @private If the pane changes size, reposition as necessary. */
-  viewDidResize: function () {
+  viewDidResize: function viewDidResize () {
     // Don't forget to call the superclass method.
-    sc_super();
+    viewDidResize.base.apply(this, arguments);
 
     // Re-position.
     this.positionPane(true);
@@ -556,11 +546,11 @@ SC.PickerPane = SC.PalettePane.extend(
   /**
     Displays a new picker pane.
 
-    @param {SC.View|HTMLElement} anchorViewOrElement view or element to anchor to
+    @param {View|HTMLElement} anchorViewOrElement view or element to anchor to
     @param {String} [preferType] apply picker position rule
     @param {Array} [preferMatrix] apply custom offset or position pref matrix for specific preferType
     @param {Number} [pointerOffset]
-    @returns {SC.PickerPane} receiver
+    @returns {PickerPane} receiver
   */
   popup: function (anchorViewOrElement, preferType, preferMatrix, pointerOffset) {
     this.beginPropertyChanges();
@@ -607,12 +597,12 @@ SC.PickerPane = SC.PalettePane.extend(
     } // else no anchor to use
 
     if (anchor) {
-      origin = SC.cloneRect(anchor);
+      origin = cloneRect(anchor);
 
       // Adjust the origin for offset based positioning.
       switch (preferType) {
-      case SC.PICKER_MENU:
-      case SC.PICKER_FIXED:
+      case PICKER_MENU:
+      case PICKER_FIXED:
         if (!preferMatrix || preferMatrix.length !== 3) {
           // default below the anchor with fine-tuned visual alignment
           // for Menu to appear just below the anchorElement.
@@ -635,7 +625,7 @@ SC.PickerPane = SC.PalettePane.extend(
       anchor.halfHeight = parseInt(anchor.height * 0.5, 0);
 
       // Don't pollute the borderFrame rect.
-      frame = SC.cloneRect(frame);
+      frame = cloneRect(frame);
       frame.halfWidth = parseInt(frame.width * 0.5, 0);
       frame.halfHeight = parseInt(frame.height * 0.5, 0);
 
@@ -658,7 +648,7 @@ SC.PickerPane = SC.PalettePane.extend(
       }
 
       /*
-        Special case behavior for transitions that include scale or rotate: notably SC.View.SCALE_IN and SC.View.POP_IN.
+        Special case behavior for transitions that include scale or rotate: notably View.SCALE_IN and View.POP_IN.
 
         We make an assumption that the picker should always scale out of the anchor, so we set the
         transform origin accordingly.
@@ -669,8 +659,8 @@ SC.PickerPane = SC.PalettePane.extend(
 
         switch (preferType) {
         // If the picker uses a pointer, set the origin to the pointer.
-        case SC.PICKER_POINTER:
-        case SC.PICKER_MENU_POINTER:
+        case PICKER_POINTER:
+        case PICKER_MENU_POINTER:
           switch (this.get('pointerPos')) {
           case 'perfectTop':
             transformOriginX = (frame.halfWidth + this.get('pointerPosX')) / frame.width;
@@ -692,8 +682,8 @@ SC.PickerPane = SC.PalettePane.extend(
           break;
 
         // If the picker doesn't use a pointer, set the origin to the correct corner.
-        case SC.PICKER_MENU:
-        case SC.PICKER_FIXED:
+        case PICKER_MENU:
+        case PICKER_FIXED:
           if (frame.x >= anchor.x) {
             transformOriginX = 0;
           } else {
@@ -734,7 +724,7 @@ SC.PickerPane = SC.PalettePane.extend(
   */
   computeAnchorRect: function (anchor) {
     var bounding, ret, cq,
-        wsize = SC.RootResponder.responder.computeWindowSize();
+        wsize = RootResponder.responder.computeWindowSize();
     // Some browsers natively implement getBoundingClientRect, so if it's
     // available we'll use it for speed.
     if (anchor.getBoundingClientRect) {
@@ -751,23 +741,23 @@ SC.PickerPane = SC.PalettePane.extend(
       // if we did not get the frame dimensions the do the calculations
       // based on an element
       if (ret.width === undefined || ret.height === undefined) {
-        cq = SC.$(anchor);
+        cq = $(anchor);
         ret.width = cq.outerWidth();
         ret.height = cq.outerHeight();
       }
     } else {
       // Only really old versions will have to go through this code path.
-      ret   = SC.offset(anchor); // get x & y
-      cq    = SC.$(anchor);
+      ret   = offset(anchor); // get x & y
+      cq    = $(anchor);
       ret.width = cq.outerWidth();
       ret.height = cq.outerHeight();
     }
     ret.height = (wsize.height - ret.y) < ret.height ? (wsize.height - ret.y) : ret.height;
 
-    if (!SC.browser.isIE && window.scrollX > 0 || window.scrollY > 0) {
+    if (!browser.isIE && window.scrollX > 0 || window.scrollY > 0) {
       ret.x += window.scrollX;
       ret.y += window.scrollY;
-    } else if (SC.browser.isIE && (document.documentElement.scrollTop > 0 || document.documentElement.scrollLeft > 0)) {
+    } else if (browser.isIE && (document.documentElement.scrollTop > 0 || document.documentElement.scrollLeft > 0)) {
       ret.x += document.documentElement.scrollLeft;
       ret.y += document.documentElement.scrollTop;
     }
@@ -778,11 +768,11 @@ SC.PickerPane = SC.PalettePane.extend(
     This method will dispatch to the correct re-position rule according to preferType
   */
   fitPositionToScreen: function (preferredPosition, frame, anchorFrame) {
-    var windowSize = SC.RootResponder.responder.computeWindowSize(),
+    var windowSize = RootResponder.responder.computeWindowSize(),
         windowFrame = { x: 0, y: 0, width: windowSize.width, height: windowSize.height };
 
     // if window size is smaller than the minimum size of app, use minimum size.
-    var mainPane = SC.RootResponder.responder.mainPane;
+    var mainPane = RootResponder.responder.mainPane;
     if (mainPane) {
       var minWidth = mainPane.layout.minWidth,
           minHeight = mainPane.layout.minHeight;
@@ -802,20 +792,20 @@ SC.PickerPane = SC.PalettePane.extend(
     var preferType = this.get('preferType');
     if (preferType) {
       switch (preferType) {
-      case SC.PICKER_MENU:
+      case PICKER_MENU:
         // apply menu re-position rule
         frame = this.fitPositionToScreenMenu(windowFrame, frame, this.get('isSubMenu'));
         break;
-      case SC.PICKER_MENU_POINTER:
+      case PICKER_MENU_POINTER:
         this.setupPointer(anchorFrame);
         frame = this.fitPositionToScreenMenuPointer(windowFrame, frame, anchorFrame);
         break;
-      case SC.PICKER_POINTER:
+      case PICKER_POINTER:
         // apply pointer re-position rule
         this.setupPointer(anchorFrame);
         frame = this.fitPositionToScreenPointer(windowFrame, frame, anchorFrame);
         break;
-      case SC.PICKER_FIXED:
+      case PICKER_FIXED:
         // skip fitPositionToScreen
         break;
       default:
@@ -830,7 +820,7 @@ SC.PickerPane = SC.PalettePane.extend(
   },
 
   /** @private
-    re-position rule migrated from old SC.OverlayPaneView.
+    re-position rule migrated from old OverlayPaneView.
     shift x, y to optimized picker visibility and make sure top-left corner is always visible.
   */
   fitPositionToScreenDefault: function (windowFrame, frame, anchorFrame) {
@@ -838,24 +828,24 @@ SC.PickerPane = SC.PalettePane.extend(
 
     // make sure the right edge fits on the screen.  If not, anchor to
     // right edge of anchor or right edge of window, whichever is closer.
-    if (SC.maxX(frame) > windowFrame.width) {
-      maximum = Math.max(SC.maxX(anchorFrame), frame.width);
+    if (maxX(frame) > windowFrame.width) {
+      maximum = Math.max(maxX(anchorFrame), frame.width);
       frame.x = Math.min(maximum, windowFrame.width) - frame.width;
     }
 
     // if the left edge is off of the screen, try to position at left edge
     // of anchor.  If that pushes right edge off screen, shift back until
     // right is on screen or left = 0
-    if (SC.minX(frame) < 0) {
-      frame.x = SC.minX(Math.max(anchorFrame, 0));
-      if (SC.maxX(frame) > windowFrame.width) {
+    if (minX(frame) < 0) {
+      frame.x = minX(Math.max(anchorFrame, 0));
+      if (maxX(frame) > windowFrame.width) {
         frame.x = Math.max(0, windowFrame.width - frame.width);
       }
     }
 
     // make sure bottom edge fits on screen.  If not, try to anchor to top
     // of anchor or bottom edge of screen.
-    if (SC.maxY(frame) > windowFrame.height) {
+    if (maxY(frame) > windowFrame.height) {
       maximum = Math.max((anchorFrame.y - frame.height), 0);
       if (maximum > windowFrame.height) {
         frame.y = Math.max(0, windowFrame.height - frame.height);
@@ -864,8 +854,8 @@ SC.PickerPane = SC.PalettePane.extend(
 
     // if top edge is off screen, try to anchor to bottom of anchor. If that
     // pushes off bottom edge, shift up until it is back on screen or top =0
-    if (SC.minY(frame) < 0) {
-      maximum = Math.min(SC.maxY(anchorFrame), (windowFrame.height - anchorFrame.height));
+    if (minY(frame) < 0) {
+      maximum = Math.min(maxY(anchorFrame), (windowFrame.height - anchorFrame.height));
       frame.y = Math.max(maximum, 0);
     }
 
@@ -1168,29 +1158,29 @@ SC.PickerPane = SC.PalettePane.extend(
   */
   setupPointer: function (a) {
     var pointerOffset = this.get('pointerOffset'),
-        K = SC.PickerPane;
+        K = PickerPane;
 
-    // Set windowPadding and pointerOffset (SC.PICKER_MENU_POINTER only).
+    // Set windowPadding and pointerOffset (PICKER_MENU_POINTER only).
     if (!pointerOffset || pointerOffset.length !== 4) {
-      if (this.get('preferType') === SC.PICKER_MENU || this.get('preferType') === SC.PICKER_MENU_POINTER) {
+      if (this.get('preferType') === PICKER_MENU || this.get('preferType') === PICKER_MENU_POINTER) {
         switch (this.get('controlSize')) {
-        case SC.TINY_CONTROL_SIZE:
+        case TINY_CONTROL_SIZE:
           this.set('pointerOffset', K.TINY_PICKER_MENU_POINTER_OFFSET);
           this.set('windowPadding', K.TINY_MENU_WINDOW_PADDING);
           break;
-        case SC.SMALL_CONTROL_SIZE:
+        case SMALL_CONTROL_SIZE:
           this.set('pointerOffset', K.SMALL_PICKER_MENU_POINTER_OFFSET);
           this.set('windowPadding', K.SMALL_MENU_WINDOW_PADDING);
           break;
-        case SC.REGULAR_CONTROL_SIZE:
+        case REGULAR_CONTROL_SIZE:
           this.set('pointerOffset', K.REGULAR_PICKER_MENU_POINTER_OFFSET);
           this.set('windowPadding', K.REGULAR_MENU_WINDOW_PADDING);
           break;
-        case SC.LARGE_CONTROL_SIZE:
+        case LARGE_CONTROL_SIZE:
           this.set('pointerOffset', K.LARGE_PICKER_MENU_POINTER_OFFSET);
           this.set('windowPadding', K.LARGE_MENU_WINDOW_PADDING);
           break;
-        case SC.HUGE_CONTROL_SIZE:
+        case HUGE_CONTROL_SIZE:
           this.set('pointerOffset', K.HUGE_PICKER_MENU_POINTER_OFFSET);
           this.set('windowPadding', K.HUGE_MENU_WINDOW_PADDING);
           break;
@@ -1198,7 +1188,7 @@ SC.PickerPane = SC.PalettePane.extend(
           this.set('pointerOffset', K.REGULAR_PICKER_MENU_POINTER_OFFSET);
           this.set('windowPadding', K.REGULAR_MENU_WINDOW_PADDING);
           //@if(debug)
-          SC.warn('SC.PickerPane with preferType of SC.PICKER_MENU_POINTER should either define a controlSize or provide a pointerOffset. SC.PickerPane will fall back to default pointerOffset of SC.PickerPane.REGULAR_PICKER_MENU_POINTER_OFFSET and default windowPadding of SC.PickerPane.WINDOW_PADDING');
+          SC.warn('PickerPane with preferType of PICKER_MENU_POINTER should either define a controlSize or provide a pointerOffset. PickerPane will fall back to default pointerOffset of PickerPane.REGULAR_PICKER_MENU_POINTER_OFFSET and default windowPadding of PickerPane.WINDOW_PADDING');
           //@endif
         }
       } else {
@@ -1226,14 +1216,14 @@ SC.PickerPane = SC.PalettePane.extend(
       // picker default re-position rule :
       // perfect right (0) > perfect left (1) > perfect top (2) > perfect bottom (3)
       // fallback to perfect top (2)
-      this.set('preferMatrix', this.get('preferType') === SC.PICKER_MENU_POINTER ? [3, 2, 1, 0, 3] : [0, 1, 2, 3, 2]);
+      this.set('preferMatrix', this.get('preferType') === PICKER_MENU_POINTER ? [3, 2, 1, 0, 3] : [0, 1, 2, 3, 2]);
     }
   },
 
   /**
     @type Array
     @default ['pointerPos']
-    @see SC.View#displayProperties
+    @see View#displayProperties
   */
   displayProperties: ['pointerPos'],
 
@@ -1258,10 +1248,10 @@ SC.PickerPane = SC.PalettePane.extend(
         this.remove();
       }
 
-      return YES;
+      return true;
     }
 
-    return NO;
+    return false;
   },
 
   /** @private */
@@ -1275,14 +1265,14 @@ SC.PickerPane = SC.PalettePane.extend(
     Over-write for adjustments. ex: shadow
   */
   clickInside: function (frame, evt) {
-    return SC.pointInRect({ x: evt.pageX, y: evt.pageY }, frame);
+    return pointInRect({ x: evt.pageX, y: evt.pageY }, frame);
   },
 
   /**
     Invoked by the root responder. Re-position picker whenever the window resizes.
   */
-  windowSizeDidChange: function (oldSize, newSize) {
-    sc_super();
+  windowSizeDidChange: function windowSizeDidChange (oldSize, newSize) {
+    windowSizeDidChange.base.apply(this, arguments);
 
     if (this.repositionOnWindowResize) {
       // Do this in the next run loop. This ensures that positionPane is only called once even if scroll view
@@ -1291,13 +1281,13 @@ SC.PickerPane = SC.PalettePane.extend(
     }
   },
 
-  remove: function () {
+  remove: function remove () {
     if (this.get('isVisibleInWindow')) {
       this._withdrawOverflowRequest();
     }
     this._removeScrollObservers();
 
-    return sc_super();
+    return remove.base.apply(this,arguments);
   },
 
   /** @private
@@ -1305,13 +1295,13 @@ SC.PickerPane = SC.PalettePane.extend(
     show scrollbars when the picker has shadows, as it's really annoying.
   */
   _hideOverflow: function () {
-    var main = SC.$('.sc-main'),
+    var main = $('.sc-main'),
         minWidth = parseInt(main.css('minWidth'), 0),
         minHeight = parseInt(main.css('minHeight'), 0),
-        windowSize = SC.RootResponder.responder.get('currentWindowSize');
+        windowSize = RootResponder.responder.get('currentWindowSize');
 
     if (windowSize.width >= minWidth && windowSize.height >= minHeight) {
-      SC.bodyOverflowArbitrator.requestHidden(this);
+      bodyOverflowArbitrator.requestHidden(this);
     }
   },
 
@@ -1320,7 +1310,7 @@ SC.PickerPane = SC.PalettePane.extend(
     show scrollbars when the picker has shadows, as it's really annoying.
   */
   _withdrawOverflowRequest: function () {
-    SC.bodyOverflowArbitrator.withdrawRequest(this);
+    bodyOverflowArbitrator.withdrawRequest(this);
   },
 
   /** @private
@@ -1395,27 +1385,27 @@ SC.PickerPane = SC.PalettePane.extend(
     this.invokeNext(this.positionPane);
   },
 
-  /** @private SC.Object */
-  init: function () {
-    sc_super();
+  /** @private Object */
+  init: function init () {
+    init.base.apply(this, arguments);
 
     // Set defaults that can only be configured on initialization.
-    if (!this.windowPadding) { this.windowPadding = SC.PickerPane.WINDOW_PADDING; }
+    if (!this.windowPadding) { this.windowPadding = PickerPane.WINDOW_PADDING; }
   },
 
-  /** @private SC.Object */
-  destroy: function () {
+  /** @private Object */
+  destroy: function destroy () {
     this._scrollView = null;
     this._anchorView = null;
     this._anchorHTMLElement = null;
-    return sc_super();
+    return destroy.base.apply(this, arguments);
   }
 
 });
 
 
 /** Class methods. */
-SC.PickerPane.mixin( /** @scope SC.PickerPane */ {
+PickerPane.mixin( /** @scope PickerPane */ {
 
   //---------------------------------------------------------------------------
   // Constants
@@ -1457,32 +1447,32 @@ SC.PickerPane.mixin( /** @scope SC.PickerPane */ {
   /** @static */
   HUGE_PICKER_MENU_POINTER_OFFSET: [9, -9, -18, 18],
 
-  /** @deprecated Version 1.10.  Use SC.PickerPane.WINDOW_PADDING.
+  /** @deprecated Version 1.10.  Use PickerPane.WINDOW_PADDING.
     @static
   */
   PICKER_EXTRA_RIGHT_OFFSET: 20,
 
-  /** @deprecated Version 1.10.  Use SC.PickerPane.TINY_MENU_WINDOW_PADDING.
+  /** @deprecated Version 1.10.  Use PickerPane.TINY_MENU_WINDOW_PADDING.
     @static
   */
   TINY_PICKER_MENU_EXTRA_RIGHT_OFFSET: 12,
 
-  /** @deprecated Version 1.10.  Use SC.PickerPane.SMALL_MENU_WINDOW_PADDING.
+  /** @deprecated Version 1.10.  Use PickerPane.SMALL_MENU_WINDOW_PADDING.
     @static
   */
   SMALL_PICKER_MENU_EXTRA_RIGHT_OFFSET: 11,
 
-  /** @deprecated Version 1.10.  Use SC.PickerPane.REGULAR_MENU_WINDOW_PADDING.
+  /** @deprecated Version 1.10.  Use PickerPane.REGULAR_MENU_WINDOW_PADDING.
     @static
   */
   REGULAR_PICKER_MENU_EXTRA_RIGHT_OFFSET: 12,
 
-  /** @deprecated Version 1.10.  Use SC.PickerPane.LARGE_MENU_WINDOW_PADDING.
+  /** @deprecated Version 1.10.  Use PickerPane.LARGE_MENU_WINDOW_PADDING.
     @static
   */
   LARGE_PICKER_MENU_EXTRA_RIGHT_OFFSET: 17,
 
-  /** @deprecated Version 1.10.  Use SC.PickerPane.HUGE_MENU_WINDOW_PADDING.
+  /** @deprecated Version 1.10.  Use PickerPane.HUGE_MENU_WINDOW_PADDING.
     @static
   */
   HUGE_PICKER_MENU_EXTRA_RIGHT_OFFSET: 12

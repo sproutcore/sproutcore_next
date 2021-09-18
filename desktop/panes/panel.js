@@ -5,16 +5,20 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('panes/modal');
+import { Pane } from "../../view/view.js";
+import { ModalPane } from "./modal.js";
+import { SC } from '../../core/core.js';
+
+
 
 /** @class
 
   Most SproutCore applications need modal panels. The default way to use the
   panel pane is to simply add it to your page like this:
 
-      SC.PanelPane.create({
+      PanelPane.create({
         layout: { width: 400, height: 200, centerX: 0, centerY: 0 },
-        contentView: SC.View.extend({
+        contentView: View.extend({
         })
       }).append();
 
@@ -22,32 +26,31 @@ sc_require('panes/modal');
   is to cover the entire document window with a semi-opaque background, and to
   resize with the window.
 
-  @extends SC.Pane
   @author Erich Ocean
   @since SproutCore 1.0
 */
-SC.PanelPane = SC.Pane.extend(
-/** @scope SC.PanelPane.prototype */ {
+export const PanelPane = Pane.extend(
+/** @scope PanelPane.prototype */ {
 
   /**
     Walk like a duck.
     @type {Boolean}
   */
-  isPanelPane: YES,
+  isPanelPane: true,
 
   /**
     @type Array
     @default ['sc-panel']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-panel'],
 
   /**
     @type Boolean
-    @default YES
-    @see SC.Pane#acceptsKeyPane
+    @default true
+    @see Pane#acceptsKeyPane
   */
-  acceptsKeyPane: YES,
+  acceptsKeyPane: true,
 
   /**
     The WAI-ARIA role for panel pane.
@@ -89,15 +92,15 @@ SC.PanelPane = SC.Pane.extend(
     the modalPane underneath it.
 
     @type Boolean
-    @default YES
+    @default true
   */
-  isModal: YES,
+  isModal: true,
 
   /**
     The modal pane to place behind this pane if this pane is modal. This
-    must be a subclass or an instance of SC.ModalPane.
+    must be a subclass or an instance of ModalPane.
   */
-  modalPane: SC.ModalPane.extend({
+  modalPane: ModalPane.extend({
     classNames: 'for-sc-panel'
   }),
 
@@ -108,14 +111,14 @@ SC.PanelPane = SC.Pane.extend(
   /**
     Set this to the view you want to act as the content within the panel.
 
-    @type SC.View
+    @type View
     @default null
   */
   contentView: null,
   contentViewBindingDefault: SC.Binding.single(),
 
   /**
-    @param {SC.View} newContent
+    @param {View} newContent
   */
   replaceContent: function(newContent) {
     this.removeAllChildren() ;
@@ -147,7 +150,7 @@ SC.PanelPane = SC.Pane.extend(
   //
 
   /**
-    The name of the theme's `SC.PanelPane` render delegate.
+    The name of the theme's `PanelPane` render delegate.
 
     @type String
     @default 'panelRenderDelegate'
@@ -168,35 +171,36 @@ SC.PanelPane = SC.Pane.extend(
   },
 
   /** @private - whenever showing on screen, deal with modal pane as well */
-  appendTo: function(elem) {
+  appendTo: function appendTo (elem) {
     var pane ;
     // show the modal only if the pane is currently not visible, or if the pane
     // is currently transitioning out
-    if ((!this.get('isVisibleInWindow') || this.get('viewState') == SC.CoreView.ATTACHED_BUILDING_OUT) && this.get('isModal') && (pane = this._modalPane())) {
-      this._isShowingModal = YES;
+    if ((!this.get('isVisibleInWindow') || this.get('viewState') == CoreView.ATTACHED_BUILDING_OUT) && this.get('isModal') && (pane = this._modalPane())) {
+      this._isShowingModal = true;
       pane.paneWillAppend(this);
     }
-    return sc_super();
+    // return sc_super();
+    return appendTo.base.apply(this, arguments);
   },
 
   /** @private - when removing from screen, deal with modal pane as well. */
-  remove: function() {
-    var pane, ret = sc_super();
+  remove: function remove () {
+    var pane, ret = remove.base.apply(this, arguments)
 
     if (this._isShowingModal) {
-      this._isShowingModal = NO ;
+      this._isShowingModal = false ;
       if (pane = this._modalPane()) pane.paneDidRemove(this);
     }
     return ret ;
   },
 
-  destroy: function() {
+  destroy: function destroy () {
     var modal = this.get('modalPane');
     if (modal && !modal.isClass) {
       modal.destroy();
     }
 
-    sc_super();
+    destroy.base.apply(this, arguments);
   },
 
   /** @private - if isModal state changes, update pane state if needed. */
@@ -206,12 +210,12 @@ SC.PanelPane = SC.Pane.extend(
 
     if (isModal) {
       if (!this._isShowingModal && (modalPane = this._modalPane())) {
-        this._isShowingModal = YES;
+        this._isShowingModal = true;
         modalPane.paneWillAppend(this);
       }
     } else {
       if (this._isShowingModal && (modalPane = this._modalPane())) {
-        this._isShowingModal = NO;
+        this._isShowingModal = false;
         modalPane.paneDidRemove(this);
       }
     }

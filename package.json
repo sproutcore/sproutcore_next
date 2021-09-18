@@ -17,7 +17,8 @@
     "responder": "./responder/responder.js",
     "statechart": "./statechart/statechart.js",
     "view": "./view/view.js",
-    "testing": "./testing/testing.js"
+    "testing": "./testing/testing.js",
+    "css": "./sproutcore_css.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

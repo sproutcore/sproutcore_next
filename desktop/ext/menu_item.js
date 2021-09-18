@@ -5,15 +5,17 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require("views/menu_item");
+import { AutoResize } from "../../view/view.js";
+import { MenuItemView } from "../views/menu_item.js";
+import { SC } from '../../core/core.js';
 
 /**
   @class
-  Extends SC.MenuItemView to support auto resize.
+  Extends MenuItemView to support auto resize.
 */
 
-SC.AutoResizingMenuItemView = SC.MenuItemView.extend(SC.AutoResize,
-/** @scope SC.AutoResizingMenuItemView.prototype */ {
+export const AutoResizingMenuItemView = MenuItemView.extend(AutoResize,
+/** @scope AutoResizingMenuItemView.prototype */ {
 
   //
   // For automatic resizing, if enabled (to be enabled by parent menu)
@@ -25,7 +27,7 @@ SC.AutoResizingMenuItemView = SC.MenuItemView.extend(SC.AutoResize,
     @property
     @type {Boolean}
   */
-  supportsAutoResize: YES,
+  supportsAutoResize: true,
 
   /**
     The menu item should NOT change its own width and height.
@@ -34,17 +36,17 @@ SC.AutoResizingMenuItemView = SC.MenuItemView.extend(SC.AutoResize,
     @property
     @type {Boolean}
   */
-  shouldAutoResize: NO,
+  shouldAutoResize: false,
   
   /**
-    If YES, the menu item will measure its width and height so that the menu
+    If true, the menu item will measure its width and height so that the menu
     can automatically resize itself. This is usually set by the parent menu.
     
     @property
     @type {Boolean}
-    @default NO
+    @default false
   */
-  shouldMeasureSize: NO,
+  shouldMeasureSize: false,
 
   // NOTE: this property could come from the theme at some point, but MenuItemView
   // would have to be migrated to render delegates first. MenuPane adds the

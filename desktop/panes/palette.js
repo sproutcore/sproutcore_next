@@ -5,17 +5,19 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('panes/panel');
-sc_require('panes/draggable');
+import { DraggablePaneSupport } from "./draggable.js";
+import { ModalPane } from "./modal.js";
+import { PanelPane } from "./panel.js";
+
 
 /** @class
   Displays a non-modal, default positioned, drag&drop-able palette pane.
 
-  The simplest way to use the palette pane is to define it in an SC.Page like this:
+  The simplest way to use the palette pane is to define it in an Page like this:
 
-        myPalettePane: SC.PalettePane.create({
+        myPalettePane: PalettePane.create({
           layout: { width: 400, height: 200, right: 0, top: 0 },
-          contentView: SC.View.extend({
+          contentView: View.extend({
           })
         })
 
@@ -30,17 +32,15 @@ sc_require('panes/draggable');
   useful for showing important detail information with flexible position.
   They provide a better user experience than modal panel.
 
-  @extends SC.PanelPane
-  @extends SC.DraggablePaneSupport
   @since SproutCore 1.0
 */
-SC.PalettePane = SC.PanelPane.extend(SC.DraggablePaneSupport,
-/** @scope SC.PalettePane.prototype */ {
+export const PalettePane = PanelPane.extend(DraggablePaneSupport,
+/** @scope PalettePane.prototype */ {
 
   /**
     @type Array
     @default ['sc-palette']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-palette'],
 
@@ -48,14 +48,14 @@ SC.PalettePane = SC.PanelPane.extend(SC.DraggablePaneSupport,
     Palettes are not modal by default
 
     @type Boolean
-    @default NO
+    @default false
   */
-  isModal: NO,
+  isModal: false,
 
   /**
-    @type SC.View
-    @default SC.ModalPane
+    @type View
+    @default ModalPane
   */
 
-  modalPane: SC.ModalPane
+  modalPane: ModalPane
 });

@@ -5,6 +5,9 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { View, Control } from "../../view/view.js";
+import { SC } from '../../core/core.js';
+
 /** @class
 
   SliderView displays a horizontal slider control that you can use to choose
@@ -13,12 +16,10 @@
   The property `value` holds the slider's current value. You can set the
   `minimum`, `maximum` and `step` properties as well.
 
-  @extends SC.View
-  @extends SC.Control
   @since SproutCore 1.0
 */
-SC.SliderView = SC.View.extend(SC.Control,
-/** @scope SC.SliderView.prototype */ {
+export const SliderView = View.extend(Control,
+/** @scope SliderView.prototype */ {
 
   /** @private */
   classNames: 'sc-slider-view',
@@ -203,14 +204,14 @@ SC.SliderView = SC.View.extend(SC.Control,
 
   /** @private Clears the mouse just down flag. */
   _sc_clearMouseJustDown: function () {
-    this._sc_isMouseJustDown = NO;
+    this._sc_isMouseJustDown = false;
   },
 
   /** @private Flag used to track when the mouse is pressed. */
-  _isMouseDown: NO,
+  _isMouseDown: false,
 
   /** @private Flag used to track when mouse was just down so that mousewheel events firing as the finger is lifted don't shoot the slider over. */
-  _sc_isMouseJustDown: NO,
+  _sc_isMouseJustDown: false,
 
   /** @private Timer used to track time immediately after a mouse up event. */
   _sc_clearMouseJustDownTimer: null,
@@ -220,9 +221,9 @@ SC.SliderView = SC.View.extend(SC.Control,
     // Fast path, reject secondary clicks.
     if (evt.which && evt.which !== 1) return false;
 
-    if (!this.get('isEnabledInPane')) return YES; // nothing to do...
-    this.set('isActive', YES);
-    this._isMouseDown = YES ;
+    if (!this.get('isEnabledInPane')) return true; // nothing to do...
+    this.set('isActive', true);
+    this._isMouseDown = true ;
 
     // Clear existing mouse just down timer.
     if (this._sc_clearMouseJustDownTimer) {
@@ -230,25 +231,25 @@ SC.SliderView = SC.View.extend(SC.Control,
       this._sc_clearMouseJustDownTimer = null;
     }
 
-    this._sc_isMouseJustDown = NO;
+    this._sc_isMouseJustDown = false;
 
-    return this._triggerHandle(evt, YES);
+    return this._triggerHandle(evt, true);
   },
 
   /* @private mouseDragged uses same technique as mouseDown. */
   mouseDragged: function(evt) {
-    return this._isMouseDown ? this._triggerHandle(evt) : YES;
+    return this._isMouseDown ? this._triggerHandle(evt) : true;
   },
 
   /* @private remove active class */
   mouseUp: function(evt) {
-    if (this._isMouseDown) this.set('isActive', NO);
-    var ret = this._isMouseDown ? this._triggerHandle(evt) : YES ;
-    this._isMouseDown = NO;
+    if (this._isMouseDown) this.set('isActive', false);
+    var ret = this._isMouseDown ? this._triggerHandle(evt) : true ;
+    this._isMouseDown = false;
 
     // To avoid annoying jitter from Magic Mouse (which sends mousewheel events while trying
     // to lift your finger after a drag), ignore mousewheel events for a small period of time.
-    this._sc_isMouseJustDown = YES;
+    this._sc_isMouseJustDown = true;
     this._sc_clearMouseJustDownTimer = this.invokeLater(this._sc_clearMouseJustDown, 250);
 
     return ret ;
@@ -256,12 +257,12 @@ SC.SliderView = SC.View.extend(SC.Control,
 
   /* @private */
   mouseWheel: function(evt) {
-    if (!this.get('isEnabledInPane')) return NO;
-    if (!this.get('updateOnScroll')) return NO;
+    if (!this.get('isEnabledInPane')) return false;
+    if (!this.get('updateOnScroll')) return false;
 
     // If the Magic Mouse is pressed, it still sends mousewheel events rapidly, we don't want errant wheel
     // events to move the slider.
-    if (this._isMouseDown || this._sc_isMouseJustDown) return NO;
+    if (this._isMouseDown || this._sc_isMouseJustDown) return false;
 
     var min = this.get('minimum'),
         max = this.get('maximum'),
@@ -271,7 +272,7 @@ SC.SliderView = SC.View.extend(SC.Control,
     if (newVal< min) this.setIfChanged('value', min);
     else if (newVal> max) this.setIfChanged('value', max);
     else this.setIfChanged('value', newVal);
-    return YES ;
+    return true ;
   },
 
   /* @private */
@@ -332,13 +333,13 @@ SC.SliderView = SC.View.extend(SC.Control,
       this.set('value', loc); // adjust
     }
 
-    return YES ;
+    return true ;
   },
 
   /** @private tied to the isEnabledInPane state */
   acceptsFirstResponder: function() {
-    if (SC.FOCUS_ALL_CONTROLS) { return this.get('isEnabledInPane'); }
-    return NO;
+    if (SC.getSetting('FOCUS_ALL_CONTROLS')) { return this.get('isEnabledInPane'); }
+    return false;
   }.property('isEnabledInPane'),
 
   /* @private TODO: Update to use interpretKeyEvents. */
@@ -348,7 +349,7 @@ SC.SliderView = SC.View.extend(SC.Control,
        var view = evt.shiftKey ? this.get('previousValidKeyView') : this.get('nextValidKeyView');
        if(view) view.becomeFirstResponder(evt);
        else evt.allowDefault();
-       return YES ; // handled
+       return true ; // handled
      }
      if (evt.which >= 33 && evt.which <= 40){
        var min = this.get('minimum'),max=this.get('maximum'),
@@ -390,9 +391,9 @@ SC.SliderView = SC.View.extend(SC.Control,
        if(val>=min && val<=max) this.set('value', val);
      }else{
        evt.allowDefault();
-       return NO;
+       return false;
      }
-     return YES;
+     return true;
    },
 
   /* @private */

@@ -4,31 +4,33 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-sc_require('views/separator');
+
+import { View, ContentDisplay, RenderContext, ImageView, pointInRect } from "../../view/view.js";
+import { SC } from '../../core/core.js';
+import { MenuPane } from "../panes/menu.js";
 
 
 /**
   @class
 
-  An SC.MenuItemView is created for every item in a menu.
+  An MenuItemView is created for every item in a menu.
 
-  @extends SC.View
   @since SproutCore 1.0
 */
-SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
-/** @scope SC.MenuItemView.prototype */ {
+export const MenuItemView = View.extend(ContentDisplay,
+/** @scope MenuItemView.prototype */ {
 
   /**
     @type Array
     @default ['sc-menu-item']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-menu-item'],
 
   /**
     @type Array
     @default ['title', 'isEnabled', 'isSeparator', 'isChecked']
-    @see SC.View#displayProperties
+    @see View#displayProperties
   */
   displayProperties: ['title', 'toolTip', 'isEnabled', 'icon', 'isSeparator', 'shortcut', 'isChecked'],
 
@@ -43,29 +45,29 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
 
   /**
     @type Boolean
-    @default YES
+    @default true
   */
-  escapeHTML: YES,
+  escapeHTML: true,
 
   /**
     @type Boolean
-    @default YES
+    @default true
   */
-  acceptsFirstResponder: YES,
+  acceptsFirstResponder: true,
 
   /**
     IE only attribute to block blurring of other controls
 
     @type Boolean
-    @default YES
+    @default true
   */
-  blocksIEDeactivate: YES,
+  blocksIEDeactivate: true,
 
   /**
     @type Boolean
-    @default NO
+    @default false
   */
-  isContextMenuEnabled: NO,
+  isContextMenuEnabled: false,
 
 
   // ..........................................................
@@ -89,7 +91,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     var ret = this.getContentProperty('itemTitleKey'),
         localize = this.getPath('parentMenu.localize');
 
-    if (localize && ret) ret = SC.String.loc(ret);
+    if (localize && ret) ret = String.loc(ret);
 
     return ret || '';
   }.property().cacheable(),
@@ -112,7 +114,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     var ret = this.getContentProperty('itemToolTipKey'),
         localize = this.getPath('parentMenu.localize');
 
-    if (localize && ret) ret = SC.String.loc(ret);
+    if (localize && ret) ret = String.loc(ret);
 
     return ret || '';
   }.property().cacheable(),
@@ -123,8 +125,8 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     @type Boolean
   */
   isEnabled: function () {
-    return this.getContentProperty('itemIsEnabledKey') !== NO &&
-           this.getContentProperty('itemSeparatorKey') !== YES;
+    return this.getContentProperty('itemIsEnabledKey') !== false &&
+           this.getContentProperty('itemSeparatorKey') !== true;
   }.property().cacheable(),
 
   /**
@@ -137,12 +139,12 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
   }.property().cacheable(),
 
   /**
-    YES if this menu item represents a separator, NO otherwise.
+    true if this menu item represents a separator, false otherwise.
 
     @type Boolean
   */
   isSeparator: function () {
-    return this.getContentProperty('itemSeparatorKey') === YES;
+    return this.getContentProperty('itemSeparatorKey') === true;
   }.property().cacheable(),
 
   /**
@@ -155,7 +157,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
   }.property().cacheable(),
 
   /**
-    YES if the menu item should include a check next to it.
+    true if the menu item should include a check next to it.
 
     @type Boolean
   */
@@ -166,16 +168,16 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
   /**
     This menu item's submenu, if it exists.
 
-    @type SC.MenuPane
+    @type MenuPane
   */
   subMenu: function () {
     var parentMenu = this.get('parentMenu'),
         menuItems = this.getContentProperty('itemSubMenuKey');
 
     if (menuItems) {
-      if (SC.kindOf(menuItems, SC.MenuPane)) {
-        menuItems.set('isModal', NO);
-        menuItems.set('isSubMenu', YES);
+      if (SC.kindOf(menuItems, MenuPane)) {
+        menuItems.set('isModal', false);
+        menuItems.set('isSubMenu', true);
         menuItems.set('parentMenu', parentMenu);
         return menuItems;
       } else {
@@ -188,11 +190,11 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
           subMenu.destroy();
         }
 
-        subMenu = this._subMenu = SC.MenuPane.create({
+        subMenu = this._subMenu = MenuPane.create({
           layout: { width: 200 },
           items: menuItems,
-          isModal: NO,
-          isSubMenu: YES,
+          isModal: false,
+          isSubMenu: true,
           parentMenu: parentMenu,
           controlSize: parentMenu.get('controlSize'),
           exampleView: parentMenu.get('exampleView')
@@ -206,7 +208,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
 
   /**
     @type Boolean
-    @default NO
+    @default false
   */
   hasSubMenu: function () {
     return !!this.get('subMenu');
@@ -223,14 +225,14 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
   },
 
   /** @private */
-  init: function () {
-    sc_super();
+  init: function init () {
+    init.base.apply(this,arguments);
     this.contentDidChange();
   },
 
   /** @private */
-  destroy: function () {
-    sc_super();
+  destroy: function destroy () {
+    destroy.base.apply(this, arguments);
 
     var subMenu = this._subMenu;
     if (subMenu) {
@@ -239,7 +241,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     }
   },
 
-  /** SC.MenuItemView is not able to update itself in place at this time. */
+  /** MenuItemView is not able to update itself in place at this time. */
   // TODO: add update: support.
   isReusable: false,
 
@@ -248,7 +250,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     innerHTML of the receiver element.  Also populates an array of classNames
     to set on the outer element.
 
-    @param {SC.RenderContext} context
+    @param {RenderContext} context
     @param {Boolean} firstTime
     @returns {void}
   */
@@ -257,7 +259,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
         val,
         menu = this.get('parentMenu'),
         itemWidth = this.get('itemWidth') || menu.layout.width,
-        itemHeight = this.get('itemHeight') || SC.DEFAULT_MENU_ITEM_HEIGHT,
+        itemHeight = this.get('itemHeight') || SC.getSetting('DEFAULT_MENU_ITEM_HEIGHT'),
         escapeHTML = this.get('escapeHTML');
 
     this.set('itemWidth', itemWidth);
@@ -292,7 +294,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
       val = this.get('toolTip');
       if (SC.typeOf(val) !== SC.T_STRING) val = val.toString();
       if (escapeHTML) {
-        val = SC.RenderContext.escapeHTML(val);
+        val = RenderContext.escapeHTML(val);
       }
       context.setAttr('title', val);
 
@@ -317,14 +319,14 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
    Generates the image used to represent the image icon. override this to
    return your own custom HTML
 
-   @param {SC.RenderContext} context the render context
+   @param {RenderContext} context the render context
    @param {String} the source path of the image
    @returns {void}
   */
   renderImage: function (context, image) {
     // get a class name and url to include if relevant
     var classArray = ['icon'];
-    if (image && SC.ImageView.valueIsUrl(image)) {
+    if (image && ImageView.valueIsUrl(image)) {
       context.begin('img').addClass(classArray).setAttr('src', image).end();
     } else {
       classArray.push(image);
@@ -336,14 +338,14 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
    Generates the label used to represent the menu item. override this to
    return your own custom HTML
 
-   @param {SC.RenderContext} context the render context
+   @param {RenderContext} context the render context
    @param {String} menu item name
    @returns {void}
   */
 
   renderLabel: function (context, label) {
     if (this.get('escapeHTML')) {
-      label = SC.RenderContext.escapeHTML(label);
+      label = RenderContext.escapeHTML(label);
     }
     context.push("<span class='value ellipsis'>" + label + "</span>");
   },
@@ -352,7 +354,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
    Generates the string used to represent the branch arrow. override this to
    return your own custom HTML
 
-   @param {SC.RenderContext} context the render context
+   @param {RenderContext} context the render context
    @returns {void}
   */
   renderBranch: function (context) {
@@ -363,7 +365,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
    Generates the string used to represent the short cut keys. override this to
    return your own custom HTML
 
-   @param {SC.RenderContext} context the render context
+   @param {RenderContext} context the render context
    @param {String} the shortcut key string to be displayed with menu item name
    @returns {void}
   */
@@ -378,7 +380,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
   showSubMenu: function () {
     var subMenu = this.get('subMenu');
     if (subMenu && !subMenu.get('isAttached')) {
-      subMenu.set('mouseHasEntered', NO);
+      subMenu.set('mouseHasEntered', false);
       subMenu.popup(this, [0, 0, 0]);
     }
 
@@ -399,7 +401,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     targetMenuItem = this.getPath('parentMenu.rootMenu.targetMenuItem');
 
     if (targetMenuItem) targetMenuItem.performAction();
-    return YES;
+    return true;
   },
 
   /** @private
@@ -407,7 +409,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
 
     This method will start flashing the menu item to indicate to the user that
     their selection has been received, unless disableMenuFlash has been set to
-    YES on the menu item.
+    true on the menu item.
 
     @returns {Boolean}
   */
@@ -415,11 +417,11 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     // Clicking on a disabled menu item should close the menu.
     if (!this.get('isEnabled')) {
       this.getPath('parentMenu.rootMenu').remove();
-      return YES;
+      return true;
     }
 
     // Menus that contain submenus should ignore clicks
-    if (this.get('hasSubMenu')) return NO;
+    if (this.get('hasSubMenu')) return false;
 
     var disableFlash = this.getContentProperty('itemDisableMenuFlashKey'),
         menu;
@@ -437,12 +439,12 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
       // flashing state. In the flashing state, no other menu items
       // should become selected.
       menu = this.getPath('parentMenu.rootMenu');
-      menu._isFlashing = YES;
+      menu._isFlashing = true;
       this.invokeLater(this.flashHighlight, 25);
       this.invokeLater(this.sendAction, 150);
     }
 
-    return YES;
+    return true;
   },
 
   /** @private
@@ -457,7 +459,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     // Close the menu
     this.getPath('parentMenu.rootMenu').remove();
     // We're no longer flashing
-    rootMenu._isFlashing = NO;
+    rootMenu._isFlashing = false;
 
     action = (action === undefined) ? rootMenu.get('action') : action;
     target = (target === undefined) ? rootMenu.get('target') : target;
@@ -472,7 +474,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
       SC.Logger.warn('Support for menu item action functions has been deprecated. Please use target and action.');
       //@endif
     } else {
-      responder = this.getPath('pane.rootResponder') || SC.RootResponder.responder;
+      responder = this.getPath('pane.rootResponder') || RootResponder.responder;
 
       if (responder) {
         // Send the action down the responder chain
@@ -519,8 +521,8 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     // a menu flash.
     if (rootMenu._isFlashing) return;
 
-    menu.set('mouseHasEntered', YES);
-    this.set('mouseHasEntered', YES);
+    menu.set('mouseHasEntered', true);
+    this.set('mouseHasEntered', true);
     menu.set('currentMenuItem', this);
 
     // Become first responder to show highlight
@@ -532,7 +534,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
       this._subMenuTimer = this.invokeLater(this.showSubMenu, 100);
     }
 
-    return YES;
+    return true;
   },
 
   /** @private
@@ -560,13 +562,13 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
       }
     }
 
-    return YES;
+    return true;
   },
 
   /** @private */
   touchStart: function (evt) {
     this.mouseEntered(evt);
-    return YES;
+    return true;
   },
 
   /** @private */
@@ -611,7 +613,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     if (menu) {
       menu.moveUp(this);
     }
-    return YES;
+    return true;
   },
 
   /** @private
@@ -622,7 +624,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     if (menu) {
       menu.moveDown(this);
     }
-    return YES;
+    return true;
   },
 
   /** @private
@@ -630,7 +632,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
   */
   moveRight: function (sender, evt) {
     this.showSubMenu();
-    return YES;
+    return true;
   },
 
   /** @private
@@ -651,13 +653,13 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
 
   /** @private*/
   keyUp: function (evt) {
-    return YES;
+    return true;
   },
 
   /** @private*/
   cancel: function (evt) {
     this.getPath('parentMenu.rootMenu').remove();
-    return YES;
+    return true;
   },
 
   /** @private*/
@@ -698,7 +700,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
 
   /** @private*/
   clickInside: function (frame, evt) {
-    return SC.pointInRect({ x: evt.pageX, y: evt.pageY }, frame);
+    return pointInRect({ x: evt.pageX, y: evt.pageY }, frame);
   },
 
 
@@ -739,8 +741,8 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     var menu = this.get('parentMenu');
     if (!menu) return;
 
-    var mapping           = SC.MenuItemView._contentPropertyToMenuItemPropertyMapping,
-        contentProperties = SC.keys(mapping),
+    var mapping           = MenuItemView._contentPropertyToMenuItemPropertyMapping,
+        contentProperties = keys(mapping),
         i, len, contentProperty, menuItemProperty;
 
 
@@ -782,7 +784,7 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
   Implementor note:  If you add such a cached property, you must add it to
                      this mapping.
 */
-SC.MenuItemView._contentPropertyToMenuItemPropertyMapping = {
+MenuItemView._contentPropertyToMenuItemPropertyMapping = {
   itemTitleKey: 'title',
   itemValueKey: 'value',
   itemToolTipKey: 'toolTip',

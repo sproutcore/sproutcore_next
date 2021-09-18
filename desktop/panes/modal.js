@@ -5,6 +5,9 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { RootResponder } from "../../responder/responder.js";
+import { Pane } from "../../view/view.js";
+
 
 /** @class
 
@@ -14,20 +17,20 @@
   panes.
 
   A modal pane is automatically appended when a pane with isModal set to
-  `YES` is made visible and removed when the same pane is hidden.  The only
+  `true` is made visible and removed when the same pane is hidden.  The only
   purpose of the `ModalPane` is to absorb mouse events so that they cannot
   filter through to the underlying content.
 
-  @extends SC.Pane
+  
   @since SproutCore 1.0
 */
-SC.ModalPane = SC.Pane.extend(
-/** @scope SC.ModalPane.prototype */{
+export const ModalPane = Pane.extend(
+/** @scope ModalPane.prototype */{
 
   /**
     @type Array
     @default ['sc-modal']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: 'sc-modal',
 
@@ -38,8 +41,8 @@ SC.ModalPane = SC.Pane.extend(
     Called by a pane just before it appends itself.   The modal pane can
     make itself visible first if needed.
 
-    @param {SC.Pane} pane the pane
-    @returns {SC.ModalPane} receiver
+    @param {Pane} pane the pane
+    @returns {ModalPane} receiver
   */
   paneWillAppend: function(pane) {
     var _tmpPane;
@@ -61,12 +64,12 @@ SC.ModalPane = SC.Pane.extend(
         this.append();
       }
     }
-    var panes = SC.RootResponder.responder.panes;
+    var panes = RootResponder.responder.panes;
     for(var i=0, iLen=panes.length; i<iLen; i++ ){
       _tmpPane = panes[i];
       if(_tmpPane!==pane) {
-        //_tmpPane.set('ariaHidden', YES);
-        this._hideShowTextfields(_tmpPane, NO);
+        //_tmpPane.set('ariaHidden', true);
+        this._hideShowTextfields(_tmpPane, false);
       }
     }
     return this ;
@@ -77,18 +80,18 @@ SC.ModalPane = SC.Pane.extend(
     itself if needed.   Modal panes only remove themselves when an equal
     number of `paneWillAppend()` and `paneDidRemove()` calls are received.
 
-    @param {SC.Pane} pane the pane
-    @returns {SC.ModalPane} receiver
+    @param {Pane} pane the pane
+    @returns {ModalPane} receiver
   */
   paneDidRemove: function(pane) {
     var _tmpPane;
     this._openPaneCount--;
-    var panes = SC.RootResponder.responder.panes;
+    var panes = RootResponder.responder.panes;
     for(var i=0, iLen=panes.length; i<iLen; i++ ){
       _tmpPane = panes[i];
       if(_tmpPane!==pane) {
-        //_tmpPane.set('ariaHidden', NO);
-        this._hideShowTextfields(_tmpPane, YES);
+        //_tmpPane.set('ariaHidden', false);
+        this._hideShowTextfields(_tmpPane, true);
       }
     }
     if (this._openPaneCount <= 0) {
@@ -98,20 +101,20 @@ SC.ModalPane = SC.Pane.extend(
   },
 
   /** @private
-    If `focusable` is NO all SC.TextFieldViews not belonging to the given
-    pane will have isBrowserFocusable set to NO.  If `focusable` is YES, then
-    all SC.TextFieldViews not belonging to the given pane will have
-    isBrowserFocusable set to YES, unless they previously had it set explictly
-    to NO.
+    If `focusable` is false all TextFieldViews not belonging to the given
+    pane will have isBrowserFocusable set to false.  If `focusable` is true, then
+    all TextFieldViews not belonging to the given pane will have
+    isBrowserFocusable set to true, unless they previously had it set explictly
+    to false.
   */
   _hideShowTextfields: function(pane, focusable){
     var view;
 
-    for (view in SC.View.views) {
-      view = SC.View.views[view];
+    for (view in View.views) {
+      view = View.views[view];
       if (view.get('isTextField') && view !== pane && view.get('pane') === pane) {
         if (focusable) {
-          // Setting isBrowserFocusable back to YES. If we cached the previous
+          // Setting isBrowserFocusable back to true. If we cached the previous
           // value, use that instead.
           if (view._scmp_isBrowserFocusable !== undefined) {
             focusable = view._scmp_isBrowserFocusable;
@@ -121,8 +124,8 @@ SC.ModalPane = SC.Pane.extend(
           }
         } else {
           // Cache the value of isBrowserFocusable. If the text field
-          // already had isBrowserFocusable: NO, we don't want to
-          // set it back to YES.
+          // already had isBrowserFocusable: false, we don't want to
+          // set it back to true.
           view._scmp_isBrowserFocusable = view.get('isBrowserFocusable');
         }
         view.set('isBrowserFocusable', focusable);

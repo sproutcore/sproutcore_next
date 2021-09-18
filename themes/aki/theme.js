@@ -2,7 +2,7 @@
 
 
 
-
+import { SC } from '../../core/core.js';
 import { BaseTheme, Theme } from '../../view/view.js';
 import './css.js';
 import './resources/scroller/scroller.js';
@@ -30,3 +30,5 @@ AkiTheme.Success = AkiTheme.subtheme("success");
 AkiTheme.Warning = AkiTheme.subtheme("warning");
 AkiTheme.Danger = AkiTheme.subtheme("danger");
 
+// for apps that don't set their own theme
+SC.setSetting('defaultTheme', 'aki');

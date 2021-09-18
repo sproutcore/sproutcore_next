@@ -49,6 +49,8 @@ import { TreeItemObserver } from './private/tree_item_observer.js';
 import { TreeItemContent } from './mixins/tree_item_content.js';
 import { CollectionContent } from './mixins/collection_content.js';
 import { SelectionSet } from './system/selection_set.js';
+import { Task } from './system/task/task.js';
+import { TaskQueue, backgroundTaskQueue } from './system/task_queue.js';
 
 // add dateTimeBinding to Binding
 Binding.dateTime = dateTimeBinding;
@@ -210,7 +212,10 @@ export const SC = {
   TreeController,
   CollectionContent,
   SelectionSet,
-  registerRuntimeDep
+  registerRuntimeDep,
+  Task,
+  TaskQueue,
+  backgroundTaskQueue
 };
 
 mixin(SC, readyMixin);

@@ -7,6 +7,7 @@
 
 import { SC } from '../../../core/core.js';
 import { pointInRect } from './rect.js';
+import { CoreQuery } from '../../../event/event.js';
 import { offset } from './utils.js';
 
 let _downloadFrames = 0; // count of download frames inserted into document
@@ -89,8 +90,8 @@ export const uniJapaneseConvert = function (str){
     optionally include the border or border and margin.
 
     @param {Object} point the point as an Object (ie. Hash) in the form { x: value, y: value }.
-    @param {DOMElement|jQuery|String} elem the element to test inclusion within.
-      This is passed to `jQuery()`, so any value supported by `jQuery()` will work.
+    @param {DOMElement|CoreQuery|String} elem the element to test inclusion within.
+      This is passed to `CoreQuery()`, so any value supported by `CoreQuery()` will work.
     @param {String} includeFlag flag to determine the dimensions of the element to test within.
       One of either: 'padding', 'border' or 'margin' (default: 'border').
     @param {String} relativeToFlag flag to determine which relative element to determine offset by.
@@ -99,7 +100,7 @@ export const uniJapaneseConvert = function (str){
   */
 
   // Note: This method is the most correct way to test the inclusion of a point within a DOM element.
-  // First, it uses offset which is a slightly improved version of jQuery's offset and much more reliable
+  // First, it uses offset which is a slightly improved version of CoreQuery's offset and much more reliable
   // than writing your own offset determination code.
   // Second, the offset must be adjusted to account for the element's left and top border
   // if not including the border or to account for the left and top margins when including the margins.
@@ -109,7 +110,7 @@ export const pointInElement = function (point, elem, includeFlag, relativeToFlag
       height,
       rect;
 
-  elem = jQuery(elem);
+  elem = CoreQuery(elem);
   includeFlag = includeFlag || 'border';
 
   // Find the offset

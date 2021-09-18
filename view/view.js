@@ -45,6 +45,7 @@ export { Page } from './system/page.js';
 export { propertyFromRenderDelegate } from './views/view/theming.js';
 export { Cursor } from './system/cursor.js';
 export { easingCurve, CubicBezierEquation } from './system/bezier_curves.js';
+export { bodyOverflowArbitrator } from './panes/body_overflow.js';
 
 
 // ..........................................................

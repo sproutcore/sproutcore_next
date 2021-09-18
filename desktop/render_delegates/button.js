@@ -5,6 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 import { SC } from '../../core/core.js';
+import { CoreQuery } from '../../event/event.js';
 import { RenderDelegate, BaseTheme } from "../../view/view.js";
 import { TOGGLE_BEHAVIOR } from '../system/constants.js';
 

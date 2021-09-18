@@ -7,6 +7,7 @@
 
 import { SC } from '../../core/core.js';
 import { View } from '../../view/view.js';
+import { CoreQuery } from '../../event/event.js';
 import { RootResponder, platform } from '../../responder/responder.js';
 import { ResponderContext } from '../../responder/mixins/responder_context.js';  // importing it separately prevents use before declaration errors
 import { bodyOverflowArbitrator } from './body_overflow.js';
@@ -287,15 +288,15 @@ export const Pane = View.extend(ResponderContext,
   /**
     Inserts the pane into the DOM.
 
-    @param {DOMElement|jQuery|String} elem the element to append the pane's layer to.
-      This is passed to `jQuery()`, so any value supported by `jQuery()` will work.
+    @param {DOMElement|CoreQuery|String} elem the element to append the pane's layer to.
+      This is passed to `CoreQuery()`, so any value supported by `CoreQuery()` will work.
     @returns {Pane} receiver
   */
   appendTo: function (elem) {
     var self = this;
 
     return this.insert(function () {
-      self._doAttach(jQuery(elem)[0]);
+      self._doAttach(CoreQuery(elem)[0]);
     });
   },
 
@@ -470,7 +471,7 @@ export const Pane = View.extend(ResponderContext,
 
         pane = Pane.create();
         pane.insert(function (layer) {
-          jQuery(layer).insertBefore("#otherElement");
+          CoreQuery(layer).insertBefore("#otherElement");
         });
 
     @param {Function} fn function which performs the actual DOM manipulation
@@ -611,15 +612,15 @@ export const Pane = View.extend(ResponderContext,
   /**
     Inserts the pane's layer as the first child of the passed element.
 
-    @param {DOMElement|jQuery|String} elem the element to prepend the pane's layer to.
-      This is passed to `jQuery()`, so any value supported by `jQuery()` will work.
+    @param {DOMElement|CoreQuery|String} elem the element to prepend the pane's layer to.
+      This is passed to `CoreQuery()`, so any value supported by `CoreQuery()` will work.
     @returns {Pane} receiver
   */
   prependTo: function (elem) {
     var self = this;
 
     return this.insert(function () {
-      var el = jQuery(elem)[0];
+      var el = CoreQuery(elem)[0];
       self._doAttach(el, el.firstChild);
     });
   },

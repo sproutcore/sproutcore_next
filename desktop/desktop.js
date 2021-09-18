@@ -43,3 +43,6 @@ export { SourceListView } from './views/source_list.js';
 export { ListView } from './views/list.js';
 export { ToolbarView } from './views/toolbar.js';
 export { WebView } from './views/web.js';
+export { GridView } from './views/grid.js';
+export { SliderView } from './views/slider.js';
+export { SelectView } from './views/select.js';

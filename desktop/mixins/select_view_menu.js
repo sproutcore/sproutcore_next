@@ -3,18 +3,20 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { AutoResizingMenuItemView } from "../ext/menu_item.js";
+import { SC } from '../../core/core.js';
 /**
- * Binds a menu view to an owning SC.SelectView, and checks selected items.
+ * Binds a menu view to an owning SelectView, and checks selected items.
  *
  * @mixin
  *
  */
-SC.SelectViewMenu = {
+export const SelectViewMenu = {
   /**
     The SelectView to bind to.
     
     @property
-    @type {SC.SelectView}
+    @type {SelectView}
     @default null
   */
   selectView: null,
@@ -58,10 +60,10 @@ SC.SelectViewMenu = {
     it is selected.
     
     @property
-    @type {SC.MenuItemView}
-    @default SC.MenuItemView subclass
+    @type {MenuItemView}
+    @default MenuItemView subclass
   */
-  exampleView: SC.AutoResizingMenuItemView.extend({
+  exampleView: AutoResizingMenuItemView.extend({
     isChecked: function() {
       var selectView = this.getPath('parentMenu.selectView');
 
@@ -126,7 +128,7 @@ SC.SelectViewMenu = {
     for (idx = 0; idx < len; idx++) {
       key = props[idx];
 
-      if (SC.typeOf(from) === SC.T_HASH) {
+      if (SC.typeOf(key) === SC.T_HASH) {
         key = key.to;
       }
       this[key + 'Binding'].disconnect();

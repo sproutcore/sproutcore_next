@@ -5,6 +5,7 @@ import { get } from "../core/mixins/observable";
 import { clone } from "../core/system/base";
 import { getSetting, setSetting } from "../core/system/settings";
 import { SCString } from "../core/system/string";
+import { Store } from "../datastore/datastore";
 
 
 export type Fix<T> = { [K in keyof T]: T[K] };

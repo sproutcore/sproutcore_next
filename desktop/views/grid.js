@@ -4,8 +4,12 @@
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-sc_require('views/list');
+// sc_require('views/list');
 
+import { ListView } from './list.js';
+import { LabelView, maxY, minY, View } from '../../view/view.js';
+import { HORIZONTAL_ORIENTATION } from '../system/constants.js';
+import { IndexSet } from '../../core/system/index_set.js';
 
 /** @class
 
@@ -16,14 +20,14 @@ sc_require('views/list');
   When the grid view is configured to accept drags and drops onto its items, it
   will set the isDropTarget property on the target item accordingly.  This
   allows you to modify the appearance of the drop target grid item accordingly
-  (@see SC.ListItemView#isDropTarget).
+  (@see ListItemView#isDropTarget).
 
-  @extends SC.ListView
+  
   @author Charles Jolley
   @version 1.0
 */
-SC.GridView = SC.ListView.extend(
-/** @scope SC.GridView.prototype */ {
+export const GridView = ListView.extend(
+/** @scope GridView.prototype */ {
 
   /** @private */
   _lastFrameWidth: null,
@@ -31,14 +35,14 @@ SC.GridView = SC.ListView.extend(
   /**
     @type Array
     @default ['sc-grid-view']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-grid-view'],
 
   /**
     @type Hash
     @default { left:0, right:0, top:0, bottom:0 }
-    @see SC.View#layout
+    @see View#layout
   */
   layout: { left: 0, right: 0, top: 0, bottom: 0 },
 
@@ -67,21 +71,21 @@ SC.GridView = SC.ListView.extend(
 
     You can override this as you wish.
 
-    @type SC.View
-    @default SC.LabelView
+    @type View
+    @default LabelView
   */
-  exampleView: SC.LabelView,
+  exampleView: LabelView,
 
   /**
     Possible values:
 
-      - SC.HORIZONTAL_ORIENTATION
-      - SC.VERTICAL_ORIENTATION
+      - HORIZONTAL_ORIENTATION
+      - VERTICAL_ORIENTATION
 
     @type String
-    @default SC.HORIZONTAL_ORIENTATION
+    @default HORIZONTAL_ORIENTATION
   */
-  insertionOrientation: SC.HORIZONTAL_ORIENTATION,
+  insertionOrientation: HORIZONTAL_ORIENTATION,
 
   /** @private */
   itemsPerRow: function () {
@@ -99,9 +103,9 @@ SC.GridView = SC.ListView.extend(
   contentIndexesInRect: function (rect) {
     var rowHeight = this.get('rowHeight') || 48,
         itemsPerRow = this.get('itemsPerRow'),
-        min = Math.floor(SC.minY(rect) / rowHeight) * itemsPerRow,
-        max = Math.ceil(SC.maxY(rect) / rowHeight) * itemsPerRow;
-    return SC.IndexSet.create(min, max - min);
+        min = Math.floor(minY(rect) / rowHeight) * itemsPerRow,
+        max = Math.ceil(maxY(rect) / rowHeight) * itemsPerRow;
+    return IndexSet.create(min, max - min);
   },
 
   /** @private */
@@ -156,9 +160,9 @@ SC.GridView = SC.ListView.extend(
     point of insertion.
 
     @field
-    @type SC.View
+    @type View
   */
-  insertionPointClass: SC.View.extend({
+  insertionPointClass: View.extend({
     classNames: ['sc-grid-insertion-point'],
 
     layout: { width: 2 },
@@ -173,13 +177,13 @@ SC.GridView = SC.ListView.extend(
     if (!itemView) return;
 
     // if drop on, then just add a class...
-    if (dropOperation & SC.DROP_ON) {
+    if (dropOperation & DROP_ON) {
       if (itemView !== this._lastDropOnView) {
         this.hideInsertionPoint();
 
         // If the drag is supposed to drop onto an item, notify the item that it
         // is the current target of the drop.
-        itemView.set('isDropTarget', YES);
+        itemView.set('isDropTarget', true);
 
         // Track the item so that we can clear isDropTarget when the drag changes;
         // versus having to clear it from all items.
@@ -190,7 +194,7 @@ SC.GridView = SC.ListView.extend(
       if (this._lastDropOnView) {
         // If there was an item that was the target of the drop previously, be
         // sure to clear it.
-        this._lastDropOnView.set('isDropTarget', NO);
+        this._lastDropOnView.set('isDropTarget', false);
         this._lastDropOnView = null;
       }
 
@@ -205,7 +209,7 @@ SC.GridView = SC.ListView.extend(
       // Adjust the position of the insertion point.
       top = layout.top;
       left = layout.left;
-      if (dropOperation & SC.DROP_AFTER) left += layout.width;
+      if (dropOperation & DROP_AFTER) left += layout.width;
       var height = layout.height;
 
       // Adjust the position of the insertion point.
@@ -214,12 +218,12 @@ SC.GridView = SC.ListView.extend(
     }
   },
 
-  /** @see SC.CollectionView#hideInsertionPoint */
+  /** @see CollectionView#hideInsertionPoint */
   hideInsertionPoint: function () {
     // If there was an item that was the target of the drop previously, be
     // sure to clear it.
     if (this._lastDropOnView) {
-      this._lastDropOnView.set('isDropTarget', NO);
+      this._lastDropOnView.set('isDropTarget', false);
       this._lastDropOnView = null;
     }
 
@@ -236,17 +240,17 @@ SC.GridView = SC.ListView.extend(
         columnWidth = Math.floor(f.width / itemsPerRow),
         row = Math.floor((loc.y - f.y - sf.y) / this.get('rowHeight'));
 
-    var retOp = SC.DROP_BEFORE,
+    var retOp = DROP_BEFORE,
         offset = (loc.x - f.x - sf.x),
         col = Math.floor(offset / columnWidth),
         percentage = (offset / columnWidth) - col;
 
-    // if the dropOperation is SC.DROP_ON and we are in the center 60%
+    // if the dropOperation is DROP_ON and we are in the center 60%
     // then return the current item.
-    if (dropOperation === SC.DROP_ON) {
+    if (dropOperation === DROP_ON) {
       if (percentage > 0.80) col++;
       if ((percentage >= 0.20) && (percentage <= 0.80)) {
-        retOp = SC.DROP_ON;
+        retOp = DROP_ON;
       }
     } else {
       if (percentage > 0.45) col++;

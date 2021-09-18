@@ -3,21 +3,22 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('views/button');
+import { SC } from '../../core/core.js';
+import { MenuPane } from '../panes/menu.js';
+import { ButtonView } from './button.js';
 
 /**
  * @class
- * @extends SC.ButtonView
  * @version 1.6
  * @author Alex Iskander
  */
-SC.PopupButtonView = SC.ButtonView.extend({
-  /** @scope SC.PopupButtonView.prototype */
+export const PopupButtonView = ButtonView.extend({
+  /** @scope PopupButtonView.prototype */
 
   /**
     @type Array
     @default ['sc-popup-button-view']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-popup-button-view'],
 
@@ -33,42 +34,42 @@ SC.PopupButtonView = SC.ButtonView.extend({
     The menu that will pop up when this button is clicked. This can be a class or
     an instance.
 
-    @type {SC.MenuPane}
-    @default SC.MenuPane
+    @type {MenuPane}
+    @default MenuPane
   */
-  menu: SC.MenuPane,
+  menu: MenuPane,
 
   /**
-    If YES, a menu instantiation task will be placed in SproutCore's
-    `SC.backgroundTaskQueue` so the menu will be instantiated before
+    If true, a menu instantiation task will be placed in SproutCore's
+    `backgroundTaskQueue` so the menu will be instantiated before
     the user taps the button, improving response time.
 
     @type Boolean
-    @default NO
+    @default false
     @property
   */
-  shouldLoadInBackground: NO,
+  shouldLoadInBackground: false,
 
   /**
    * @private
-   * If YES, the menu has been instantiated; if NO, the 'menu' property
+   * If true, the menu has been instantiated; if false, the 'menu' property
    * still has a class instead of an instance.
   */
-  _menuIsLoaded: NO,
+  _menuIsLoaded: false,
 
   /** @private
-    isActive is NO, but when the menu is instantiated, it is bound to the menu's isVisibleInWindow property.
+    isActive is false, but when the menu is instantiated, it is bound to the menu's isVisibleInWindow property.
   */
-  isActive: NO,
+  isActive: false,
 
-  acceptsFirstResponder: YES,
+  acceptsFirstResponder: true,
 
 
   /**
     @private
   */
-  init: function() {
-    sc_super();
+  init: function init() {
+    init.base.apply(this, arguments);
 
     // keep track of the current instantiated menu separately from
     // our property. This allows us to destroy it when the property
@@ -80,7 +81,7 @@ SC.PopupButtonView = SC.ButtonView.extend({
 
   /**
     Adds menu instantiation to the background task queue if the menu
-    is not already instantiated and if shouldLoadInBackground is YES.
+    is not already instantiated and if shouldLoadInBackground is true.
 
     @method
     @private
@@ -89,7 +90,7 @@ SC.PopupButtonView = SC.ButtonView.extend({
     var menu = this.get('menu');
 
     if (menu && menu.isClass && this.get('shouldLoadInBackground')) {
-      SC.backgroundTaskQueue.push(SC.PopupButtonView.InstantiateMenuTask.create({ popupButton: this }));
+      SC.backgroundTaskQueue.push(PopupButtonView.InstantiateMenuTask.create({ popupButton: this }));
     }
   },
 
@@ -136,7 +137,7 @@ SC.PopupButtonView = SC.ButtonView.extend({
     Called to instantiate a menu. You can override this to set properties
     such as the menu's width or the currently selected item.
 
-    @param {SC.MenuPane} menu The MenuPane class to instantiate.
+    @param {MenuPane} menu The MenuPane class to instantiate.
   */
   createMenu: function(menu) {
     return menu.create();
@@ -189,9 +190,9 @@ SC.PopupButtonView = SC.ButtonView.extend({
   /** @private */
   mouseDown: function(evt) {
     // If disabled, handle mouse down but ignore it.
-    if (!this.get('isEnabled')) return YES ;
+    if (!this.get('isEnabled')) return true ;
 
-    this.set('_mouseDown', YES);
+    this.set('_mouseDown', true);
 
     this.showMenu();
 
@@ -215,7 +216,7 @@ SC.PopupButtonView = SC.ButtonView.extend({
 
     this.becomeFirstResponder();
 
-    return YES;
+    return true;
   },
 
   /** @private */
@@ -237,7 +238,7 @@ SC.PopupButtonView = SC.ButtonView.extend({
       if(evt.timeStamp - this._mouseDownTimestamp > 400) {
         if (targetMenuItem && menu.get('mouseHasEntered') && this._mouseDownTimestamp) {
           // Have the menu item perform its action.
-          // If the menu returns NO, it had no action to
+          // If the menu returns false, it had no action to
           // perform, so we should close the menu immediately.
           if (!targetMenuItem.performAction()) {
             menu.remove();
@@ -251,7 +252,7 @@ SC.PopupButtonView = SC.ButtonView.extend({
     }
 
     this._mouseDownTimestamp = undefined;
-    return YES;
+    return true;
   },
 
   /**
@@ -260,13 +261,13 @@ SC.PopupButtonView = SC.ButtonView.extend({
     Shows the menu when the user presses Enter. Otherwise, hands it off to button
     to decide what to do.
   */
-  keyDown: function(event) {
+  keyDown: function kd (event) {
     if (event.which == 13) {
       this.showMenu();
-      return YES;
+      return true;
     }
 
-    return sc_super();
+    return kd.base.apply(this,arguments);
   },
 
   /** @private */
@@ -283,17 +284,17 @@ SC.PopupButtonView = SC.ButtonView.extend({
 /**
   @class
 
-  An SC.Task that handles instantiating a PopupButtonView's menu. It is used
-  by SC.PopupButtonView to instantiate the menu in the backgroundTaskQueue.
+  An Task that handles instantiating a PopupButtonView's menu. It is used
+  by PopupButtonView to instantiate the menu in the backgroundTaskQueue.
 */
-SC.PopupButtonView.InstantiateMenuTask = SC.Task.extend(
-  /**@scope SC.PopupButtonView.InstantiateMenuTask.prototype */ {
+PopupButtonView.InstantiateMenuTask = SC.Task.extend(
+  /**@scope PopupButtonView.InstantiateMenuTask.prototype */ {
 
   /**
     The popupButton whose menu should be instantiated.
 
     @property
-    @type {SC.PopupButtonView}
+    @type {PopupButtonView}
     @default null
   */
   popupButton: null,
