@@ -1729,7 +1729,7 @@ export const RootResponder = SC.Object.extend(
         touchEntry.event = evt;
 
         //@if (debug)
-        if (LOG_TOUCH_EVENTS) Logger.info('-- Received touch end');
+        if (SC.getSetting('LOG_TOUCH_EVENTS')) SC.Logger.info('-- Received touch end');
         //@endif
         if (touchEntry.hidesTouchIntercept) {
           touchEntry.unhideTouchIntercept();
