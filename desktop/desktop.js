@@ -29,6 +29,7 @@ import './render_delegates/slider.js';
 import './render_delegates/source_list.js';
 import './render_delegates/well.js';
 import './render_delegates/workspace.js';
+import { MasterDetailView } from './views/master_detail.js';
 
 /**
   If set to `NO`, then pressing backspace will NOT navigate to the previous
@@ -62,3 +63,6 @@ export { WebView } from './views/web.js';
 export { GridView } from './views/grid.js';
 export { SliderView } from './views/slider.js';
 export { SelectView } from './views/select.js';
+export { WorkspaceView } from './views/workspace.js';
+export { MasterDetailView } from './views/master_detail.js';
+ 

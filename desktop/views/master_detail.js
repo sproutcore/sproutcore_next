@@ -5,9 +5,13 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require("views/workspace");
-sc_require("views/toolbar");
-
+import { AUTO_CONTROL_SIZE, propertyFromRenderDelegate, View } from "../../view/view.js";
+import { ButtonView } from "./button.js";
+import { ToolbarView } from "./toolbar.js";
+import { WorkspaceView } from "./workspace.js";
+import { platform } from "../../responder/responder.js";
+import { HORIZONTAL_ORIENTATION, VERTICAL_ORIENTATION } from "../system/constants.js";
+import { PickerPane, PICKER_POINTER } from "../panes/picker.js";
 
 /** @class
   Master/Detail view is a simple view which manages a master view and a detail view.
@@ -29,13 +33,13 @@ sc_require("views/toolbar");
 
   @since SproutCore 1.2
 */
-SC.MasterDetailView = SC.View.extend(
-/** @scope SC.MasterDetailView.prototype */ {
+export const MasterDetailView = View.extend(
+/** @scope MasterDetailView.prototype */ {
 
   /**
     @type Array
     @default ['sc-master-detail-view']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ["sc-master-detail-view"],
 
@@ -54,13 +58,13 @@ SC.MasterDetailView = SC.View.extend(
     The master view. For your development pleasure, it defaults to a
     WorkspaceView with a top toolbar.
 
-    @type SC.View
-    @default SC.WorkspaceView
+    @type View
+    @default WorkspaceView
   */
-  masterView: SC.WorkspaceView.extend({
-    topToolbar: SC.ToolbarView.extend({
+  masterView: WorkspaceView.extend({
+    topToolbar: ToolbarView.extend({
     }),
-    contentView: SC.View.extend({ backgroundColor: "white" })
+    contentView: View.extend({ backgroundColor: "white" })
   }),
 
   /**
@@ -68,18 +72,18 @@ SC.MasterDetailView = SC.View.extend(
     a top toolbar view with a button that closes/shows master. Come take a peek at
     the code to see what it looks like--it is so simple.
 
-    @type SC.View
-    @default SC.WorkspaceView
+    @type View
+    @default WorkspaceView
   */
-  detailView: SC.WorkspaceView.extend({
-    topToolbar: SC.ToolbarView.extend({
+  detailView: WorkspaceView.extend({
+    topToolbar: ToolbarView.extend({
       childViews: ["showHidePicker"],
-      showHidePicker: SC.ButtonView.extend({
+      showHidePicker: ButtonView.extend({
         layout: { left: 7, centerY: 0, height: 30, width: 100 },
-        controlSize: SC.AUTO_CONTROL_SIZE,
+        controlSize: AUTO_CONTROL_SIZE,
         title: "Picker",
         action: "toggleMasterPicker",
-        isVisible: NO,
+        isVisible: false,
         isVisibleBinding: ".parentView.masterIsHidden"
       })
     })
@@ -95,11 +99,11 @@ SC.MasterDetailView = SC.View.extend(
 
     @field
     @type Boolean
-    @default NO
+    @default false
   */
   autoHideMaster: function() {
-    if (SC.platform.touch) return YES;
-    return NO;
+    if (platform.touch) return true;
+    return false;
   }.property().cacheable(),
 
   /**
@@ -116,46 +120,46 @@ SC.MasterDetailView = SC.View.extend(
     @type Number
     @default From theme, or 1.
   */
-  dividerWidth: SC.propertyFromRenderDelegate('dividerWidth', 1),
+  dividerWidth: propertyFromRenderDelegate('dividerWidth', 1),
 
   /**
     A property (computed) that says whether the master view is hidden.
 
     @field
     @type Boolean
-    @default NO
+    @default false
     @observes autoHideMaster
     @observes orientation
   */
   masterIsHidden: function() {
-    if (!this.get("autoHideMaster")) return NO;
-    if (this.get("orientation") === SC.HORIZONTAL_ORIENTATION) return NO;
-    return YES;
+    if (!this.get("autoHideMaster")) return false;
+    if (this.get("orientation") === HORIZONTAL_ORIENTATION) return false;
+    return true;
   }.property("autoHideMaster", "orientation"),
 
   /**
     Tracks the orientation of the view. Possible values:
 
-      - SC.VERTICAL_ORIENTATION
-      - SC.HORIZONTAL_ORIENTATION
+      - VERTICAL_ORIENTATION
+      - HORIZONTAL_ORIENTATION
 
     @type String
-    @default SC.VERTICAL_ORIENTATION
+    @default VERTICAL_ORIENTATION
   */
-  orientation: SC.VERTICAL_ORIENTATION,
+  orientation: VERTICAL_ORIENTATION,
 
   /** @private */
   _scmd_frameDidChange: function() {
     var f = this.get("frame"), ret;
-    if (f.width > f.height) ret = SC.HORIZONTAL_ORIENTATION;
-    else ret = SC.VERTICAL_ORIENTATION;
+    if (f.width > f.height) ret = HORIZONTAL_ORIENTATION;
+    else ret = VERTICAL_ORIENTATION;
 
     this.setIfChanged('orientation', ret);
   }.observes('frame'),
 
   /** @private */
-  init: function() {
-    sc_super();
+  init: function init () {
+    init.base.apply(this, arguments);
     this._scmd_frameDidChange();
     this._scmd_masterIsHiddenDidChange();
   },
@@ -164,7 +168,7 @@ SC.MasterDetailView = SC.View.extend(
     If the master is hidden, this toggles the master picker pane.
     Of course, since pickers are modal, this actually only needs to handle showing.
 
-    @param {SC.View} view The view to anchor the picker to
+    @param {View} view The view to anchor the picker to
   */
   toggleMasterPicker: function(view) {
     if (!this.get("masterIsHidden")) return;
@@ -176,7 +180,7 @@ SC.MasterDetailView = SC.View.extend(
   },
 
   /**
-    @param {SC.View} view The view to anchor the picker to
+    @param {View} view The view to anchor the picker to
   */
   showMasterPicker: function(view) {
     if (this._picker && this._picker.get("isVisibleInWindow")) return;
@@ -198,15 +202,15 @@ SC.MasterDetailView = SC.View.extend(
   },
 
   /**
-    @param {SC.PickerPane} picker The picker to popup
-    @param {SC.View} view The view to anchor the picker to
+    @param {PickerPane} picker The picker to popup
+    @param {View} view The view to anchor the picker to
   */
   showPicker: function(picker, view) {
-    picker.popup(view, SC.PICKER_POINTER, [3, 0, 1, 2, 3], [9, -9, -18, 18]);
+    picker.popup(view, PICKER_POINTER, [3, 0, 1, 2, 3], [9, -9, -18, 18]);
   },
 
   /**
-    @param {SC.PickerPane} picker The picker to popup
+    @param {PickerPane} picker The picker to popup
   */
   hidePicker: function(picker) {
     picker.remove();
@@ -217,10 +221,10 @@ SC.MasterDetailView = SC.View.extend(
 
     This defaults to one with a special theme.
 
-    @type SC.PickerPane
-    @default SC.PickerPane
+    @type PickerPane
+    @default PickerPane
   */
-  pickerPane: SC.PickerPane.extend({
+  pickerPane: PickerPane.extend({
     layout: { width: 250, height: 480 },
     themeName: 'popover'
   }),
@@ -275,7 +279,7 @@ SC.MasterDetailView = SC.View.extend(
   },
 
   /** @private */
-  _masterIsDrawn: NO, // whether the master is in the view
+  _masterIsDrawn: false, // whether the master is in the view
 
   /** @private
     Tiles the views as necessary.
@@ -297,7 +301,7 @@ SC.MasterDetailView = SC.View.extend(
       if (!this._masterIsDrawn) {
         if (this._picker) this._picker.set('contentView', null);
         this.appendChild(master);
-        this._masterIsDrawn = YES;
+        this._masterIsDrawn = true;
       }
 
       // set master layout
@@ -313,7 +317,7 @@ SC.MasterDetailView = SC.View.extend(
       if (this._masterIsDrawn) {
         // Removes the child from the document, but doesn't destroy it or its layer.
         this.removeChild(master);
-        this._masterIsDrawn = NO;
+        this._masterIsDrawn = false;
       }
 
       // and child, naturally

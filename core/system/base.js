@@ -116,7 +116,8 @@ const _nativeTypeHash = {
   "[object Array]": "array",
   "[object Date]": "date",
   "[object RegExp]": "regexp",
-  "[object Object]": "object"
+  "[object Object]": "object",
+  "[object AsyncFunction]": "function"
 };
 
 // Inlined from jQuery.type to avoid dependency.

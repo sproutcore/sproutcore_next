@@ -424,12 +424,12 @@ export const RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
 
     @returns {RecordArray} receiver
   */
-  destroy: function() {
+  destroy: function destroy () {
     if (!this.get('isDestroyed')) {
       this.get('store').recordArrayWillDestroy(this);
     }
 
-    init.base.apply(this, arguments);
+    destroy.base.apply(this, arguments);
   },
 
   // ..........................................................

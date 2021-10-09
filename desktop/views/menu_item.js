@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { View, ContentDisplay, RenderContext, ImageView, pointInRect } from "../../view/view.js";
+import { RootResponder } from "../../responder/responder.js";
 import { SC } from '../../core/core.js';
 import { MenuPane } from "../panes/menu.js";
 

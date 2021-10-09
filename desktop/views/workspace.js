@@ -5,7 +5,9 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require("views/toolbar");
+import { View } from "../../view/view.js";
+import { HORIZONTAL_ORIENTATION, VERTICAL_ORIENTATION } from "../system/constants.js";
+import { ToolbarView } from "./toolbar.js";
 
 /** @class
   WorkspaceView manages a content view and two optional toolbars (top and bottom).
@@ -14,23 +16,22 @@ sc_require("views/toolbar");
   handy!) and iPad apps where you would like the masterIsHidden property to pass through.
 
   @since SproutCore 1.2
-  @extends SC.View
   @author Alex Iskander
 */
-SC.WorkspaceView = SC.View.extend(
-/** @scope SC.WorkspaceView.prototype */ {
+export const WorkspaceView = View.extend(
+/** @scope WorkspaceView.prototype */ {
 
   /**
     @type Array
     @default ['sc-workspace-view']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ["sc-workspace-view"],
 
   /**
     @type Array
     @default "hasTopToolbar hasBottomToolbar".w()
-    @see SC.View#displayProperties
+    @see View#displayProperties
   */
   displayProperties: ["hasTopToolbar", "hasBottomToolbar"],
 
@@ -41,13 +42,13 @@ SC.WorkspaceView = SC.View.extend(
   renderDelegateName: 'workspaceRenderDelegate',
 
   /**
-    @type SC.View
-    @default SC.ToolbarView
+    @type View
+    @default ToolbarView
   */
-  topToolbar: SC.ToolbarView.extend(),
+  topToolbar: ToolbarView.extend(),
 
   /**
-    @type SC.View
+    @type View
     @default null
   */
   bottomToolbar: null,
@@ -55,19 +56,19 @@ SC.WorkspaceView = SC.View.extend(
   /**
     The content. Must NOT be null.
 
-    @type SC.View
-    @default SC.View
+    @type View
+    @default View
   */
-  contentView: SC.View.extend(),
+  contentView: View.extend(),
 
   /**
     If you want to automatically resize the toolbars like iPhone
-    apps should, set to YES.
+    apps should, set to true.
 
     @type Boolean
-    @default NO
+    @default false
   */
-  autoResizeToolbars: NO,
+  autoResizeToolbars: false,
 
   /**
     @type Number
@@ -93,31 +94,31 @@ SC.WorkspaceView = SC.View.extend(
   */
   toolbarSize: function() {
     if (!this.get("autoResizeToolbars")) return this.get("defaultToolbarSize");
-    if (this.get("orientation") === SC.HORIZONTAL_ORIENTATION) return this.get("smallToolbarSize");
+    if (this.get("orientation") === HORIZONTAL_ORIENTATION) return this.get("smallToolbarSize");
     return this.get("largeToolbarSize");
   }.property("autoHideMaster", "orientation"),
 
   /**
     Tracks the orientation of the view. Possible values:
 
-      - SC.HORIZONTAL_ORIENTATION
-      - SC.PORTRAIT_ORIENTATION
+      - HORIZONTAL_ORIENTATION
+      - PORTRAIT_ORIENTATION
 
     @field
     @type String
-    @default SC.HORIZONTAL_ORIENTATION
+    @default HORIZONTAL_ORIENTATION
   */
   orientation: function() {
     var f = this.get("frame");
-    if (f.width > f.height) return SC.HORIZONTAL_ORIENTATION;
-    else return SC.VERTICAL_ORIENTATION;
+    if (f.width > f.height) return HORIZONTAL_ORIENTATION;
+    else return VERTICAL_ORIENTATION;
   }.property("frame").cacheable(),
 
   /**
     @type Boolean
-    @default NO
+    @default false
   */
-  masterIsHidden: NO,
+  masterIsHidden: false,
 
   /** @private */
   masterIsHiddenDidChange: function() {
@@ -141,8 +142,8 @@ SC.WorkspaceView = SC.View.extend(
   /** @private
     Creates the child views. Specifically, instantiates master and detail views.
   */
-  createChildViews: function() {
-    sc_super();
+  createChildViews: function cv() {
+    cv.base.apply(this, arguments);
 
     var topToolbar = this.get("topToolbar");
     if (topToolbar) {
@@ -197,19 +198,19 @@ SC.WorkspaceView = SC.View.extend(
   },
 
   /** @private
-    Returns YES if a top toolbar is present.
+    Returns true if a top toolbar is present.
   */
   hasTopToolbar: function() {
-    if (this.get("topToolbar")) return YES;
-    return NO;
+    if (this.get("topToolbar")) return true;
+    return false;
   }.property("topToolbar").cacheable(),
 
   /** @private
-    Returns YES if a bottom toolbar is present.
+    Returns true if a bottom toolbar is present.
   */
   hasBottomToolbar: function() {
-    if (this.get("bottomToolbar")) return YES;
-    return NO;
+    if (this.get("bottomToolbar")) return true;
+    return false;
   }.property("bottomToolbar").cacheable(),
 
   /** @private
@@ -241,6 +242,7 @@ SC.WorkspaceView = SC.View.extend(
   */
   topToolbarDidChange: function() {
     var active = this.activeTopToolbar, replacement = this.get("topToolbar");
+    let container = this.get('container');
     if (active) {
       if (active.createdByParent) {
         container.removeChildAndDestroy(active);
@@ -261,6 +263,7 @@ SC.WorkspaceView = SC.View.extend(
   */
   bottomToolbarDidChange: function() {
     var active = this.activeBottomToolbar, replacement = this.get("bottomToolbar");
+    let container = this.get('container');
     if (active) {
       if (active.createdByParent) {
         container.removeChildAndDestroy(active);
@@ -279,6 +282,7 @@ SC.WorkspaceView = SC.View.extend(
   /** @private */
   contentViewDidChange: function() {
     var active = this.activeContentView, replacement = this.get("contentView");
+    let container = this.get('container');
     if (active) {
       if (active.createdByParent) {
         container.removeChildAndDestroy(active);

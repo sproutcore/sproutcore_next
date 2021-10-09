@@ -1057,7 +1057,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
     var cache = this._scst_recordArraysByQuery,
         set   = this.get('recordArrays');
 
-    if (cache) delete cache[guidFor(recordArray.get('query'))];
+    if (cache) delete cache[SC.guidFor(recordArray.get('query'))];
     if (set) set.remove(recordArray);
     return this ;
   },
