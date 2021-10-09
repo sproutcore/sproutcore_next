@@ -688,7 +688,7 @@ export const ListItemView = View.extend(InlineEditable, Control,
     }
 
     el = el[0];
-    offset = offset(el);
+    offset = SC.offset(el);
 
     f.x = offset.x;
     f.y = offset.y + top + lineHeightShift;
