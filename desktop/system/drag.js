@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { CoreQuery } from '../../event/event.js';
 import { maxX, maxY, minX, minY, Pane, pointInRect, View } from '../../view/view.js';
 
 /**
@@ -591,7 +592,7 @@ export const Drag = SC.Object.extend(
             // Canvas elements need manual copying.
             var dragCanvasses = dragView.$().find('canvas');
             if (dragCanvasses.length) {
-              var ghostCanvasses = $(layer).find('canvas'),
+              var ghostCanvasses = CoreQuery(layer).find('canvas'),
                   len = dragCanvasses.length,
                   i, dragCanvas, ghostCanvas;
               for (i = 0; i < len; i++) {

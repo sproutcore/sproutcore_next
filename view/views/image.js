@@ -13,6 +13,7 @@ import { InnerFrame } from '../mixins/inner_frame.js';
 import { platform } from '../../responder/responder.js';
 import { BLANK_IMAGE_URL, IMAGE_STATE_FAILED, IMAGE_STATE_LOADED, IMAGE_STATE_LOADING, IMAGE_STATE_NONE, IMAGE_TYPE_CSS_CLASS, IMAGE_TYPE_NONE, IMAGE_TYPE_URL } from '../system/constants.js';
 import { imageQueue } from '../system/image_queue.js';
+import { CoreQuery } from '../../event/event.js';
 
 
 
@@ -337,7 +338,7 @@ export const ImageView = View.extend(Control, InnerFrame,
       };
 
       // Don't grab the jQuery object repeatedly
-      jqImage = $(image);
+      jqImage = CoreQuery(image);
 
       // Using on here instead of setting onabort/onerror/onload directly
       // fixes an issue with images having 0 width and height

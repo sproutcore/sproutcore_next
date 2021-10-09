@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { CoreQuery } from '../../event/event.js';
 import { RenderDelegate, BaseTheme, RenderContext } from "../../view/view.js";
 
 /**
@@ -111,7 +112,7 @@ BaseTheme.radioGroupRenderDelegate = RenderDelegate.create({
   */
 
   indexForEvent: function(dataSource, jquery, evt) {
-    var index = $(evt.target).closest('.sc-radio-button').attr('index');
+    var index = CoreQuery(evt.target).closest('.sc-radio-button').attr('index');
     if (isNaN(index)) return undefined;
     return parseInt(index, 0);
   }

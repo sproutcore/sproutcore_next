@@ -6,7 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
-import { browser } from '../../event/event.js';
+import { browser, CoreQuery } from '../../event/event.js';
 import { viewFor } from '../../view/view.js';
 
 /** @class Touch
@@ -117,7 +117,7 @@ export const Touch = function(touch, touchContext) {
   var target = touch.target, targetView;
 
   // Special-case handling for TextFieldView's touch intercept overlays.
-  if (target && $(target).hasClass("touch-intercept")) {
+  if (target && CoreQuery(target).hasClass("touch-intercept")) {
     touch.target.style[browser.experimentalStyleNameFor('transform')] = "translate3d(0px,-5000px,0px)";
     target = document.elementFromPoint(touch.pageX, touch.pageY);
     if (target) targetView = viewFor(target);

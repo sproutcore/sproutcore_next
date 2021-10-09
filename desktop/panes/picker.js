@@ -9,7 +9,7 @@ import { PalettePane } from "./palette.js";
 import { SC } from '../../core/core.js';
 import { bodyOverflowArbitrator, cloneRect, HUGE_CONTROL_SIZE, LARGE_CONTROL_SIZE, maxX, maxY, minX, minY, offset, REGULAR_CONTROL_SIZE, SMALL_CONTROL_SIZE, TINY_CONTROL_SIZE } from "../../view/view.js";
 import { RootResponder } from "../../responder/responder.js";
-import { browser } from "../../event/event.js";
+import { browser, CoreQuery } from "../../event/event.js";
 
 /**
   Popular customized picker position rules:
@@ -741,14 +741,14 @@ export const PickerPane = PalettePane.extend(
       // if we did not get the frame dimensions the do the calculations
       // based on an element
       if (ret.width === undefined || ret.height === undefined) {
-        cq = $(anchor);
+        cq = CoreQuery(anchor);
         ret.width = cq.outerWidth();
         ret.height = cq.outerHeight();
       }
     } else {
       // Only really old versions will have to go through this code path.
       ret   = offset(anchor); // get x & y
-      cq    = $(anchor);
+      cq    = CoreQuery(anchor);
       ret.width = cq.outerWidth();
       ret.height = cq.outerHeight();
     }
@@ -1295,7 +1295,7 @@ export const PickerPane = PalettePane.extend(
     show scrollbars when the picker has shadows, as it's really annoying.
   */
   _hideOverflow: function () {
-    var main = $('.sc-main'),
+    var main = CoreQuery('.sc-main'),
         minWidth = parseInt(main.css('minWidth'), 0),
         minHeight = parseInt(main.css('minHeight'), 0),
         windowSize = RootResponder.responder.get('currentWindowSize');

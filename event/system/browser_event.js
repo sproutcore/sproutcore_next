@@ -10,6 +10,7 @@
 import { SC } from '../../core/core.js';
 import { CoreQuery } from './core_query.js';
 import { platform } from '../../responder/responder.js';
+import { browser } from './browser.js';
 
 export const MODIFIER_KEYS = {
   16:'shift', 17:'ctrl', 18: 'alt'
@@ -74,20 +75,20 @@ SC.mixin(SCEvent, /** @scope SCEvent */ {
   */
   MOUSE_WHEEL_MULTIPLIER: function() {
     var deltaMultiplier = 1,
-        version = SC.browser.engineVersion;
+        version = browser.engineVersion;
 
-    if (SC.browser.name === SC.BROWSER.safari) {
+    if (browser.name === SC.BROWSER.safari) {
       deltaMultiplier = 0.4;
       // Safari 5.0.1 and up
-      if (SC.browser.compare(version, '533.17') > 0 && SC.browser.compare(version, '534') < 0) {
+      if (browser.compare(version, '533.17') > 0 && browser.compare(version, '534') < 0) {
         deltaMultiplier = 0.004;
-      } else if (SC.browser.compare(version, '533') < 0) {
+      } else if (browser.compare(version, '533') < 0) {
         // Scrolling in Safari 5.0
         deltaMultiplier = 40;
       }
-    }else if(SC.browser.name === SC.BROWSER.ie){
+    }else if(browser.name === SC.BROWSER.ie){
       deltaMultiplier = 0.3;
-    }else if(SC.browser.name === SC.BROWSER.chrome){
+    }else if(browser.name === SC.BROWSER.chrome){
       deltaMultiplier = 0.4;
     }
     return deltaMultiplier;
@@ -206,7 +207,7 @@ SC.mixin(SCEvent, /** @scope SCEvent */ {
 
     // For whatever reason, IE has trouble passing the window object
     // around, causing it to be cloned in the process
-    if (SC.browser.name === SC.BROWSER.ie && elem.setInterval) elem = window;
+    if (browser.name === SC.BROWSER.ie && elem.setInterval) elem = window;
 
     // if target is a function, treat it as the method, with optional context
     if (SC.typeOf(target) === SC.T_FUNCTION) {
@@ -559,13 +560,13 @@ SC.mixin(SCEvent, /** @scope SCEvent */ {
         Implement support for mouseenter on browsers other than IE */
     mouseenter: {
       setup: function() {
-        if ( SC.browser.name === SC.BROWSER.ie ) return false;
+        if ( browser.name === SC.BROWSER.ie ) return false;
         SCEvent.add(this, 'mouseover', SCEvent.special.mouseenter.handler);
         return true;
       },
 
       teardown: function() {
-        if ( SC.browser.name === SC.BROWSER.ie ) return false;
+        if ( browser.name === SC.BROWSER.ie ) return false;
         SCEvent.remove(this, 'mouseover', SCEvent.special.mouseenter.handler);
         return true;
       },
@@ -584,13 +585,13 @@ SC.mixin(SCEvent, /** @scope SCEvent */ {
         Implement support for mouseleave on browsers other than IE */
     mouseleave: {
       setup: function() {
-        if ( SC.browser.name === SC.BROWSER.ie ) return false;
+        if ( browser.name === SC.BROWSER.ie ) return false;
         SCEvent.add(this, "mouseout", SCEvent.special.mouseleave.handler);
         return true;
       },
 
       teardown: function() {
-        if ( SC.browser.name === SC.BROWSER.ie ) return false;
+        if ( browser.name === SC.BROWSER.ie ) return false;
         SCEvent.remove(this, "mouseout", SCEvent.special.mouseleave.handler);
         return true;
       },
@@ -918,14 +919,14 @@ SCEvent.prototype = {
       var deltaMultiplier = SCEvent.MOUSE_WHEEL_MULTIPLIER;
 
       // normalize wheelDelta, wheelDeltaX, & wheelDeltaY for Safari
-      if (SC.browser.isWebkit && originalEvent.wheelDelta !== undefined) {
+      if (browser.isWebkit && originalEvent.wheelDelta !== undefined) {
         this.wheelDelta = 0 - (originalEvent.wheelDeltaY || originalEvent.wheelDeltaX);
         this.wheelDeltaY = 0 - (originalEvent.wheelDeltaY || 0);
         this.wheelDeltaX = 0 - (originalEvent.wheelDeltaX || 0);
 
       // normalize wheelDelta for Firefox (all Mozilla browsers)
       // note that we multiple the delta on FF to make it's acceleration more natural.
-      } else if (!SC.none(originalEvent.detail) && SC.browser.isMozilla) {
+      } else if (!SC.none(originalEvent.detail) && browser.isMozilla) {
         if (originalEvent.axis && (originalEvent.axis === originalEvent.HORIZONTAL_AXIS)) {
           this.wheelDeltaX = originalEvent.detail;
           this.wheelDelta = this.wheelDeltaY = 0;
@@ -936,7 +937,7 @@ SCEvent.prototype = {
 
       // handle all other legacy browser
       } else {
-        this.wheelDelta = this.wheelDeltaY = SC.browser.isIE || SC.browser.isOpera ? 0 - originalEvent.wheelDelta : originalEvent.wheelDelta;
+        this.wheelDelta = this.wheelDeltaY = browser.isIE || browser.isOpera ? 0 - originalEvent.wheelDelta : originalEvent.wheelDelta;
         this.wheelDeltaX = 0;
       }
 
@@ -1052,8 +1053,8 @@ SCEvent.prototype = {
   //
   // Reference: http://unixpapa.com/js/key.html
   getCharString: function() {
-    if(SC.browser.name === SC.BROWSER.ie &&
-        SC.browser.compare(SC.browser.version, '9.0') < 0) {
+    if(browser.name === SC.BROWSER.ie &&
+        browser.compare(browser.version, '9.0') < 0) {
       // Return an empty String for backspace, tab, left, right, up or down.
       if(this.keyCode === 8 || this.keyCode === 9 ||
           (this.keyCode >= 37 && this.keyCode <= 40)) {

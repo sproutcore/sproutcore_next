@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { CoreQuery } from '../../event/event.js';
 import { measureString, metricsForString, prepareStringMeasurement, teardownStringMeasurement } from '../system/string_measurement.js';
 import { cacheSlotFor } from '../system/string_metric_optimization.js';
 // sc_require("system/utils/string_measurement");
@@ -330,7 +331,7 @@ export const AutoResize = {
     // layer. This way, the height will grow appropriately to fit the target as
     // text *wraps* within the current width.
     if (!this.get('shouldResizeWidth')) {
-      layer.style.maxWidth = $(layer).outerWidth() + 'px';
+      layer.style.maxWidth = CoreQuery(layer).outerWidth() + 'px';
     }
 
     if (this.get('shouldResizeWidth') && this.get('maxWidth')) {

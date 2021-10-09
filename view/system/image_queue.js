@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { CoreQuery } from '../../event/event.js';
 
 export const IMAGE_ABORTED_ERROR = SC.$error("Image.AbortedError", "Image", -100) ;
 
@@ -213,9 +214,9 @@ export const imageQueue = SC.Object.create(/** @scope imageQueue.prototype */ {
 
       // Using on here instead of setting onabort/onerror/onload directly
       // fixes an issue with images having 0 width and height
-      $(img).on('abort', this._imageDidAbort);
-      $(img).on('error', this._imageDidError);
-      $(img).on('load', this._imageDidLoad);
+      CoreQuery(img).on('abort', this._imageDidAbort);
+      CoreQuery(img).on('error', this._imageDidError);
+      CoreQuery(img).on('load', this._imageDidLoad);
       img.src = entry.url ;
 
       // add to loading queue.

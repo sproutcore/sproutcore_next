@@ -23,7 +23,7 @@ let _downloadFrames = 0; // count of download frames inserted into document
 export const download = function(path) {
   var tempDLIFrame=document.createElement('iframe'),
       frameId = 'DownloadFrame_' + this._downloadFrames;
-  $(tempDLIFrame).attr('id',frameId);
+  CoreQuery(tempDLIFrame).attr('id',frameId);
   tempDLIFrame.style.border='10px';
   tempDLIFrame.style.width='0px';
   tempDLIFrame.style.height='0px';
@@ -32,11 +32,11 @@ export const download = function(path) {
   tempDLIFrame.style.left='-10000px';
   // Don't set the iFrame content yet if this is Safari
   if (!SC.browser.isSafari) {
-    $(tempDLIFrame).attr('src',path);
+    CoreQuery(tempDLIFrame).attr('src',path);
   }
   document.getElementsByTagName('body')[0].appendChild(tempDLIFrame);
   if (SC.browser.isSafari) {
-    $(tempDLIFrame).attr('src',path);
+    CoreQuery(tempDLIFrame).attr('src',path);
   }
   _downloadFrames = _downloadFrames + 1;
   if (!SC.browser.isSafari) {
@@ -151,10 +151,10 @@ export const pointInElement = function (point, elem, includeFlag, relativeToFlag
     for iphone.
   */
 export const switchScale = function() {
-  $('head meta[name=viewport]').remove();
+  CoreQuery('head meta[name=viewport]').remove();
   if(window.innerWidth === window.screen.width){
-    $('head').prepend('<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5, user-scalable=0" />');
+    CoreQuery('head').prepend('<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5, user-scalable=0" />');
   }else{
-    $('head').prepend('<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=0" />');
+    CoreQuery('head').prepend('<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=0" />');
   }
 }

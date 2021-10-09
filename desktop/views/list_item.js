@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { CoreQuery } from '../../event/event.js';
 import { Control, InlineEditable, InlineTextFieldDelegate, MIXED_STATE, View, ImageView, RenderContext } from '../../view/view.js';
 
 
@@ -312,7 +313,7 @@ export const ListItemView = View.extend(InlineEditable, Control,
     var layer = this.get('layer');
     if (!layer) return false; // no layer yet -- nothing to do
 
-    var el = $(evt.target);
+    var el = CoreQuery(evt.target);
     var ret = false;
     while (!ret && el.length > 0 && (el[0] !== layer)) {
       if (el.hasClass(className)) ret = true;

@@ -40,7 +40,7 @@ let Logger = console; // use console until Logger is available
 
   This is how you could write your mouseup handler in jQuery:
 
-        $('#okButton').on('click', function () {
+        CoreQuery('#okButton').on('click', function () {
           SC.run(function () {
 
             // handle click event...

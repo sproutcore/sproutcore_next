@@ -128,8 +128,8 @@ export const offset = function (elem, relativeToFlag) {
     if (relativeToFlag === 'viewport') {
 
       if(SC.browser.compare(SC.browser.version, '8') <= 0){
-        result.left -= $(window).scrollLeft();
-        result.top -= $(window).scrollTop();
+        result.left -= CoreQuery(window).scrollLeft();
+        result.top -= CoreQuery(window).scrollTop();
       }else{
         result.left -= window.pageXOffset;
         result.top -= window.pageYOffset;
