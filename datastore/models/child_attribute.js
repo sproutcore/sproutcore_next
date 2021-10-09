@@ -27,6 +27,8 @@ import { RecordAttribute } from "./record_attribute.js";
 export const ChildAttribute = RecordAttribute.extend(
   /** @scope ChildAttribute.prototype */ {
 
+  isChildAttribute: true,
+
   isNestedRecordTransform: true,
 
   // ..........................................................
@@ -41,37 +43,31 @@ export const ChildAttribute = RecordAttribute.extend(
     if (!record) {
       throw new Error('Child: Error during transform: Unable to retrieve parent record.');
     }
-    if (!SC.none(value)) ret = record.registerNestedRecord(value, key);
+    ret = record.materializeNestedRecord(value, key);
 
     return ret;
   },
 
   // Default fromType is just returning itself
   fromType: function(record, key, value) {
-    var sk, store, ret;
+    var sk, store, ret, attrs, attrkey = this.get('key') || key;
 
     if (record) {
-      // Unregister the old child (nested) record.
-      if (record.readAttribute(key)) {
-        record.unregisterNestedRecord(key);
-      }
-
       if (SC.none(value)) {
-        // Handle null value.
-        record.writeAttribute(key, value);
+        record.writeAttribute(attrkey, value);
         ret = value;
-      } else {
-        // Register the nested record with this record (the parent).
-        ret = record.registerNestedRecord(value, key);
-
-        if (ret) {
-          // Write the data hash of the nested record to the store.
-          sk = ret.get('storeKey');
-          store = ret.get('store');
-          record.writeAttribute(key, store.readDataHash(sk));
-        } else if (value) {
-          // If registration failed, just write the value.
-          record.writeAttribute(key, value);
+      } else { // value is truthy
+        if (value.isRecord) {
+          if (value.isChildRecord) { // get the attributes
+            attrs = value.get('attributes');
+          }
+          else {
+            attrs = value.get('store').readEditableDataHash(value.get('storeKey')); // we should clone
+          }
+          record.writeAttribute(attrkey, attrs);
+        }
+        else {
+          record.writeAttribute(attrkey, value);
         }
       }
     }
@@ -81,7 +77,7 @@ export const ChildAttribute = RecordAttribute.extend(
 
   /**
     The core handler.  Called from the property.
-    @param {Record} record the record instance
+    @param {import('./record.js').Record} record the record instance
     @param {String} key the key used to access this attribute on the record
     @param {Object} value the property value if called as a setter
     @returns {Object} property value
