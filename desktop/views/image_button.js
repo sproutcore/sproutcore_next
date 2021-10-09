@@ -5,17 +5,19 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+import { ButtonView } from "./button.js";
+
 /** @class
 
   Provides a button that displays an image instead of the standard button
   user interface.
 
-  It behaves the same as an SC.ButtonView, but has an image property that
+  It behaves the same as an ButtonView, but has an image property that
   should be set to a unique class name.
 
   For example:
 
-      SC.ImageButtonView.create({
+      ImageButtonView.create({
         action: 'imageButtonWasClicked',
 
         image: 'my-image-button-icon'
@@ -34,23 +36,20 @@
 
   Note: in addition to using SCSS, you can use normal CSS syntax and sc_static.
 
-  @extends SC.View
-  @extends SC.Control
-  @extends SC.ButtonView
   @since SproutCore 1.5
 */
-SC.ImageButtonView = SC.ButtonView.extend(
-/** @scope SC.ImageButtonView.prototype */ {
+export const ImageButtonView = ButtonView.extend(
+/** @scope ImageButtonView.prototype */ {
 
   /**
     @type Array
     @default ['sc-image-button-view']
-    @see SC.View#classNames
+    @see View#classNames
   */
   classNames: ['sc-image-button-view'],
 
   /**
-    Unlike SC.ButtonView, SC.ImageButtonView does not have a default theme
+    Unlike ButtonView, ImageButtonView does not have a default theme
     that needs to be applied for backwards compatibility.
 
     @type String

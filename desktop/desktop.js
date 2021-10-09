@@ -65,4 +65,5 @@ export { SliderView } from './views/slider.js';
 export { SelectView } from './views/select.js';
 export { WorkspaceView } from './views/workspace.js';
 export { MasterDetailView } from './views/master_detail.js';
+export { ImageButtonView } from './views/image_button.js';
  
