@@ -1384,16 +1384,24 @@ export const Record = SC.Object.extend(
       if (value.type && !SC.none(childNS)) {
         recordType = childNS[value.type];
       }
-    }
+      // check to see if we have a record type at this point
+      // and call for the typeClass if we don't
+      if (!recordType && key && this[key]) {
+        recordType = this[key].get('typeClass');
+      }
 
-    // Maybe it's not a hash or there was no type property.
-    if (!recordType && key && this[key]) {
-      recordType = this[key].get('typeClass');
-    }
+      // reverse lookup, we have the hash key, but no direct available attributes
+      if (!recordType && key && !this[key]) {
+        var item = this._findRecordAttributeFor(key);
+        if (item) {
+          recordType = item.get('typeClass');
+        }
+      }
 
-    // When all else fails throw and exception.
-    if (!recordType || !SC.kindOf(recordType, Record)) {
-      throw new Error('Child: Error during transform: Invalid record type.');
+      // if all else fails, throw an exception
+      if (!recordType || SC.typeOf(recordType) !== SC.T_CLASS) {
+        this._throwUnlessRecordTypeDefined(recordType, 'nestedRecord');
+      }
     }
 
     return recordType;
@@ -1407,33 +1415,59 @@ export const Record = SC.Object.extend(
     (may be null)
     @returns {Record} the nested record created
    */
-  createNestedRecord: function(recordType, hash, psk, path) {
-    var store = this.get('store'), id, sk, cr = null;
+  createNestedRecord: function(recordType, hash, key, parentObject) {
+    var attrkey, cr, attrval, attrIsToMany = false,
+        attribute, po;
+
+    if (!key && SC.typeOf(recordType) === SC.T_STRING) {
+      key = recordType;
+      recordType = this._materializeNestedRecordType(hash, key);
+    }
+    attribute = this[key] || this._findRecordAttributeFor(key);
+
+    if (attribute && attribute.isNestedRecordTransform) {
+      attrkey = attribute.key || key;
+      if (attribute.isChildrenAttribute) attrIsToMany = true;
+    }
+    else attrkey = key;
 
     hash = hash || {}; // init if needed
 
-    if (SC.none(store)) throw new Error('Error: during the creation of a child record: false STORE ON PARENT!');
-
-    // Check for a primary key in the child record hash and if not found, then
-    // check for a custom id generation function and if we still have no id,
-    // generate a unique (and re-createable) id based on the parent's
-    // storeKey.  Having the generated id be re-createable is important so
-    // that we don't keep making new storeKeys for the same child record each
-    // time that it is reloaded.
-    id = hash[recordType.prototype.primaryKey];
-    if (!id) { id = this.generateIdForChild(cr); }
-    if (!id) { id = psk + '.' + path; }
-
-    // If there is an id, there may also be a storeKey.  If so, update the
-    // hash for the child record in the store and materialize it.  If not,
-    // then create the child record.
-    sk = store.storeKeyExists(recordType, id);
-    if (sk) {
-      store.writeDataHash(sk, hash);
-      cr = store.materializeRecord(sk);
-    } else {
-      cr = store.createRecord(recordType, hash, id);
+    // check whether the child records hash already exists at the parents hash,
+    // because if not, it should be created
+    if (recordType.kindOf && recordType.kindOf(Record)) {
+      po = this.get(key);
+      if (attrIsToMany && !parentObject && po && po.isChildArray) {
+        parentObject = po;
+      }
+      cr = recordType.create({
+        parentObject: parentObject || this,
+        parentAttribute: attrkey,
+        isChildRecord: true
+      });
     }
+    else cr = hash;
+
+    attrval = this.readAttribute(attrkey);
+    this.propertyWillChange(key);
+    if (!attrval) { // create if it doesn't exist
+      if (attrIsToMany) {
+        this.writeAttribute(attrkey, [hash]); // create the array as well
+      }
+      else {
+        this.writeAttribute(attrkey, hash);
+      }
+    }
+    else { // update
+      if (attrIsToMany) {
+        attrval.push(hash);
+        this.writeAttribute(attrkey, attrval);
+      }
+      else {
+        this.writeAttribute(attrkey, hash);
+      }
+    }
+    this.propertyDidChange(key);
 
     return cr;
   },
