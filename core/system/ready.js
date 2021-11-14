@@ -17,7 +17,6 @@ import { __runtimeDeps as obsSetRuntimeDeps } from '../private/observer_set.js';
 import { __runtimeDeps as objRuntimeDeps } from './object.js';
 import { __runtimeDeps as bindingRuntimeDeps } from './binding.js';
 import { __runtimeDeps as scWorkerRuntimeDeps } from './scworker.js';
-import { containerSwapDissolveTransition } from '../../view/views/view/transitions/swap_dissolve_transition.js';
 
 
 setSetting('BENCHMARK_LOG_READY', true);
@@ -67,18 +66,18 @@ const runtimeDeps = [
 //   // SC.onReady.done();
 // })
 
-export function registerRuntimeDep (p) {
+export function registerRuntimeDep(p) {
   runtimeDeps.push(p);
 }
 
 
 export const readyMixin = {
 
-  get isReady () {
+  get isReady() {
     return getSetting('isReady');
   },
 
-  set isReady (val) {
+  set isReady(val) {
     setSetting('isReady', val);
   },
 
@@ -88,11 +87,11 @@ export const readyMixin = {
 
     @type Boolean
   */
-  get suppressOnReady () {
+  get suppressOnReady() {
     return getSetting('suppressOnReady');
   },
 
-  set suppressOnReady (val) {
+  set suppressOnReady(val) {
     setSetting('suppressOnReady', val);
   },
 
@@ -101,20 +100,20 @@ export const readyMixin = {
 
     @type Boolean
   */
-  get suppressMain () {
+  get suppressMain() {
     return getSetting('suppressMain');
   },
 
-  set suppressMain (val) {
+  set suppressMain(val) {
     setSetting('suppressMain', val);
   },
 
 
-  get mode () {
+  get mode() {
     return getSetting('mode');
   },
 
-  set mode (val) {
+  set mode(val) {
     setSetting('mode', val);
   },
 
@@ -135,14 +134,14 @@ export const readyMixin = {
     @returns {SC}
   */
   ready: function (target, method) {
-    
+
     var queue = getSetting('_readyQueue');
-    
+
     // normalize
     if (method === undefined) {
       method = target;
       target = null;
-    } else if (typeOf(method) === T_STRING) {      
+    } else if (typeOf(method) === T_STRING) {
       method = target[method];
     }
 
@@ -166,27 +165,27 @@ export const readyMixin = {
   onReady: {
 
     done: function () {
-      
+
       console.log("SPROUTCORE_READY_DONE_FUNCTION");
       // first wait till the promises are resolved
       if (getSetting('isReady')) return;
       setSetting('isReady', true);
 
-      Promise.all(runtimeDeps).then( () => {  
-        console.log("SPROUTCORE READY_DONE AFTER promise.all");        
-  
+      Promise.all(runtimeDeps).then(() => {
+        console.log("SPROUTCORE READY_DONE AFTER promise.all");
+
         RunLoop.begin();
-  
+
         if (Locale) {
           console.log("GENERATING LOCALE");
           Locale.createCurrentLocale();
           var loc = Locale.currentLanguage.toLowerCase();
           if (global.jQuery) {
             jQuery("body").addClass(loc);
-    
+
             jQuery("html").attr("lang", loc);
-      
-            jQuery("#loading").remove();   
+
+            jQuery("#loading").remove();
           }
         }
         // debugger;
@@ -203,18 +202,18 @@ export const readyMixin = {
           }
           // _readyQueue = null;
         }
-        
+
         Promise.all(promises).then(r => {
           console.log("About to run global main");
           if (global.main && !getSetting('suppressMain') && (getSetting('mode') === APP_MODE)) { global.main(); }
-          RunLoop.end();  
+          RunLoop.end();
         });
-      
+
       })
-      .catch(e => {
-        console.error("SC.onReady#done: Error in resolving runtime dependency promises", e);
-        setSetting('isReady', false);
-      });
+        .catch(e => {
+          console.error("SC.onReady#done: Error in resolving runtime dependency promises", e);
+          setSetting('isReady', false);
+        });
     }
   }
 
@@ -239,11 +238,11 @@ else if (global.onload === null) {
 
 setSetting('mode', APP_MODE);
 
-function loadClassicScripts () {
+function loadClassicScripts() {
   console.log("LOADING classic scripts");
   const scripts = Array.from(document.querySelectorAll("script[type=sc_classic]"));
   return Promise.all(scripts.map(s => {
-    return new Promise( (res, rej) => {
+    return new Promise((res, rej) => {
       const script = document.createElement('script');
       script.async = false;
       script.src = s.src;
