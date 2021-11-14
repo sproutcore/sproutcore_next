@@ -1,0 +1,12 @@
+{
+    "root": true,
+    "env": {
+        "browser": true
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "rules": {
+        "space-after-function-name": true
+    }
+}
