@@ -2,7 +2,7 @@ import { Comparable } from "../core/mixins/comparable";
 import { Copyable } from "../core/mixins/copyable";
 import { Enumerable } from "../core/mixins/enumerable";
 import { get } from "../core/mixins/observable";
-import { clone } from "../core/system/base";
+import { clone, mixin } from "../core/system/base";
 import { getSetting, setSetting } from "../core/system/settings";
 import { SCString } from "../core/system/string";
 import { Store } from "../datastore/datastore";
@@ -10,59 +10,59 @@ import { Store } from "../datastore/datastore";
 
 export type Fix<T> = { [K in keyof T]: T[K] };
 
-/**
- * Check that any arguments to `create()` match the type's properties.
- *
- * Accept any additional properties and add merge them into the instance.
- */
-type SCObjectInstanceArguments<T> = Partial<T> & {
-    [key: string]: any;
-};
+// /**
+//  * Check that any arguments to `create()` match the type's properties.
+//  *
+//  * Accept any additional properties and add merge them into the instance.
+//  */
+// type SCObjectInstanceArguments<T> = Partial<T> & {
+//     [key: string]: any;
+// };
 
-/**
- * Accept any additional properties and add merge them into the prototype.
- */
-interface SCObjectClassArguments {
-    [key: string]: any;
-}
-
-type Objectify<T> = Readonly<T>;
-
-type SCObjectClassConstructor<T> = (new (properties?: object) => T) & (new (...args: any[]) => T);
-
-type MixinOrLiteral<T, Base> = Mixin<T, Base> | T;
-
-
-// class SCObjectMethod extends Function {
-//     base: Function
+// /**
+//  * Accept any additional properties and add merge them into the prototype.
+//  */
+// interface SCObjectClassArguments {
+//     [key: string]: any;
 // }
 
-// class SCComputedProperty extends SCObjectMethod {
-//     dependentKeys: string[];
-//     cacheKey: string;
-//     lastSetValueKey: string;
-//     isProperty: true;
-// }
+// type Objectify<T> = Readonly<T>;
 
-// class SCCachedComputedProperty extends SCComputedProperty {
-//   
-// }
+// type SCObjectClassConstructor<T> = (new (properties?: object) => T) & (new (...args: any[]) => T);
 
-// class SCIdempotentProperty extends SCComputedProperty {
-//     isVolatile: true;
-// }
-
-// class SCEnhancedMethod extends Function {
-//     isEnhancement: true;
-// }
-
-// class SCObserverMethod extends Function {
-//     localPropertyPaths: string[];
-//     propertyPaths: string[];
-// }
+// type MixinOrLiteral<T, Base> = Mixin<T, Base> | T;
 
 
-// type SCMethod<T> = (this: T, ...args? )
+// // class SCObjectMethod extends Function {
+// //     base: Function
+// // }
+
+// // class SCComputedProperty extends SCObjectMethod {
+// //     dependentKeys: string[];
+// //     cacheKey: string;
+// //     lastSetValueKey: string;
+// //     isProperty: true;
+// // }
+
+// // class SCCachedComputedProperty extends SCComputedProperty {
+// //   
+// // }
+
+// // class SCIdempotentProperty extends SCComputedProperty {
+// //     isVolatile: true;
+// // }
+
+// // class SCEnhancedMethod extends Function {
+// //     isEnhancement: true;
+// // }
+
+// // class SCObserverMethod extends Function {
+// //     localPropertyPaths: string[];
+// //     propertyPaths: string[];
+// // }
+
+
+// // type SCMethod<T> = (this: T, ...args? )
 
 interface SCObjectMethod<T> {
     base: Function
@@ -86,10 +86,10 @@ type ObserverMethod<Target, Sender> =
     | ((this: Target, sender: Sender, key: string, value: any, rev: number) => void);
 
 
-// type MethodDetector<T, U> = 
-//     T extends Function? SCObjectMethod<T> & ThisType<U>: 
-//     (T extends SCComputedProperty<T>? SCComputedProperty<T> & ThisType<U>:
-//         (T extends SCCachedComputedProperty<T>? SCCachedComputedProperty<T> & ThisType<U>: T));
+// // type MethodDetector<T, U> = 
+// //     T extends Function? SCObjectMethod<T> & ThisType<U>: 
+// //     (T extends SCComputedProperty<T>? SCComputedProperty<T> & ThisType<U>:
+// //         (T extends SCCachedComputedProperty<T>? SCCachedComputedProperty<T> & ThisType<U>: T));
 type MethodDetector<T, U> = 
     T extends Function? SCObjectMethod<T> & ThisType<U>: T;
     // unclear how to approach the computed properties atm
@@ -146,49 +146,6 @@ class CoreObject {
         arg3: T3 & ThisType<T3 & InstanceType<Class>>
     ): InstanceType<Class> & T1 & T2 & T3;
 
-    static extend<Statics, Instance>(
-        this: Statics & SCObjectClassConstructor<Instance>
-    ): Objectify<Statics> & SCObjectClassConstructor<Instance>;
-
-    static extend<
-        Statics,
-        Instance extends B1,
-        T1 extends SCObjectClassArguments,
-        B1
-    >(
-        this: Statics & SCObjectClassConstructor<Instance>,
-        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>
-    ): Objectify<Statics> & SCObjectClassConstructor<T1 & Instance>;
-
-    static extend<
-        Statics,
-        Instance extends B1 & B2,
-        T1 extends SCObjectClassArguments,
-        B1,
-        T2 extends SCObjectClassArguments,
-        B2
-    >(
-        this: Statics & SCObjectClassConstructor<Instance>,
-        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
-        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>
-    ): Objectify<Statics> & SCObjectClassConstructor<T1 & T2 & Instance>;
-
-    static extend<
-        Statics,
-        Instance extends B1 & B2 & B3,
-        T1 extends SCObjectClassArguments,
-        B1,
-        T2 extends SCObjectClassArguments,
-        B2,
-        T3 extends SCObjectClassArguments,
-        B3
-    >(
-        this: Statics & SCObjectClassConstructor<Instance>,
-        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
-        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>,
-        arg3: MixinOrLiteral<T3, B3> & ThisType<Fix<Instance & T1 & T2 & T3>>
-    ): Objectify<Statics> & SCObjectClassConstructor<T1 & T2 & T3 & Instance>;
-
     static extend<
         Statics,
         Instance extends B1 & B2 & B3 & B4,
@@ -209,11 +166,37 @@ class CoreObject {
             ThisType<Fix<Instance & T1 & T2 & T3 & T4>>
     ): Objectify<Statics> & SCObjectClassConstructor<T1 & T2 & T3 & T4 & Instance>;
 
-    static reopen<Statics, Instance>(
-        this: Statics & SCObjectClassConstructor<Instance>
-    ): Objectify<Statics> & SCObjectClassConstructor<Instance>;
+    static extend<
+        Statics,
+        Instance extends B1 & B2 & B3,
+        T1 extends SCObjectClassArguments,
+        B1,
+        T2 extends SCObjectClassArguments,
+        B2,
+        T3 extends SCObjectClassArguments,
+        B3
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
+        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>,
+        arg3: MixinOrLiteral<T3, B3> & ThisType<Fix<Instance & T1 & T2 & T3>>
+    ): Objectify<Statics> & SCObjectClassConstructor<T1 & T2 & T3 & Instance>;
 
-    static reopen<
+    static extend<
+        Statics,
+        Instance extends B1 & B2,
+        T1 extends SCObjectClassArguments,
+        B1,
+        T2 extends SCObjectClassArguments,
+        B2
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
+        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>
+    ): Objectify<Statics> & SCObjectClassConstructor<T1 & T2 & Instance>;
+
+
+    static extend<
         Statics,
         Instance extends B1,
         T1 extends SCObjectClassArguments,
@@ -221,7 +204,29 @@ class CoreObject {
     >(
         this: Statics & SCObjectClassConstructor<Instance>,
         arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>
-    ): Objectify<Statics> & SCObjectClassConstructor<Instance & T1>;
+    ): Objectify<Statics> & SCObjectClassConstructor<T1 & Instance>;
+
+
+    static extend<Statics, Instance>(
+        this: Statics & SCObjectClassConstructor<Instance>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance>;
+
+
+   static reopen<
+        Statics,
+        Instance extends B1 & B2 & B3,
+        T1 extends SCObjectClassArguments,
+        B1,
+        T2 extends SCObjectClassArguments,
+        B2,
+        T3 extends SCObjectClassArguments,
+        B3
+    >(
+        this: Statics & SCObjectClassConstructor<Instance>,
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
+        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>,
+        arg3: MixinOrLiteral<T3, B3> & ThisType<Fix<Instance & T1 & T2 & T3>>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance & T1 & T2 & T3>;
 
     static reopen<
         Statics,
@@ -238,19 +243,19 @@ class CoreObject {
 
     static reopen<
         Statics,
-        Instance extends B1 & B2 & B3,
+        Instance extends B1,
         T1 extends SCObjectClassArguments,
-        B1,
-        T2 extends SCObjectClassArguments,
-        B2,
-        T3 extends SCObjectClassArguments,
-        B3
+        B1
     >(
         this: Statics & SCObjectClassConstructor<Instance>,
-        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>,
-        arg2: MixinOrLiteral<T2, B2> & ThisType<Fix<Instance & T1 & T2>>,
-        arg3: MixinOrLiteral<T3, B3> & ThisType<Fix<Instance & T1 & T2 & T3>>
-    ): Objectify<Statics> & SCObjectClassConstructor<Instance & T1 & T2 & T3>;
+        arg1: MixinOrLiteral<T1, B1> & ThisType<Fix<Instance & T1>>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance & T1>;
+
+    static reopen<Statics, Instance>(
+        this: Statics & SCObjectClassConstructor<Instance>
+    ): Objectify<Statics> & SCObjectClassConstructor<Instance>;
+
+ 
 }
 
 class Mixin<T, Base = SCObject> {
@@ -374,14 +379,15 @@ interface Observable {
     allPropertiesDidChange: () => object;
     propertyRevision: number;
 }
+
 declare const Observable: Mixin<Observable, CoreObject>;
 
-export class SCObject extends CoreObject.extend(Observable) {}
+export class SCObject extends CoreObject.extend(Observable) {};
 
 export namespace SC {
     class Object extends SCObject {};
     getSetting: (name: string) => any;
-    setSetting: (name: string, val: any) => void;
+    setSetting: (name: string, val: any) => any;
     LOG_BINDINGS: boolean;
     LOG_DUPLICATE_BINDINGS: boolean;
     LOG_OBSERVERS: boolean;
@@ -391,10 +397,12 @@ export namespace SC {
     Enumerable,
     Observable,
     get,
-    clone
+    clone,
+    mixin
 }
 
-  
+
+
 global {
 
     interface String {
@@ -414,7 +422,7 @@ global {
         
     }
 
-    interface Array implements CoreArray, Enumerable, Observable {
+    interface Array extends CoreArray, Enumerable, Observable {
         copy: (deep?: boolean) => any[];
         nextObject: (index: number, previousObject?: any, context?: any) => Function;
         enumerator: () => SCEnumerator;
@@ -441,4 +449,4 @@ global {
     }
 }
 
-export default SC;
+// export default SC;
