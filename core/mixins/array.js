@@ -19,8 +19,8 @@ import { Enumerable } from './enumerable.js';
 
 let PropertyChain;
 
-export async function __runtimeDeps () {
-  const m = await import ('../private/property_chain.js')
+export async function __runtimeDeps() {
+  const m = await import('../private/property_chain.js')
   PropertyChain = m.PropertyChain;
 }
 
@@ -166,7 +166,7 @@ export const CoreArray = {
 
     @param {Number|IndexSet} start index, start of range, or index set
     @param {Number} [length] length of passing range
-    @returns {Object} receiver
+    @returns {ThisType} receiver
   */
   removeAt: function (start, length) {
     var delta = 0, // used to shift range
@@ -199,6 +199,7 @@ export const CoreArray = {
   /**
     Search the array of this object, removing any occurrences of it.
     @param {object} obj object to remove
+    @returns {ThisType}
   */
   removeObject: function (obj) {
     var loc = this.get('length') || 0;
@@ -214,7 +215,7 @@ export const CoreArray = {
     of the.
 
     @param {Enumerable} objects the objects to remove
-    @returns {Array}
+    @returns {ThisType}
   */
   removeObjects: function (objects) {
     this.beginPropertyChanges();
@@ -235,7 +236,7 @@ export const CoreArray = {
 
     @param {Number} [beginIndex] (Optional) index to begin slicing from.
     @param {Number} [endIndex] (Optional) index to end the slice at.
-    @returns {Array} New array with specified slice
+    @returns {ThisType} New array with specified slice
   */
   slice: function (beginIndex, endIndex) {
     var ret = [];
@@ -250,9 +251,9 @@ export const CoreArray = {
     Push the object onto the end of the array.  Works just like push() but it
     is KVO-compliant.
 
-    @param {Object} object the objects to push
+    @param {SCObject} object the objects to push
 
-    @return {Object} The passed object
+    @return {object} The passed object
   */
   pushObject: function (obj) {
     this.insertAt(this.get('length'), obj);
@@ -335,12 +336,13 @@ export const CoreArray = {
   /**
     Compares each item in the passed array to this one.
 
-    @param {Array} ary The array you want to compare to
+    @param {CoreArray} ary The array you want to compare to
     @returns {Boolean} true if they are equal.
   */
   isEqual: function (ary) {
     if (!ary) return false;
-    if (ary == this) return true;
+    // @ts-ignore
+    if (ary === this) return true;
 
     var loc = ary.get('length');
     if (loc != this.get('length')) return false;
@@ -364,9 +366,8 @@ export const CoreArray = {
   /**
     Generates a new array with the contents of the old array, sans the passed
     value.
-
     @param {Object} value The value you want to be removed
-    @returns {Array} The new, filtered array
+    @returns {CoreArray} The new, filtered array
   */
   without: function (value) {
     if (this.indexOf(value) < 0) return this; // value not present.
@@ -395,10 +396,11 @@ export const CoreArray = {
     Returns a new array that is a one-dimensional flattening of this array,
     i.e. for every element of this array extract that and it's elements into
     a new array.
-
+    @this {CoreArray}
     @returns {CoreArray}
    */
   flatten: function () {
+    /**@type {CoreArray} */
     var ret = [];
     this.forEach(function (k) {
       if (k && k.isEnumerable) {
@@ -434,12 +436,15 @@ export const CoreArray = {
     return Math.min.apply(Math, this);
   },
 
+  /**
+   * @type {RangeObserver}
+   */
   rangeObserverClass: RangeObserver,
 
   /**
     Returns true if object is in the array
 
-    @param {Object} object to look for
+    @param {any} object to look for
     @returns {Boolean}
   */
   contains: function (obj) {
@@ -461,12 +466,12 @@ export const CoreArray = {
     The return value from this method is an opaque reference to the
     range observer object.  You can use this reference to destroy the
     range observer when you are done with it or to update its range.
-
-    @param {IndexSet} indexes indexes to observe
+    @this { CoreArray }
+    @param { IndexSet } indexes indexes to observe
     @param {Object} target object to invoke on change
     @param {String|Function} method the method to invoke
     @param {Object} context optional context
-    @returns {RangeObserver} range observer
+    @returns { RangeObserver } range observer
   */
   addRangeObserver: function (indexes, target, method, context) {
     var rangeob = this._array_rangeObservers;
@@ -514,7 +519,7 @@ export const CoreArray = {
 
     The return value should replace the old range observer object.  It will
     usually be null.
-
+    @this {CoreArray}
     @param {RangeObserver} rangeObserver the range observer
     @returns {RangeObserver} updated range observer or null
   */
@@ -574,6 +579,14 @@ export const CoreArray = {
       }
     }
   },
+
+  /**
+   * @this {CoreArray}
+   * @param {number} start Index where the content did change
+   * @param {number} removedCount How many items were removed
+   * @param {number} addedCount how many items were added
+   * @returns {ThisType}
+   */
 
   arrayContentDidChange: function (start, removedCount, addedCount) {
     var rangeob = this._array_rangeObservers,
@@ -715,8 +728,8 @@ export const CoreArray = {
     For all registered property chains on this object, removed them from objects
     being removed from the enumerable, and clone them onto newly added objects.
 
-    @param {Object[]} addedObjects the objects being added to the enumerable
-    @param {Object[]} removedObjects the objected being removed from the enumerable
+    @param {CoreArray} addedObjects the objects being added to the enumerable
+    @param {CoreArray} removedObjects the objected being removed from the enumerable
     @returns {Object} receiver
   */
   setupEnumerablePropertyChains: function (addedObjects) {
@@ -794,15 +807,15 @@ export const CoreArray = {
   */
   removeDependentKeyWithChain: function (property, chain) {
     var kvoCloneList = '_kvo_enumerable_property_clones',
-      clone, cloneList;
+      curClone, cloneList;
 
     this.forEach(function (item) {
       item.removeDependentKeyWithChain(property, chain);
 
       cloneList = item[kvoCloneList];
-      clone = cloneList[guidFor(chain)];
+      curClone = cloneList[guidFor(chain)];
 
-      clone.deactivate(item);
+      curClone.deactivate(item);
     }, this);
   },
 
