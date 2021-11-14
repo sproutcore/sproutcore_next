@@ -407,7 +407,7 @@ export const CoreView = Responder.extend(SC.DelegateSupport, viewStatechart,
     @returns {RenderContext}
   */
   renderContext: function (tagNameOrElement) {
-    return RenderContext(tagNameOrElement);
+    return RenderContext.call(RenderContext, tagNameOrElement); 
   },
 
   /**
