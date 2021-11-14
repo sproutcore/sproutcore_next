@@ -29,7 +29,6 @@ import './render_delegates/slider.js';
 import './render_delegates/source_list.js';
 import './render_delegates/well.js';
 import './render_delegates/workspace.js';
-import { MasterDetailView } from './views/master_detail.js';
 
 /**
   If set to `NO`, then pressing backspace will NOT navigate to the previous
@@ -66,4 +65,6 @@ export { SelectView } from './views/select.js';
 export { WorkspaceView } from './views/workspace.js';
 export { MasterDetailView } from './views/master_detail.js';
 export { ImageButtonView } from './views/image_button.js';
+export { CollectionViewDelegate } from './mixins/collection_view_delegate.js';
+export { PanelPane } from './panes/panel.js';
  
