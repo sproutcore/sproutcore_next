@@ -1190,4 +1190,5 @@ export const RenderContext = SC.Builder.create(
     if (SC.typeOf(text) === SC.T_NUMBER) { text = text.toString(); }
     return text.replace(_escapeHTMLRegex, _escapeHTMLMethod);
   };
+  RenderContext.prototype.escapeHTML = RenderContext.escapeHTML; // also provide to context, as SC.RenderContext is not always directly available
 })();
