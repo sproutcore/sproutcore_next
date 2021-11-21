@@ -813,9 +813,12 @@ export const CoreArray = {
       item.removeDependentKeyWithChain(property, chain);
 
       cloneList = item[kvoCloneList];
-      curClone = cloneList[guidFor(chain)];
+      if (cloneList) {
+        const chainID = guidFor(chain);
+        curClone = cloneList[chainID];
 
-      curClone.deactivate(item);
+        curClone.deactivate(item);
+      }
     }, this);
   },
 
