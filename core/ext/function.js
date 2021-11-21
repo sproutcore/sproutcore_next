@@ -192,10 +192,10 @@ import('../system/runloop.js').then(r => {
 });
 
 Function.prototype.runloop = function (thisParam = this) {
-  const fn = thisParam;
+  const fn = this;
   return (...args) => {
     RunLoop.begin();
-    fn.apply(thisParam, ...args);
+    fn.apply(thisParam, args);
     RunLoop.end();
   }
 }
