@@ -47,7 +47,7 @@ SC.setSetting('allowsBackspaceToPreviousPage', false);
 
 export { ScrollerView, OverlayScrollerView } from './views/scroller.js';
 export { ButtonView } from './views/button.js';
-export { CheckboxView} from './views/checkbox.js';
+export { CheckboxView } from './views/checkbox.js';
 export * from './system/constants.js';
 export { SplitChild, NeedsSplitParent } from './mixins/split_child.js';
 export { SplitThumb } from './mixins/split_thumb.js';
@@ -67,4 +67,4 @@ export { MasterDetailView } from './views/master_detail.js';
 export { ImageButtonView } from './views/image_button.js';
 export { CollectionViewDelegate } from './mixins/collection_view_delegate.js';
 export { PanelPane } from './panes/panel.js';
- 
+export { SheetPane } from './panes/sheet.js';
