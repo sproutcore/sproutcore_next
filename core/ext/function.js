@@ -185,6 +185,21 @@ Function.prototype.observes = function (...propertyPaths) {
 };
 
 
+// // wrap the function in a runloop
+let RunLoop;
+import('../system/runloop.js').then(r => {
+  RunLoop = r.RunLoop;
+});
+
+Function.prototype.runloop = function (thisParam = this) {
+  const fn = thisParam;
+  return (...args) => {
+    RunLoop.begin();
+    fn.apply(thisParam, ...args);
+    RunLoop.end();
+  }
+}
+
 /**
  * Import Timer async. It might be that this needs orchestration through the same mechamism as the other 
  * async imports (such as in system/object.js etc).
@@ -198,32 +213,32 @@ import('../system/timer.js').then(r => {
 });
 
 
-  /**
-    Creates a timer that will execute the function after a specified 
-    period of time.
-    
-    If you pass an optional set of arguments, the arguments will be passed
-    to the function as well.  Otherwise the function should have the 
-    signature:
-    
-        function functionName(timer)
+/**
+  Creates a timer that will execute the function after a specified 
+  period of time.
+  
+  If you pass an optional set of arguments, the arguments will be passed
+  to the function as well.  Otherwise the function should have the 
+  signature:
+  
+      function functionName(timer)
 
-    @param target {Object} optional target object to use as this
-    @param interval {Number} the time to wait, in msec
-    @returns {SC.Timer} scheduled timer
-  */
+  @param target {Object} optional target object to use as this
+  @param interval {Number} the time to wait, in msec
+  @returns {SC.Timer} scheduled timer
+*/
 
-Function.prototype.invokeLater = function(target, interval) {
-  if (interval === undefined) interval = 1 ;
+Function.prototype.invokeLater = function (target, interval) {
+  if (interval === undefined) interval = 1;
   var f = this;
   if (arguments.length > 2) {
-    var args = $A(arguments).slice(2,arguments.length);
+    var args = $A(arguments).slice(2, arguments.length);
     args.unshift(target);
     // f = f.bind.apply(f, args) ;
-    var func = f ;
+    var func = f;
     // Use "this" in inner func because it get its scope by 
     // outer func f (=target). Could replace "this" with target for clarity.
-    f = function() { return func.apply(this, args.slice(1)); } ;
+    f = function () { return func.apply(this, args.slice(1)); };
   }
   return Timer.schedule({ target: target, action: f, interval: interval });
 }
