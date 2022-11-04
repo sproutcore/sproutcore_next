@@ -26,7 +26,7 @@ export async function __runtimeDeps () {
 //
 
 /**
-  @namespace
+  @class
 
   This private class is used to store information about observers on a
   particular key.  Note that this object is not observable.  You create new
@@ -223,6 +223,7 @@ export const ObserverSet = {
     return this.members.slice(0);
   },
 
+  /** @constructor */
   constructor: function () {
     this._members = {};
     /**@type ObserverSetMember[] */

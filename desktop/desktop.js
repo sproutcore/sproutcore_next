@@ -29,7 +29,6 @@ import './render_delegates/slider.js';
 import './render_delegates/source_list.js';
 import './render_delegates/well.js';
 import './render_delegates/workspace.js';
-import { MasterDetailView } from './views/master_detail.js';
 
 /**
   If set to `NO`, then pressing backspace will NOT navigate to the previous
@@ -48,7 +47,7 @@ SC.setSetting('allowsBackspaceToPreviousPage', false);
 
 export { ScrollerView, OverlayScrollerView } from './views/scroller.js';
 export { ButtonView } from './views/button.js';
-export { CheckboxView} from './views/checkbox.js';
+export { CheckboxView } from './views/checkbox.js';
 export * from './system/constants.js';
 export { SplitChild, NeedsSplitParent } from './mixins/split_child.js';
 export { SplitThumb } from './mixins/split_thumb.js';
@@ -66,4 +65,6 @@ export { SelectView } from './views/select.js';
 export { WorkspaceView } from './views/workspace.js';
 export { MasterDetailView } from './views/master_detail.js';
 export { ImageButtonView } from './views/image_button.js';
- 
+export { CollectionViewDelegate } from './mixins/collection_view_delegate.js';
+export { PanelPane } from './panes/panel.js';
+export { SheetPane } from './panes/sheet.js';

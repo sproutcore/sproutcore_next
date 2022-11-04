@@ -37,6 +37,7 @@ export const RangeObserver = {
 
   /** @private */
   toString: function () {
+    /**@type string */
     var base = this.indexes ? this.indexes.toString() : "IndexSet<..>";
     return base.replace('IndexSet', 'RangeObserver(%@)'.fmt(guidFor(this)));
   },
@@ -48,7 +49,7 @@ export const RangeObserver = {
 
     Note that changes to a range are buffered until the end of a run loop
     unless a property on the record itself changes.
-
+    @constructor
     @param {Array} source the source array
     @param {IndexSet} indexSet set of indexes to observer
     @param {Object} target the target
@@ -101,8 +102,8 @@ export const RangeObserver = {
     Updates the set of indexes the range observer applies to.  This will
     stop observing the old objects for changes and start observing the
     new objects instead.
-
-    @param {Array} source the source array
+    @this {RangeObserver}
+    @param {import ("../mixins/array.js").CoreArray} source the source array
     @param {IndexSet} indexSet The index set representing the change
     @returns {RangeObserver} receiver
   */
@@ -120,7 +121,7 @@ export const RangeObserver = {
     Configures observing for each item in the current range.  Should update
     the observing array with the list of observed objects so they can be
     torn down later
-
+    @this {RangeObserver}
     @returns {RangeObserver} receiver
   */
   beginObserving: function () {
@@ -154,7 +155,9 @@ export const RangeObserver = {
     return this;
   },
 
-  /** @private
+  /** 
+    @private
+    @this {RangeObserver}
     Called when an object that appears to need range observers has changed.
     Check to see if the range observer contains this object in its list.  If
     it does, go ahead and setup observers on all objects and remove ourself
@@ -211,7 +214,7 @@ export const RangeObserver = {
     Remove observers for any objects currently begin observed.  This is
     called whenever the observed range changes due to an array change or
     due to destroying the observer.
-
+    @this {RangeObserver}
     @returns {RangeObserver} receiver
   */
   endObserving: function () {
@@ -265,7 +268,7 @@ export const RangeObserver = {
 
   /**
     Whenever an object changes, notify the delegate
-
+    @this {RangeObserver}
     @param {Object} the object that changed
     @param {String} key the property that changed
     @param {Null} value No longer used

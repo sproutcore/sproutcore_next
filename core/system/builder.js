@@ -90,38 +90,38 @@ export const Builder = function (props) { return Builder.create(props); };
   @param {Object} props
   @returns {Builder}
 */
-Builder.create = function create(props) { 
-  
+Builder.create = function create(props) {
+
   // generate new fn with built-in properties and copy props
-  var fn = mixin(beget(this.fn), props||{}) ;
+  var fn = mixin(beget(this.fn), props || {});
   if (props.hasOwnProperty('toString')) fn.toString = props.toString;
-  
+
   // generate new constructor and hook in the fn
-  var construct = function() {
-    var ret = beget(fn); // falseTE: using closure here...
-    
+  var construct = function () {
+    var ret = beget(fn); // NOTE: using closure here...
+
     // the defaultClass is usually this for this constructor. 
     // e.g. View.build() -> this = View
-    ret.defaultClass = this ;
-    ret.constructor = construct ;
+    ret.defaultClass = this || SC; // fallback 
+    ret.constructor = construct;
 
     // now init the builder object.
-    return ret.init.apply(ret, arguments) ;
-  } ;
-  construct.fn = construct.prototype = fn ;
+    return ret.init.apply(ret, arguments);
+  };
+  construct.fn = construct.prototype = fn;
 
   // the create() method can be used to extend a new builder.
   // eg. View.buildCustom = View.build.extend({ ...props... })
-  construct.extend = Builder.create ;
-  construct.mixin = Builder.mixin ;
-  
-  return construct; // return new constructor
-} ;
+  construct.extend = Builder.create;
+  construct.mixin = Builder.mixin;
 
-Builder.mixin = function() {
+  return construct; // return new constructor
+};
+
+Builder.mixin = function () {
   var len = arguments.length, idx;
-  for(idx=0;idx<len;idx++) mixin(this, arguments[idx]);
-  return this ;
+  for (idx = 0; idx < len; idx++) mixin(this, arguments[idx]);
+  return this;
 };
 
 /** This is the default set of helper methods defined for new builders. */
@@ -136,24 +136,24 @@ Builder.fn = {
     
     @returns {Builder} receiver
   */
-  init: function(content) {
+  init: function (content) {
     if (content !== undefined) {
       if (typeOf(content) === T_ARRAY) {
-        var loc=content.length;
-        while(--loc >= 0) {
+        var loc = content.length;
+        while (--loc >= 0) {
           this[loc] = content.objectAt ? content.objectAt(loc) : content[loc];
         }
-        this.length = content.length ;
+        this.length = content.length;
       } else {
-        this[0] = content; this.length=1;
+        this[0] = content; this.length = 1;
       }
     }
-    return this ;
+    return this;
   },
-  
+
   /** Return the number of elements in the matched set. */
-  size: function() { return this.length; },
-  
+  size: function () { return this.length; },
+
   /** 
     Take an array of elements and push it onto the stack (making it the
     new matched set.)  The receiver will be saved so it can be popped later.
@@ -161,9 +161,9 @@ Builder.fn = {
     @param {Object|Array} content
     @returns {Builder} new instance
   */
-  pushStack: function() {
+  pushStack: function () {
     // Build a new CoreQuery matched element set
-    var ret = this.constructor.apply(this,arguments);
+    var ret = this.constructor.apply(this, arguments);
 
     // Add the old object onto the stack (as a reference)
     ret.prevObject = this;
@@ -177,29 +177,29 @@ Builder.fn = {
     transform.  If there is no previous item on the stack, an empty set will
     be returned.
   */
-  end: function() { 
-    return this.prevObject || this.constructor(); 
+  end: function () {
+    return this.prevObject || this.constructor();
   },
-  
+
   // toString describes the builder
-  toString: function() { 
-    return "%@$(%@)".fmt(this.defaultClass.toString(), 
-      A(this).invoke('toString').join(',')); 
+  toString: function () {
+    return "%@$(%@)".fmt(this.defaultClass.toString(),
+      A(this).invoke('toString').join(','));
   },
-  
+
   /** You can enhance the fn using this mixin method. */
   mixin: Builder.mixin
-  
+
 };
 
 // Apply Enumerable.  Whenever possible we want to use the Array version
 // because it might be native code.
-(function() {
-  var enumerable = Enumerable, fn = Builder.fn, key, value ;
-  for(key in enumerable) {
-    if (!enumerable.hasOwnProperty(key)) continue ;
+(function () {
+  var enumerable = Enumerable, fn = Builder.fn, key, value;
+  for (key in enumerable) {
+    if (!enumerable.hasOwnProperty(key)) continue;
     value = Array.prototype[key] || enumerable[key];
-    fn[key] = value ;
+    fn[key] = value;
   }
 })();
 

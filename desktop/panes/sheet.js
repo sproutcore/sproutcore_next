@@ -5,18 +5,22 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('panes/panel');
+import { ModalPane } from "./modal.js";
+import { PanelPane } from "./panel.js";
+import { View } from "../../view/view.js";
+
+// sc_require('panes/panel');
 
 /**
- @class
+ 
 
    Displays a modal sheet pane that animates from the top of the viewport.
 
  The default way to use the sheet pane is to simply add it to your page like this:
 
- SC.SheetPane.create({
+ SheetPane.create({
         layout: { width: 400, height: 200, centerX: 0 },
-        contentView: SC.View.extend({
+        contentView: View.extend({
         })
       }).append();
 
@@ -24,28 +28,28 @@ sc_require('panes/panel');
  is to cover the entire document window with a semi-opaque background, and to
  resize with the window.
 
- @extends SC.PanelPane
+ 
  @since SproutCore 1.0
  @author Evin Grano
  @author Tom Dale
  @author Joe Gaudet
  */
-SC.SheetPane = SC.PanelPane.extend(
-  /** @scope SC.SheetPane.prototype */
+export const SheetPane = PanelPane.extend(
+  /** @scope SheetPane.prototype */
   {
 
     /**
      @type {Array}
      @default ['sc-sheet']
-     @see SC.View#classNames
+     @see View#classNames
      */
     classNames: ['sc-sheet'],
 
     /**
-     @type SC.View
-     @default SC.ModalPane
+     @type View
+     @default ModalPane
      */
-    modalPane: SC.ModalPane,
+    modalPane: ModalPane,
 
     /**
      * Duration in seconds
@@ -61,7 +65,7 @@ SC.SheetPane = SC.PanelPane.extend(
     timing: 'ease-in-out',
 
     /** @private */
-    transitionIn: SC.View.SLIDE_IN,
+    transitionIn: View.SLIDE_IN,
 
     /** @private */
     transitionInOptions: function () {
@@ -74,7 +78,7 @@ SC.SheetPane = SC.PanelPane.extend(
 
 
     /** @private */
-    transitionOut: SC.View.SLIDE_OUT,
+    transitionOut: View.SLIDE_OUT,
 
     /** @private */
     transitionOutOptions: function () {

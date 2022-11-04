@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-import { Pane } from "../../view/view.js";
+import { CoreView, Pane } from "../../view/view.js";
 import { ModalPane } from "./modal.js";
 import { SC } from '../../core/core.js';
 
@@ -32,223 +32,223 @@ import { SC } from '../../core/core.js';
 export const PanelPane = Pane.extend(
 /** @scope PanelPane.prototype */ {
 
-  /**
-    Walk like a duck.
-    @type {Boolean}
-  */
-  isPanelPane: true,
+    /**
+      Walk like a duck.
+      @type {Boolean}
+    */
+    isPanelPane: true,
 
-  /**
-    @type Array
-    @default ['sc-panel']
-    @see View#classNames
-  */
-  classNames: ['sc-panel'],
+    /**
+      @type Array
+      @default ['sc-panel']
+      @see View#classNames
+    */
+    classNames: ['sc-panel'],
 
-  /**
-    @type Boolean
-    @default true
-    @see Pane#acceptsKeyPane
-  */
-  acceptsKeyPane: true,
+    /**
+      @type Boolean
+      @default true
+      @see Pane#acceptsKeyPane
+    */
+    acceptsKeyPane: true,
 
-  /**
-    The WAI-ARIA role for panel pane.
+    /**
+      The WAI-ARIA role for panel pane.
+  
+      @type String
+      @default 'dialog'
+      @constant
+    */
+    ariaRole: 'dialog',
 
-    @type String
-    @default 'dialog'
-    @constant
-  */
-  ariaRole: 'dialog',
+    /**
+      The WAI-ARIA label for the panel. Screen readers will use this to tell
+      the user a name for the panel.
+  
+      @type String
+    */
+    ariaLabel: null,
 
-  /**
-    The WAI-ARIA label for the panel. Screen readers will use this to tell
-    the user a name for the panel.
+    /**
+      The WAI-ARIA labelledby for the panel. Screen readers will use this to tell
+      the header or name of your panel if there is no label. This should be an id
+      to an element inside the panel.
+  
+      @type String
+    */
+    ariaLabelledBy: null,
 
-    @type String
-  */
-  ariaLabel: null,
+    /**
+      The WAI-ARIA describedby text. Screen readers will use this to speak the description
+      of the panel. This should be an id to an element inside the panel.
+  
+      @type String
+    */
+    ariaDescribedBy: null,
 
-  /**
-    The WAI-ARIA labelledby for the panel. Screen readers will use this to tell
-    the header or name of your panel if there is no label. This should be an id
-    to an element inside the panel.
+    /**
+      Indicates that a pane is modal and should not allow clicks to pass
+      though to panes underneath it. This will usually cause the pane to show
+      the modalPane underneath it.
+  
+      @type Boolean
+      @default true
+    */
+    isModal: true,
 
-    @type String
-  */
-  ariaLabelledBy: null,
+    /**
+      The modal pane to place behind this pane if this pane is modal. This
+      must be a subclass or an instance of ModalPane.
+    */
+    modalPane: ModalPane.extend({
+      classNames: 'for-sc-panel'
+    }),
 
-  /**
-    The WAI-ARIA describedby text. Screen readers will use this to speak the description
-    of the panel. This should be an id to an element inside the panel.
+    // ..........................................................
+    // CONTENT VIEW
+    //
 
-    @type String
-  */
-  ariaDescribedBy: null,
+    /**
+      Set this to the view you want to act as the content within the panel.
+  
+      @type View
+      @default null
+    */
+    contentView: null,
+    contentViewBindingDefault: SC.Binding.single(),
 
-  /**
-    Indicates that a pane is modal and should not allow clicks to pass
-    though to panes underneath it. This will usually cause the pane to show
-    the modalPane underneath it.
+    /**
+      @param {View} newContent
+    */
+    replaceContent: function (newContent) {
+      this.removeAllChildren();
+      if (newContent) this.appendChild(newContent);
+    },
 
-    @type Boolean
-    @default true
-  */
-  isModal: true,
-
-  /**
-    The modal pane to place behind this pane if this pane is modal. This
-    must be a subclass or an instance of ModalPane.
-  */
-  modalPane: ModalPane.extend({
-    classNames: 'for-sc-panel'
-  }),
-
-  // ..........................................................
-  // CONTENT VIEW
-  //
-
-  /**
-    Set this to the view you want to act as the content within the panel.
-
-    @type View
-    @default null
-  */
-  contentView: null,
-  contentViewBindingDefault: SC.Binding.single(),
-
-  /**
-    @param {View} newContent
-  */
-  replaceContent: function(newContent) {
-    this.removeAllChildren() ;
-    if (newContent) this.appendChild(newContent);
-  },
-
-  /** @private */
-  createChildViews: function() {
-    // if contentView is defined, then create the content
-    var view = this.contentView ;
-    if (view) {
-      view = this.contentView = this.createChildView(view) ;
-      this.childViews = [view] ;
-    }
-  },
+    /** @private */
+    createChildViews: function () {
+      // if contentView is defined, then create the content
+      var view = this.contentView;
+      if (view) {
+        view = this.contentView = this.createChildView(view);
+        this.childViews = [view];
+      }
+    },
 
 
-  /**
-    Invoked whenever the content property changes. This method will simply
-    call replaceContent. Override replaceContent to change how the view is
-    swapped out.
-  */
-  contentViewDidChange: function() {
-    this.replaceContent(this.get('contentView'));
-  }.observes('contentView'),
+    /**
+      Invoked whenever the content property changes. This method will simply
+      call replaceContent. Override replaceContent to change how the view is
+      swapped out.
+    */
+    contentViewDidChange: function () {
+      this.replaceContent(this.get('contentView'));
+    }.observes('contentView'),
 
-  // ..........................................................
-  // INTERNAL SUPPORT
-  //
+    // ..........................................................
+    // INTERNAL SUPPORT
+    //
 
-  /**
-    The name of the theme's `PanelPane` render delegate.
+    /**
+      The name of the theme's `PanelPane` render delegate.
+  
+      @type String
+      @default 'panelRenderDelegate'
+    */
+    renderDelegateName: 'panelRenderDelegate',
 
-    @type String
-    @default 'panelRenderDelegate'
-  */
-  renderDelegateName: 'panelRenderDelegate',
+    // get the modal pane.
+    _modalPane: function () {
+      var pane = this.get('modalPane');
 
-  // get the modal pane.
-  _modalPane: function() {
-    var pane = this.get('modalPane');
+      // instantiate if needed
+      if (pane && pane.isClass) {
+        pane = pane.create({ owner: this });
+        this.set('modalPane', pane);
+      }
 
-    // instantiate if needed
-    if (pane && pane.isClass) {
-      pane = pane.create({ owner: this });
-      this.set('modalPane', pane);
-    }
+      return pane;
+    },
 
-    return pane ;
-  },
+    /** @private - whenever showing on screen, deal with modal pane as well */
+    appendTo: function appendTo(elem) {
+      var pane;
+      // show the modal only if the pane is currently not visible, or if the pane
+      // is currently transitioning out
+      if ((!this.get('isVisibleInWindow') || this.get('viewState') == CoreView.ATTACHED_BUILDING_OUT) && this.get('isModal') && (pane = this._modalPane())) {
+        this._isShowingModal = true;
+        pane.paneWillAppend(this);
+      }
+      // return sc_super();
+      return appendTo.base.apply(this, arguments);
+    },
 
-  /** @private - whenever showing on screen, deal with modal pane as well */
-  appendTo: function appendTo (elem) {
-    var pane ;
-    // show the modal only if the pane is currently not visible, or if the pane
-    // is currently transitioning out
-    if ((!this.get('isVisibleInWindow') || this.get('viewState') == CoreView.ATTACHED_BUILDING_OUT) && this.get('isModal') && (pane = this._modalPane())) {
-      this._isShowingModal = true;
-      pane.paneWillAppend(this);
-    }
-    // return sc_super();
-    return appendTo.base.apply(this, arguments);
-  },
+    /** @private - when removing from screen, deal with modal pane as well. */
+    remove: function remove() {
+      var pane, ret = remove.base.apply(this, arguments)
 
-  /** @private - when removing from screen, deal with modal pane as well. */
-  remove: function remove () {
-    var pane, ret = remove.base.apply(this, arguments)
+      if (this._isShowingModal) {
+        this._isShowingModal = false;
+        if (pane = this._modalPane()) pane.paneDidRemove(this);
+      }
+      return ret;
+    },
 
-    if (this._isShowingModal) {
-      this._isShowingModal = false ;
-      if (pane = this._modalPane()) pane.paneDidRemove(this);
-    }
-    return ret ;
-  },
+    destroy: function destroy() {
+      var modal = this.get('modalPane');
+      if (modal && !modal.isClass) {
+        modal.destroy();
+      }
 
-  destroy: function destroy () {
-    var modal = this.get('modalPane');
-    if (modal && !modal.isClass) {
-      modal.destroy();
-    }
+      destroy.base.apply(this, arguments);
+    },
 
-    destroy.base.apply(this, arguments);
-  },
-
-  /** @private - if isModal state changes, update pane state if needed. */
-  _isModalDidChange: function() {
-    var modalPane,
+    /** @private - if isModal state changes, update pane state if needed. */
+    _isModalDidChange: function () {
+      var modalPane,
         isModal = this.get('isModal');
 
-    if (isModal) {
-      if (!this._isShowingModal && (modalPane = this._modalPane())) {
-        this._isShowingModal = true;
-        modalPane.paneWillAppend(this);
+      if (isModal) {
+        if (!this._isShowingModal && (modalPane = this._modalPane())) {
+          this._isShowingModal = true;
+          modalPane.paneWillAppend(this);
+        }
+      } else {
+        if (this._isShowingModal && (modalPane = this._modalPane())) {
+          this._isShowingModal = false;
+          modalPane.paneDidRemove(this);
+        }
       }
-    } else {
-      if (this._isShowingModal && (modalPane = this._modalPane())) {
-        this._isShowingModal = false;
-        modalPane.paneDidRemove(this);
-      }
-    }
-  }.observes('isModal'),
+    }.observes('isModal'),
 
-  /**
-    Called when the pane is shown.  Takes on key pane status.
-  */
-  didShowInDocument: function () {
-   this.becomeKeyPane();
-  },
+    /**
+      Called when the pane is shown.  Takes on key pane status.
+    */
+    didShowInDocument: function () {
+      this.becomeKeyPane();
+    },
 
-  /**
-    Called when the pane is attached.  Takes on key pane status.
-  */
-  didAppendToDocument: function () {
-    this.becomeKeyPane();
-  },
+    /**
+      Called when the pane is attached.  Takes on key pane status.
+    */
+    didAppendToDocument: function () {
+      this.becomeKeyPane();
+    },
 
-  /**
-    Called when the pane is detached.  Resigns key pane status.
-  */
-  willRemoveFromDocument: function () {
-    this.resignKeyPane();
-  },
+    /**
+      Called when the pane is detached.  Resigns key pane status.
+    */
+    willRemoveFromDocument: function () {
+      this.resignKeyPane();
+    },
 
-  /**
-    Called when the pane is about to be hidden.  Resigns key pane status.
-  */
-  willHideInDocument: function () {
-   this.resignKeyPane();
-  },
+    /**
+      Called when the pane is about to be hidden.  Resigns key pane status.
+    */
+    willHideInDocument: function () {
+      this.resignKeyPane();
+    },
 
-  displayProperties: ['ariaLabel', 'ariaLabelledBy', 'ariaDescribedBy']
+    displayProperties: ['ariaLabel', 'ariaLabelledBy', 'ariaDescribedBy']
 
-});
+  });

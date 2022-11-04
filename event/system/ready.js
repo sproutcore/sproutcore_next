@@ -1,4 +1,5 @@
-import { SC } from '../../core/core.js';
+import { SC, GLOBAL } from '../../core/core.js';
 import { CoreQuery } from './core_query.js';
 
-CoreQuery(SC.onReady.done);
+// this should not be necessary at all
+// if (!GLOBAL.onload) CoreQuery(SC.onReady.done);
