@@ -45,7 +45,7 @@ export const ChildrenAttribute = ChildAttribute.extend(
     // lazily create a ChildArray one time.  after that always return the
     // same object.
     if (!ret) {
-      ret = SC.ChildArray.create({
+      ret = ChildArray.create({
         parentObject: record,
         parentAttribute: attrKey,
         defaultRecordType: recordType

@@ -185,7 +185,7 @@ export const ManyAttribute = RecordAttribute.extend(
       // if we have an inverse relationship, get the inverse records and  
       // notify them of what is happening.
       if (inverseKey) {
-        oldRecords = A(this._scsa_call(record, key));
+        oldRecords = SC.A(this._scsa_call(record, key));
 
         len = oldRecords.get('length');
         for(var i=0;i<len;i++) {

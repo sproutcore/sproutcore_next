@@ -389,7 +389,7 @@ export const RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   find: function(original, query, target) {
     if (query && query.isQuery) {
       return this.get('store').find(query.queryWithScope(this));
-    } else return original.apply(this, $A(arguments).slice(1));
+    } else return original.apply(this, SC.$A(arguments).slice(1));
   }.enhance(),
 
   /**

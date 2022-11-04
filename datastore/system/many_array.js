@@ -5,6 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 import { SC } from '../../core/core.js';
+import { Record } from '../models/record.js';
 
 /**
   @class
@@ -497,7 +498,7 @@ export const ManyArray = SC.Object.extend(SC.Enumerable, SC.Array,
     var t = SC.typeOf(orderBy),
         ret, idx, len;
 
-    if (t === SC.T_FUNCTION) ret = SC.orderBy(a, b);
+    if (t === SC.T_FUNCTION) ret = orderBy(a, b);
     else if (t === SC.T_STRING) ret = SC.compare(a, b);
     else {
       len = SC.orderBy.get('length');
@@ -541,7 +542,7 @@ export const ManyArray = SC.Object.extend(SC.Enumerable, SC.Array,
 
   /** @private */
   init: function init () {
-    init.base.apply(this, argumemts);
+    init.base.apply(this, arguments);
 
     // Initialize.
     this.recordPropertyDidChange();

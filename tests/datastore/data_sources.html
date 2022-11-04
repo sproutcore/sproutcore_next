@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="/tests/qunit/qunit-2.11.3.css">
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script src="/tests/qunit/qunit-2.11.3.js"></script>
+    <script>
+      window.module = QUnit.module;
+      window.test = QUnit.test;
+      window.equals = QUnit.assert.equal;
+      window.same = QUnit.assert.deepEqual;
+      window.ok = QUnit.assert.ok;
+      window.assert = QUnit.assert;
+    </script>
+    <script src="./data_sources/fixtures.js" type="module"></script>
+    <script src="./data_sources/data_source.js" type="module"></script>
+    <script src="./data_sources/cascade.js" type="module"></script>
+    <!-- <script src="./system/store/commitRecord.js" type="module"></script> -->
+    <!-- <script src="./system/store/conflictedStoreKeys_test.js" type="module"></script> -->
+    <!-- <script src="./system/store/connectDataSource.js" type="module"></script> -->
+    <!-- <script src="./system/store/core_methods.js" type="module"></script> -->
+    <!-- <script src="./system/store/createRecord.js" type="module"></script> -->
+    <!-- <script src="./system/store/dataHashDidChange.js" type="module"></script> -->
+    <!-- <script src="./system/store/dataSourceCallbacks.js" type="module"></script> -->
+    <!-- <script src="./system/store/destroyRecord.js" type="module"></script> -->
+    <!-- <script src="./system/store/error_methods.js" type="module"></script> -->
+    <!-- <script src="./system/store/find.js" type="module"></script>  -->
+    <!-- <script src="./system/store/init.js" type="module"></script>  -->
+    <!-- <script src="./system/store/loadRecord.js" type="module"></script>  -->
+    <!-- <script src="./system/store/loadRecords.js" type="module"></script>  -->
+    <!-- <script src="./system/store/materializeRecord.js" type="module"></script>  -->
+    <!-- <script src="./system/store/pushChanges.js" type="module"></script>  -->
+    <!-- <script src="./system/store/pushRelationships.js" type="module"></script>  -->
+    <!-- <script src="./system/store/readDataHash.js" type="module"></script>  -->
+    <!-- <script src="./system/store/readEditableDataHash.js" type="module"></script>  -->
+    <!-- <script src="./system/store/recordDidChange.js" type="module"></script>  -->
+    <!-- <script src="./system/store/removeDataHash.js" type="module"></script>  -->
+    <!-- <script src="./system/store/retrieveRecord.js" type="module"></script>  -->
+    <!-- <script src="./system/store/unloadRecord.js" type="module"></script>  -->
+    <!-- <script src="./system/store/unloadRecords.js" type="module"></script>  -->
+    <!-- <script src="./system/store/writeDataHash.js" type="module"></script>  -->
+</body>
+</html>

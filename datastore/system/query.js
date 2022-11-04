@@ -7,7 +7,7 @@
 
 import { SC } from '../../core/core.js';
 import { Store } from './store.js';
-
+import { Record } from '../models/record.js';
 // sc_require('core') ;
 
 /**

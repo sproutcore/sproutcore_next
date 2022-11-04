@@ -9,6 +9,7 @@ import { Logger } from "../logger.js";
 import { SCObject } from "../object.js";
 import { readyMixin } from "../ready.js";
 import { SCString } from "../string.js";
+import { Scanner } from "./scanner.js";
 
 
 /**

@@ -759,7 +759,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
   commitChangesFromNestedStore: function (nestedStore, changes, force) {
     // first, check for optimistic locking problems
     if (!force && nestedStore.get('conflictedStoreKeys')) {
-      SC.Store.CHAIN_CONFLICT_ERROR.throw();
+      Store.CHAIN_CONFLICT_ERROR.throw();
     }
 
     // OK, no locking issues.  So let's just copy them changes.
@@ -1173,7 +1173,7 @@ export const Store = SC.Object.extend( /** @scope Store.prototype */ {
       (id ? K.RECORD_EXISTS_ERROR : K.BAD_STATE_ERROR).throw();
 
     // allow error or destroyed state only with id
-    } else if (!id && (status===DESTROYED_CLEAN || status===ERROR)) {
+    } else if (!id && (status=== K.DESTROYED_CLEAN || status=== SC.ERROR)) {
       K.BAD_STATE_ERROR.throw();
     }
 

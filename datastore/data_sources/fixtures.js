@@ -8,6 +8,7 @@ import { SC } from '../../core/core.js';
 import { Query } from "../system/query.js";
 import { Store } from '../system/store.js';
 import { DataSource, MIXED_STATE } from "./data_source.js";
+import { Record } from '../models/record.js';
 
 // sc_require('data_sources/data_source');
 // sc_require('models/record');
@@ -398,10 +399,4 @@ export const FixturesDataSource = DataSource.extend(
 
 });
 
-// This needs moving...
-/**
-  Default fixtures instance for use in applications.
 
-  @property {FixturesDataSource}
-*/
-// Record.fixtures = FixturesDataSource.create();

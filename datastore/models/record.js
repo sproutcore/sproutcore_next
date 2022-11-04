@@ -5,6 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 import { SC } from '../../core/core.js';
+import { FixturesDataSource } from '../data_sources/fixtures.js';
 import { ManyArray } from '../system/many_array.js';
 import { Query } from '../system/query.js';
 import { ChildrenAttribute } from './children_attribute.js';
@@ -243,7 +244,7 @@ export const Record = SC.Object.extend(
       else return parent.get('status');
     }
     else return this.store.readStatus(this.storeKey);
-  }.property('storeKey').cacheable(),
+  }.property('storeKey'),
 
   /**
     The store that owns this record.  All changes will be buffered into this
@@ -429,7 +430,7 @@ export const Record = SC.Object.extend(
       var store = this.get('store');
       var storeKey = this.get('storeKey');
       var ret = store.readDataHash(storeKey);
-      if (ret) ret = SC.clone(ret, YES);
+      if (ret) ret = SC.clone(ret, true);
       return ret;
     }
   }.property(),
@@ -1062,7 +1063,7 @@ export const Record = SC.Object.extend(
 
     // For now we're going to be agnostic about whether ids should live in the
     // hash or not.
-    keysToKeep[primaryKey] = YES;
+    keysToKeep[primaryKey] = true;
 
     for (key in this) {
       // make sure property is a record attribute.
@@ -1075,7 +1076,7 @@ export const Record = SC.Object.extend(
           // As we go, we'll build up a key —> attribute mapping table that we
           // can use when purging keys from the data hash that are not defined
           // in the schema, below.
-          keysToKeep[keyForDataHash] = YES;
+          keysToKeep[keyForDataHash] = true;
 
           isRecord = SC.typeOf(typeClass.call(valueForKey)) === SC.T_CLASS;
           isChild  = valueForKey.isNestedRecordTransform;
@@ -1090,7 +1091,7 @@ export const Record = SC.Object.extend(
               dataHash[keyForDataHash] = attrValue;
             }
             else if (!includeNull) {
-              keysToKeep[keyForDataHash] = NO;
+              keysToKeep[keyForDataHash] = false;
             }
 
           } else if (isChild) {
@@ -1130,7 +1131,7 @@ export const Record = SC.Object.extend(
       if (!keysToKeep[key]) {
         // Deleting a key doesn't seem too common unless it's a mistake, so
         // we'll log it in debug mode.
-        SC.debug("%@:  Deleting key from underlying data hash due to normalization:  %@", this, key);
+        SC.Logger.debug("%@:  Deleting key from underlying data hash due to normalization:  %@", this, key);
         delete dataHash[key];
       }
     }
@@ -1334,7 +1335,7 @@ export const Record = SC.Object.extend(
         if (attribute) recordType = attribute.get('typeClass');
         if (!recordType) return null;
       }
-      if (recordType.kindOf && recordType.kindOf(SC.Record)) {
+      if (recordType.kindOf && recordType.kindOf(Record)) {
         childRecord = recordType.create({
           parentObject: parentObject || this,
           parentAttribute: attrkey,
@@ -2038,3 +2039,11 @@ Record.mixin( /** @scope Record */ {
   }
 
 });
+
+
+/**
+  Default fixtures instance for use in applications.
+
+  @property {FixturesDataSource}
+*/
+Record.fixtures = FixturesDataSource.create();

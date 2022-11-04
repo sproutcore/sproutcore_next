@@ -8,6 +8,7 @@
 import { SC } from '../../core/core.js';
 import { Query } from "./query.js";
 import { Store } from "./store.js";
+import { Record } from '../models/record.js';
 
 // sc_require('system/store');
 
@@ -494,9 +495,6 @@ export const NestedStore = Store.extend(
     if (!editables) editables = this.editables = [];
     editables[storeKey] = 1 ; // use number for dense array support
 
-    // propagate the data to the child records
-    this._updateChildRecordHashes(storeKey, hash, status);
-
     return this ;
   },
 
@@ -531,8 +529,7 @@ export const NestedStore = Store.extend(
     var changes = this.get('chainedChanges');
     if (!changes) changes = this.chainedChanges = SC.Set.create();
 
-    var that = this,
-        didAddChainedChanges = false;
+    var didAddChainedChanges = false;
 
     for (idx = 0; idx < len; idx++) {
       if (isArray) storeKey = storeKeys[idx];
@@ -547,10 +544,6 @@ export const NestedStore = Store.extend(
 
       this._notifyRecordPropertyChange(storeKey, statusOnly, key);
 
-      // notify also the child records
-      this._propagateToChildren(storeKey, function(storeKey){
-        that.dataHashDidChange(storeKey, null, statusOnly, key);
-      });
     }
 
     this.setIfChanged('hasChanges', true);
@@ -709,8 +702,10 @@ export const NestedStore = Store.extend(
     if( this.get( "dataSource" ) )
       // return sc_super();
       return fn.base.apply(this, arguments);
-    else
+    else {
+      debugger;
       Store.NESTED_STORE_UNSUPPORTED_ERROR.throw();
+    }
   },
 
   // ..........................................................
