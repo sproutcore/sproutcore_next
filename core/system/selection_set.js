@@ -12,7 +12,7 @@ import { Copyable } from '../mixins/copyable.js';
 import { guidFor, none } from './base.js';
 import { IndexSet } from './index_set.js';
 import { FROZEN_ERROR } from './constants.js';
-import { CoreSet } from './core_set.js';
+import { SCSet } from './set.js';
 
 /** @class
 
@@ -358,7 +358,7 @@ export const SelectionSet = SCObject.extend(Enumerable, Freezable, Copyable,
   addObjects: function(objects) {
     var cur = this._objects,
         oldlen, newlen;
-    if (!cur) cur = this._objects = CoreSet.create();
+    if (!cur) cur = this._objects = SCSet.create();
     oldlen = cur.get('length');
 
     cur.addEach(objects);
