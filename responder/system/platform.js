@@ -7,6 +7,7 @@
 
 import { SC, GLOBAL } from '../../core/core.js';
 import { SCEvent, browser } from '../../event/event.js';
+import { device } from './device.js';
 import { RootResponder } from './root_responder.js';
 
 const OS = SC.OS;
@@ -172,7 +173,7 @@ export const platform = SC.Object.create({
     that will translate mouse events to touch events.
 
     This is useful if you are debugging touch functionality on the desktop.
-    
+
   */
   simulateTouchEvents: function () {
     // Touch events are supported natively, no need for this.
@@ -206,7 +207,7 @@ export const platform = SC.Object.create({
 
     // fix orientation handling
     platform.windowSizeDeterminesOrientation = true;
-    browser.device.orientationHandlingShouldChange(); // not sure this is correct
+    device.orientationHandlingShouldChange(); // not sure this is correct
   },
 
   /** @private
