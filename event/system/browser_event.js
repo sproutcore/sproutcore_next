@@ -11,6 +11,7 @@ import { SC } from '../../core/core.js';
 import { CoreQuery } from './core_query.js';
 import { platform } from '../../responder/responder.js';
 import { browser } from './browser.js';
+import { BROWSER } from '../../core/system/browser.js';
 
 export const MODIFIER_KEYS = {
   16:'shift', 17:'ctrl', 18: 'alt'
@@ -467,7 +468,7 @@ SC.mixin(SCEvent, /** @scope SCEvent */ {
     support namespaces.
 
     @param event {Event} the event to handle
-    
+
     @returns {Boolean}
   */
   handle: function (event) {
@@ -926,7 +927,7 @@ SCEvent.prototype = {
 
       // normalize wheelDelta for Firefox (all Mozilla browsers)
       // note that we multiple the delta on FF to make it's acceleration more natural.
-      } else if (!SC.none(originalEvent.detail) && browser.isMozilla) {
+      } else if (!SC.none(originalEvent.detail) && browser.name === BROWSER.firefox) {
         if (originalEvent.axis && (originalEvent.axis === originalEvent.HORIZONTAL_AXIS)) {
           this.wheelDeltaX = originalEvent.detail;
           this.wheelDelta = this.wheelDeltaY = 0;

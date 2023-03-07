@@ -12,10 +12,11 @@
 import { SC } from '../../core/core.js';
 import { device, PORTRAIT_ORIENTATION } from './device.js';
 import { platform } from './platform.js';
-import { SCEvent, browser, MODIFIER_KEYS, FUNCTION_KEYS, CoreQuery } from '../../event/event.js'; 
+import { SCEvent, browser, MODIFIER_KEYS, FUNCTION_KEYS, CoreQuery } from '../../event/event.js';
 import { rectsEqual } from '../../view/views/utils/rect.js';
 import { viewFor } from '../../view/view.js';
 import { Touch } from './touch.js';
+import { BROWSER } from '../../core/system/browser.js';
 
 /** Set to false to leave the backspace key under the control of the browser.*/
 // CAPTURE_BACKSPACE_KEY = false ;
@@ -868,7 +869,7 @@ export const RootResponder = SC.Object.extend(
     var mousewheel = 'mousewheel';
 
     // Firefox emits different mousewheel events than other browsers
-    if (browser.isMozilla) {
+    if (browser.name === BROWSER.firefox) {
       // For Firefox < 3.5, subscribe to DOMMouseScroll events
       if (browser.compare(browser.engineVersion, '1.9.1') < 0) {
         mousewheel = 'DOMMouseScroll';
@@ -1922,8 +1923,8 @@ export const RootResponder = SC.Object.extend(
       return true;
     }
 
-    // Firefox does falseT handle delete here...
-    if (browser.isMozilla && (evt.which === 8)) return true ;
+    // Firefox does NOT handle delete here...
+    if (browser.name === BROWSER.firefox && (evt.which === 8)) return true ;
 
     // modifier keys are handled separately by the 'flagsChanged' event
     // send event for modifier key changes, but only stop processing if this

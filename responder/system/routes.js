@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { BROWSER } from '../../core/system/browser.js';
 import { browser, SCEvent } from '../../event/event.js';
 import { platform } from './platform.js';
 
@@ -328,7 +329,7 @@ export const routes = SC.Object.create(
     // Remove the '#' prefix
     loc = (loc && loc.length > 0) ? loc.slice(1, loc.length) : '';
 
-    if (!(browser.isMozilla && browser.compare(browser.mozilla, "41.0") > 0)) {
+    if (!(browser.name === BROWSER.firefox && browser.compare(browser.mozilla, "41.0") > 0)) {
       // because of bug https://bugzilla.mozilla.org/show_bug.cgi?id=483304
       loc = decodeURI(loc);
     }
