@@ -7,7 +7,7 @@
 // sc_require('views/scroller');
 
 import { SC } from '../../core/core.js';
-import { ALIGN_BOTTOM, ALIGN_CENTER, ALIGN_LEFT, ALIGN_MIDDLE, ALIGN_RIGHT, ALIGN_TOP, cloneRect, ContainerView, easingCurve, LAYOUT_HORIZONTAL, LAYOUT_VERTICAL, maxX, maxY, minX, minY, outlet, View } from '../../view/view.js';
+import { ALIGN_BOTTOM, ALIGN_CENTER, ALIGN_LEFT, ALIGN_MIDDLE, ALIGN_RIGHT, ALIGN_TOP, cloneRect, ContainerView, easingCurve, LAYOUT_HORIZONTAL, LAYOUT_VERTICAL, maxX, maxY, minX, minY, offset, outlet, View } from '../../view/view.js';
 import { Drag } from '../system/drag.js';
 import { OverlayScrollerView, ScrollerView } from './scroller.js';
 
@@ -81,7 +81,7 @@ export const SCROLL = {
           verticalOverlay: true
         });
 
-  
+
   @since SproutCore 1.0
 */
 export const ScrollView = View.extend({
@@ -885,7 +885,7 @@ export const ScrollView = View.extend({
         var duration = new Date() - start,
             percent = Math.min(duration / totalDuration, 1); // Capped at 100%
 
-        run(function () {
+        SC.run(function () {
           var currentLeft = leftStart + leftDelta * easingCurve.value(percent),
               currentScale = scaleStart + scaleDelta * easingCurve.value(percent),
               currentTop = topStart + topDelta * easingCurve.value(percent);
@@ -2365,7 +2365,6 @@ export const ScrollView = View.extend({
   mouseWheel: function (evt) {
     var handled = false,
       contentView = this.get('contentView');
-
     // Ignore it if not enabled.
     if (contentView && this.get('isEnabledInPane')) {
 
