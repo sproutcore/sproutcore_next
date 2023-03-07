@@ -1,5 +1,6 @@
 
 import { SC } from '../../core/core.js';
+import { BROWSER } from '../../core/system/browser.js';
 import { browser } from '../../event/event.js';
 import { metricsForString } from './string_measurement.js';
 
@@ -145,7 +146,7 @@ export const bestStringMetricsForMaxWidth = function me (string,maxWidth,example
   }
   metrics.browserCorrection = 0;
   if(browser.isIE) metrics.browserCorrection = 1;
-  if(browser.isMozilla) metrics.browserCorrection = 1;
+  if(browser.name === BROWSER.firefox) metrics.browserCorrection = 1;
   metrics.width = Math.min(maxWidth,metrics.width+metrics.browserCorrection);
   if(cache) {
     var entry = cache.list[lines];
@@ -196,9 +197,9 @@ export const cacheSlotFor = function() {
 */
 export const cachedVersionOf = function() {
   var ret = function(func) {
-    var ret = function r () {     
+    var ret = function r () {
       var cache = cacheSlotFor(arguments);
-      return cache.result || (cache.result = r.func.apply(this,arguments));    
+      return cache.result || (cache.result = r.func.apply(this,arguments));
     };
     ret.func = func;
     return ret;

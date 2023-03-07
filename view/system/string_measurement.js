@@ -6,6 +6,7 @@
 // ==========================================================================
 
 import { SC } from '../../core/core.js';
+import { BROWSER } from '../../core/system/browser.js';
 import { browser, CoreQuery } from '../../event/event.js';
 import { RenderContext } from "../render_context/render_context.js";
 
@@ -198,7 +199,7 @@ export const measureString = function(string, ignoreEscape) {
   };
 
   // Firefox seems to be 1 px short at times, especially with non english characters.
-  if (browser.isMozilla) {
+  if (browser.name === BROWSER.firefox) {
     result.width += 1;
   }
 

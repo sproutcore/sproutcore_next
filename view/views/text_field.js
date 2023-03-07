@@ -14,6 +14,7 @@ import { propertyFromRenderDelegate } from "./view/theming.js";
 import { platform } from '../../responder/responder.js';
 import { TextSelection } from "../system/text_selection.js";
 import { browser, SCEvent } from '../../event/event.js';
+import { BROWSER } from '../../core/system/browser.js';
 
 // sc_require('views/field');
 // sc_require('system/text_selection');
@@ -1114,8 +1115,8 @@ export const TextFieldView = FieldView.extend(Editable,
       var val = this.get('value');
 
       // This code is nasty. It's thanks to Gecko .keycode table that has characters like '&' with the same keycode as up arrow key
-      if (val && ((!browser.isMozilla && which > 47) ||
-                  (browser.isMozilla && ((which > 32 && which < 43) || which > 47) && !(keyCode > 36 && keyCode < 41))) &&
+      if (val && ((!browser.name === BROWSER.firefox && which > 47) ||
+                  (browser.name === BROWSER.firefox && ((which > 32 && which < 43) || which > 47) && !(keyCode > 36 && keyCode < 41))) &&
           (val.length >= this.get('maxLength'))) {
         maxLengthReached = true;
       }
@@ -1286,7 +1287,7 @@ export const TextFieldView = FieldView.extend(Editable,
   },
 
   keyUp: function (evt) {
-    if (browser.isMozilla &&
+    if (browser.name === BROWSER.firefox &&
         evt.keyCode === SCEvent.KEY_RETURN) { this.fieldValueDidChange(); }
 
     // The caret/selection may have changed.
