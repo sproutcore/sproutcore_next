@@ -14,6 +14,7 @@ import { ActionSupport, DROP_AFTER, DROP_BEFORE, DROP_ON, View } from '../../vie
 import { CollectionViewDelegate } from '../mixins/collection_view_delegate.js';
 import { DRAG_REORDER } from '../system/constants.js';
 import { Drag, DRAG_MOVE, DRAG_NONE } from '../system/drag.js';
+import '../render_delegates/collection.js';
 /**
   @class
 
@@ -559,21 +560,6 @@ export const CollectionView = View.extend(ActionSupport, CollectionViewDelegate,
     @default false
   */
   isActive: false,
-
-  /** @deprecated Version 1.11.0.  ScrollView observes the frame (height/width) of the collection.
-
-    @type Number
-    @default 0
-  */
-  calculatedHeight: 0,
-
-  /** @deprecated Version 1.11.0.  ScrollView observes the frame (height/width) of the collection.
-
-    @type Number
-    @default 0
-  */
-  calculatedWidth: 0,
-
 
   // ..........................................................
   // SUBCLASS METHODS
