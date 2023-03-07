@@ -562,24 +562,11 @@ export const RunLoop = SCObject.extend({
   @returns {Object}
 */
 export const _getRecentStack = function () {
-  var currentFunction = arguments.callee.caller,
-    i = 0,
-    stack = {},
-    first = true,
-    functionName;
-
-  while (currentFunction && i < 10) {
-    // Skip ourselves!
-    if (first) {
-      first = false;
-    } else {
-      functionName = currentFunction.displayName || currentFunction.toString().substring(0, 40);
-      stack[i++] = functionName;
-    }
-    currentFunction = currentFunction.caller;
-  }
-
-  return stack;
+  // the first item is getRecentStack
+  // we keep in line with what the original did, so
+  // we return only 10 items
+  const trace = new Error().stack.split('\n').slice(1, 11);
+  return trace;
 };
 //@endif
 
