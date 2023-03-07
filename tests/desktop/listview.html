@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Test Suite</title>
+    <link rel="stylesheet" href="../qunit/qunit-2.11.3.css">
+    <style>
+      /* The problem here is styling, I have focused on code first, but it seems that much of the styling is required in order to pass the tests...*/
+      .sc-view.sc-pane {
+        position:absolute;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" media="screen" href="../resources/yuireset.css">
+  </head>
+  <body>
+    <script src="../qunit/qunit-2.11.3.js"></script>
+    <script>
+      window.module = QUnit.module;
+      window.test = QUnit.test.bind(QUnit.assert);
+      window.equals = QUnit.assert.equal.bind(QUnit.assert);
+      window.same = QUnit.assert.deepEqual.bind(QUnit.assert);
+      window.ok = QUnit.assert.ok.bind(QUnit.assert);
+      window.assert = QUnit.assert;
+      QUnit.config.autostart = false;
+    </script>
+    <script src="./views/list/contentIndexesInRect.js" type="module"></script>
+    <script src="./views/list/drag_and_drop.js" type="module"></script>
+    <script src="./views/list/layoutForContentIndex.js" type="module"></script>
+    <script src="./views/list/render.js" type="module"></script>
+    <script src="./views/list/rowDelegate.js" type="module"></script>
+    <script src="./views/list/rowOffsetForContentIndex.js" type="module"></script>
+    <script src="./views/list/rowSizeForContentIndex.js" type="module"></script>
+    <script src="./views/list/ui_alternatingrows.js" type="module"></script>
+    <script src="./views/list/ui_outline.js" type="module"></script>
+    <script src="./views/list/ui_row_heights.js" type="module"></script>
+    <script src="./views/list/ui_simple.js" type="module"></script>
+    <!-- <script src="./views/collection/reload.js" type="module"></script> -->
+    <!-- <script src="./views/collection/select.js" type="module"></script> -->
+    <!-- <script src="./views/collection/selection.js" type="module"></script> -->
+    <!-- <script src="./views/collection/selectNextItem.js" type="module"></script> -->
+    <!-- <script src="./views/collection/selectPreviousItem.js" type="module"></script> -->
+    <!-- <script src="./views/collection/touch.js" type="module"></script> -->
+    <!-- <script src="./views/collection/ui_diagram.js" type="module"></script> -->
+    <!-- <script src="./view/didAppendToDocument.js" type="module"></script> -->
+    <!-- <script src="./view/destroyLayer.js" type="module"></script> -->
+    <!-- <script src="./view/destroy.js" type="module"></script> -->
+    <!-- <script src="./view/createLayer.js" type="module"></script> -->
+    <!-- <script src="./view/createChildViews.js" type="module"></script> -->
+    <!-- <script src="./view/convertLayouts.js" type="module"></script>  -->
+    <!-- <script src="./view/convertFrames.js" type="module"></script> -->
+    <!-- <script src="./view/clippingFrame.js" type="module"></script>  -->
+    <!-- <script src="./view/class_name_bindings_test.js" type="module"></script> -->
+    <!-- <script src="./view/childViewLayout_test.js" type="module"></script> -->
+    <!-- <script src="./view/border_frame_test.js" type="module"></script>  -->
+    <!-- <script src="./view/background_color.js" type="module"></script> -->
+    <!-- <script src="./view/attribute_bindings_test.js" type="module"></script>  -->
+    <!-- <script src="./view/animation.js" type="module"></script> -->
+
+     <!-- <script src="./view/theme.js" type="module"></script> because no content -->
+
+    <script type="module">
+      import { SC } from '../../core/core.js';
+      import { SCEvent } from '../../event/event.js';
+      import { RootResponder } from '../../responder/responder.js';
+      SC.ready(function () {
+        SCEvent.remove(document, 'selectstart', RootResponder.responder, RootResponder.responder.selectstart);
+        // SCEvent.remove(document, 'mousewheel', RootResponder.responder, RootResponder.responder.mousewheel)
+        QUnit.start();
+      });
+      // jQuery(SC.onReady.done);
+    </script>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+
+</body>
+</html>
