@@ -8,7 +8,8 @@
 import { SC } from '../../core/core.js';
 import { CoreQuery } from '../../event/event.js';
 import { Control, InlineEditable, InlineTextFieldDelegate, MIXED_STATE, View, ImageView, RenderContext } from '../../view/view.js';
-
+import '../render_delegates/disclosure.js';
+import '../render_delegates/checkbox.js';
 
 /**
   @static
@@ -852,7 +853,7 @@ export const ListItemView = View.extend(InlineEditable, Control,
 
     // handle unread count
     key = this.getDelegateProperty('contentUnreadCountKey', del);
-    value = (key && content) ? get(content, key) : null;
+    value = (key && content) ? SC.get(content, key) : null;
     if (!SC.none(value) && value !== '') {
       console.log(value);
       this.renderCount(working, value);
