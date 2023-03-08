@@ -16,7 +16,6 @@ import '../node_modules/jquery/dist/jquery.slim.js';
 import { Runner } from './system/runner.js';
 import { CoreTest } from './system/core_test.js';
 
-
 CoreTest.Runner = Runner;
 
 
@@ -35,23 +34,24 @@ CoreTest.defaultPlan = function defaultPlan() {
 
 // create a module.  If this is the first time, create the test plan and
 // runner.  This will cause the test to run on page load
-export const module = function(desc, l) {
+const module = function(desc, l) {
   CoreTest.defaultPlan().module(desc, l);
 };
 
 // create a test.  If this is the first time, create the test plan and
 // runner.  This will cause the test to run on page load
-export const test = function(desc, func) {
+const test = function(desc, func) {
   CoreTest.defaultPlan().test(desc, func);
 };
 
 // reset htmlbody for unit testing
-export const clearHtmlbody = function() {
+const clearHtmlbody = function() {
   CoreTest.defaultPlan().clearHtmlbody();
 };
 
-export const htmlbody = function(string) {
+const htmlbody = function(string) {
   CoreTest.defaultPlan().htmlbody(string);
 };
 
-export { CoreTest };
+export { CoreTest, module, test, clearHtmlbody, htmlbody };
+
