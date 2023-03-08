@@ -6,34 +6,34 @@
 // ==========================================================================
 
 import { SC } from '../core/core.js';
-import './render_delegates/split.js';
-import './render_delegates/split_divider.js';
-import './render_delegates/button.js';
-import './render_delegates/checkbox.js';
-import './render_delegates/collection.js';
-import './render_delegates/disclosure.js';
-import './render_delegates/toolbar.js';
-import './render_delegates/image_button.js';
-import './render_delegates/master_detail.js';
-import './render_delegates/menu.js';
-import './render_delegates/panel.js';
-import './render_delegates/picker.js';
-import './render_delegates/popup_button.js';
-import './render_delegates/progress.js';
-import './render_delegates/radio_group.js';
-import './render_delegates/radio.js';
-import './render_delegates/segment.js';
-import './render_delegates/segmented.js';
-import './render_delegates/select_button.js';
-import './render_delegates/slider.js';
-import './render_delegates/source_list.js';
-import './render_delegates/well.js';
-import './render_delegates/workspace.js';
 
+// import './render_delegates/split.js';
+// import './render_delegates/split_divider.js';
+// import './render_delegates/button.js';
+// import './render_delegates/checkbox.js';
+// import './render_delegates/collection.js';
+// import './render_delegates/disclosure.js';
+// import './render_delegates/toolbar.js';
+// import './render_delegates/image_button.js';
+// import './render_delegates/master_detail.js';
+// import './render_delegates/menu.js';
+// import './render_delegates/panel.js';
+// import './render_delegates/picker.js';
+// import './render_delegates/popup_button.js';
+// import './render_delegates/progress.js';
+// import './render_delegates/radio_group.js';
+// import './render_delegates/radio.js';
+// import './render_delegates/segment.js';
+// import './render_delegates/segmented.js';
+// import './render_delegates/select_button.js';
+// import './render_delegates/slider.js';
+// import './render_delegates/source_list.js';
+// import './render_delegates/well.js';
+// import './render_delegates/workspace.js';
 /**
   If set to `NO`, then pressing backspace will NOT navigate to the previous
   page in the browser history, which is the default behavior in most browsers.
-  
+
   Usually it is best to leave this property set to `NO` in order to prevent the
   user from inadvertently losing data by pressing the backspace key.
 
@@ -56,6 +56,7 @@ export { SplitDividerView } from './views/split_divider.js';
 export { SplitView } from './views/split.js';
 export { ScrollView } from './views/scroll_view.js';
 export { SourceListView } from './views/source_list.js';
+export { CollectionView } from './views/collection.js';
 export { ListView } from './views/list.js';
 export { ToolbarView } from './views/toolbar.js';
 export { WebView } from './views/web.js';
