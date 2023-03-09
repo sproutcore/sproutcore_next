@@ -5,6 +5,7 @@
 import { SC } from '../../core/core.js';
 import { RenderDelegate, BaseTheme } from "../../view/view.js";
 
+import './button.js';
 /**
   @class
   Renders and updates the DOM representation of a SelectView.

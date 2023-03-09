@@ -8,6 +8,8 @@ import { propertyFromRenderDelegate, RenderContext } from '../../view/view.js';
 import { AutoResizingMenuPane } from '../ext/menu.js';
 import { SelectViewMenu } from '../mixins/select_view_menu.js';
 import { PopupButtonView } from './popup_button.js';
+import '../render_delegates/select_button.js';
+import '../render_delegates/menu.js';
 
 /**
  * @class
@@ -121,7 +123,7 @@ export const SelectView = PopupButtonView.extend({
 
   /**
     If true, the empty name and the default title will be localized.
-    
+
     @type Boolean
     @default true
   */
@@ -202,8 +204,8 @@ export const SelectView = PopupButtonView.extend({
   /**
     @private
 
-    This gets the value for a specific menu item. 
-    
+    This gets the value for a specific menu item.
+
     This method therefore accepts both the menu items as created for the menupane's displayItems
     AND the raw items provided by the developer in `items`.
   */
@@ -291,7 +293,7 @@ export const SelectView = PopupButtonView.extend({
       if (sel.get) return sel.get(itemIconKey);
       else if (SC.typeOf(sel) == SC.T_HASH) return sel[itemIconKey];
     }
-    return null;      
+    return null;
   }.property('selectedItem').cacheable(),
 
   /**
@@ -391,12 +393,12 @@ export const SelectView = PopupButtonView.extend({
     var displayItems = this.get('displayItems');
     if (!displayItems) return;
 
-    var len = displayItems.get ? displayItems.get('length') : displayItems.length, 
+    var len = displayItems.get ? displayItems.get('length') : displayItems.length,
       idx, item;
 
     for (idx = 0; idx < len; idx++) {
       item = displayItems.objectAt(idx);
-      
+
       if (this.isValueEqualTo(item)) {
         this.setIfChanged('selectedItem', item);
         return;
@@ -523,7 +525,7 @@ export const SelectView = PopupButtonView.extend({
 
     // We have to find the selected item, and then get its 'top' position so we
     // can position the menu correctly.
-    var itemViews = menu.get('menuItemViews'), 
+    var itemViews = menu.get('menuItemViews'),
       len = itemViews.length,
       idx, view;
 
