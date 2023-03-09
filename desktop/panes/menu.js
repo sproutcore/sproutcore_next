@@ -9,7 +9,7 @@ import { bodyOverflowArbitrator, propertyFromRenderDelegate, REGULAR_CONTROL_SIZ
 import { MenuItemView } from "../views/menu_item.js";
 import { MenuScrollView } from "../views/menu_scroll.js";
 import { PickerPane, PICKER_MENU } from "./picker.js";
-
+import { SC } from "../../core/core.js";
 
 /**
   @class
@@ -58,7 +58,7 @@ import { PickerPane, PICKER_MENU } from "./picker.js";
   To determine when a user clicks on a menu item, you can observe the
   `selectedItem` property for changes.
 
-  
+
   @since SproutCore 1.0
 */
 
